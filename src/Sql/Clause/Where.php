@@ -19,6 +19,10 @@ class Where extends Clause
     {
         $predicates_sql = parent::getSQL();
 
+        if ($this->isEmptySQL($predicates_sql)) {
+            return '';
+        }
+
         return "WHERE {$predicates_sql}";
     }
 }
