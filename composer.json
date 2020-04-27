@@ -1,0 +1,46 @@
+{
+    "name": "pine3ree/p3-db",
+    "description": "A tiny PDO wrapper for lazy instantiation and query profiling",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "database",
+        "pdo",
+        "php",
+        "pine3ree",
+        "p3"
+    ],
+    "homepage": "https://github.com/pine3ree/p3-db",
+    "support": {
+        "docs": "https://github.com/pine3ree/p3-db/README.md",
+        "issues": "https://github.com/pine3ree/p3-db/issues",
+        "source": "https://github.com/pine3ree/p3-db"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "php": "^7.1",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.9",
+        "phpstan/phpstan-strict-rules": "^0.9",
+        "phpunit/phpunit": "^6.5",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "P3\\DB\\": "src/"
+        }
+    },
+    "scripts": {
+        "cs": "@phpcs",
+        "cbf": "@phpcbf",
+        "stan": "@phpstan",
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf",
+        "phpstan": "phpstan analyze -l max -c phpstan.neon ./src",
+        "test": "phpunit --colors=always"
+    }
+}
