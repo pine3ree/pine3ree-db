@@ -122,12 +122,20 @@ abstract class Query
 
     protected function quoteIdentifier(string $identifier, string $q = '`'): string
     {
-        $identifier = trim($identifier, ".{$q}");
-        if (false === strpos($identifier, '.')) {
-            return "{$q}{$identifier}{$q}";
+        if ($q) {
+            if ($q === substr($identifier, 0, 1) && substr($identifier, -1) === $q) {
+                return $identifier;
+            }
+
+            $identifier = trim($identifier, ".{$q}");
+            if (false === strpos($identifier, '.')) {
+                return "{$q}{$identifier}{$q}";
+            }
+
+            return $q . str_replace(".", "{$q}.{$q}", $identifier) . $q;
         }
 
-        return $q . str_replace(".", "{$q}.{$q}", $identifier) . $q;
+        return $identifier;
     }
 
     protected function quoteAlias(string $alias, string $q = '`'): string
