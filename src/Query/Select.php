@@ -90,9 +90,46 @@ class Select extends ConditionsAware
         return parent::setTable($table, $alias);
     }
 
-    public function groupBy($groupBy): self
+    /**
+     *
+     * @param sring|string[] $groupBy
+     * @param bool $replace
+     * @return $this
+     * @throws InvalidArgumentException
+     */
+    public function groupBy($groupBy, bool $replace = false): self
     {
+        if ($replace) {
+            $this->groupBy = [];
+        }
+
+        if (is_array($groupBy)) {
+            foreach ($this->groupBy as $identifier) {
+                $this->groupBy($identifier);
+            }
+            return $this;
+        }
+
+        if (!is_string($groupBy)) {
+            throw new InvalidArgumentException(sprintf(
+                "The `groupBy` argument must be either a string or an array of"
+                . " string identifiers, `%s` provided",
+                gettype($groupBy)
+            ));
+        }
+
+        $this->groupBy[] = $groupBy;
+
         return $this;
+    }
+
+    protected function getGroupBySQL(): string
+    {
+        if (empty($this->groupBy)) {
+            return '';
+        }
+
+        return "GROUP BY " . implode(", ", $this->groupBy);
     }
 
     public function having($having): self
@@ -279,9 +316,19 @@ class Select extends ConditionsAware
             $sqls[] = $where_sql;
         }
 
-        $orderby_sql = $this->getOrderBySQL();
-        if ($this->isNotEmptyStatement($orderby_sql)) {
-            $sqls[] = $orderby_sql;
+        $group_sql = $this->getGroupBySQL();
+        if ($this->isNotEmptyStatement($group_sql)) {
+            $sqls[] = $group_sql;
+        }
+
+        $having_sql = $this->getHavingSQL();
+        if ($this->isNotEmptyStatement($having_sql)) {
+            $sqls[] = $having_sql;
+        }
+
+        $order_sql = $this->getOrderBySQL();
+        if ($this->isNotEmptyStatement($order_sql)) {
+            $sqls[] = $order_sql;
         }
 
         if ($this->limit > 0) {
