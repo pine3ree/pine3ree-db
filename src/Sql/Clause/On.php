@@ -12,8 +12,8 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 
 /**
- * Represents a SQL "HAVING" clause
+ * Represents a SQL "ON" clause
  */
-class Having extends Clause
+class On extends Clause
 {
 }

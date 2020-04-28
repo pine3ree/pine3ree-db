@@ -14,7 +14,7 @@ use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
 /**
- * Class Comparison
+ * This class represents a sql comparison condition
  */
 class Comparison extends Predicate
 {
@@ -32,29 +32,58 @@ class Comparison extends Predicate
         Sql::GT  => Sql::GT,
     ];
 
-    public function __construct(string $identifier, string $operator, $value)
+    /**
+     * @param string|Literal $identifier
+     * @param scalar|literal|array<int, scalar|literal> $min_value
+     * @param scalar|literal $max_value
+     */
+    public function __construct($identifier, string $operator, $value)
     {
-        $this->identifier = $identifier;
+        self::assertValidIdentifier($identifier);
+        self::assertValidOperator($operator);
 
+        $this->identifier = $identifier;
+        $this->operator = $operator;
+        $this->value = $value;
+    }
+
+    private static function assertValidOperator(string $operator)
+    {
         if (!isset(self::OPERATORS[$operator])) {
             throw new InvalidApplicationNameException(
                 "Invalid comparison operator `{$identifier}`, must be one of "
                 . implode(', ', self::OPERATORS) . "!"
             );
         }
-
-        $this->operator = $operator;
-        $this->value = $value;
     }
 
     public function getSQL(): string
     {
-        $identifier = $this->quoteIdentifier($this->identifier);
+        if (isset($this->sql)) {
+            return $this->sql;
+        }
+
+        $identifier = $this->identifier instanceof Literal
+            ? (string)$this->identifier
+            : $this->quoteIdentifier($this->identifier);
 
         $param = $this->value instanceof Literal
             ? (string)$this->value
             : $this->createNamedParam($this->value);
 
-        return "{$identifier} {$this->operator} {$param}";
+        $operator = $this->operator;
+        if (is_null($this->value)) {
+            switch ($operator) {
+                case Sql::EQ:
+                    $operator = "IS";
+                    break;
+                case Sql::NEQ:
+                case Sql::NE:
+                    $operator = "IS NOT";
+                    break;
+            }
+        }
+
+        return $this->sql = "{$identifier} {$operator} {$param}";
     }
 }

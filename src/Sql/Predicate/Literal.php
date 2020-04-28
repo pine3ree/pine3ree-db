@@ -11,7 +11,7 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate;
 
 /**
- * Class Literal
+ * This class represents a sql literal-expression predicate
  */
 class Literal extends Predicate
 {

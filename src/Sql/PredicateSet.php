@@ -21,7 +21,10 @@ use P3\Db\Sql\Predicate\Literal as LiteralPredicate;
  */
 class PredicateSet extends Predicate
 {
+    /** @var Predicate[] */
     protected $predicates = [];
+
+    /** @var string */
     protected $combined_by;
 
     /**
@@ -37,13 +40,26 @@ class PredicateSet extends Predicate
         self::COMB_OR  => Sql::OR,
     ];
 
-    public function __construct(array $predicates = null, string $comb_by = Sql::AND)
+    /**
+     *
+     * @param string $combined_by
+     * @param null|Predicates[]|Predicate|string $predicates
+     */
+    public function __construct(string $combined_by = Sql::AND, $predicates = null)
     {
-        foreach ($predicates as $predicate) {
-            $this->addPredicate($predicate);
-        }
+        $this->combined_by = self::COMB[strtoupper($combined_by)] ?? Sql::AND;
 
-        $this->combined_by = isset(self::COMB[$comb_by]) ? $comb_by : Sql::AND;
+        if (isset($predicates)) {
+            if (is_array($predicates)) {
+                foreach ($predicates as $predicate) {
+                    $this->addPredicate($predicate);
+                }
+            } elseif ($predicates instanceof PredicateSet) {
+                $this->predicates = $predicates->getPredicates();
+            } else {
+                $this->addPredicate($predicates);
+            }
+        }
     }
 
     /**
@@ -58,26 +74,29 @@ class PredicateSet extends Predicate
                 ? new LiteralPredicate($predicate)
                 : new ExpressionPredicate($predicate, $params);
         } elseif (is_array($predicate) && count($predicate) === 3) {
-            $predicate = $this->buildPredicateFromArray($predicate);
+            $predicate = $this->buildPredicateFromSpecs($predicate);
         }
 
         if (! $predicate instanceof Predicate) {
             throw new InvalidArgumentException(sprintf(
                 "A single predicate must be defined either as a string, a"
                 . " Predicate instance or an [identifier, operator, value] array"
-                . " expression!, `%s` provided",
+                . " expression, `%s` provided!",
                 is_object($predicate) ? get_class($predicate) : gettype($predicate)
             ));
         }
 
         $this->predicates[] = $predicate;
+        unset($this->sql); // remove rendered sql
     }
 
-    protected function buildPredicateFromArray(array $array): Predicate
+    protected function buildPredicateFromSpecs(array $specs): Predicate
     {
-        $identifier = $array[0];
-        $operator   = $array[1];
-        $value      = $array[2];
+        $identifier = $specs[0]; // identifier or Literal sql expression
+        $operator   = $specs[1];
+        $value      = $specs[2];
+
+        Sql::assertValidOperator($operator);
 
         if ($value instanceof Literal) {
             return new LiteralPredicate("{$identifier} {$operator} {$value}");
@@ -105,11 +124,25 @@ class PredicateSet extends Predicate
         return $this->predicates;
     }
 
+    public function isEmpty(): bool
+    {
+        return empty($this->predicates);
+    }
+
     public function getSQL(): string
     {
+        if (isset($this->sql)) {
+            return $this->sql;
+        }
+
         $sqls = [];
         foreach ($this->predicates as $predicate) {
-            $sqls[] = trim($predicate->getSQL());
+            $sql = trim($predicate->getSQL());
+            if ($this->isEmptySQL($sql)) {
+                continue;
+            }
+            $sqls[] = $sql;
+            $this->importParams($predicate);
         }
 
         $sqls = array_filter($sqls, function ($sql) {
@@ -117,31 +150,31 @@ class PredicateSet extends Predicate
         });
 
         if (empty($sqls)) {
-            return '';
+            return $this->sql = '';
         }
 
         if (1 === count($sqls)) {
-            return $sqls[0];
+            return $this->sql = $sqls[0];
         }
 
         $LOGICAL_OP = self::COMB[$this->combined_by];
 
-        return "(" . trim(implode(" {$LOGICAL_OP} ", $sqls)) . ")";
+        return $this->sql = "(" . trim(implode(" {$LOGICAL_OP} ", $sqls)) . ")";
     }
 
     /**
-     * Strip any surrounding matching pair of parentheses
+     * Import parameters and types from inner predicate
      *
-     * @param string $sql
-     * @return bool
+     * @param Predicate $predicate
      */
-    protected function stripParentheses(string $sql): string
+    private function importParams(Predicate $predicate)
     {
-        if ('(' === substr($sql, 0, 1) && substr($sql, -1) === ')') {
-            return mb_substr($sql, 1, -1);
+        foreach ($predicate->getParams() as $index => $value) {
+            $this->params[$index] = $value;
         }
-
-        return $sql;
+        foreach ($predicate->getParamsTypes() as $index => $type) {
+            $this->params_types[$index] = $type;
+        }
     }
 
     public function jsonSerialize()

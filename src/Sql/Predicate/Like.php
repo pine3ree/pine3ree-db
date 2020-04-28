@@ -8,11 +8,12 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
 /**
- * Class Like
+ * This class represents a sql LIKE condition
  */
 class Like extends Predicate
 {
@@ -20,21 +21,45 @@ class Like extends Predicate
     protected $value;
     protected $not = false;
 
-    public function __construct(string $identifier, $value)
+    /**
+     * @param string|Literal $identifier
+     * @param string|Literal $values
+     */
+    public function __construct($identifier, $value)
     {
+        self::assertValidIdentifier($identifier);
+        self::assertValidValue($value);
+
         $this->identifier = $identifier;
         $this->value = $value;
     }
 
+    private static function assertValidValue($value)
+    {
+        if (!is_string($value) && ! $value instanceof Literal) {
+            throw new InvalidArgumentException(sprintf(
+                "A LIKE value must be either a string or an Sql Literal expression instance, `%s` provided!",
+                is_object($value) ? get_class($value) : gettype($value)
+            ));
+        }
+    }
+
     public function getSQL(): string
     {
-        $identifier = $this->quoteIdentifier($this->identifier);
-        $operator   = ($this->not ? "NOT " : "") . "LIKE";
+        if (isset($this->sql)) {
+            return $this->sql;
+        }
+
+        $identifier = $this->identifier instanceof Literal
+            ? (string)$this->identifier
+            : $this->quoteIdentifier($this->identifier);
+
+        $operator = ($this->not ? "NOT " : "") . "LIKE";
 
         $param = $this->value instanceof Literal
             ? (string)$this->value
             : $this->createNamedParam($this->value);
 
-        return "{$identifier} {$operator} {$param}";
+        return $this->sql = "{$identifier} {$operator} {$param}";
     }
 }

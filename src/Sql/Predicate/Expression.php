@@ -11,7 +11,7 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate;
 
 /**
- * Class Expression
+ * This class represents a sql expression with parameter markers
  */
 class Expression extends Predicate
 {

@@ -11,12 +11,14 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\In;
 
 /**
- * Class NotIn
+ * This class represents a sql NOT IN condition
  */
 class NotIn extends In
 {
-
-    public function __construct(string $identifier, array $values)
+    /**
+     * @see In::__construct()
+     */
+    public function __construct($identifier, array $values)
     {
         parent::__construct($identifier, $values);
         $this->not = true;

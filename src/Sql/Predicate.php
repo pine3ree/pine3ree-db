@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql;
 
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -67,7 +68,7 @@ abstract class Predicate implements \JsonSerializable
 
     protected function createNamedParam($value, int $param_type = null): string
     {
-//        return $this->createPositionalParam($value, $param_type);
+        //return $this->createPositionalParam($value, $param_type);
         static $i = 1;
 
         $marker = ":_np{$i}";
@@ -107,6 +108,15 @@ abstract class Predicate implements \JsonSerializable
         $this->params_types[$key] = $param_type;
     }
 
+    protected static function assertValidIdentifier($identifier)
+    {
+        if (!is_string($identifier) && ! $identifier instanceof Literal) {
+            throw new InvalidArgumentException(sprintf(
+                "A predicate identifier must be either a string or an SQL Literal, '%s' provided!!",
+                is_object($identifier) ? get_class($identifier) : gettype($identifier)
+            ));
+        }
+    }
     public function jsonSerialize()
     {
         return [

@@ -8,21 +8,12 @@
 
 namespace P3\Db\Sql\Clause;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 
 /**
- * Class Where
+ * Represents a SQL "WHERE" clause
  */
 class Where extends Clause
 {
-    public function getSQL(): string
-    {
-        $predicates_sql = parent::getSQL();
-
-        if ($this->isEmptySQL($predicates_sql)) {
-            return '';
-        }
-
-        return "WHERE {$predicates_sql}";
-    }
 }

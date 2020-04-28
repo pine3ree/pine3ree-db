@@ -11,7 +11,7 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate;
 
 /**
- * Class In
+ * This class represents a sql IN condition
  */
 class In extends Predicate
 {
@@ -20,25 +20,38 @@ class In extends Predicate
     protected $has_null = false;
     protected $not = false;
 
-    public function __construct(string $identifier, array $values)
+    /**
+     * @param string|Literal $identifier
+     * @param array $values
+     */
+    public function __construct($identifier, array $values)
     {
+        self::assertValidIdentifier($identifier);
+
         $this->identifier = $identifier;
         $this->values     = $values;
     }
 
     public function getSQL(): string
     {
-        $identifier = $this->quoteIdentifier($this->identifier);
-        $operator   = ($this->not ? "NOT " : "") . "IN";
+        if (isset($this->sql)) {
+            return $this->sql;
+        }
+
+        $identifier = $this->identifier instanceof Literal
+            ? (string)$this->identifier
+            : $this->quoteIdentifier($this->identifier);
+
+        $operator = ($this->not ? "NOT " : "") . "IN";
 
         $values = [];
         $has_null = false;
         foreach ($this->values as $value) {
             if (null === $value) {
                 $has_null = true;
-            } else {
-                $values[] = $this->createNamedParam($value);
+                continue;
             }
+            $values[] = $this->createNamedParam($value);
         }
 
         $ivl_sql = empty($values) ? "(NULL)" : "('" . implode("', '", $values) . "')";
@@ -50,6 +63,6 @@ class In extends Predicate
                 : " OR {$identifier} IS NULL";
         }
 
-        return "{$identifier} {$operator} {$ivl_sql}{$null_sql}";
+        return $this->sql = "{$identifier} {$operator} {$ivl_sql}{$null_sql}";
     }
 }
