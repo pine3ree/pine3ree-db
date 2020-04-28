@@ -47,7 +47,10 @@ abstract class Clause extends PredicateSet
         }
 
         $fqcn = static::class;
-        static::$name = strtoupper(substr($fqcn, strrpos($fqcn, '\\') + 1));
+        $class_basename = substr($fqcn, strrpos($fqcn, '\\') + 1);
+        $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $class_basename);
+
+        static::$name = strtoupper($name);
 
         return static::$name;
     }
