@@ -8,6 +8,12 @@
 
 namespace P3\Db;
 
+use InvalidArgumentException;
+
+use function gettype;
+use function is_string;
+use function sprintf;
+
 /**
  * Class Sql
  */
@@ -21,6 +27,13 @@ class Sql
     public const UPDATE = 'UPDATE';
     public const DELETE = 'DELETE';
 
+    public const QUERY_DML = [
+        self::SELECT => self::SELECT,
+        self::INSERT => self::INSERT,
+        self::UPDATE => self::UPDATE,
+        self::DELETE => self::DELETE,
+    ];
+
     /**
      * Clauses
      */
@@ -33,24 +46,52 @@ class Sql
     public const LIMIT    = 'LIMIT';
     public const OFFSET   = 'OFFSET';
 
+    public const CLAUSES = [
+        self::WHERE    => self::WHERE,
+        self::JOIN     => self::JOIN,
+        self::ON       => self::ON,
+        self::GROUP_BY => self::GROUP_BY,
+        self::HAVING   => self::HAVING,
+        self::ORDER_BY => self::ORDER_BY,
+        self::LIMIT    => self::LIMIT,
+        self::OFFSET   => self::OFFSET,
+    ];
+
     /**
      * Join clause types
      */
-    const JOIN_AUTO          = '';
-    const JOIN_INNER         = 'INNER';
-    const JOIN_CROSS         = 'CROSS';
-    const JOIN_LEFT          = 'LEFT';
-    const JOIN_RIGHT         = 'RIGHT';
-    const JOIN_STRAIGHT      = 'STRAIGHT_JOIN';
-    const JOIN_NATURAL       = 'NATURAL';
-    const JOIN_NATURAL_LEFT  = 'NATURAL LEFT';
-    const JOIN_NATURAL_RIGHT = 'NATURAL RIGHT';
+    public const JOIN_AUTO          = '';
+    public const JOIN_INNER         = 'INNER';
+    public const JOIN_CROSS         = 'CROSS';
+    public const JOIN_LEFT          = 'LEFT';
+    public const JOIN_RIGHT         = 'RIGHT';
+    public const JOIN_STRAIGHT      = 'STRAIGHT_JOIN';
+    public const JOIN_NATURAL       = 'NATURAL';
+    public const JOIN_NATURAL_LEFT  = 'NATURAL LEFT';
+    public const JOIN_NATURAL_RIGHT = 'NATURAL RIGHT';
+
+    public const JOIN_TYPES = [
+        self::JOIN_AUTO          => self::JOIN_AUTO,
+        self::JOIN_INNER         => self::JOIN_INNER,
+        self::JOIN_CROSS         => self::JOIN_CROSS,
+        self::JOIN_LEFT          => self::JOIN_LEFT,
+        self::JOIN_RIGHT         => self::JOIN_RIGHT,
+        self::JOIN_STRAIGHT      => self::JOIN_STRAIGHT,
+        self::JOIN_NATURAL       => self::JOIN_NATURAL,
+        self::JOIN_NATURAL_LEFT  => self::JOIN_NATURAL_LEFT,
+        self::JOIN_NATURAL_RIGHT => self::JOIN_NATURAL_RIGHT,
+    ];
 
     /**
      * ORDER BY directions
      */
     public const ASC  = 'ASC';
     public const DESC = 'DESC';
+
+    public const SORT = [
+        self::ASC  => self::ASC,
+        self::DESC => self::DESC,
+    ];
 
     /**
      * Comparison operators...
@@ -83,6 +124,23 @@ class Sql
     public const LIKE        = 'LIKE';
     public const NOT_LIKE    = 'NOT LIKE';
 
+    // valid operators excluding boolean
+    public const OPERATORS = [
+        self::EQ          => self::EQ,
+        self::NEQ         => self::NEQ,
+        self::NE          => self::NE,
+        self::LT          => self::LT,
+        self::LTE         => self::LTE,
+        self::GTE         => self::GTE,
+        self::GT          => self::GT,
+        self::BETWEEN     => self::BETWEEN,
+        self::NOT_BETWEEN => self::NOT_BETWEEN,
+        self::IN          => self::IN,
+        self::NOT_IN      => self::NOT_IN,
+        self::LIKE        => self::LIKE,
+        self::NOT_LIKE    => self::NOT_LIKE,
+    ];
+
     /**
      * Boolean operators
      */
@@ -95,5 +153,28 @@ class Sql
      * Quantifiers
      */
     public const DISTINCT = 'DISTINCT';
-    public const ALL = 'ALL';
+    public const ALL      = 'ALL';
+    public const ANY      = 'ANY';
+    public const SOME     = 'SOME';
+
+    public const QUANTIFIERS = [
+        self::DISTINCT => self::DISTINCT,
+        self::ALL      => self::ALL,
+    ];
+
+    public static function isSupportedOperator($operator): bool
+    {
+        return !empty(self::OPERATORS[$operator]);
+    }
+
+    public static function assertValidOperator($operator)
+    {
+        if (!is_string($operator) || empty(self::OPERATORS[$operator])) {
+            throw new InvalidArgumentException(sprintf(
+                "Invalid or unsupported SQL operator, '%s' provided!",
+                is_string($operator) ? $operator : gettype($operator)
+            ));
+        }
+    }
+
 }
