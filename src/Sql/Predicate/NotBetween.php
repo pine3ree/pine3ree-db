@@ -18,9 +18,9 @@ class NotBetween extends Between
     /**
      * @see Between::__construct()
      */
-    public function __construct($identifier, $min_value, $max_value)
+    public function __construct($identifier, array $limits)
     {
-        parent::__construct($identifier, $min_value, $max_value);
+        parent::__construct($identifier, $limits);
         $this->not = true;
     }
 }

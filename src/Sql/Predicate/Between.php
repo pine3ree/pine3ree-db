@@ -26,19 +26,18 @@ class Between extends Predicate
      * @param scalar|literal|array<int, scalar|literal> $min_value
      * @param scalar|literal $max_value
      */
-    public function __construct($identifier, $min_value, $max_value = null)
+    public function __construct($identifier, array $limits)
     {
         self::assertValidIdentifier($identifier);
-
         $this->identifier = $identifier;
 
-        if (2 === func_num_args() && is_array($min_value)) {
-            $max_value = $min_value[1] ?? null;
-            $min_value = $min_value[0];
-        }
+        self::assertValidLimits($limits);
 
-        self::assertValidValue($max_value);
+        $min_value = $limits[0];
+        $max_value = $limits[1];
+
         self::assertValidValue($min_value);
+        self::assertValidValue($max_value);
 
         $this->min_value = $min_value;
         $this->max_value = $max_value;
