@@ -54,7 +54,6 @@ class Db
 
         $params = $select->getParams();
         $types  = $select->getParamsTypes();
-
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value, $types[$key] ?? PDO::PARAM_STR);
         }
@@ -95,7 +94,6 @@ class Db
 
         $params = $select->getParams();
         $types  = $select->getParamsTypes();
-
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value, $types[$key] ?? PDO::PARAM_STR);
         }
