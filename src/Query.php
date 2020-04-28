@@ -102,12 +102,12 @@ abstract class Query
 
     protected function isEmptyStatement($sql): bool
     {
-        return !is_string($sql) || '' !== $sql;
+        return !is_string($sql) || '' === $sql;
     }
 
     protected function isNotEmptyStatement($sql): bool
     {
-        return is_string($sql) && '' !== $sql;
+        return !$this->isEmptyStatement($sql);
     }
 
     protected function normalizeColumn(string $column): string

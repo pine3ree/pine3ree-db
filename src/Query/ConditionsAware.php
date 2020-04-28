@@ -114,8 +114,7 @@ abstract class ConditionsAware extends Query
         }
 
         $sql = $this->getConditionsSQL($conditions);
-
-        if (is_null($sql)) {
+        if ('' === $sql) {
             return '';
         }
 
@@ -132,15 +131,14 @@ abstract class ConditionsAware extends Query
      * @return string|null
      * @throws InvalidArgumentException
      */
-    protected function getConditionsSQL($conditions, string $combined_by = self::COMB_AND): ?string
+    protected function getConditionsSQL($conditions, string $combined_by = self::COMB_AND): string
     {
         if (null === $conditions) {
-            return null;
+            return '';
         }
 
         if (is_string($conditions) || $conditions instanceof Expr) {
-            $sql = trim($conditions);
-            return '' === $sql ? null : $sql;
+            return trim($conditions);
         }
 
         if (!is_array($conditions)) {
@@ -241,9 +239,8 @@ abstract class ConditionsAware extends Query
 
         // discard empty statements
         $sqls = array_filter($sqls, [$this, 'isNotEmptyStatement']);
-
         if (empty($sqls)) {
-            return null;
+            return '';
         }
 
         if (1 === count($sqls)) {
@@ -255,16 +252,16 @@ abstract class ConditionsAware extends Query
         return "(" . implode(" {$OP} ", $sqls) . ")";
     }
 
-    protected function getBetweenSQL(string $identifier, string $operator, $values): string
+    protected function getBetweenSQL(string $identifier, string $operator, $limits): string
     {
-        if (!is_array($values) || count($values) !== 2) {
+        if (!is_array($limits) || count($limits) !== 2) {
             throw new InvalidArgumentException(
                 "The {$operator} operator requires a 2-item array value!"
             );
         }
 
-        $marker_min = $this->createNamedParam($values[0]);
-        $marker_max = $this->createNamedParam($values[1]);
+        $marker_min = $this->createNamedParam($limits[0]);
+        $marker_max = $this->createNamedParam($limits[1]);
 
         return  "{$identifier} {$operator} {$marker_min} AND {$marker_max}";
     }
