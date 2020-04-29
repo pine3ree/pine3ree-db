@@ -54,7 +54,7 @@ class In extends Predicate
             $values[] = $this->createNamedParam($value);
         }
 
-        $ivl_sql = empty($values) ? "(NULL)" : "('" . implode("', '", $values) . "')";
+        $ivl_sql = empty($values) ? "(NULL)" : "(" . implode(", ", $values) . ")";
 
         $null_sql = "";
         if ($has_null) {
