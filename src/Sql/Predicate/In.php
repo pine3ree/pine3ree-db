@@ -32,6 +32,13 @@ class In extends Predicate
         $this->values     = $values;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * If one of the values is NULL then add an IS NULL clause
+     *
+     * @return string
+     */
     public function getSQL(): string
     {
         if (isset($this->sql)) {
