@@ -10,7 +10,6 @@ namespace P3\Db\Sql;
 
 use InvalidArgumentException;
 use P3\Db\Sql;
-use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
@@ -38,6 +37,12 @@ class PredicateSet extends Predicate
         self::COMB_OR  => Sql::OR,
     ];
 
+    /**
+     * ALiases ("||" for "OR" and "&&" for "AND") for nested-predicates array
+     * definitons
+     *
+     * @see \P3\Db\Sql\Statement\Traits\ConditionAwareTrait::setCondition()
+     */
     public const COMB_ID = [
         self::COMB_AND => self::COMB_AND,
         self::COMB_OR  => self::COMB_OR,
@@ -47,16 +52,21 @@ class PredicateSet extends Predicate
      * @param string $combined_by
      * @param null|Predicates[]|PredicateSet|Predicate|array|string $predicates
      */
-    public function __construct(string $combined_by = Sql::AND, $predicates = null)
+    public function __construct(string $combined_by = null, $predicates = null)
     {
-        $this->combined_by = self::COMB[strtoupper($combined_by)] ?? Sql::AND;
-
-        if (!isset($predicates)) {
-            return;
+        if (isset($combined_by)) {
+            $combined_by = self::COMB[strtoupper($combined_by)] ?? Sql::AND;
         }
 
         if ($predicates instanceof PredicateSet) {
-            $this->predicates = $predicates->getPredicates();
+            $this->predicates  = $predicates->getPredicates();
+            $this->combined_by = $combined_by ?? $predicates->getCombinedBy();
+            return;
+        }
+
+        $this->combined_by = $combined_by ?? Sql::AND;
+
+        if (!isset($predicates)) {
             return;
         }
 
@@ -64,10 +74,27 @@ class PredicateSet extends Predicate
             foreach ($predicates as $key => $predicate) {
                 if ($predicate instanceof PredicateSet) {
                     $comb_by = self::COMB_ID[strtoupper($key)] ?? $predicate->getCombinedBy();
-                    $predicate = new PredicateSet($comb_by, $predicate->getPredicates());
-                } elseif (!is_numeric($key) && ! $predicate instanceof Predicate) {
+                    $nestedSet = new PredicateSet($comb_by, $predicate->getPredicates());
+                    $this->addPredicate($nestedSet);
+                    continue;
+                }
+
+                if (is_numeric($key)) {
+                    $this->addPredicate($predicate);
+                    continue;
+                }
+
+                if (is_array($predicate)) {
+                    $comb_by = self::COMB_ID[strtoupper($key)] ?? Sql::AND;
+                    $nestedSet = new PredicateSet($comb_by, $predicate);
+                    $this->addPredicate($nestedSet);
+                    continue;
+                }
+
+                if (! $predicate instanceof Predicate) {
                     $predicate = new Predicate\Comparison($key, '=', $predicate);
                 }
+
                 $this->addPredicate($predicate);
             }
             return;
@@ -81,12 +108,10 @@ class PredicateSet extends Predicate
      * @param Predicate|string|array $predicate
      * @throws InvalidArgumentException
      */
-    public function addPredicate($predicate, array $params = null)
+    public function addPredicate($predicate)
     {
         if (is_string($predicate)) {
-            $predicate = empty($params)
-                ? new Predicate\Literal($predicate)
-                : new Predicate\Expression($predicate, $params);
+            $predicate = new Predicate\Literal($predicate);
         } elseif (is_array($predicate)) {
             $predicate = $this->buildPredicateFromSpecs($predicate);
         }

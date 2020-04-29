@@ -9,7 +9,7 @@
 namespace P3\Db\Sql\Statement\Traits;
 
 use P3\Db\Sql;
-use P3\Db\Sql\Clause;
+use P3\Db\Sql\Condition;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
 use P3\Db\Sql\Statement;
@@ -18,7 +18,7 @@ use RuntimeException;
 /**
  * A trait for sql-statements that can include WHERE, HAVING and ON clauses
  */
-trait ClauseAwareTrait
+trait ConditionAwareTrait
 {
     /**
      * Define a clause
@@ -27,11 +27,11 @@ trait ClauseAwareTrait
      * @param string $fqcn
      * @param string|array|Predicate|PredicateSet $clause
      */
-    private function setClause($property, $fqcn, $clause): self
+    private function setCondition($property, $fqcn, $clause): self
     {
         if (isset($this->{$property})) {
             throw new RuntimeException(
-                "Clause of class `{$fqcn}` for property `{$property}` is already set!"
+                "Condition of class `{$fqcn}` for property `{$property}` is already set!"
             );
         }
 
@@ -59,7 +59,7 @@ trait ClauseAwareTrait
      * @param string $property The sql-statement property in which the clause is stored
      * @return string
      */
-    private function getClauseSQL(string $property, bool $stripParentheses = false): string
+    private function getConditionSQL(string $property, bool $stripParentheses = false): string
     {
         if (!isset($this->{$property})) {
             return '';
@@ -78,7 +78,7 @@ trait ClauseAwareTrait
      *
      * @param Predicate $predicate
      */
-    private function importParams(Clause $clause)
+    private function importParams(Condition $clause)
     {
         foreach ($clause->getParams() as $index => $value) {
             $this->params[$index] = $value;

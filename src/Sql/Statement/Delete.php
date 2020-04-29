@@ -11,9 +11,9 @@ namespace P3\Db\Sql\Statement\DML;
 namespace P3\Db\Sql\Statement;
 
 use RuntimeException;
-use P3\Db\Sql\Clause\Where;
+use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Statement\DML;
-use P3\Db\Sql\Statement\Traits\ClauseAwareTrait;
+use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 
 /**
  * This class represents a DELETE sql-statement expression
@@ -22,7 +22,7 @@ use P3\Db\Sql\Statement\Traits\ClauseAwareTrait;
  */
 class Delete extends DML
 {
-    use ClauseAwareTrait;
+    use ConditionAwareTrait;
 
     /** @var Where|null */
     protected $where;
@@ -74,12 +74,12 @@ class Delete extends DML
     /** @var string|array|Predicate|Where| */
     public function where($where): self
     {
-        return $this->setClause('where', Where::class, $where);
+        return $this->setCondition('where', Where::class, $where);
     }
 
     protected function getWhereSQL(bool $stripParentheses = false): string
     {
-        return $this->getClauseSQL('where', $stripParentheses);
+        return $this->getConditionSQL('where', $stripParentheses);
     }
 
     public function __get(string $name)

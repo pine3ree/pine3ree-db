@@ -8,11 +8,11 @@
 
 namespace P3\Db\Sql\Statement;
 
-use P3\Db\Sql\Clause\Having;
-use P3\Db\Sql\Clause\On;
-use P3\Db\Sql\Clause\Where;
+use P3\Db\Sql\Condition\Having;
+use P3\Db\Sql\Condition\On;
+use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Statement\DML;
-use P3\Db\Sql\Statement\Traits\ClauseAwareTrait;
+use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 
 /**
  * This class represents a SELECT sql-statement expression
@@ -23,7 +23,7 @@ use P3\Db\Sql\Statement\Traits\ClauseAwareTrait;
  */
 class Select extends DML
 {
-    use ClauseAwareTrait;
+    use ConditionAwareTrait;
 
     /** @var Where|null */
     protected $where;
@@ -34,12 +34,12 @@ class Select extends DML
     /** @var On|null */
     protected $on;
 
-    public function getSQL(bool $stripClausesParentheses = false): string
+    public function getSQL(bool $stripConditionsParentheses = false): string
     {
 
     }
 
-    public function getBaseSQL(bool $stripClausesParentheses = false): string
+    public function getBaseSQL(bool $stripConditionsParentheses = false): string
     {
 
     }
@@ -47,34 +47,34 @@ class Select extends DML
     /** @var string|array|Predicate|Where| */
     public function where($where): self
     {
-        return $this->setClause('where', Where::class, $where);
+        return $this->setCondition('where', Where::class, $where);
     }
 
     protected function getWhereSQL(bool $stripParentheses = false): string
     {
-        return $this->getClauseSQL('where', $stripParentheses);
+        return $this->getConditionSQL('where', $stripParentheses);
     }
 
     /** @var string|array|Predicate|Having| */
     public function having($having): self
     {
-        return $this->setClause('having', Having::class, $having);
+        return $this->setCondition('having', Having::class, $having);
     }
 
     protected function getHavingSQL(bool $stripParentheses = false): string
     {
-        return $this->getClauseSQL('having', $stripParentheses);
+        return $this->getConditionSQL('having', $stripParentheses);
     }
 
     /** @var string|array|Predicate|Having| */
     public function on($on): self
     {
-        return $this->setClause('on', On::class, $on);
+        return $this->setCondition('on', On::class, $on);
     }
 
     protected function getOnSQL(bool $stripParentheses = false): string
     {
-        return $this->getClauseSQL('on', $stripParentheses);
+        return $this->getConditionSQL('on', $stripParentheses);
     }
 
     public function __get(string $name)

@@ -11,12 +11,12 @@ namespace P3\Db\Sql;
 use P3\Db\Sql\PredicateSet;
 
 /**
- * Class Clause
+ * Class Condition
  */
-abstract class Clause extends PredicateSet
+abstract class Condition extends PredicateSet
 {
     /**
-     * @var string WHERE|HAVING|ON
+     * @var string WHERE|HAVING|ON consition clauses
      */
     protected static $name;
 
@@ -56,8 +56,8 @@ abstract class Clause extends PredicateSet
             return $this->__name;
         }
 
-        // e.g P3\Db\Sql\Clause\Having => HAVING
-        // e.g P3\Db\Sql\Clause\GroupBy => GROUP BY
+        // e.g P3\Db\Sql\Condition\Having => HAVING
+        // e.g P3\Db\Sql\Condition\GroupBy => GROUP BY
         $class_basename = ltrim(strrchr(static::class, '\\'), '\\');
         $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $class_basename);
 
