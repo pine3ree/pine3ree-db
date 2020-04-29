@@ -16,10 +16,14 @@ use P3\Db\Sql\PredicateSet;
 abstract class Clause extends PredicateSet
 {
     /**
-     *
      * @var string WHERE|HAVING|ON
      */
     protected static $name;
+
+    /**
+     * @var string WHERE|HAVING|ON Resolved name cache
+     */
+    protected $__name;
 
     public function getSQL(bool $stripParentheses = false): string
     {
@@ -46,13 +50,20 @@ abstract class Clause extends PredicateSet
             return static::$name;
         }
 
+        // runtime variable
+        if (!empty($this->__name)) {
+            return $this->__name;
+        }
+
+        // e.g P3\Db\Sql\Clause\Having => HAVING
+        // e.g P3\Db\Sql\Clause\GroupBy => GROUP BY
         $fqcn = static::class;
         $class_basename = substr($fqcn, strrpos($fqcn, '\\') + 1);
         $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $class_basename);
 
-        static::$name = strtoupper($name);
+        $this->__name = strtoupper($name);
 
-        return static::$name;
+        return $this->__name;
     }
 
     /**
