@@ -9,29 +9,20 @@
 namespace P3\Db\Sql;
 
 use P3\Db\Sql;
+use P3\Db\Sql\Expression;
 
 /**
- * Class Literal
+ * This class represents a literal SQL expression without parameters
  */
-class Literal
+class Literal extends Expression
 {
-    /**
-     * @pvar string The literal SQL expression
-     */
-    private $literal;
-
     public function __construct(string $literal)
     {
-        $this->literal = $literal;
+        $this->sql = trim($literal);
     }
 
     public function getSQL(): string
     {
-        return $this->literal ?? '';
-    }
-
-    public function __toString(): string
-    {
-        return $this->literal ?? '';
+        return $this->sql;
     }
 }

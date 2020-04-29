@@ -13,8 +13,6 @@ use P3\Db\Sql;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Predicate\Expression as ExpressionPredicate;
-use P3\Db\Sql\Predicate\Literal as LiteralPredicate;
 
 /**
  * Class PredicateSet
@@ -40,48 +38,64 @@ class PredicateSet extends Predicate
         self::COMB_OR  => Sql::OR,
     ];
 
+    public const COMB_ID = [
+        self::COMB_AND => self::COMB_AND,
+        self::COMB_OR  => self::COMB_OR,
+    ];
+
     /**
-     *
      * @param string $combined_by
-     * @param null|Predicates[]|Predicate|string $predicates
+     * @param null|Predicates[]|PredicateSet|Predicate|array|string $predicates
      */
     public function __construct(string $combined_by = Sql::AND, $predicates = null)
     {
         $this->combined_by = self::COMB[strtoupper($combined_by)] ?? Sql::AND;
 
-        if (isset($predicates)) {
-            if (is_array($predicates)) {
-                foreach ($predicates as $predicate) {
-                    $this->addPredicate($predicate);
-                }
-            } elseif ($predicates instanceof PredicateSet) {
-                $this->predicates = $predicates->getPredicates();
-            } else {
-                $this->addPredicate($predicates);
-            }
+        if (!isset($predicates)) {
+            return;
         }
+
+        if ($predicates instanceof PredicateSet) {
+            $this->predicates = $predicates->getPredicates();
+            return;
+        }
+
+        if (is_array($predicates)) {
+            foreach ($predicates as $key => $predicate) {
+                if ($predicate instanceof PredicateSet) {
+                    $comb_by = self::COMB[strtoupper($key)] ?? $predicate->getCombinedBy();
+                    $predicate = new PredicateSet($comb_by, $predicate->getPredicates());
+                } elseif (!is_numeric($key) && ! $predicate instanceof Predicate) {
+                    $predicate = new Predicate\Comparison($key, '=', $predicate);
+                }
+                $this->addPredicate($predicate);
+            }
+            return;
+        }
+
+        $this->addPredicate($predicates);
     }
 
     /**
      *
-     * @param Predicate|string $predicate
+     * @param Predicate|string|array $predicate
      * @throws InvalidArgumentException
      */
     public function addPredicate($predicate, array $params = null)
     {
         if (is_string($predicate)) {
             $predicate = empty($params)
-                ? new LiteralPredicate($predicate)
-                : new ExpressionPredicate($predicate, $params);
-        } elseif (is_array($predicate) && count($predicate) === 3) {
+                ? new Predicate\Literal($predicate)
+                : new Predicate\Expression($predicate, $params);
+        } elseif (is_array($predicate)) {
             $predicate = $this->buildPredicateFromSpecs($predicate);
         }
 
         if (! $predicate instanceof Predicate) {
             throw new InvalidArgumentException(sprintf(
                 "A single predicate must be defined either as a string, a"
-                . " Predicate instance or an [identifier, operator, value] array"
-                . " expression, `%s` provided!",
+                . " Predicate/PredicateSet instance or an specs-array such as "
+                . "[identifier, operator, value] or [identifier => value], `%s` provided!",
                 is_object($predicate) ? get_class($predicate) : gettype($predicate)
             ));
         }
@@ -92,28 +106,77 @@ class PredicateSet extends Predicate
 
     protected function buildPredicateFromSpecs(array $specs): Predicate
     {
+        if (count($specs) === 1) {
+            if (!is_numeric($key = key($specs))) {
+                return new Predicate\Comparison($key, '=', current($specs));
+            }
+            throw new InvalidArgumentException(sprintf(
+                "A predicate single value specs-array must have a non-numeric string key, `%s`  provided",
+                $key
+            ));
+        }
+
+        if (count($specs) !== 3) {
+            throw new InvalidArgumentException(
+                "A predicate specs-array mus t be provide in one of the following forms"
+                . " [identifier, operator, value] or [identifier => value]!"
+            );
+        }
+
         $identifier = $specs[0]; // identifier or Literal sql expression
         $operator   = $specs[1];
         $value      = $specs[2];
 
         Sql::assertValidOperator($operator);
+        $operator = strtoupper($operator);
+
+        if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
+            return new Predicate\Comparison($identifier, $operator, $value);
+        }
+
+        switch ($operator) {
+            case Sql::BETWEEN:
+                return new Predicate\Between($identifier, $value);
+                // break;
+            case Sql::NOT_BETWEEN:
+                return new Predicate\NotBetween($identifier, $value);
+                // break;
+            case Sql::IN:
+                return new Predicate\In($identifier, $value);
+                // break;
+            case Sql::NOT_IN:
+                return new Predicate\NotIn($identifier, $value);
+                // break;
+            case Sql::LIKE:
+                return new Predicate\Like($identifier, $value);
+                // break;
+            case Sql::NOT_LIKE:
+                return new Predicate\NotLike($identifier, $value);
+                // break;
+        }
 
         if ($value instanceof Literal) {
-            return new LiteralPredicate("{$identifier} {$operator} {$value}");
+            return new Predicate\Literal("{$identifier} {$operator} {$value}");
         }
 
-        $params = [];
         if (is_array($value)) {
-            foreach ($value as $v) {
-                $marker = $this->createNamedParam($v);
-                $params[$marker] = $v;
-            }
-        } else {
-            $marker = $this->createNamedParam($value);
-            $params[$marker] = $value;
+             throw new InvalidArgumentException(
+                "Array value not supported for operator `{$operator}`"
+            );
         }
 
-        return new ExpressionPredicate("{$identifier} {$operator} {$marker}", $params);
+        $marker = $this->createNamedParam($value);
+        $params[] = [$marker => $value];
+
+        return new Predicate\Expression("{$identifier} {$operator} {$marker}", $params);
+    }
+
+    /**
+     * @return string Returns either "AND" or "OR"
+     */
+    public function getCombinedBy(): string
+    {
+        return $this->combined_by;
     }
 
     /**

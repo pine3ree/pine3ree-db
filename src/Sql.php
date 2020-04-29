@@ -20,18 +20,31 @@ use function sprintf;
 class Sql
 {
     /**
-     * DQL/DML query types
+     * DML statements
      */
     public const SELECT = 'SELECT';
     public const INSERT = 'INSERT';
     public const UPDATE = 'UPDATE';
     public const DELETE = 'DELETE';
 
-    public const QUERY_DML = [
+    public const DML_STATEMENTS = [
         self::SELECT => self::SELECT,
         self::INSERT => self::INSERT,
         self::UPDATE => self::UPDATE,
         self::DELETE => self::DELETE,
+    ];
+
+    /**
+     * DDL statements
+     */
+    public const CREATE = 'CREATE';
+    public const ALTER  = 'ALTER';
+    public const DROP   = 'DROP';
+
+    public const DDL_STATEMENTS = [
+        self::CREATE => self::CREATE,
+        self::ALTER  => self::ALTER,
+        self::DROP   => self::DROP,
     ];
 
     /**
@@ -114,6 +127,17 @@ class Sql
     public const GTE = self::GREATER_THAN_EQUAL;
     public const GT  = self::GREATER_THAN;
 
+    // valid comparison operators excluding boolean
+    public const COMPARISON_OPERATORS = [
+        self::EQ  => self::EQ,
+        self::NEQ => self::NEQ,
+        self::NE  => self::NE,
+        self::LT  => self::LT,
+        self::LTE => self::LTE,
+        self::GTE => self::GTE,
+        self::GT  => self::GT,
+    ];
+
     /**
      * Other conditional operators
      */
@@ -147,11 +171,11 @@ class Sql
     public const AND = 'AND';
     public const OR  = 'OR';
 
-    public const STAR = '*';
 
     /**
      * Quantifiers
      */
+    public const STAR     = '*';
     public const DISTINCT = 'DISTINCT';
     public const ALL      = 'ALL';
     public const ANY      = 'ANY';
@@ -164,12 +188,14 @@ class Sql
 
     public static function isSupportedOperator($operator): bool
     {
-        return !empty(self::OPERATORS[$operator]);
+        return !empty(self::OPERATORS[strtoupper($operator)]);
     }
 
     public static function assertValidOperator($operator)
     {
-        if (!is_string($operator) || empty(self::OPERATORS[$operator])) {
+        if (!is_string($operator)
+            || empty(self::OPERATORS[strtoupper($operator)])
+        ) {
             throw new InvalidArgumentException(sprintf(
                 "Invalid or unsupported SQL operator, '%s' provided!",
                 is_string($operator) ? $operator : gettype($operator)
