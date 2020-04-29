@@ -6,55 +6,66 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Statement;
+namespace P3\Db\Sql\Statement\Traits;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Clause\Where;
-use P3\Db\Sql\Expression;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
 use P3\Db\Sql\Statement;
 
 /**
- * Trait ClauseAwareTrait
+ * A trait for sql-statements that can include WHERE, HAVING and ON clauses
  */
 trait ClauseAwareTrait
 {
-    /** @var Where|null */
-    protected $where;
-
-    /** @var Having|null */
-    protected $having;
-
-    /** @var On|null */
-    protected $on;
-
-    /** @var string|array|Predicate|Where| */
-    public function where($where): self
-    {
-        return $this->setClause('where', Where::class, $where);
-    }
-
-    protected function getWhereSQL(): string
-    {
-        return $this->getClauseSQL('where');
-
-        if (!isset($this->where)) {
-            return '';
-        }
-
-        $sql = $this->where->getSQL(true);
-        if ($this instanceof Statement) {
-            $this->importParams($this->where);
-        }
-
-        return $sql;
-    }
+//    /** @var Where|null */
+//    protected $where;
+//
+//    /** @var Having|null */
+//    protected $having;
+//
+//    /** @var On|null */
+//    protected $on;
+//
+//    /** @var string|array|Predicate|Where| */
+//    public function where($where): self
+//    {
+//        return $this->setClause('where', Where::class, $where);
+//    }
+//
+//    protected function getWhereSQL(bool $stripParentheses = false): string
+//    {
+//        return $this->getClauseSQL('where', $stripParentheses);
+//    }
+//
+//    /** @var string|array|Predicate|Having| */
+//    public function having($having): self
+//    {
+//        return $this->setClause('having', Having::class, $having);
+//    }
+//
+//    protected function getHavingSQL(bool $stripParentheses = false): string
+//    {
+//        return $this->getClauseSQL('having', $stripParentheses);
+//    }
+//
+//    /** @var string|array|Predicate|Having| */
+//    public function on($on): self
+//    {
+//        return $this->setClause('on', On::class, $on);
+//    }
+//
+//    protected function getOnSQL(bool $stripParentheses = false): string
+//    {
+//        return $this->getClauseSQL('on', $stripParentheses);
+//    }
 
     /**
+     * Define a clause
      *
      * @param string $property
      * @param string $fqcn
@@ -86,13 +97,19 @@ trait ClauseAwareTrait
         return $this;
     }
 
-    protected function getClauseSQL(string $property): string
+    /**
+     * Return the compiled SQL string for a given clause property
+     *
+     * @param string $property The sql-statement property in which the clause is stored
+     * @return string
+     */
+    private function getClauseSQL(string $property, bool $stripParentheses = false): string
     {
         if (!isset($this->{$property})) {
             return '';
         }
 
-        $sql = $this->{$property}->getSQL(true);
+        $sql = $this->{$property}->getSQL($stripParentheses);
         if ($this instanceof Statement) {
             $this->importParams($this->{$property});
         }

@@ -194,8 +194,22 @@ class Insert extends DML
             return $this->sql;
         }
 
-        if (empty($this->table) || empty($this->columns || empty($this->values))) {
-            return $this->sql = '';
+       if (empty($this->table)) {
+            throw new RuntimeException(
+                "The INSERT table has not been defined!"
+            );
+        }
+
+        if (empty($this->columns)) {
+            throw new RuntimeException(
+                "The INSERT column list has not been defined!"
+            );
+        }
+
+        if (empty($this->values($values))) {
+            throw new RuntimeException(
+                "The INSERT values have not been defined!"
+            );
         }
 
         $table   = $this->quoteIdentifier($this->table);

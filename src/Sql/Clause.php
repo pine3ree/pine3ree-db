@@ -46,19 +46,19 @@ abstract class Clause extends PredicateSet
      */
     protected function getName(): string
     {
+        // use the statically defined name if set
         if (!empty(static::$name)) {
             return static::$name;
         }
 
-        // runtime variable
+        // use the cached name value if set
         if (!empty($this->__name)) {
             return $this->__name;
         }
 
         // e.g P3\Db\Sql\Clause\Having => HAVING
         // e.g P3\Db\Sql\Clause\GroupBy => GROUP BY
-        $fqcn = static::class;
-        $class_basename = substr($fqcn, strrpos($fqcn, '\\') + 1);
+        $class_basename = ltrim(strrchr(static::class, '\\'), '\\');
         $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $class_basename);
 
         $this->__name = strtoupper($name);

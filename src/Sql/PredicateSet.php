@@ -63,7 +63,7 @@ class PredicateSet extends Predicate
         if (is_array($predicates)) {
             foreach ($predicates as $key => $predicate) {
                 if ($predicate instanceof PredicateSet) {
-                    $comb_by = self::COMB[strtoupper($key)] ?? $predicate->getCombinedBy();
+                    $comb_by = self::COMB_ID[strtoupper($key)] ?? $predicate->getCombinedBy();
                     $predicate = new PredicateSet($comb_by, $predicate->getPredicates());
                 } elseif (!is_numeric($key) && ! $predicate instanceof Predicate) {
                     $predicate = new Predicate\Comparison($key, '=', $predicate);
