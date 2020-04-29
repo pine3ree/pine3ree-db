@@ -8,8 +8,8 @@
 
 namespace P3\Db\Sql\Statement;
 
-use RuntimeException;
 use P3\Db\Sql\Statement\DML;
+use RuntimeException;
 
 /**
  * This class represent an INSERT SQL statement

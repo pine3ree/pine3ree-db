@@ -8,7 +8,6 @@
 
 namespace P3\Db\Sql;
 
-use P3\Db\Sql;
 use P3\Db\Sql\Expression;
 
 /**

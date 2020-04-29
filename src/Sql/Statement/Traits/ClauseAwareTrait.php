@@ -10,60 +10,16 @@ namespace P3\Db\Sql\Statement\Traits;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
-use P3\Db\Sql\Clause\Having;
-use P3\Db\Sql\Clause\On;
-use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
 use P3\Db\Sql\Statement;
+use RuntimeException;
 
 /**
  * A trait for sql-statements that can include WHERE, HAVING and ON clauses
  */
 trait ClauseAwareTrait
 {
-//    /** @var Where|null */
-//    protected $where;
-//
-//    /** @var Having|null */
-//    protected $having;
-//
-//    /** @var On|null */
-//    protected $on;
-//
-//    /** @var string|array|Predicate|Where| */
-//    public function where($where): self
-//    {
-//        return $this->setClause('where', Where::class, $where);
-//    }
-//
-//    protected function getWhereSQL(bool $stripParentheses = false): string
-//    {
-//        return $this->getClauseSQL('where', $stripParentheses);
-//    }
-//
-//    /** @var string|array|Predicate|Having| */
-//    public function having($having): self
-//    {
-//        return $this->setClause('having', Having::class, $having);
-//    }
-//
-//    protected function getHavingSQL(bool $stripParentheses = false): string
-//    {
-//        return $this->getClauseSQL('having', $stripParentheses);
-//    }
-//
-//    /** @var string|array|Predicate|Having| */
-//    public function on($on): self
-//    {
-//        return $this->setClause('on', On::class, $on);
-//    }
-//
-//    protected function getOnSQL(bool $stripParentheses = false): string
-//    {
-//        return $this->getClauseSQL('on', $stripParentheses);
-//    }
-
     /**
      * Define a clause
      *
@@ -74,7 +30,7 @@ trait ClauseAwareTrait
     private function setClause($property, $fqcn, $clause): self
     {
         if (isset($this->{$property})) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "Clause of class `{$fqcn}` for property `{$property}` is already set!"
             );
         }
@@ -116,8 +72,6 @@ trait ClauseAwareTrait
 
         return $sql;
     }
-
-
 
     /**
      * Import parameters and types from inner predicate
