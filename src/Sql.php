@@ -171,15 +171,15 @@ class Sql
     public const AND = 'AND';
     public const OR  = 'OR';
 
+    public const ASTERISK = '*';
 
     /**
      * Quantifiers
      */
-    public const STAR     = '*';
     public const DISTINCT = 'DISTINCT';
     public const ALL      = 'ALL';
-    public const ANY      = 'ANY';
     public const SOME     = 'SOME';
+    public const ANY      = 'ANY';
 
     public const QUANTIFIERS = [
         self::DISTINCT => self::DISTINCT,
