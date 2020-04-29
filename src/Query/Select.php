@@ -78,7 +78,7 @@ class Select extends ConditionsAware
             return $this;
         }
 
-        if (Sql::STAR === $columns | is_array($columns)) {
+        if (Sql::ASTERISK === $columns | is_array($columns)) {
             $this->columns = $columns;
         }
 
@@ -287,7 +287,7 @@ class Select extends ConditionsAware
 
     private function getColumnsSQL(): string
     {
-        if ($this->columns === Sql::STAR || empty($this->columns)) {
+        if ($this->columns === Sql::ASTERISK || empty($this->columns)) {
             return $this->alias ? $this->quoteAlias($this->alias) . ".*" : "*";
         }
 
