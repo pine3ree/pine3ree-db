@@ -41,6 +41,11 @@ abstract class Expression implements \JsonSerializable
      */
     protected const MAX_INDEX = 999999;
 
+    public function hasParams(): bool
+    {
+        return !empty($this->params);
+    }
+
     public function getParams(): array
     {
         return $this->params;
@@ -49,6 +54,21 @@ abstract class Expression implements \JsonSerializable
     public function getParamsTypes(): array
     {
         return $this->params_types;
+    }
+
+    /**
+     * Import parameters and types from inner expression
+     *
+     * @param Predicate $predicate
+     */
+    protected function importParams(self $expr)
+    {
+        foreach ($expr->getParams() as $key => $value) {
+            $this->params[$key] = $value;
+        }
+        foreach ($expr->getParamsTypes() as $key => $type) {
+            $this->params_types[$key] = $type;
+        }
     }
 
     abstract public function getSQL(): string;
@@ -72,20 +92,30 @@ abstract class Expression implements \JsonSerializable
      */
     protected function quoteIdentifier(string $identifier, string $q = '`'): string
     {
-        if ($q) {
-            if ($q === substr($identifier, 0, 1) && substr($identifier, -1) === $q) {
-                return $identifier;
-            }
-
-            $identifier = trim($identifier, ".{$q}");
-            if (false === strpos($identifier, '.')) {
-                return "{$q}{$identifier}{$q}";
-            }
-
-            return $q . str_replace(".", "{$q}.{$q}", $identifier) . $q;
+        if ($identifier === '*') {
+            return '*';
         }
 
-        return $identifier;
+        if ($this->isQuoted($identifier, $q)) {
+            return $identifier;
+        }
+
+        if (false === strpos($identifier, '.')) {
+            return "{$q}{$identifier}{$q}";
+        }
+
+        $quoted = $q . str_replace(".", "{$q}.{$q}", $identifier) . $q;
+
+        return str_replace("{$q}*{$q}", "*", $quoted);
+    }
+
+    protected function isQuoted(string $identifier, string $q = '`')
+    {
+        return (
+            !empty($q)
+            && $q === substr($identifier, 0, 1)
+            && $q === substr($identifier, -1)
+        );
     }
 
     /**
@@ -144,7 +174,7 @@ abstract class Expression implements \JsonSerializable
     {
         //return $this->createPositionalParam($value, $param_type);
 
-        $marker = ":np" . self::$index;
+        $marker = ":" . self::$index . "";
 
         $this->setParam($marker, $value, $type);
 
