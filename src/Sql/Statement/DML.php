@@ -35,9 +35,9 @@ abstract class DML extends Statement
      *
      * @param array|string $table
      * @param string|null $alias
-     * @return $this
+     * @return void
      */
-    protected function setTable($table, string $alias = null): self
+    protected function setTable($table, string $alias = null): void
     {
         if (isset($this->table)) {
             throw new RuntimeException(
@@ -57,8 +57,6 @@ abstract class DML extends Statement
         if (!empty($alias)) {
             $this->alias = $alias;
         }
-
-        return $this;
     }
 
     protected function normalizeColumn(string $column, string $q = '`'): string

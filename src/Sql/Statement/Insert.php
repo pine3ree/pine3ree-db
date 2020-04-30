@@ -35,7 +35,8 @@ class Insert extends DML
 
     public function into($table, string $alias = null): self
     {
-        return parent::setTable($table, $alias);
+        parent::setTable($table, $alias);
+        return $this;
     }
 
     /**
