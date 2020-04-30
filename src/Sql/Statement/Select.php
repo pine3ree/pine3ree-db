@@ -191,10 +191,11 @@ class Select extends DML
     }
 
     /**
+     * Add a join specification to this statement
      *
-     * @param string $type
-     * @param string $table
-     * @param string $alias
+     * @param string $type The join type (LEFT, RIGHT, INNER, ...)
+     * @param string $table The join table name
+     * @param string $alias The join table alias
      * @param On|PredicateSet|Predicate|Literal|Predicate\Literal|array|string $cond
      *      The join conditional usually an ON clause, but may be changed using Literal classes
      * @return $this
@@ -342,7 +343,7 @@ class Select extends DML
             return $this;
         }
 
-        $this->orderBy = $orderBy + (array)$this->orderBy;
+        $this->orderBy += $orderBy;
 
         return $this;
     }
@@ -407,13 +408,36 @@ class Select extends DML
     public function limit(int $limit): self
     {
         $this->limit = max(0, $limit);
+        unset($this->sqls['limit']);
+
         return $this;
     }
 
     public function offset(int $offset): self
     {
         $this->offset = max(0, $offset);
+        unset($this->sqls['limit']);
+
         return $this;
+    }
+
+    private function getLimitSQL(): string
+    {
+        if (isset($this->sqls['limit'])) {
+            return $this->sqls['limit'];
+        }
+
+        $sql = '';
+        if ($this->limit > 0) {
+            $limit = $this->createNamedParam($this->limit, PDO::PARAM_INT);
+            $sql .= "LIMIT {$limit}";
+        }
+        if ($this->offset > 0) {
+            $offset = $this->createNamedParam($this->offset, PDO::PARAM_INT);
+            $sql .= "OFFSET {$offset}";
+        }
+
+        return $this->sqls['limit'] = $sql;
     }
 
     public function getSQL(bool $stripConditionsParentheses = false): string
@@ -422,12 +446,10 @@ class Select extends DML
             return $this->sql;
         }
 
-        $sqls = [];
+        $base_sql = $this->getBaseSQL();
+        $clauses_sql = $this->getClausesSQL($stripConditionsParentheses);
 
-        $sqls[] = $this->getBaseSQL();
-        $sqls[] = $this->getClausesSQL($stripConditionsParentheses);
-
-        $this->sql = trim(implode(" ", $sqls));
+        $this->sql = rtrim("{$base_sql} {$clauses_sql}");
 
         return $this->sql;
     }
@@ -440,59 +462,36 @@ class Select extends DML
             );
         }
 
-        $sqls = ["SELECT"];
+        $select = "SELECT";
         if ($this->distinct) {
-            $sqls[] = "DISTINCT";
+            $select .= " DISTINCT";
         }
 
-        $sqls[] = $this->getColumnsSQL();
+        $columns = $this->getColumnsSQL();
 
-        $table_sql = $this->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias_sql = $this->quoteAlias($this->alias)) {
-            $table_sql .= " {$alias_sql}";
+        $table = $this->quoteIdentifier($this->table);
+        if (!empty($this->alias) && $alias = $this->quoteAlias($this->alias)) {
+            $table .= " {$alias}";
         }
 
-        $sqls[] = "FROM {$table_sql}";
-
-        return trim(implode(" ", $sqls));
+        return "{$select} {$columns} FROM {$table}";
     }
 
     private function getClausesSQL(bool $stripConditionsParentheses = false): string
     {
         $sqls = [];
 
-        $join_sql = $this->getJoinSQL($stripConditionsParentheses);
-        if (!$this->isEmptySql($join_sql)) {
-            $sqls[] = $join_sql;
-        }
+        $sqls[] = $this->getJoinSQL($stripConditionsParentheses);
+        $sqls[] = $this->getWhereSQL($stripConditionsParentheses);
+        $sqls[] = $this->getGroupBySQL();
+        $sqls[] = $this->getHavingSQL($stripConditionsParentheses);
+        $sqls[] = $this->getOrderBySQL();
+        $sqls[] = $this->getLimitSQL();
 
-        $where_sql = $this->getWhereSQL($stripConditionsParentheses);
-        if (!$this->isEmptySql($where_sql)) {
-            $sqls[] = $where_sql;
-        }
-
-        $group_sql = $this->getGroupBySQL();
-        if (!$this->isEmptySql($group_sql)) {
-            $sqls[] = $group_sql;
-        }
-
-        $having_sql = $this->getHavingSQL($stripConditionsParentheses);
-        if (!$this->isEmptySql($having_sql)) {
-            $sqls[] = $having_sql;
-        }
-
-        $order_sql = $this->getOrderBySQL();
-        if (!$this->isEmptySql($order_sql)) {
-            $sqls[] = $order_sql;
-        }
-
-        if ($this->limit > 0) {
-            $limit = $this->createNamedParam($this->limit, PDO::PARAM_INT);
-            $sqls[] = "LIMIT {$limit}";
-        }
-        if ($this->offset > 0) {
-            $offset = $this->createNamedParam($this->offset, PDO::PARAM_INT);
-            $sqls[] = "OFFSET {$offset}";
+        foreach ($sqls as $index => $sql) {
+            if ($this->isEmptySQL($sql)) {
+                unset($sqls[$index]);
+            }
         }
 
         return implode(" ", $sqls);
