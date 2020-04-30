@@ -26,7 +26,6 @@ use RuntimeException;
  *
  * @property-read Where|null $where The Where clause if any
  * @property-read Having|null $where The Having clause if any
- * @property-read On|null $where The On clause if any
  */
 class Select extends DML
 {
@@ -463,8 +462,8 @@ class Select extends DML
         }
 
         $select = "SELECT";
-        if ($this->distinct) {
-            $select .= " DISTINCT";
+        if ($this->quantifier) {
+            $select .= " {$this->quantifier}";
         }
 
         $columns = $this->getColumnsSQL();
@@ -504,9 +503,6 @@ class Select extends DML
         };
         if ('having' === $having) {
             return $this->having;
-        };
-        if ('on' === $name) {
-            return $this->on;
         };
     }
 }
