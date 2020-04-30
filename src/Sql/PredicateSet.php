@@ -49,8 +49,25 @@ class PredicateSet extends Predicate
     ];
 
     /**
+     * Array format when building the set from an array:
+     *
+     *  <pre>
+     *  [
+     *      'enabled' => true, // `enabled` = 1
+     *      ['id', 'IN', [1, 2, 3, null]], // `id` AND IN (1, 2, 3) OR `id` IS NULL
+     *      new Predicate\Like('email', '%gmail.com'), // AND `email LIKE '%gmail.com'`
+     *      '!!' => [
+     *          'status' => [
+     *              ['=', null], // `status` IS NULL
+     *              ['BETWEEN', [2, 16]], // OR `status` BETWEEN '2' AND '16'
+     *          ],
+     *          new Predicate\Literal("created_at <= '2019-12-31'"), // OR `created_at` <= '2020-01-01'
+     *      ].
+     *  ]
+     * </pre>
+     *
      * @param string $combined_by
-     * @param null|Predicates[]|PredicateSet|Predicate|array|string $predicates
+     * @param null|Predicate[]|PredicateSet|Predicate|array|string $predicates
      */
     public function __construct(string $combined_by = null, $predicates = null)
     {
@@ -70,40 +87,60 @@ class PredicateSet extends Predicate
             return;
         }
 
-        if (is_array($predicates)) {
-            foreach ($predicates as $key => $predicate) {
-                if ($predicate instanceof PredicateSet) {
-                    $comb_by = self::COMB_ID[strtoupper($key)] ?? $predicate->getCombinedBy();
+        if (!is_array($predicates)) {
+            $this->addPredicate($predicates);
+            return;
+        }
+
+        foreach ($predicates as $key => $predicate) {
+            // nested predicate-set
+            if ($predicate instanceof PredicateSet) {
+                $comb_by = self::COMB_ID[strtoupper($key)] ?? null;
+                if (isset($comb_by) && $comb_by !== $predicate->getCombinedBy()) {
                     $nestedSet = new PredicateSet($comb_by, $predicate->getPredicates());
                     $this->addPredicate($nestedSet);
-                    continue;
-                }
-
-                if (is_numeric($key)) {
+                } else {
                     $this->addPredicate($predicate);
-                    continue;
                 }
+                continue;
+            }
 
-                if (is_array($predicate)) {
-                    $comb_by = self::COMB_ID[strtoupper($key)] ?? Sql::AND;
+            if (is_numeric($key)) {
+                $this->addPredicate($predicate);
+                continue;
+            }
+
+            if (is_array($predicate)) {
+                // $key is "||" or "&&" for predicate-set array definitions
+                if (isset(self::COMB_ID[$comb_id = strtoupper($key)])) {
+                    $comb_by = self::COMB_ID[$comb_id];
                     $nestedSet = new PredicateSet($comb_by, $predicate);
                     $this->addPredicate($nestedSet);
                     continue;
                 }
 
-                if (! $predicate instanceof Predicate) {
-                    $predicate = new Predicate\Comparison($key, '=', $predicate);
+                // $key is an identifier and the array may be a predicate-building
+                // spec in the form [operator, value] that allows to set multiple
+                // conditions for a single identifier
+                foreach ($predicate as $specs) {
+                    if (is_array($specs) && 2 === count($specs)) {
+                        array_unshift($specs, $key);
+                        $this->addPredicate($specs);
+                    }
                 }
-
-                $this->addPredicate($predicate);
+                continue;
             }
-            return;
-        }
 
-        $this->addPredicate($predicates);
+            if (! $predicate instanceof Predicate) {
+                $predicate = new Predicate\Comparison($key, '=', $predicate);
+            }
+
+            $this->addPredicate($predicate);
+        }
     }
 
     /**
+     * Add a predicate or a predicate-set
      *
      * @param Predicate|string|array $predicate
      * @throws InvalidArgumentException
@@ -118,8 +155,8 @@ class PredicateSet extends Predicate
 
         if (! $predicate instanceof Predicate) {
             throw new InvalidArgumentException(sprintf(
-                "A single predicate must be defined either as a string, a"
-                . " Predicate/PredicateSet instance or an specs-array such as "
+                "Adding a predicate must be done using either as a string, a"
+                . " Predicate/PredicateSet instance or an predicate specs-array such as "
                 . "[identifier, operator, value] or [identifier => value], `%s` provided!",
                 is_object($predicate) ? get_class($predicate) : gettype($predicate)
             ));
@@ -136,14 +173,14 @@ class PredicateSet extends Predicate
                 return new Predicate\Comparison($key, '=', current($specs));
             }
             throw new InvalidArgumentException(sprintf(
-                "A predicate single value specs-array must have a non-numeric string key, `%s`  provided",
+                "A predicate single value specs-array must have a non-numeric string key, `%s` provided",
                 $key
             ));
         }
 
         if (count($specs) !== 3) {
             throw new InvalidArgumentException(
-                "A predicate specs-array mus t be provide in one of the following forms"
+                "A predicate specs-array must be provide in one of the following forms"
                 . " [identifier, operator, value] or [identifier => value]!"
             );
         }
