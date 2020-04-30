@@ -208,9 +208,10 @@ class Insert extends DML
     {
         foreach ($columns as $column) {
             if (!is_string($column) || is_numeric($column)) {
-                throw new RuntimeException(
-                    'The INSERT columns must be non-numeric strings valid table column names!'
-                );
+                throw new RuntimeException(sprintf(
+                    'The INSERT columns must be valid table column names, `%s` provided!',
+                    is_string($column) ? $column : gettype($column)
+                ));
             }
         }
     }
@@ -218,7 +219,7 @@ class Insert extends DML
     /**
      * Set the values of the records to be INSERTed
      *
-     * @param array[]|Select $values
+     * @param Select $select The select from statement used as source
      * @return $this
      */
     public function select(Select $select)
@@ -255,7 +256,6 @@ class Insert extends DML
             );
         }
 
-
         $insert  = $this->ignore ? "INSERT IGNORE" : "INSERT";
         $table   = $this->quoteIdentifier($this->table);
         $columns = $this->getColumnsSQL();
@@ -287,7 +287,6 @@ class Insert extends DML
         }
 
         $sqls = [];
-
         foreach ($this->columns as $column) {
             $sqls[] = $this->quoteIdentifier($column);
         }
