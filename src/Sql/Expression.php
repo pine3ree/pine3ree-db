@@ -8,14 +8,15 @@
 
 namespace P3\Db\Sql;
 
-use InvalidArgumentException;
+use JsonSerializable;
+use P3\Db\Sql\Predicate;
 use PDO;
 
 /**
  * This abstract class represents a generic SQL Expression and is the ancestor
  * of all the other sql-related classes.
  */
-abstract class Expression implements \JsonSerializable
+abstract class Expression implements JsonSerializable
 {
     /**
      * @var string The rendered SQL statement string with optional parameter markers
@@ -29,7 +30,7 @@ abstract class Expression implements \JsonSerializable
 
     /**
      * A collection of indexed types for substitution parameters
-     * Types are expressed using \PDO::PARAM_* constants
+     * Types are expressed using PDO::PARAM_* constants
      *
      * @var array<int|string: int>
      */
@@ -88,7 +89,7 @@ abstract class Expression implements \JsonSerializable
      * Quote a yet unquoted identifier that represents a table column
      *
      * @param string $identifier The target identifier (column, table.column t.column)
-     * @param string $q The quoter char
+     * @param string $q The quote char
      * @return string
      */
     protected function quoteIdentifier(string $identifier, string $q = '`'): string
@@ -120,10 +121,10 @@ abstract class Expression implements \JsonSerializable
     }
 
     /**
-     * Quote a yet unquoted alias
+     * Quote an alias
      *
      * @param string $identifier The target identifier (column or alias)
-     * @param string $q The quoter char
+     * @param string $q The quote char
      * @return string
      */
     protected function quoteAlias(string $alias, string $q = '`'): string
