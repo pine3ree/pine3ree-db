@@ -8,7 +8,9 @@
 
 namespace P3\Db\Sql\Statement;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Statement\DML;
+use P3\Db\Sql\Statement\Select;
 use RuntimeException;
 
 /**
@@ -16,26 +18,38 @@ use RuntimeException;
  */
 class Insert extends DML
 {
-    /** @var string[] $columns */
+    /** @var bool */
+    private $ignore = false;
+
+    /** @var string[] */
     private $columns = [];
 
-    /** @var array[] $values */
-    private $values = [];
+    /** @var array[]|null */
+    private $values;
+
+    /** @var Select */
+    private $select;
 
     /**
      * @param array|string $table
      * @param string $alias
      */
-    public function __construct($table = null, string $alias = null)
+    public function __construct($table = null)
     {
         if (!empty($table)) {
             $this->into($table, $alias);
         }
     }
 
-    public function into($table, string $alias = null): self
+    public function ignore(): self
     {
-        parent::setTable($table, $alias);
+        $this->ignore = true;
+        return $this;
+    }
+
+    public function into($table): self
+    {
+        parent::setTable($table);
         return $this;
     }
 
@@ -64,15 +78,21 @@ class Insert extends DML
     /**
      * Set the values of the records to be INSERTed
      *
-     * @param array $values
+     * @param array[] $values
      * @return $this
      */
     public function values(array $values)
     {
-        $this->values = [];
+        if (empty($values)) {
+            throw new InvalidArgumentException(
+                'Cannot INSERT an empty set of column values!'
+            );
+        }
 
         unset($this->sql, $this->sqls['values']);
 
+        $this->select = null;
+        $this->values = [];
         foreach ($values as $value) {
             $this->value($value);
         }
@@ -102,15 +122,16 @@ class Insert extends DML
             );
         }
 
-        if ($reset) {
-            $this->values = [];
-            unset($this->sql, $this->sqls['columns']);
-        }
-
         if (count($this->columns) !== count($value)) {
             throw new RuntimeException(
                 "The INSERT value size does not match the defined columns!"
             );
+        }
+
+        $this->select = null;
+        if ($reset) {
+            $this->values = [];
+            unset($this->sql, $this->sqls['values']);
         }
 
         $this->values[] = array_values($value);
@@ -128,6 +149,7 @@ class Insert extends DML
      */
     public function rows(array $rows)
     {
+        $this->select = null;
         $this->columns = [];
         $this->values = [];
 
@@ -174,6 +196,7 @@ class Insert extends DML
             ));
         }
 
+        $this->select = null;
         unset($this->sql, $this->sqls['values']);
 
         $this->values[] = array_values($row);
@@ -190,6 +213,22 @@ class Insert extends DML
                 );
             }
         }
+    }
+
+    /**
+     * Set the values of the records to be INSERTed
+     *
+     * @param array[]|Select $values
+     * @return $this
+     */
+    public function select(Select $select)
+    {
+        unset($this->sql, $this->sqls['values']);
+
+        $this->values = null;
+        $this->select = $select;
+
+        return $this;
     }
 
     public function getSQL(): string
@@ -210,12 +249,14 @@ class Insert extends DML
             );
         }
 
-        if (empty($this->values($values))) {
+        if (empty($this->values) && empty($this->select)) {
             throw new RuntimeException(
-                "The INSERT values have not been defined!"
+                "The INSERT values or select statement have not been defined!"
             );
         }
 
+
+        $insert  = $this->ignore ? "INSERT IGNORE" : "INSERT";
         $table   = $this->quoteIdentifier($this->table);
         $columns = $this->getColumnsSQL();
         $values  = $this->getValuesSQL();
@@ -232,7 +273,11 @@ class Insert extends DML
             );
         }
 
-        return $this->sql = "INSERT INTO {$table} {$columns} VALUES {$values}";
+        if ($this->select instanceof Select) {
+            return $this->sql = "{$insert} INTO {$table} {$columns} {$values}";
+        }
+
+        return $this->sql = "{$insert} INTO {$table} {$columns} VALUES {$values}";
     }
 
     private function getColumnsSQL(): string
@@ -254,6 +299,17 @@ class Insert extends DML
     {
         if (isset($this->sqls['values'])) {
             return $this->sqls['values'];
+        }
+
+        if ($this->select instanceof Select) {
+            $sql = $this->select->getSQL();
+            if ($this->isEmptySQL($sql)) {
+                return $this->sqls['values'] = '';
+            }
+            if ($this->select->hasParams()) {
+                $this->importParams($this->select);
+            }
+            return $this->sqls['values'] = "({$sql})";
         }
 
         $sqls = [];
