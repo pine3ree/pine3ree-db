@@ -34,9 +34,6 @@ class Select extends DML
     /** @var string|null */
     protected $quantifier;
 
-    /** @var bool */
-    protected $distinct = false;
-
     /** @var string[] */
     protected $columns = [
         Sql::ASTERISK => Sql::ASTERISK,
