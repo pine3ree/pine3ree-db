@@ -89,13 +89,13 @@ class Insert extends DML
             );
         }
 
-        unset($this->sql, $this->sqls['values']);
-
         $this->select = null;
         $this->values = [];
         foreach ($values as $value) {
             $this->value($value);
         }
+
+        unset($this->sql, $this->sqls['values']);
 
         return $this;
     }
@@ -153,11 +153,11 @@ class Insert extends DML
         $this->columns = [];
         $this->values = [];
 
-        unset($this->sql, $this->sqls['columns'], $this->sqls['values']);
-
         foreach ($rows as $row) {
             $this->row($row);
         }
+
+        unset($this->sql, $this->sqls['columns'], $this->sqls['values']);
 
         return $this;
     }
@@ -224,10 +224,10 @@ class Insert extends DML
      */
     public function select(Select $select)
     {
-        unset($this->sql, $this->sqls['values']);
-
         $this->values = null;
         $this->select = $select;
+
+        unset($this->sql, $this->sqls['values']);
 
         return $this;
     }
