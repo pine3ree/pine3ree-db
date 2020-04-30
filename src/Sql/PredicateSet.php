@@ -142,7 +142,8 @@ class PredicateSet extends Predicate
     /**
      * Add a predicate or a predicate-set
      *
-     * @param Predicate|string|array $predicate
+     * @param Predicate|string|array $predicate A Predicate/PredicateSet instance
+     *      or a specs-array [identifier, operator, value] or [identifier => value]
      * @throws InvalidArgumentException
      */
     public function addPredicate($predicate)
