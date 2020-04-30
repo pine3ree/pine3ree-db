@@ -12,7 +12,8 @@ use InvalidArgumentException;
 use PDO;
 
 /**
- * A SQL Expression
+ * This abstract class represents a generic SQL Expression and is the ancestor
+ * of all the other sql-related classes.
  */
 abstract class Expression implements \JsonSerializable
 {
