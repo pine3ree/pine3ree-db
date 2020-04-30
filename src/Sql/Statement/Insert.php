@@ -16,7 +16,10 @@ use RuntimeException;
  */
 class Insert extends DML
 {
+    /** @var string[] $columns */
     private $columns = [];
+
+    /** @var array[] $values */
     private $values = [];
 
     /**

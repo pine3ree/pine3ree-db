@@ -27,7 +27,7 @@ trait ConditionAwareTrait
      * @param string $fqcn
      * @param string|array|Predicate|PredicateSet $clause
      */
-    private function setCondition($property, $fqcn, $clause): self
+    private function setCondition(string $property, $fqcn, $clause): self
     {
         if (isset($this->{$property})) {
             throw new RuntimeException(
@@ -65,26 +65,13 @@ trait ConditionAwareTrait
             return '';
         }
 
-        $sql = $this->{$property}->getSQL($stripParentheses);
-        if ($this instanceof Statement) {
-            $this->importParams($this->{$property});
+        $condition = $this->{$property};
+
+        $sql = $condition->getSQL($stripParentheses);
+        if ($condition->hasParams()) {
+            $this->importParams($condition);
         }
 
         return $sql;
-    }
-
-    /**
-     * Import parameters and types from inner predicate
-     *
-     * @param Predicate $predicate
-     */
-    private function importParams(Condition $clause)
-    {
-        foreach ($clause->getParams() as $index => $value) {
-            $this->params[$index] = $value;
-        }
-        foreach ($clause->getParamsTypes() as $index => $type) {
-            $this->params_types[$index] = $type;
-        }
     }
 }

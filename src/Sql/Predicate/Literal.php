@@ -29,9 +29,4 @@ class Literal extends Predicate
     {
         return $this->literal ?? '';
     }
-
-    public function __toString(): string
-    {
-        return $this->literal ?? '';
-    }
 }

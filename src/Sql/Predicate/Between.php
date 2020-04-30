@@ -85,6 +85,6 @@ class Between extends Predicate
             ? (string)$this->max_value
             : $this->createNamedParam($this->max_value);
 
-        return $this->sql =  "{$identifier} {$operator} {$min} AND {$max}";
+        return $this->sql = "{$identifier} {$operator} {$min} AND {$max}";
     }
 }

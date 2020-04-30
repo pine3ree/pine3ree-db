@@ -60,4 +60,17 @@ abstract class DML extends Statement
 
         return $this;
     }
+
+    protected function normalizeColumn(string $column, string $q = '`'): string
+    {
+        if ($this->isQuoted($column, $q)) {
+            return $column;
+        }
+
+        if (false === strpos($column, '.')) {
+            $column = $this->alias ? "{$this->alias}.{$column}" : $column;
+        }
+
+        return $this->quoteIdentifier($column);
+    }
 }

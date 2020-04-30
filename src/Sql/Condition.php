@@ -11,7 +11,7 @@ namespace P3\Db\Sql;
 use P3\Db\Sql\PredicateSet;
 
 /**
- * Class Condition
+ * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
  */
 abstract class Condition extends PredicateSet
 {

@@ -233,10 +233,6 @@ class PredicateSet extends Predicate
             $this->importParams($predicate);
         }
 
-        $sqls = array_filter($sqls, function ($sql) {
-            return '' !== $sql;
-        });
-
         if (empty($sqls)) {
             return $this->sql = '';
         }
@@ -245,24 +241,9 @@ class PredicateSet extends Predicate
             return $this->sql = $sqls[0];
         }
 
-        $LOGICAL_OP = self::COMB[$this->combined_by];
+        $AND_OR = self::COMB[$this->combined_by];
 
-        return $this->sql = "(" . trim(implode(" {$LOGICAL_OP} ", $sqls)) . ")";
-    }
-
-    /**
-     * Import parameters and types from inner predicate
-     *
-     * @param Predicate $predicate
-     */
-    private function importParams(Predicate $predicate)
-    {
-        foreach ($predicate->getParams() as $index => $value) {
-            $this->params[$index] = $value;
-        }
-        foreach ($predicate->getParamsTypes() as $index => $type) {
-            $this->params_types[$index] = $type;
-        }
+        return $this->sql = "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
     }
 
     public function jsonSerialize()

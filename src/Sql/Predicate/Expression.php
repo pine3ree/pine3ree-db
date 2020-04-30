@@ -22,17 +22,12 @@ class Expression extends Predicate
 
     public function __construct(string $expression, array $params = [])
     {
-        $this->expression = $expression;
+        $this->sql = $expression;
         $this->params = $params;
     }
 
     public function getSQL(): string
     {
-        return $this->expression ?? '';
-    }
-
-    public function __toString(): string
-    {
-        return $this->expression ?? '';
+        return $this->sql ?? '';
     }
 }

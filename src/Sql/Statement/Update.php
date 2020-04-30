@@ -123,10 +123,16 @@ class Update extends DML
         return "UPDATE {$table} SET " . implode(", ", $set);
     }
 
-    /** @var string|array|Predicate|Where| */
+    /**
+     * Add WHERE conditions
+     *
+     * @param string|array|Predicate|Where $where
+     * @return $this
+     */
     public function where($where): self
     {
-        return $this->setCondition('where', Where::class, $where);
+        $this->setCondition('where', Where::class, $where);
+        return $this;
     }
 
     private function getWhereSQL(bool $stripParentheses = false): string
