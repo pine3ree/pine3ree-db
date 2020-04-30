@@ -82,6 +82,7 @@ class Sql
     public const JOIN_NATURAL       = 'NATURAL';
     public const JOIN_NATURAL_LEFT  = 'NATURAL LEFT';
     public const JOIN_NATURAL_RIGHT = 'NATURAL RIGHT';
+    public const USING              = 'USING';
 
     public const JOIN_TYPES = [
         self::JOIN_AUTO          => self::JOIN_AUTO,
