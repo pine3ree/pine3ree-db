@@ -496,6 +496,7 @@ class Select extends DML
 
         return implode(" ", $sqls);
     }
+
     public function __get(string $name)
     {
         if ('where' === $name) {
