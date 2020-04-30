@@ -24,8 +24,17 @@ use RuntimeException;
 /**
  * This class represents a SELECT sql-statement expression
  *
+ * @property-read string|null $table The db table to select from if already set
+ * @property-read string|null $quantifier The SELECT quantifier if any
+ * @property-read string[] $columns The columns to be returned
+ * @property-read string|null $from Alias of $table
  * @property-read Where|null $where The Where clause if any
- * @property-read Having|null $where The Having clause if any
+ * @property-read array[] $joins An array of JOIN specs if any
+ * @property-read array[] $groupBy An array of GROUP BY identifiers
+ * @property-read Having|null $having The Having clause if any
+ * @property-read array[] $orderBy An array of ORDER BY identifier to sort-direction pairs
+ * @property-read int|null $limit The Having clause if any
+ * @property-read int|null $offset The Having clause if any
  */
 class Select extends DML
 {
@@ -42,8 +51,8 @@ class Select extends DML
     /** @var Where|null */
     protected $where;
 
-    /** @var array */
-    protected $join;
+    /** @var array{type: string, table: string, alias: string, cond: On|Literal}[] */
+    protected $joins = [];
 
     /** @var array */
     protected $groupBy = [];
@@ -166,21 +175,33 @@ class Select extends DML
          return $this;
     }
 
+    /**
+     * @see self::addJoin()
+     */
     public function join(string $table, string $alias, $cond = null): self
     {
         return $this->addJoin(Sql::JOIN_AUTO, $table, $alias, $cond);
     }
 
+    /**
+     * @see self::addJoin()
+     */
     public function innerJoin(string $table, string $alias, $cond = null): self
     {
         return $this->addJoin(Sql::JOIN_INNER, $table, $alias, $cond);
     }
 
+    /**
+     * @see self::addJoin()
+     */
     public function leftJoin(string $table, string $alias, $cond = null): self
     {
         return $this->addJoin(Sql::JOIN_LEFT, $table, $alias, $cond);
     }
 
+    /**
+     * @see self::addJoin()
+     */
     public function rightJoin(string $table, string $alias, $cond = null): self
     {
         return $this->addJoin(Sql::JOIN_RIGHT, $table, $alias, $cond);
@@ -204,7 +225,7 @@ class Select extends DML
             $cond = new On(Sql::AND, $cond);
         }
 
-        $this->join[] = [
+        $this->joins[] = [
             'type'  => $type,
             'table' => $table,
             'alias' => $alias,
@@ -218,7 +239,7 @@ class Select extends DML
 
     protected function getJoinSQL(): string
     {
-        if (empty($this->join)) {
+        if (empty($this->joins)) {
             return '';
         }
 
@@ -227,14 +248,14 @@ class Select extends DML
         }
 
         $sqls = [];
-        foreach ($this->join as $join) {
+        foreach ($this->joins as $join) {
             $type  = isset(Sql::JOIN_TYPES[$join['type']]) ? $join['type'] : '';
             $table = $this->quoteIdentifier($join['table']);
             $alias = $this->quoteAlias($join['alias']);
-            $cond  = $join['cond']->getSQL(false);
+            $cond  = $join['cond'];
 
-            if ($join['cond']->hasParams()) {
-                $this->importParams($join['cond']);
+            if ($cond->hasParams()) {
+                $this->importParams($cond);
             }
 
             $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond}");
@@ -495,11 +516,39 @@ class Select extends DML
 
     public function __get(string $name)
     {
+        if ('table' === $name) {
+            return $this->table;
+        };
+        if ('alias' === $name) {
+            return $this->alias;
+        };
+        if ('quantifier' === $name) {
+            return $this->quantifier;
+        };
+        if ('columns' === $name) {
+            return $this->columns;
+        };
         if ('where' === $name) {
             return $this->where;
         };
-        if ('having' === $having) {
+        if ('joins' === $name) {
+            return $this->joins;
+        };
+        if ('having' === $name) {
             return $this->having;
+        };
+        if ('groupBy' === $name) {
+            return $this->groupBy;
+        };
+        if ('orderBy' === $name) {
+            return $this->orderBy;
+        };
+        if ('limit' === $name) {
+            return $this->limit;
+        };
+        if ('offset' === $name) {
+            return $this->offset;
         };
     }
 }
+

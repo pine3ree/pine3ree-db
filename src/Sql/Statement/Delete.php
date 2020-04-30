@@ -18,6 +18,8 @@ use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 /**
  * This class represents a DELETE sql-statement expression
  *
+ * @property-read string|null $table The db table to delete from if already set
+ * @property-read string|null $from Alias of $table
  * @property-read Where|null $where The Where clause if any
  */
 class Delete extends DML
@@ -27,7 +29,11 @@ class Delete extends DML
     /** @var Where|null */
     protected $where;
 
-    public function __construct($table = null)
+    /**
+     * @param string|array $table The db table to delete from as a string or
+     *      [alias => name] array
+     */
+    public function __construct(string $table = null)
     {
         if (!empty($table)) {
             $this->from($table);
@@ -90,6 +96,12 @@ class Delete extends DML
 
     public function __get(string $name)
     {
+        if ('table' === $name) {
+            return $this->table;
+        };
+        if ('from' === $name) {
+            return $this->table;
+        };
         if ('where' === $name) {
             return $this->where;
         };

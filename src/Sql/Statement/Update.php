@@ -16,6 +16,9 @@ use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 /**
  * This class represents an UPDATE sql-statement expression
  *
+ * @property-read string|null $table The db table to select from if already set
+ * @property-read string|null $quantifier The SELECT quantifier if any
+ * @property-read array $set The SET column/value pairs to be updated
  * @property-read Where|null $where The Where clause if any
  */
 class Update extends DML
@@ -25,7 +28,7 @@ class Update extends DML
     /**
      * @var array Column-value pairs for update
      */
-    private $set;
+    private $set = [];
 
     /** @var Where|null */
     protected $where;
@@ -142,14 +145,14 @@ class Update extends DML
 
     public function __get(string $name)
     {
+        if ('table' === $name) {
+            return $this->table;
+        };
+        if ('set' === $name) {
+            return $this->set;
+        };
         if ('where' === $name) {
             return $this->where;
         };
-//        if ('having' === $having) {
-//            return $this->having;
-//        };
-//        if ('on' === $name) {
-//            return $this->on;
-//        };
     }
 }

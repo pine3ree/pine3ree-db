@@ -15,6 +15,14 @@ use RuntimeException;
 
 /**
  * This class represent an INSERT SQL statement
+ *
+ * @property-read string|null $table The db table to inserto into if already set
+ * @property-read bool $ignore Is it an INSERT IGNORE statement
+ * @property-read string|null $into Alias of $table
+ * @property-read string[] $columns The insert column list
+ * @property-read array[] $values An array of INSERT values
+ * @property-read Select|null $select The source Select statement if any
+ * @property-read array[] $rows An array of GROUP BY identifiers
  */
 class Insert extends DML
 {
@@ -34,7 +42,7 @@ class Insert extends DML
      * @param array|string $table
      * @param string $alias
      */
-    public function __construct($table = null)
+    public function __construct(string $table = null)
     {
         if (!empty($table)) {
             $this->into($table, $alias);
@@ -327,5 +335,27 @@ class Insert extends DML
         }
 
         return "(" . implode(", ", $sqls) . ")";
+    }
+
+    public function __get(string $name)
+    {
+        if ('table' === $name) {
+            return $this->table;
+        };
+        if ('ignore' === $name) {
+            return $this->ignore;
+        };
+        if ('into' === $name) {
+            return $this->table;
+        };
+        if ('columns' === $name) {
+            return $this->columns;
+        };
+        if ('values' === $name) {
+            return $this->values;
+        };
+        if ('select' === $name) {
+            return $this->select;
+        };
     }
 }
