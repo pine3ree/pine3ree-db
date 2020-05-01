@@ -22,8 +22,10 @@ abstract class Predicate extends Expression
     {
         if (!is_string($identifier) && ! $identifier instanceof Literal) {
             throw new InvalidArgumentException(sprintf(
-                "A predicate identifier must be either a string or an SQL Literal, '%s' provided!!",
-                is_object($identifier) ? get_class($identifier) : gettype($identifier)
+                "A predicate identifier must be either a string or an SQL Literal,"
+                . " '%s' provided in class `%s`!!",
+                is_object($identifier) ? get_class($identifier) : gettype($identifier),
+                static::class
             ));
         }
     }
@@ -34,8 +36,9 @@ abstract class Predicate extends Expression
         if (!$is_valid) {
             throw new InvalidArgumentException(sprintf(
                 "A predicte value must be either a scalar or an Sql Literal"
-                . " expression instance, `%s` provided!",
-                is_object($value) ? get_class($value) : gettype($value)
+                . " expression instance, `%s` provided in class``%s!",
+                is_object($value) ? get_class($value) : gettype($value),
+                static::class
             ));
         }
     }
