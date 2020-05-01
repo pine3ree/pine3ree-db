@@ -45,7 +45,7 @@ class Insert extends DML
     public function __construct(string $table = null)
     {
         if (!empty($table)) {
-            $this->into($table, $alias);
+            $this->into($table);
         }
     }
 

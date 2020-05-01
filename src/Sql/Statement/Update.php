@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Statement;
 
+use InvalidArgumentException;
 use RuntimeException;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Statement\DML;
@@ -33,10 +34,13 @@ class Update extends DML
     /** @var Where|null */
     protected $where;
 
-    public function __construct($table = null, string $alias = null)
+    /**
+     * @param string $table The db table to update
+     */
+    public function __construct(string $table = null)
     {
         if (!empty($table)) {
-            parent::setTable($table, $alias);
+            parent::setTable($table);
         }
     }
 
@@ -46,12 +50,19 @@ class Update extends DML
      * @param string|array $table
      * @return $this
      */
-    public function table($table, string $alias = null): self
+    public function table($table): self
     {
-        parent::setTable($table, $alias);
+        parent::setTable($table);
         return $this;
     }
 
+    /**
+     *
+     * @param string|array<string: mixed> $columnOrRow A single column or a set of column:value pairs
+     * @param mixed $value The value for a single column
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function set($columnOrRow, $value = null): self
     {
         if (is_array($columnOrRow)) {
@@ -64,14 +75,22 @@ class Update extends DML
                 }
             }
             $this->set = $row;
-        } elseif (is_string($columnOrRow)) {
+            return $this;
+        }
+
+        if (is_string($columnOrRow)) {
             $column = trim($columnOrRow);
             if ($column) {
                 $this->set[$column] = $value;
             }
+            return $this;
         }
 
-        return $this;
+        throw new InvalidArgumentException(sprintf(
+            "The set() columnOrRow argument muste be either a string or an array"
+            . " of column:value pairs, `%s` provided!",
+            is_object($columnOrRow) ? get_class($columnOrRow) : gettype($columnOrRow)
+        ));
     }
 
     public function getSQL(): string
