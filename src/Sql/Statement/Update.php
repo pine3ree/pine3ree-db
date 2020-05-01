@@ -112,7 +112,7 @@ class Update extends DML
         return $this->sql;
     }
 
-    protected function getBaseSQL(): string
+    private function getBaseSQL(): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(

@@ -217,7 +217,7 @@ class Select extends DML
      *      The join conditional usually an ON clause, but may be changed using Literal classes
      * @return $this
      */
-    protected function addJoin(string $type, string $table, string $alias, $cond = null): self
+    private function addJoin(string $type, string $table, string $alias, $cond = null): self
     {
         if (! $cond instanceof On
             && ! $cond instanceof Literal
@@ -237,7 +237,7 @@ class Select extends DML
         return $this;
     }
 
-    protected function getJoinSQL(): string
+    private function getJoinSQL(): string
     {
         if (empty($this->joins)) {
             return '';
@@ -277,7 +277,7 @@ class Select extends DML
         return $this;
     }
 
-    protected function getWhereSQL(bool $stripParentheses = false): string
+    private function getWhereSQL(bool $stripParentheses = false): string
     {
         return $this->getConditionSQL('where', $stripParentheses);
     }
@@ -315,7 +315,7 @@ class Select extends DML
         return $this;
     }
 
-    protected function getGroupBySQL(): string
+    private function getGroupBySQL(): string
     {
         if (empty($this->groupBy)) {
             return '';
@@ -336,7 +336,7 @@ class Select extends DML
         return $this;
     }
 
-    protected function getHavingSQL(bool $stripParentheses = false): string
+    private function getHavingSQL(bool $stripParentheses = false): string
     {
         return $this->getConditionSQL('having', $stripParentheses);
     }
@@ -471,7 +471,7 @@ class Select extends DML
         return $this->sql;
     }
 
-    protected function getBaseSQL(): string
+    private function getBaseSQL(): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(
