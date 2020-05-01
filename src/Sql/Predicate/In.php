@@ -29,7 +29,7 @@ class In extends Predicate
         self::assertValidIdentifier($identifier);
 
         foreach ($values as $value) {
-            self::assertValidIdentifier($value);
+            self::assertValidValue($value);
         }
 
         $this->identifier = $identifier;
