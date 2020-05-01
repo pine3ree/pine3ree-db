@@ -71,7 +71,15 @@ class Insert extends DML
     public function columns(array $columns): self
     {
         if (empty($columns)) {
-            return $this;
+            throw new RuntimeException(
+                "Missing columns definitions in INSERT SQL!"
+            );
+        }
+
+        if (empty($columns)) {
+            throw new RuntimeException(
+                "Missing columns definitions in INSERT SQL!"
+            );
         }
 
         self::assertValidColumns($columns);
@@ -119,16 +127,11 @@ class Insert extends DML
      */
     public function value(array $value, bool $reset = false)
     {
-        // Do we allow this? INSERT INTO table (value1, value2,..)
-        if (empty($this->columns)) {
-            throw new RuntimeException(
-                "The INSERT query columns have not defined!"
-            );
-        }
-
         self::assertValidValue($value);
 
-        if (count($this->columns) !== count($value)) {
+        if (!empty($this->columns)
+            && count($this->columns) !== count($value)
+        ) {
             throw new InvalidArgumentException(
                 "The INSERT value size does not match the defined columns!"
             );
@@ -213,8 +216,7 @@ class Insert extends DML
         }
 
         if (empty($this->columns)) {
-            self::assertValidColumns($columns = array_keys($row));
-            $this->columns = $columns;
+            $this->columns(array_keys($row));
         }
 
         if ($this->columns !== array_keys($row)) {
@@ -226,15 +228,21 @@ class Insert extends DML
         }
 
         $this->select = null;
-        unset($this->sql, $this->sqls['values']);
-
         $this->values[] = array_values($row);
+
+        unset($this->sql, $this->sqls['values']);
 
         return $this;
     }
 
     private static function assertValidColumns(array $columns)
     {
+        if (empty($columns)) {
+            throw new RuntimeException(
+                "When specified, the INSERT column list must be a not empty!"
+            );
+        }
+
         foreach ($columns as $column) {
             if (!is_string($column) || is_numeric($column)) {
                 throw new RuntimeException(sprintf(
@@ -273,12 +281,6 @@ class Insert extends DML
             );
         }
 
-        if (empty($this->columns)) {
-            throw new RuntimeException(
-                "The INSERT column list has not been defined!"
-            );
-        }
-
         if (empty($this->values) && empty($this->select)) {
             throw new RuntimeException(
                 "The INSERT values or select statement have not been defined!"
@@ -290,11 +292,7 @@ class Insert extends DML
         $columns = $this->getColumnsSQL();
         $values  = $this->getValuesSQL();
 
-        if (empty($columns)) {
-            throw new RuntimeException(
-                "Missing columns definitions in INSERT SQL!"
-            );
-        }
+        $column_list = empty($columns) ? "" : "{$columns} ";
 
         if (empty($values)) {
             throw new RuntimeException(
@@ -303,14 +301,18 @@ class Insert extends DML
         }
 
         if ($this->select instanceof Select) {
-            return $this->sql = "{$insert} INTO {$table} {$columns} {$values}";
+            return $this->sql = "{$insert} INTO {$table} {$column_list}{$values}";
         }
 
-        return $this->sql = "{$insert} INTO {$table} {$columns} VALUES {$values}";
+        return $this->sql = "{$insert} INTO {$table} {$column_list}VALUES {$values}";
     }
 
     private function getColumnsSQL(): string
     {
+        if (empty($this->columns)) {
+            return '';
+        }
+
         if (isset($this->sqls['columns'])) {
             return $this->sqls['columns'];
         }
