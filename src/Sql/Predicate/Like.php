@@ -34,7 +34,7 @@ class Like extends Predicate
         $this->value = $value;
     }
 
-    private static function assertValidValue($value)
+    protected static function assertValidValue($value)
     {
         if (!is_string($value) && ! $value instanceof Literal) {
             throw new InvalidArgumentException(sprintf(
@@ -51,13 +51,13 @@ class Like extends Predicate
         }
 
         $identifier = $this->identifier instanceof Literal
-            ? (string)$this->identifier
+            ? $this->identifier->getSQL()
             : $this->quoteIdentifier($this->identifier);
 
         $operator = ($this->not ? "NOT " : "") . "LIKE";
 
         $param = $this->value instanceof Literal
-            ? (string)$this->value
+            ? $this->value->getSQL()
             : $this->createNamedParam($this->value);
 
         return $this->sql = "{$identifier} {$operator} {$param}";

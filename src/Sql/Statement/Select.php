@@ -147,7 +147,7 @@ class Select extends DML
                 $column_sql = $this->alias ? $this->quoteAlias($this->alias) . ".*" : "*";
             } else {
                 $column_sql = $column instanceof Literal
-                    ? (string)$column
+                    ? $column->getSQL()
                     : $this->normalizeColumn($column);
                 if (!is_numeric($alias)) {
                     $column_sql .= " AS " . $this->quoteAlias($alias);

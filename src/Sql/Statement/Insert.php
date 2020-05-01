@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\DML;
 use P3\Db\Sql\Statement\Select;
 use RuntimeException;
@@ -118,35 +119,55 @@ class Insert extends DML
      */
     public function value(array $value, bool $reset = false)
     {
+        // Do we allow this? INSERT INTO table (value1, value2,..)
         if (empty($this->columns)) {
             throw new RuntimeException(
                 "The INSERT query columns have not defined!"
             );
         }
 
-        if (empty($value)) {
-            throw new RuntimeException(
-                'Cannot INSERT an empty record!'
-            );
-        }
+        self::assertValidValue($value);
 
         if (count($this->columns) !== count($value)) {
-            throw new RuntimeException(
+            throw new InvalidArgumentException(
                 "The INSERT value size does not match the defined columns!"
             );
         }
 
-        $this->select = null;
         if ($reset) {
             $this->values = [];
-            unset($this->sql, $this->sqls['values']);
         }
 
+        $this->select = null;
         $this->values[] = array_values($value);
 
         unset($this->sql, $this->sqls['values']);
 
         return $this;
+    }
+
+    protected static function assertValidValue($value)
+    {
+        if (empty($value)) {
+            throw new InvalidArgumentException(
+                'Cannot INSERT an empty record!'
+            );
+        }
+
+        foreach ($value as $i => $v) {
+            if (!is_scalar($v) && null !== $v && ! $v instanceof Literal) {
+                throw new InvalidArgumentException(sprintf(
+                    "A column value must be either a scalar, null or a Literal,"
+                    . " `%s` provided for index {$i}",
+                    is_object($v) ? get_class($v) : gettype($v)
+                ));
+            }
+        }
+        if (empty($value)) {
+            throw new RuntimeException(
+                'Cannot INSERT an empty record!'
+            );
+        }
     }
 
     /**
@@ -330,8 +351,10 @@ class Insert extends DML
     private function getValueSQL(array $value): string
     {
         $sqls = [];
-        foreach ($value as $val) {
-            $sqls[] = $marker = $this->createNamedParam($val);
+        foreach ($value as $v) {
+            $sqls[] = $v instanceof Literal
+                ? $v->getSQL()
+                : $this->createNamedParam($v);
         }
 
         return "(" . implode(", ", $sqls) . ")";

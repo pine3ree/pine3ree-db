@@ -64,11 +64,11 @@ class Comparison extends Predicate
         }
 
         $identifier = $this->identifier instanceof Literal
-            ? (string)$this->identifier
+            ? $this->identifier->getSQL()
             : $this->quoteIdentifier($this->identifier);
 
         $param = $this->value instanceof Literal
-            ? (string)$this->value
+            ? $this->value->getSQL()
             : $this->createNamedParam($this->value);
 
         $operator = $this->operator;

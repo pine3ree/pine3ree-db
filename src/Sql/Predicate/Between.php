@@ -53,18 +53,6 @@ class Between extends Predicate
         }
     }
 
-    private static function assertValidValue($value)
-    {
-        $is_valid = is_scalar($value) || is_null($value) || $value instanceof Literal;
-        if (!$is_valid) {
-            throw new InvalidArgumentException(sprintf(
-                "BETWEEN min/max values must be either a scalar or an Sql Literal"
-                . " expression instance, `%s` provided!",
-                is_object($value) ? get_class($value) : gettype($value)
-            ));
-        }
-    }
-
     public function getSQL(): string
     {
         if (isset($this->sql)) {
@@ -72,17 +60,17 @@ class Between extends Predicate
         }
 
         $identifier = $this->identifier instanceof Literal
-            ? (string)$this->identifier
+            ? $this->identifier->getSQL()
             : $this->quoteIdentifier($this->identifier);
 
         $operator = ($this->not ? "NOT " : "") . "BETWEEN";
 
         $min = $this->min_value instanceof Literal
-            ? (string)$this->min_value
+            ? $this->min_value->getSQL()
             : $this->createNamedParam($this->min_value);
 
         $max = $this->max_value instanceof Literal
-            ? (string)$this->max_value
+            ? $this->getSQL()
             : $this->createNamedParam($this->max_value);
 
         return $this->sql = "{$identifier} {$operator} {$min} AND {$max}";

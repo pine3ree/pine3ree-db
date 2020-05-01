@@ -99,9 +99,7 @@ class Update extends DML
             return $this->sql;
         }
 
-        $sqls = [];
-
-        $sqls[] = $this->getBaseSQL();
+        $base_sql = $this->getBaseSQL();
 
         $where_sql = $this->getWhereSQL();
         if ($this->isEmptySQL($where_sql)) {
@@ -110,9 +108,7 @@ class Update extends DML
             );
         }
 
-        $sqls[] = $where_sql;
-
-        $this->sql = implode(" ", $sqls);
+        $this->sql = "{$base_sql} {$where_sql}";
         return $this->sql;
     }
 
@@ -138,8 +134,10 @@ class Update extends DML
         $set = [];
         foreach ($this->set as $column => $value) {
             $column = $this->quoteIdentifier($column);
-            $marker = $this->createNamedParam($value);
-            $set[] = "{$column} = {$marker}";
+            $param  = $value instanceof Literal
+                ? $val->getSQL()
+                : $this->createNamedParam($value);
+            $set[] = "{$column} = {$param}";
         }
 
         return "UPDATE {$table} SET " . implode(", ", $set);

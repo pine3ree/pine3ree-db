@@ -28,6 +28,10 @@ class In extends Predicate
     {
         self::assertValidIdentifier($identifier);
 
+        foreach ($values as $value) {
+            self::assertValidIdentifier($value);
+        }
+
         $this->identifier = $identifier;
         $this->values     = $values;
     }
@@ -46,7 +50,7 @@ class In extends Predicate
         }
 
         $identifier = $this->identifier instanceof Literal
-            ? (string)$this->identifier
+            ? $this->identifier->getSQL()
             : $this->quoteIdentifier($this->identifier);
 
         $operator = ($this->not ? "NOT " : "") . "IN";
@@ -58,7 +62,9 @@ class In extends Predicate
                 $has_null = true;
                 continue;
             }
-            $values[] = $this->createNamedParam($value);
+            $values[] = $value instanceof Literal
+                ? $value->getSQL()
+                : $this->createNamedParam($value);
         }
 
         $ivl_sql = empty($values) ? "(NULL)" : "(" . implode(", ", $values) . ")";
