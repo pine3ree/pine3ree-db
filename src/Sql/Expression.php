@@ -113,6 +113,8 @@ abstract class Expression implements JsonSerializable
             return $identifier;
         }
 
+        $identifier = trim($identifier, $q);
+
         if (false === strpos($identifier, '.')) {
             return "{$q}{$identifier}{$q}";
         }
@@ -125,8 +127,7 @@ abstract class Expression implements JsonSerializable
 
     protected function isQuoted(string $identifier, string $q = '`')
     {
-        return (
-            !empty($q)
+        return ($q !== ''
             && $q === substr($identifier, 0, 1)
             && $q === substr($identifier, -1)
         );
