@@ -8,32 +8,62 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Predicate;
+use P3\Db\Sql\Statement\Select;
+
+use function get_class;
+use function gettype;
+use function implode;
+use function is_array;
+use function is_object;
+use function sprintf;
 
 /**
  * This class represents a sql IN condition
  */
 class In extends Predicate
 {
+    /** @var string|Literal */
     protected $identifier;
-    protected $values;
+
+    /** @var array|Select */
+    protected $value_list;
+
+    /** @var bool */
     protected $has_null = false;
+
+    /** @var bool */
     protected $not = false;
 
     /**
      * @param string|Literal $identifier
-     * @param array $values
+     * @param array|Select $value_list
      */
-    public function __construct($identifier, array $values)
+    public function __construct($identifier, $value_list)
     {
         self::assertValidIdentifier($identifier);
-
-        foreach ($values as $value) {
-            self::assertValidValue($value);
-        }
+        self::assertValidValueList($value_list);
 
         $this->identifier = $identifier;
-        $this->values     = $values;
+        $this->value_list = $value_list;
+    }
+
+    protected static function assertValidValueList($value_list)
+    {
+        if (!is_array($value_list) && ! $value_list instanceof Select) {
+            throw new InvalidArgumentException(sprintf(
+                "A IN/NOT-IN predicate value list must be either an array of values"
+                . " or a Select statement, '%s' provided!",
+                is_object($value_list) ? get_class($value_list) : gettype($value_list)
+            ));
+        }
+
+        if (is_array($value_list)) {
+            foreach ($value_list as $value) {
+                self::assertValidValue($value);
+            }
+        }
     }
 
     /**
@@ -55,9 +85,16 @@ class In extends Predicate
 
         $operator = ($this->not ? "NOT " : "") . "IN";
 
+        if ($this->value_list instanceof Select) {
+            $select_sql = $this->value_list->getSQL();
+            $this->importParams($this->value_list);
+
+            return $this->sql = "{$identifier} {$operator} ({$select_sql})";
+        }
+
         $values = [];
         $has_null = false;
-        foreach ($this->values as $value) {
+        foreach ($this->value_list as $value) {
             if (null === $value) {
                 $has_null = true;
                 continue;

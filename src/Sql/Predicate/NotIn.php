@@ -18,9 +18,9 @@ class NotIn extends In
     /**
      * @see In::__construct()
      */
-    public function __construct($identifier, array $values)
+    public function __construct($identifier, $value_list)
     {
-        parent::__construct($identifier, $values);
+        parent::__construct($identifier, $value_list);
         $this->not = true;
     }
 }
