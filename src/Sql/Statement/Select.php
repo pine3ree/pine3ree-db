@@ -105,7 +105,7 @@ class Select extends DML
 
     /**
      *
-     * @param type $columns
+     * @param string|string[] $columns
      * @return $this
      */
     public function columns($columns): self
@@ -114,10 +114,9 @@ class Select extends DML
             return $this;
         }
 
-        if ($columns === Sql::ASTERISK) {
-            $columns = [
-                Sql::ASTERISK => Sql::ASTERISK,
-            ];
+        // was a single column or the sql-asterisk "*" provided?
+        if (is_string($columns)) {
+            $columns = [$columns => $columns];
         }
 
         self::assertValidColumns($columns);
@@ -168,7 +167,7 @@ class Select extends DML
                     : $this->quoteIdentifier(
                         $this->normalizeColumn($column)
                     );
-                if (!is_numeric($key) && '' !== $key) {
+                if (!is_numeric($key) && $key !== '' && $key !== $column) {
                     $column_sql .= " AS " . $this->quoteAlias($key);
                 }
             }
