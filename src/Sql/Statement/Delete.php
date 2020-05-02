@@ -30,13 +30,13 @@ class Delete extends DML
     protected $where;
 
     /**
-     * @param string|array $table The db table to delete from as a string or
+     * @param string|array $from The db table to delete from as a string or
      *      [alias => name] array
      */
-    public function __construct(string $table = null)
+    public function __construct(string $from = null)
     {
-        if (!empty($table)) {
-            $this->from($table);
+        if (!empty($from)) {
+            $this->from($from);
         }
     }
 
