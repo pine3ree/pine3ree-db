@@ -75,6 +75,10 @@ class PredicateSet extends Predicate
             $combined_by = self::COMB[strtoupper($combined_by)] ?? Sql::AND;
         }
 
+        if (!isset($predicates)) {
+            return;
+        }
+
         if ($predicates instanceof PredicateSet) {
             $this->predicates  = $predicates->getPredicates();
             $this->combined_by = $combined_by ?? $predicates->getCombinedBy();
@@ -82,10 +86,6 @@ class PredicateSet extends Predicate
         }
 
         $this->combined_by = $combined_by ?? Sql::AND;
-
-        if (!isset($predicates)) {
-            return;
-        }
 
         if (!is_array($predicates)) {
             $this->addPredicate($predicates);
