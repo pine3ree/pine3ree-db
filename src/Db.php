@@ -15,6 +15,7 @@ use P3\Db\Sql\Statement\Delete;
 use P3\Db\Sql\Statement\Insert;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Update;
+use P3\Db\Sql\Condition\Where;
 
 use function func_num_args;
 use function is_array;
@@ -123,6 +124,18 @@ class Db
     }
 
     /**
+     * Create and return a new Select statement
+     *
+     * @param array|string $columns
+     * @param string|array|null $table
+     * @return P3\Sql\Statement\Select
+     */
+    public function select($columns = Sql::ASTERISK, $table = null): Select
+    {
+        return new Select($columns, $table);
+    }
+
+    /**
      * Create an Insert statement and either return it run it if additional
      * arguments are provided
      *
@@ -178,7 +191,7 @@ class Db
      *
      * @param string|array|null $table
      * @param array|null $data
-     * @param array|null $where
+     * @param string|array|Predicate|Where $where
      *
      * @return Update|false|int
      */
@@ -205,13 +218,26 @@ class Db
     /**
      * Create and return a new Select statement
      *
-     * @param array|string $columns
      * @param string|array|null $table
-     * @return P3\Sql\Statement\Select
+     * @param string|array|Predicate|Where $where
+     * @return Delete|bool|int
      */
-    public function select($columns = Sql::ASTERISK, $table = null): Select
+    public function delete($from = null, $where = null): Select
     {
-        return new Select($columns, $table);
+        $delete = Delete($from);
+
+        if (func_num_args() < 2 || !isset($where)) {
+            return $delete;
+        }
+
+        $delete->where($where);
+
+        $stmt = $this->prepare($delete, true);
+        if (false === $stmt || false === $stmt->execute()) {
+            return false;
+        }
+
+        return $stmt->rowCount();
     }
 
     /**
