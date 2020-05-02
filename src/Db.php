@@ -222,9 +222,9 @@ class Db
      * @param string|array|Predicate|Where $where
      * @return Delete|bool|int
      */
-    public function delete($from = null, $where = null): Select
+    public function delete($from = null, $where = null)
     {
-        $delete = Delete($from);
+        $delete = new Delete($from);
 
         if (func_num_args() < 2 || !isset($where)) {
             return $delete;
