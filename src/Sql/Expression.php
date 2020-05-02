@@ -74,10 +74,10 @@ abstract class Expression implements JsonSerializable
      */
     protected function importParams(self $expr)
     {
-        foreach ($expr->getParams() as $key => $value) {
+        foreach ($expr->params as $key => $value) {
             $this->params[$key] = $value;
         }
-        foreach ($expr->getParamsTypes() as $key => $type) {
+        foreach ($expr->params_types as $key => $type) {
             $this->params_types[$key] = $type;
         }
     }
@@ -97,14 +97,14 @@ abstract class Expression implements JsonSerializable
     /**
      * Quote a yet unquoted identifier that represents a table column
      *
-     * @param string $identifier The target identifier (column, table.column t.column)
+     * @param string $identifier The target identifier (column, table.column, t.column)
      * @param string $q The quote char
      * @return string
      */
     protected function quoteIdentifier(string $identifier, string $q = '`'): string
     {
-        if ($identifier === '*') {
-            return '*';
+        if ($identifier === '*' || $q === '') {
+            return $identifier;
         }
 
         if ($this->isQuoted($identifier, $q)) {
@@ -115,9 +115,10 @@ abstract class Expression implements JsonSerializable
             return "{$q}{$identifier}{$q}";
         }
 
-        $quoted = $q . str_replace(".", "{$q}.{$q}", $identifier) . $q;
+        $quoted = $q . str_replace('.', "{$q}.{$q}", $identifier) . $q;
+        $quoted = str_replace("{$q}*{$q}", '*', $quoted); // unquote the sql asterisk
 
-        return str_replace("{$q}*{$q}", "*", $quoted);
+        return $quoted;
     }
 
     protected function isQuoted(string $identifier, string $q = '`')
@@ -132,7 +133,7 @@ abstract class Expression implements JsonSerializable
     /**
      * Quote an alias
      *
-     * @param string $identifier The target identifier (column or alias)
+     * @param string $alias The alias string to quote
      * @param string $q The quote char
      * @return string
      */
