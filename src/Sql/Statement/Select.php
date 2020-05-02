@@ -114,12 +114,23 @@ class Select extends DML
             return $this;
         }
 
-        if (Sql::ASTERISK === $columns) {
+        if ($columns = Sql::ASTERISK) {
             $this->columns = [
                 Sql::ASTERISK => Sql::ASTERISK,
             ];
         }
 
+        self::assertValidColumns($columns);
+
+        $this->columns = $column;
+
+        unset($this->sql, $this->sqls['columns']);
+
+        return $this;
+    }
+
+    private static function assertValidColumns($columns)
+    {
         if (!is_array($columns)) {
             throw new InvalidArgumentException(sprintf(
                 "The SELECT columns argumen must be either the ASTERISK string"
@@ -128,11 +139,17 @@ class Select extends DML
             ));
         }
 
-        $this->columns = $columns;
+        foreach ($columns as $key => $column) {
+            if (!is_string($column) || '' === $column) {
+                throw new InvalidArgumentException(sprintf(
+                    "A table column must be a non emtoy string, `%s provided` for index `{$key}`!",
+                    gettype($column)
+                ));
+            }
+        }
 
-        unset($this->sql, $this->sqls['columns']);
+        $columns = array_map('trim', $columns);
 
-        return $this;
     }
 
     private function getColumnsSQL(): string
@@ -149,7 +166,7 @@ class Select extends DML
                 $column_sql = $column instanceof Literal
                     ? $column->getSQL()
                     : $this->normalizeColumn($column);
-                if (!is_numeric($alias)) {
+                if (!is_numeric($alias) && '' !== $alias) {
                     $column_sql .= " AS " . $this->quoteAlias($alias);
                 }
             }
