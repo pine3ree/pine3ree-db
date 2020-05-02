@@ -16,6 +16,10 @@ use P3\Db\Sql\Statement\Insert;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Update;
 
+use function func_num_args;
+use function is_array;
+use function is_int;
+
 /**
  * Class Db
  */
