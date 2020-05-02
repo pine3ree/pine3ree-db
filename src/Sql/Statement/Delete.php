@@ -103,7 +103,7 @@ class Delete extends DML
             return $this->table;
         };
         if ('where' === $name) {
-            return $this->where;
+            return $this->where ?? $this->where = new Where();
         };
     }
 }

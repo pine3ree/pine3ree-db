@@ -169,7 +169,7 @@ class Update extends DML
             return $this->set;
         };
         if ('where' === $name) {
-            return $this->where;
+            return $this->where ?? $this->where = new Where();
         };
     }
 }

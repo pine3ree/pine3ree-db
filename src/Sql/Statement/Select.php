@@ -114,15 +114,15 @@ class Select extends DML
             return $this;
         }
 
-        if ($columns = Sql::ASTERISK) {
-            $this->columns = [
+        if ($columns === Sql::ASTERISK) {
+            $columns = [
                 Sql::ASTERISK => Sql::ASTERISK,
             ];
         }
 
         self::assertValidColumns($columns);
 
-        $this->columns = $column;
+        $this->columns = $columns;
 
         unset($this->sql, $this->sqls['columns']);
 
@@ -133,7 +133,7 @@ class Select extends DML
     {
         if (!is_array($columns)) {
             throw new InvalidArgumentException(sprintf(
-                "The SELECT columns argumen must be either the ASTERISK string"
+                "The SELECT columns argument must be either the ASTERISK string"
                 . " or an array of column names, '%s' provided!",
                 gettype($columns)
             ));
@@ -159,15 +159,17 @@ class Select extends DML
         }
 
         $sqls = [];
-        foreach ($this->columns as $alias => $column) {
-            if ($column === Sql::ASTERISK ) {
+        foreach ($this->columns as $key => $column) {
+            if ($column === Sql::ASTERISK) {
                 $column_sql = $this->alias ? $this->quoteAlias($this->alias) . ".*" : "*";
             } else {
                 $column_sql = $column instanceof Literal
                     ? $column->getSQL()
-                    : $this->normalizeColumn($column);
-                if (!is_numeric($alias) && '' !== $alias) {
-                    $column_sql .= " AS " . $this->quoteAlias($alias);
+                    : $this->quoteIdentifier(
+                        $this->normalizeColumn($column)
+                    );
+                if (!is_numeric($key) && '' !== $key) {
+                    $column_sql .= " AS " . $this->quoteAlias($key);
                 }
             }
             $sqls[] = $column_sql;
@@ -546,13 +548,13 @@ class Select extends DML
             return $this->columns;
         };
         if ('where' === $name) {
-            return $this->where;
+            return $this->where ?? $this->where = new Where();
         };
         if ('joins' === $name) {
             return $this->joins;
         };
         if ('having' === $name) {
-            return $this->having;
+            return $this->having ?? $this->having = new Having();
         };
         if ('groupBy' === $name) {
             return $this->groupBy;
