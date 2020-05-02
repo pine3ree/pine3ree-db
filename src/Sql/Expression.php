@@ -72,13 +72,15 @@ abstract class Expression implements JsonSerializable
      *
      * @param Predicate $predicate
      */
-    protected function importParams(self $expr)
+    protected function importParams(self $expr): void
     {
+        if (empty($expr->params)) {
+            return;
+        }
+
         foreach ($expr->params as $key => $value) {
             $this->params[$key] = $value;
-        }
-        foreach ($expr->params_types as $key => $type) {
-            $this->params_types[$key] = $type;
+            $this->params_types[$key] = $expr->params_types[$key] ?? PDO::PARAM_STR;
         }
     }
 
