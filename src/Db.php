@@ -10,6 +10,11 @@ namespace P3\Db;
 
 use PDO;
 use PDOStatement;
+use P3\Db\Sql\Statement;
+use P3\Db\Sql\Statement\Delete;
+use P3\Db\Sql\Statement\Insert;
+use P3\Db\Sql\Statement\Select;
+use P3\Db\Sql\Statement\Update;
 
 /**
  * Class Db
@@ -26,16 +31,32 @@ class Db
         $this->pdo = $pdo;
     }
 
-    public function fetchByPK(string $table, $pk): ?array
+    public function fetchByPK(string $table, $pk_value, $pk_column = 'id'): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM `{$table}` WHERE id = :id");
-        $result = $stmt->execute(['id' => $pk]);
+        if (is_int($pk_value)) {
+            $stmt = $this->pdo->query(
+                "SELECT * FROM `{$table}` WHERE `{$pk_column}` = '{$pk_value}'"
+            );
+        } else {
+           $stmt = $this->pdo->prepare(
+                "SELECT * FROM `{$table}` WHERE `{$pk_column}` = :id"
+            );
+        }
+
+        if ($stmt === false) {
+            return null;
+        }
+
+        $result = $stmt->execute([$pk_column => $pk_value]);
 
         if ($result === false) {
             return null;
         }
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        return is_array($row) ? $row : null;
     }
 
     public function fetchOne(string $table, $where = null, $order = null): ?array
@@ -50,25 +71,18 @@ class Db
         }
         $select->limit(1);
 
-        $stmt = $this->pdo->prepare($select->getSQL());
-
-        $params = $select->getParams();
-        $types  = $select->getParamsTypes();
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value, $types[$key] ?? PDO::PARAM_STR);
+        $stmt = $this->prepare($select, true);
+        if (false === $stmt || false === $stmt->execute()) {
+            return null;
         }
-
-        $result = $stmt->execute();
-
-        if ($result === false) {
+        if (false === $stmt->execute()) {
             return null;
         }
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
 
-        return $row;
+        return is_array($row) ? $row : null;
     }
 
     public function fetchAll(
@@ -77,7 +91,7 @@ class Db
         $order = null,
         int $limit = null,
         int $offset = null
-    ): ?array {
+    ): array {
         $select = $this->select()->from($table);
 
         if (isset($where)) {
@@ -87,199 +101,44 @@ class Db
             $select->orderBy($order);
         }
         if (isset($limit)) {
-            $select->limit($limit)->offset((int)$offset);
-        }
-
-        $stmt = $this->pdo->prepare($select->getSQL());
-
-        $params = $select->getParams();
-        $types  = $select->getParamsTypes();
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value, $types[$key] ?? PDO::PARAM_STR);
-        }
-
-        $result = $stmt->execute();
-
-        if ($result === false) {
-            return [];
-        }
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-//
-//
-//        $sql = "SELECT * FROM `{$table}`";
-//
-//        $params = [];
-//
-//        if (!empty($where)) {
-//            $sql .= $this->buildWhereSQL($where, $params);
-//        }
-//
-//        if (!empty($order)) {
-//            $sql .= " ORDER BY {$order}";
-//        }
-//
-//        if (!empty($limit)) {
-//            $sql .= " LIMIT " . max(0, $limit);
-//        }
-//        if (!empty($offset)) {
-//            $sql .= " OFFSET " . max(0, $offset);
-//        }
-//
-//        $stmt = $this->pdo->prepare($sql);
-//        $result = $stmt->execute($params);
-//
-//        if ($result === false) {
-//            return [];
-//        }
-//
-//        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function insert(string $table, array $rows): ?bool
-    {
-        if (empty($data)) {
-            return null;
-        }
-
-        $columns = array_keys($data);
-
-        $sql_columns = "(`" . implode('`, `', $columns) . "`)";
-        $sql_markers = "(:" . implode(', :', $columns) . ")";
-
-        $sql = "INSERT INTO `{$table}` {$columns} VALUES {$sql_markers}";
-
-        $stmt = $this->pdo->prepare($sql);
-        $result = $stmt->execute($data);
-
-        if ($result === false) {
-            return false;
-        }
-
-        if ($stmt->rowCount() > 0) {
-            return true;
-        }
-
-        return null;
-    }
-
-    public function insertRow(string $table, array $row): ?bool
-    {
-        foreach ($row as $column => $value) {
-            if (!is_null($value) && !is_scalar($value)) {
-                unset($row[$column]);
+            $select->limit($limit);
+            if (isset($limit)) {
+                $select->offset($offset);
             }
         }
 
-        if (empty($row)) {
-            return null;
-        }
-
-        $columns = array_keys($row);
-
-        $sql_columns = "(`" . implode('`, `', $columns) . "`)";
-        $sql_markers = "(:" . implode(', :', $columns) . ")";
-
-        $sql = "INSERT INTO `{$table}` {$sql_columns} VALUES {$sql_markers}";
-
-        $stmt = $this->pdo->prepare($sql);
-
-        foreach ($row as $column => $value) {
-            if (is_int($value)) {
-               $stmt->bindValue(":{$column}", $value, PDO::PARAM_INT);
-            } elseif (is_bool($value)) {
-                $stmt->bindValue(":{$column}", $value, PDO::PARAM_BOOL);
-            } elseif (is_null($value)) {
-                $stmt->bindValue(":{$column}", $value, PDO::PARAM_NULL);
-            } else {
-                $stmt->bindValue(":{$column}", $value, PDO::PARAM_STR);
-            }
-        }
-
-        $result = $stmt->execute();
-
-        if ($result === false) {
+        $stmt = $this->prepare($select, true);
+        if (false === $stmt || false === $stmt->execute()) {
             return false;
         }
 
-        if ($stmt->rowCount() > 0) {
-            return true;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
 
-        return null;
+        return $rows;
     }
-
-//    public function updateRow(string $table, array $data, $where = null): ?bool
-//    {
-//        if (empty($data)) {
-//            return null;
-//        }
-//
-//        $params = [];
-//        $set_sql = $this->buildSetSQL($data, $params);
-//        if (empty($set_sql)) {
-//            return null;
-//        }
-//
-//        $sql = "UPDATE `{$table}` {$set_sql}";
-//        if (!empty($where)) {
-//            $sql .= $this->buildWhereSQL($where, $params);
-//        }
-//        $sql .= " LIMIT 1";
-//
-//        $stmt = $this->pdo->prepare($sql);
-//        $result = $stmt->execute($params);
-//
-//        if ($result === false) {
-//            return false;
-//        }
-//
-//        if ($stmt->rowCount() > 0) {
-//            return true;
-//        }
-//
-//        return null;
-//    }
 
     /**
+     * Create an Insert statement and either return it run it if additional
+     * arguments are provided
      *
-     * @param string|array|null $table
-     * @param array|null $data
-     * @param array|null $where
-     * @return \P3\Db\Query\Update|false|int
+     * @param string|null $table
+     * @param array[] $rows
+     * @return Insert|false|int
      */
-    public function update(string $table = null, array $data = null, $where = null)
+    public function insert(string $table = null, array $rows = null)
     {
-        $update = new Query\Update($table);
-
-        if (func_num_args() < 2 || !isset($data)) {
-            return $update;
+        if (func_num_args() < 2) {
+            return new Insert($table);
         }
 
-        if (empty($data)) {
-            return null;
-        }
+        $insert = new Insert();
+        $insert
+            ->into($table)
+            ->rows($rows);
 
-        $update->set($data)->where($where);
-
-        $sql = $update->getSQL();
-
-        if (empty($sql)) {
-            return false;
-        }
-
-        $stmt = $this->pdo->prepare($sql);
-
-        $params = $update->getParams();
-        $types  = $update->getParamsTypes();
-
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value, $types[$key] ?? PDO::PARAM_STR);
-        }
-
-        $result = $stmt->execute();
-
-        if ($result === false) {
+        $stmt = $this->prepare($insert, true);
+        if (false === $stmt || false === $stmt->execute()) {
             return false;
         }
 
@@ -287,92 +146,106 @@ class Db
     }
 
     /**
+     * Insert a new row/record into the a db-table
      *
-     * @param string|array|null $table
-     * @param array|string $columns
-     * @return \P3\Db\Query\Select
+     * @param string $table
+     * @param array $row
+     *
+     * @return bool
      */
-    public function select($columns = Query\Select::ANY)
+    public function insertRow(string $table, array $row): bool
     {
-        return new Query\Select($columns);
+        $insert = new Insert();
+        $insert
+            ->into($table)
+            ->row($row);
+
+        $stmt = $this->prepare($insert, true);
+        if (false === $stmt || false === $stmt->execute()) {
+            return false;
+        }
+
+        return $stmt->rowCount() > 0;
     }
 
-    private function buildWhereSQL($where, array &$params = null): string
+    /**
+     * Create an Update statement and either return it run it if additional
+     * arguments are provided
+     *
+     * @param string|array|null $table
+     * @param array|null $data
+     * @param array|null $where
+     *
+     * @return Update|false|int
+     */
+    public function update(string $table = null, array $data = null, $where = null)
     {
-        if (empty($where)) {
-            return '';
+        $update = new Update($table);
+
+        if (func_num_args() < 2 || !isset($data)) {
+            return $update;
         }
 
-        static $i = 0;
+        $update
+            ->set($data)
+            ->where($where);
 
-        if (is_array($where)) {
-            $where_sqls = [];
-            foreach ($where as $col => $value) {
-                $i += 1;
-                if (is_string($col)) {
-                    if (is_null($value)) {
-                        $where_sqls[] = "`{$col}` IS NULL";
-                    } else {
-                        $where_sqls[] = "`{$col}` = :{$col}{$i}";
-                        $params[":{$col}{$i}"] = $value;
-                    }
-                } elseif (is_numeric($col) && is_string($value)) {
-                    $where_sqls[] = "{$value}";
-                } elseif (is_scalar($value)) {
-                    $where_sqls[] = "`{$col}` = :{$col}{$i}";
-                    $params[":{$col}{$i}"] = is_bool($value) ? (int)$value : $value;
-                } elseif (is_null($value)) {
-                    $where_sqls[] = "`{$col}` IS NULL";
-                } elseif (is_array($value) && count($value) == 3) {
-                    $c = $value[0];
-                    $o = $value[1];
-                    $v = $value[2];
-                    if ($o === 'BETWEEN') {
-                        if (!is_array($v) || count($v) !== 2) {
-                            continue;
-                        }
-                        $where_sqls[] = "{$c} BETWEEN :{$c}{$i}_min AND :{$c}{$i}_max";
-                        $params[":{$c}{$i}_min"] = $v[0];
-                        $params[":{$c}{$i}_max"] = $v[1];
-                    } elseif ($o === 'IN') {
-                        if (is_null($v)) {
-                            $where_sqls[] = "`{$c}` IN (NULL)";
-                        } elseif (is_scalar($v)) {
-                            $where_sqls[] = "`{$c}` IN (:{$c}{$i})";
-                            $params[":{$c}{$i}"] = $v;
-                        } elseif (is_array($v)) {
-                            $in_sqls = [];
-                            foreach ($v as $vin) {
-                                if (is_null($vin)) {
-                                    $in_sqls[] = "NULL";
-                                } else {
-                                    $in_sqls[] = ":{$c}{$i}";
-                                    $params[":{$c}{$i}"] = $vin;
-                                }
-                                $i += 1;
-                            }
-                            $where_sqls[] = "`{$c}` IN (" . implode(',', $in_sqls) . ")";
-                        }
-                    } else {
-                        $where_sqls[] = "`{$c}` {$o} :{$c}{$i}";
-                        $params[":{$c}{$i}"] = $v;
-                    }
-                }
+        $stmt = $this->prepare($update, true);
+        if (false === $stmt || false === $stmt->execute()) {
+            return false;
+        }
+
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Create and return a new Select statement
+     *
+     * @param array|string $columns
+     * @param string|array|null $table
+     * @return P3\Sql\Statement\Select
+     */
+    public function select($columns = Sql::ASTERISK, $table = null): Select
+    {
+        return new Select($columns, $table);
+    }
+
+    /**
+     * Prepare a Statement and optionally bind its values returning the
+     * prepared/binded PDOStatement
+     *
+     * @param \P3\Db\Statement $statement
+     * @return PDOStatement|false
+     */
+    public function prepare(Statement $statement, bool $bind = false)
+    {
+        $stmt = $this->pdo->prepare($statement->getSQL());
+
+        if ($bind && $stmt instanceof PDOStatement) {
+            $params = $statement->getParams();
+            $ptypes = $statement->getParamsTypes();
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value, $ptypes[$key] ?? PDO::PARAM_STR);
             }
-
-            $where_sql = "(" . implode(") AND (", $where_sqls) . ")";
-
-            return " WHERE {$where_sql}";
         }
 
-        if (is_string($where)) {
-            return " WHERE {$where}";
+        return $stmt;
+    }
+
+    /**
+     * Prepare and execute a Statement returning the result of PDOStatement::execute()
+     *
+     * @param \P3\Db\Statement $statement
+     * @return bool
+     */
+    public function executeStatement(Statement $statement): bool
+    {
+        $stmt = $this->prepare($statement, true);
+
+        if ($stmt instanceof PDOStatement) {
+            return $stmt->execute();
         }
 
-        if (is_int($where)) {
-            return " WHERE id = '{$where}'";
-        }
-
-        return '';
+        return false;
     }
 }
