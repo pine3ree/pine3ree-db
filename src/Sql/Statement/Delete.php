@@ -20,7 +20,7 @@ use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
  *
  * @property-read string|null $table The db table to delete from if already set
  * @property-read string|null $from Alias of $table
- * @property-read Where|null $where The Where clause if any
+ * @property-read Where $where The Where clause, built on-first-access if null
  */
 class Delete extends DML
 {

@@ -28,10 +28,10 @@ use RuntimeException;
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read string[] $columns The columns to be returned
  * @property-read string|null $from Alias of $table
- * @property-read Where|null $where The Where clause if any
+ * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read array[] $joins An array of JOIN specs if any
  * @property-read array[] $groupBy An array of GROUP BY identifiers
- * @property-read Having|null $having The Having clause if any
+ * @property-read Having $having The Having clause, built on-first-access if null
  * @property-read array[] $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any

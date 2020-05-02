@@ -20,7 +20,7 @@ use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
  * @property-read string|null $table The db table to select from if already set
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read array $set The SET column/value pairs to be updated
- * @property-read Where|null $where The Where clause if any
+ * @property-read Where|null $where The Where clause, built on-first-access if null
  */
 class Update extends DML
 {
