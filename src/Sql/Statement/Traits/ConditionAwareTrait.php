@@ -36,10 +36,12 @@ trait ConditionAwareTrait
         }
 
         if (is_array($clause)) {
+            // ["&&" => clauses] or ["||" => clauses]
             if (count($clause) === 1
                 && isset(PredicateSet::COMB_ID[$comb_id = key($clause)])
+                && is_array($clauses = current($clause))
             ) {
-                $clause = new $fqcn($comb_id, current($clause));
+                $clause = new $fqcn($comb_id, $clauses);
             } else {
                 $clause = new $fqcn(Sql::AND, $clause);
             }
