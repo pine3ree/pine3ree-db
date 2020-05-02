@@ -13,6 +13,9 @@ use P3\Db\Sql;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
+use function implode;
+use function is_null;
+
 /**
  * This class represents a sql comparison condition
  */

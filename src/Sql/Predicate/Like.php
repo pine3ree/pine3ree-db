@@ -12,6 +12,10 @@ use InvalidArgumentException;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
+use function get_class;
+use function gettype;
+use function is_object;
+
 /**
  * This class represents a sql LIKE condition
  */

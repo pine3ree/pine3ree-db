@@ -11,6 +11,8 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
+use function count;
+
 /**
  * This class represents a sql BETWEEN condition
  */
