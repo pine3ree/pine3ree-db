@@ -9,7 +9,6 @@
 namespace P3\Db\Sql;
 
 use JsonSerializable;
-use P3\Db\Sql\Predicate;
 use PDO;
 
 use function addcslashes;
@@ -70,7 +69,7 @@ abstract class Expression implements JsonSerializable
     /**
      * Import parameters and types from inner expression
      *
-     * @param Predicate $predicate
+     * @param self $expr
      */
     protected function importParams(self $expr): void
     {
