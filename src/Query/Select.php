@@ -62,6 +62,46 @@ class Select extends Query
     }
 
     /**
+     * @see SqlSelect::join()
+     * @return $this
+     */
+    public function join(string $table, string $alias, $cond): self
+    {
+        $this->statement->join($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
+     * @see SqlSelect::leftJoin()
+     * @return $this
+     */
+    public function leftJoin(string $table, string $alias, $cond): self
+    {
+        $this->statement->leftJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
+     * @see SqlSelect::rightJoin()
+     * @return $this
+     */
+    public function rightJoin(string $table, string $alias, $cond): self
+    {
+        $this->statement->rightJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
+     * @see SqlSelect::innerJoin()
+     * @return $this
+     */
+    public function innerJoin(string $table, string $alias, $cond): self
+    {
+        $this->statement->innerJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
      * @see SqlSelect::where()
      * @return $this
      */
