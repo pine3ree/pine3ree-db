@@ -44,27 +44,21 @@ class Insert extends Query
         return $this;
     }
 
-    public function values(array $values)
+    public function values(array $values, bool $reset = false)
     {
-        $this->statement->values($values);
+        $this->statement->values($values, $reset);
         return $this;
     }
 
-    public function value(array $value)
+    public function multipleValues(array $value, bool $reset = false)
     {
-        $this->statement->value($value);
+        $this->statement->multipleValues($value, $reset);
         return $this;
     }
 
     public function rows(array $rows)
     {
         $this->statement->rows($rows);
-        return $this;
-    }
-
-    public function row(array $row)
-    {
-        $this->statement->row($row);
         return $this;
     }
 
