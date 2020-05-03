@@ -141,7 +141,6 @@ class Select extends Query
         return $this;
     }
 
-
     public function limit(int $limit): self
     {
         $this->statement->limit($limit);
@@ -167,7 +166,6 @@ class Select extends Query
 
         return is_array($rows) ? $rows : [];
     }
-
 
     public function fetchOne(): ?array
     {
