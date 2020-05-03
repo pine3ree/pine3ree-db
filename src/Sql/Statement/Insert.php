@@ -329,6 +329,7 @@ class Insert extends DML
             return $this->sqls['values'];
         }
 
+        // INSERT...SELECT
         if ($this->select instanceof Select) {
             $sql = $this->select->getSQL();
             if ($this->isEmptySQL($sql)) {
