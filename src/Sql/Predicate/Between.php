@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
@@ -25,8 +26,7 @@ class Between extends Predicate
 
     /**
      * @param string|Literal $identifier
-     * @param scalar|literal|array<int, scalar|literal> $min_value
-     * @param scalar|literal $max_value
+     * @param array $limits
      */
     public function __construct($identifier, array $limits)
     {

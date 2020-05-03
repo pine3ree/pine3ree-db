@@ -65,7 +65,7 @@ class Insert extends DML
     /**
      * Define the INSERT columns, this will also cleare any defined values
      *
-     * @param type $columns
+     * @param array $columns
      * @return $this
      */
     public function columns(array $columns): self

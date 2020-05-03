@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Statement;
 
+use RuntimeException;
 use P3\Db\Sql\Statement;
 
 /**

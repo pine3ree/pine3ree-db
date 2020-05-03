@@ -63,7 +63,7 @@ class Select extends DML
     /** @var array */
     protected $orderBy = [];
 
-    /** @var inti|null */
+    /** @var int|null */
     protected $limit;
 
     /** @var int|null */
@@ -185,7 +185,7 @@ class Select extends DML
      *
      * @param string|array $table
      * @param string|null $alias
-     * @return \self
+     * @return $this
      */
     public function from($table, string $alias = null): self
     {
@@ -302,7 +302,7 @@ class Select extends DML
 
     /**
      *
-     * @param sring|string[] $groupBy
+     * @param string|string[] $groupBy
      * @param bool $replace
      * @return $this
      * @throws InvalidArgumentException
@@ -361,9 +361,9 @@ class Select extends DML
 
     /**
      *
-     * @param type $orderBy
+     * @param string|array $orderBy
      * @param null|string|true $sortOrReplace Set the default sort or the replace flag
-     * @return \self
+     * @return $this
      */
     public function orderBy($orderBy, $sortOrReplace = null): self
     {
