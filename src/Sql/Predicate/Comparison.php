@@ -8,7 +8,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
-use InvalidApplicationNameException;
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
@@ -37,8 +37,8 @@ class Comparison extends Predicate
 
     /**
      * @param string|Literal $identifier
-     * @param scalar|literal|array<int, scalar|literal> $min_value
-     * @param scalar|literal $max_value
+     * @param string $operator
+     * @param string|int|bool|Literal $value
      */
     public function __construct($identifier, string $operator, $value)
     {
@@ -53,8 +53,8 @@ class Comparison extends Predicate
     private static function assertValidOperator(string $operator)
     {
         if (!isset(self::OPERATORS[$operator])) {
-            throw new InvalidApplicationNameException(
-                "Invalid comparison operator `{$identifier}`, must be one of "
+            throw new InvalidArgumentException(
+                "Invalid comparison operator `{$operator}`, must be one of "
                 . implode(', ', self::OPERATORS) . "!"
             );
         }
