@@ -93,44 +93,19 @@ class Insert extends DML
     }
 
     /**
-     * Set the values of the records to be INSERTed
+     * Add a single row-values list to the INSERT statement
      *
-     * @param array[] $values
-     * @return $this
-     */
-    public function values(array $values)
-    {
-        if (empty($values)) {
-            throw new InvalidArgumentException(
-                'Cannot INSERT an empty set of column values!'
-            );
-        }
-
-        $this->select = null;
-        $this->values = [];
-        foreach ($values as $value) {
-            $this->value($value);
-        }
-
-        unset($this->sql, $this->sqls['values']);
-
-        return $this;
-    }
-
-    /**
-     * Add a single row-values to the INSERT statement
-     *
-     * @param array $value
+     * @param array $values
      * @param bool $reset Reset the values for a single insert
      * @return $this
      * @throws RuntimeException
      */
-    public function value(array $value, bool $reset = false)
+    public function values(array $values, bool $reset = false)
     {
-        self::assertValidValue($value);
+        self::assertValidValues($values);
 
         if (!empty($this->columns)
-            && count($this->columns) !== count($value)
+            && count($this->columns) !== count($values)
         ) {
             throw new InvalidArgumentException(
                 "The INSERT value size does not match the defined columns!"
@@ -142,34 +117,57 @@ class Insert extends DML
         }
 
         $this->select = null;
-        $this->values[] = array_values($value);
+        $this->values[] = array_values($values);
 
         unset($this->sql, $this->sqls['values']);
 
         return $this;
     }
 
-    protected static function assertValidValue($value)
+    /**
+     * Set the values of the records to be INSERTed
+     *
+     * @param array[] $multiple_values
+     * @param bool $reset Reset the values for a single insert
+     * @return $this
+     */
+    public function multipleValues(array $multiple_values, bool $reset = false)
     {
-        if (empty($value)) {
+        if (empty($multiple_values)) {
+            throw new InvalidArgumentException(
+                'Cannot INSERT an empty set of column values!'
+            );
+        }
+
+        $this->select = null;
+        if ($reset) {
+            $this->values = [];
+        }
+        foreach ($multiple_values as $values) {
+            $this->values($values);
+        }
+
+        unset($this->sql, $this->sqls['values']);
+
+        return $this;
+    }
+
+    protected static function assertValidValues($values)
+    {
+        if (empty($values)) {
             throw new InvalidArgumentException(
                 'Cannot INSERT an empty record!'
             );
         }
 
-        foreach ($value as $i => $v) {
-            if (!is_scalar($v) && null !== $v && ! $v instanceof Literal) {
+        foreach ($values as $i => $value) {
+            if (!is_scalar($value) && null !== $value && ! $value instanceof Literal) {
                 throw new InvalidArgumentException(sprintf(
                     "A column value must be either a scalar, null or a Literal,"
                     . " `%s` provided for index {$i}",
-                    is_object($v) ? get_class($v) : gettype($v)
+                    is_object($value) ? get_class($value) : gettype($value)
                 ));
             }
-        }
-        if (empty($value)) {
-            throw new RuntimeException(
-                'Cannot INSERT an empty record!'
-            );
         }
     }
 
