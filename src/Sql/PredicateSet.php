@@ -197,25 +197,23 @@ class PredicateSet extends Predicate
             return new Predicate\Comparison($identifier, $operator, $value);
         }
 
-        switch ($operator) {
-            case Sql::BETWEEN:
-                return new Predicate\Between($identifier, $value);
-                // break;
-            case Sql::NOT_BETWEEN:
-                return new Predicate\NotBetween($identifier, $value);
-                // break;
-            case Sql::IN:
-                return new Predicate\In($identifier, $value);
-                // break;
-            case Sql::NOT_IN:
-                return new Predicate\NotIn($identifier, $value);
-                // break;
-            case Sql::LIKE:
-                return new Predicate\Like($identifier, $value);
-                // break;
-            case Sql::NOT_LIKE:
-                return new Predicate\NotLike($identifier, $value);
-                // break;
+        if ($operator === Sql::BETWEEN) {
+            return new Predicate\Between($identifier, $value);
+        }
+        if ($operator === Sql::NOT_BETWEEN) {
+            return new Predicate\NotBetween($identifier, $value);
+        }
+        if ($operator === Sql::IN) {
+            return new Predicate\In($identifier, $value);
+        }
+        if ($operator === Sql::NOT_IN) {
+            return new Predicate\NotIn($identifier, $value);
+        }
+        if ($operator === Sql::LIKE) {
+            return new Predicate\Like($identifier, $value);
+        }
+        if ($operator === Sql::NOT_LIKE) {
+            return new Predicate\NotLike($identifier, $value);
         }
 
         if ($value instanceof Literal) {
@@ -224,7 +222,7 @@ class PredicateSet extends Predicate
 
         if (is_array($value)) {
              throw new InvalidArgumentException(
-                "Array value not supported for operator `{$operator}`"
+                "Array value not supported for operator `{$operator}`!"
             );
         }
 
