@@ -173,7 +173,7 @@ class Select extends Query
 
         $stmt = $this->prepare(true);
         if ($stmt === false || false === $stmt->execute()) {
-            return [];
+            return null;
         }
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
