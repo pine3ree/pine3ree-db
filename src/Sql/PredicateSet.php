@@ -95,7 +95,7 @@ class PredicateSet extends Predicate
         foreach ($predicates as $key => $predicate) {
             // nested predicate-set
             if ($predicate instanceof PredicateSet) {
-                $comb_by = self::COMB_ID[strtoupper($key)] ?? null;
+                $comb_by = self::COMB_ID[$key] ?? null;
                 if (isset($comb_by) && $comb_by !== $predicate->getCombinedBy()) {
                     $nestedSet = new PredicateSet($comb_by, $predicate->getPredicates());
                     $this->addPredicate($nestedSet);
@@ -112,8 +112,8 @@ class PredicateSet extends Predicate
 
             if (is_array($predicate)) {
                 // $key is "||" or "&&" for predicate-set array definitions
-                if (isset(self::COMB_ID[$comb_id = strtoupper($key)])) {
-                    $comb_by = self::COMB_ID[$comb_id];
+                $comb_by = self::COMB_ID[$key] ?? null;
+                if (isset($comb_by)) {
                     $nestedSet = new PredicateSet($comb_by, $predicate);
                     $this->addPredicate($nestedSet);
                     continue;
