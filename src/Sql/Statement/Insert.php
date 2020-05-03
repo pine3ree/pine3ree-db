@@ -341,20 +341,20 @@ class Insert extends DML
         }
 
         $sqls = [];
-        foreach ($this->values as $value) {
-            $sqls[] = $this->getValueSQL($value);
+        foreach ($this->values as $values) {
+            $sqls[] = $this->getRowValuesSQL($values);
         }
 
         return $this->sqls['values'] = implode(", ", $sqls);
     }
 
-    private function getValueSQL(array $value): string
+    private function getRowValuesSQL(array $values): string
     {
         $sqls = [];
-        foreach ($value as $v) {
-            $sqls[] = $v instanceof Literal
-                ? $v->getSQL()
-                : $this->createNamedParam($v);
+        foreach ($values as $value) {
+            $sqls[] = $value instanceof Literal
+                ? $value->getSQL()
+                : $this->createNamedParam($value);
         }
 
         return "(" . implode(", ", $sqls) . ")";
