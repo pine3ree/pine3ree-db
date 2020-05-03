@@ -15,6 +15,8 @@ use P3\Db\Sql\Predicate;
 use function get_class;
 use function gettype;
 use function is_object;
+use function is_string;
+use function sprintf;
 
 /**
  * This class represents a sql LIKE condition
