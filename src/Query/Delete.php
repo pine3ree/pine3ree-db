@@ -9,40 +9,39 @@
 namespace P3\Db\Query;
 
 use PDO;
+use P3\Db\Db;
 use P3\Db\Query;
-use P3\Db\Query\ConditionsAware;
+use P3\Db\Sql\Statement\Delete as SqlDelete;
 
 /**
  * Class Delete
+ *
+ * @property-read SqlDelete $statement
  */
-class Delete extends ConditionsAware
+class Delete extends Query
 {
-    public function __construct($table = null)
+    public function __construct(Db $db, string $table = null)
     {
-        if (!empty($table)) {
-            $this->from($table);
-        }
+        parent::__construct($db, new SqlDelete($table));
     }
 
     public function from($table)
     {
-        parent::setTable($table);
+        $this->statement->from($table);
     }
 
-    public function getSQL(): string
+    public function where($where)
     {
-        if (isset($this->sql)) {
-            return $this->sql;
+        $this->statement->where($where);
+    }
+
+    public function execute()
+    {
+        $stmt = $this->prepare(true);
+        if ($stmt === false || false === $stmt->execute()) {
+            return false;
         }
 
-        if (empty($this->table) || empty($this->columns || empty($this->values))) {
-            return $this->sql = '';
-        }
-
-        $where_sql = $this->getWhereSQL();
-        if ($this->isEmptyStatement($where_sql)) {
-            return $this->sql = '';
-        }
-
+        return $stmt->rowCount();
     }
 }

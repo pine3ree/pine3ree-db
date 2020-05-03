@@ -8,91 +8,43 @@
 
 namespace P3\Db\Query;
 
+use InvalidArgumentException;
 use PDO;
+use P3\Db\Db;
 use P3\Db\Query;
-use P3\Db\Query\ConditionsAware;
+use P3\Db\Sql\Statement\Update as SqlUpdate;
 
 /**
  * Class Update
+ *
+ * @property-read SqlUpdate $statement
  */
-class Update extends ConditionsAware
+class Update extends Query
 {
-    private $set;
-
-    public function __construct($table = null, string $alias = null)
+    public function __construct(Db $db, string $table = null)
     {
-        if (!empty($table)) {
-            parent::setTable($table, $alias);
-        }
+        parent::__construct($db, new SqlUpdate($table));
     }
 
-    public function table($table, string $alias = null): self
+    public function table($table): self
     {
-        return parent::setTable($table, $alias);
+        $this->statement->table($table);
+        return $this;
     }
 
     public function set($columnOrRow, $value = null): self
     {
-        if (is_array($columnOrRow)) {
-            $row = $columnOrRow;
-            foreach ($row as $column => $value) {
-                if (is_numeric($column)) {
-                    throw new InvalidArgumentException(
-                        "A column in an UPDATE query cannot be numeric!"
-                    );
-                }
-            }
-            $this->set = $row;
-        } elseif (is_string($columnOrRow)) {
-            $column = trim($columnOrRow);
-            if ($column) {
-                $this->set[$column] = $value;
-            }
-        }
-
+        $this->statement->set($columnOrRow, $value);
         return $this;
     }
 
-    public function getSQL(): string
+    public function execute()
     {
-        if (isset($this->sql)) {
-            return $this->sql;
+        $stmt = $this->prepare(true);
+        if ($stmt === false || false === $stmt->execute()) {
+            return false;
         }
 
-        $sqls = [];
-
-        $sqls[] = $this->getBaseSQL();
-
-        $where_sql = $this->getWhereSQL();
-        if ($this->isNotEmptyStatement($where_sql)) {
-            $sqls[] = $where_sql;
-        } else {
-            return ''; // inhibit condition-less update
-        }
-
-        $this->sql = implode(" ", $sqls);
-
-        return $this->sql;
-    }
-
-    protected function getBaseSQL(): string
-    {
-        if (empty($this->table) || empty($this->set)) {
-            return '';
-        }
-
-        $table_sql = $this->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias_sql = $this->quoteAlias($this->alias)) {
-            $table_sql .= " {$alias_sql}";
-        }
-
-        $set = [];
-        foreach ($this->set as $column => $value) {
-            $column = $this->quoteIdentifier($column);
-            $marker = $this->createNamedParam($value);
-            $set[] = "{$column} = {$marker}";
-        }
-
-        return "UPDATE {$table_sql} SET " . implode(", ", $set);
+        return $stmt->rowCount();
     }
 }
