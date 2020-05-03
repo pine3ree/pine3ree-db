@@ -156,7 +156,6 @@ class Select extends Query
     public function fetchAll(): array
     {
         $stmt = $this->prepare(true);
-
         if ($stmt === false || false === $stmt->execute()) {
             return [];
         }
