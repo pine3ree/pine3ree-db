@@ -394,7 +394,7 @@ class Select extends DML
         }
 
         if (!is_array($orderBy)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 "The ORDER BY options must be either an array or a string!"
             );
         }
@@ -406,7 +406,6 @@ class Select extends DML
                 $identifier = $direction;
                 $direction  = $sort;
             }
-
 
             $parts = array_map('trim', explode(' ', $identifier));
             $identifier = $parts[0];
