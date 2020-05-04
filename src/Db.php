@@ -100,7 +100,7 @@ class Db
         $select->where->addPredicate(
             new Predicate\Comparison($pk, '=', $pk_value)
         );
-        $select->limit(1);
+        $select;
 
         $stmt = $this->prepare($select, true);
         if (false === $stmt || false === $stmt->execute()) {
