@@ -81,18 +81,29 @@ class Db
      *
      * @param string $table
      * @param int|string $pk_value
-     * @param string $pk_column
+     * @param string $pk_column The primary-key table column
      * @return array|null
      */
-    public function fetchByPK(string $table, $pk_value, string $pk_column = 'id'): ?array
+    public function fetchByPK(string $table, $pk_value, string $pk = 'id'): ?array
     {
-        $stmt = $this->prepare(
-            "SELECT * FROM `{$table}` WHERE `{$pk_column}` = :{$pk_column}"
+//        $stmt = $this->prepare(
+//            "SELECT * FROM `{$table}` WHERE `{$pk}` = :{$pk}"
+//        );
+//
+//        if ($stmt === false
+//            || false === $stmt->execute([":{$pk}" => $pk_value])
+//        ) {
+//            return null;
+//        }
+//
+        $select = $this->select()->from($table);
+        $select->where->addPredicate(
+            new Predicate\Comparison($pk, '=', $pk_value)
         );
+        $select->limit(1);
 
-        if ($stmt === false
-            || false === $stmt->execute([":{$pk_column}" => $pk_value])
-        ) {
+        $stmt = $this->prepare($select, true);
+        if (false === $stmt || false === $stmt->execute()) {
             return null;
         }
 
