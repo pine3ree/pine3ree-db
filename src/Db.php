@@ -76,15 +76,23 @@ class Db
         );
     }
 
-    public function fetchByPK(string $table, $pk_value, $pk_column = 'id'): ?array
+    /**
+     * Fetch a single row for given primary-key value, if any
+     *
+     * @param string $table
+     * @param int|string $pk_value
+     * @param string $pk_column
+     * @return array|null
+     */
+    public function fetchByPK(string $table, $pk_value, string $pk_column = 'id'): ?array
     {
-        $select = $this->select()
-            ->from($table)
-            ->where([$pk_column => $pk_value])
-            ->limit(1);
+        $stmt = $this->prepare(
+            "SELECT * FROM `{$table}` WHERE `{$pk_column}` = :{$pk_column}"
+        );
 
-        $stmt = $this->prepare($select, true);
-        if ($stmt === false || false === $stmt->execute()) {
+        if ($stmt === false
+            || false === $stmt->execute([":{$pk_column}" => $pk_value])
+        ) {
             return null;
         }
 
