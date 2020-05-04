@@ -86,16 +86,6 @@ class Db
      */
     public function fetchByPK(string $table, $pk_value, string $pk = 'id'): ?array
     {
-//        $stmt = $this->prepare(
-//            "SELECT * FROM `{$table}` WHERE `{$pk}` = :{$pk}"
-//        );
-//
-//        if ($stmt === false
-//            || false === $stmt->execute([":{$pk}" => $pk_value])
-//        ) {
-//            return null;
-//        }
-//
         $select = $this->select()->from($table);
         $select->where->addPredicate(
             new Predicate\Comparison($pk, '=', $pk_value)
