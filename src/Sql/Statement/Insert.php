@@ -341,6 +341,7 @@ class Insert extends DML
             return $this->sqls['values'] = "({$sql})";
         }
 
+        // INSERT...VALUES
         $sqls = [];
         foreach ($this->values as $values) {
             $sqls[] = $this->getRowValuesSQL($values);
