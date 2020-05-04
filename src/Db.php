@@ -10,6 +10,7 @@ namespace P3\Db;
 
 use PDO;
 use PDOStatement;
+use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Delete;
 use P3\Db\Sql\Statement\Insert;
@@ -31,30 +32,59 @@ class Db
      */
     private $pdo;
 
-    public function __construct(PDO $pdo)
+    private $dsn;
+    private $username;
+    private $password;
+    private $options = [];
+
+    public function __construct(
+        string $dsn,
+        string $username = null,
+        string $password = null,
+        array $options = null
+    ) {
+        $this->dsn = $dsn;
+        $this->username = $username;
+        $this->password = $password;
+        if (isset($options)) {
+            $this->options = $options;
+        }
+    }
+
+    private function connect()
     {
-        $this->pdo = $pdo;
+        $this->pdo = $this->createPDO();
+    }
+
+    public function isConnected(): bool
+    {
+        return isset($this->pdo);
+    }
+
+    public function getPDO(): PDO
+    {
+        return $this->pdo ?? $this->pdo = $this->createPDO();
+    }
+
+    private function createPDO(): PDO
+    {
+        return new PDO(
+            $this->dsn,
+            $this->username,
+            $this->password,
+            $this->options
+        );
     }
 
     public function fetchByPK(string $table, $pk_value, $pk_column = 'id'): ?array
     {
-        if (is_int($pk_value)) {
-            $stmt = $this->pdo->query(
-                "SELECT * FROM `{$table}` WHERE `{$pk_column}` = '{$pk_value}'"
-            );
-        } else {
-           $stmt = $this->pdo->prepare(
-                "SELECT * FROM `{$table}` WHERE `{$pk_column}` = :id"
-            );
-        }
+        $select = $this->select()
+            ->from($table)
+            ->where([$pk_column => $pk_value])
+            ->limit(1);
 
-        if ($stmt === false) {
-            return null;
-        }
-
-        $result = $stmt->execute([$pk_column => $pk_value]);
-
-        if ($result === false) {
+        $stmt = $this->prepare($select, true);
+        if ($stmt === false || false === $stmt->execute()) {
             return null;
         }
 
@@ -78,9 +108,6 @@ class Db
 
         $stmt = $this->prepare($select, true);
         if (false === $stmt || false === $stmt->execute()) {
-            return null;
-        }
-        if (false === $stmt->execute()) {
             return null;
         }
 
@@ -128,7 +155,7 @@ class Db
      *
      * @param array|string $columns
      * @param string|array|null $table
-     * @return P3\Sql\Statement\Select
+     * @return Select
      */
     public function select($columns = Sql::ASTERISK, $table = null): Select
     {
@@ -244,12 +271,12 @@ class Db
      * Prepare a Statement and optionally bind its values returning the
      * prepared/binded PDOStatement
      *
-     * @param \P3\Db\Statement $statement
+     * @param Statement $statement
      * @return PDOStatement|false
      */
     public function prepare(Statement $statement, bool $bind = false)
     {
-        $stmt = $this->pdo->prepare($statement->getSQL());
+        $stmt = $this->getPDO()->prepare($statement->getSQL());
 
         if ($bind && $stmt instanceof PDOStatement) {
             $params = $statement->getParams();
@@ -261,21 +288,24 @@ class Db
 
         return $stmt;
     }
-
-    /**
-     * Prepare and execute a Statement returning the result of PDOStatement::execute()
-     *
-     * @param \P3\Db\Statement $statement
-     * @return bool
-     */
-    public function executeStatement(Statement $statement): bool
-    {
-        $stmt = $this->prepare($statement, true);
-
-        if ($stmt instanceof PDOStatement) {
-            return $stmt->execute();
-        }
-
-        return false;
-    }
+//
+//    /**
+//     * Prepare and execute a Statement returning the result of PDOStatement::execute()
+//     *
+//     * @param \P3\Db\Statement $statement
+//     * @return bool
+//     */
+//    public function executeStatement(Statement $statement): bool
+//    {
+//        $stmt = $this->prepare($statement, true);
+//
+//        if ($stmt instanceof PDOStatement) {
+//            $result = $stmt->execute();
+//            $stmt->closeCursor();
+//
+//            return $result;
+//        }
+//
+//        return false;
+//    }
 }
