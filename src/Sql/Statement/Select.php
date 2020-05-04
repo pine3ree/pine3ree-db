@@ -536,37 +536,37 @@ class Select extends DML
     {
         if ('table' === $name) {
             return $this->table;
-        };
+        }
         if ('alias' === $name) {
             return $this->alias;
-        };
+        }
         if ('quantifier' === $name) {
             return $this->quantifier;
-        };
+        }
         if ('columns' === $name) {
             return $this->columns;
-        };
+        }
         if ('where' === $name) {
             return $this->where ?? $this->where = new Where();
-        };
+        }
         if ('joins' === $name) {
             return $this->joins;
-        };
+        }
         if ('having' === $name) {
             return $this->having ?? $this->having = new Having();
-        };
+        }
         if ('groupBy' === $name) {
             return $this->groupBy;
-        };
+        }
         if ('orderBy' === $name) {
             return $this->orderBy;
-        };
+        }
         if ('limit' === $name) {
             return $this->limit;
-        };
+        }
         if ('offset' === $name) {
             return $this->offset;
-        };
+        }
     }
 }
 

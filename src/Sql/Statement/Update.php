@@ -166,12 +166,12 @@ class Update extends DML
     {
         if ('table' === $name) {
             return $this->table;
-        };
+        }
         if ('set' === $name) {
             return $this->set;
-        };
+        }
         if ('where' === $name) {
             return $this->where ?? $this->where = new Where();
-        };
+        }
     }
 }

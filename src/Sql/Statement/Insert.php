@@ -366,21 +366,21 @@ class Insert extends DML
     {
         if ('table' === $name) {
             return $this->table;
-        };
+        }
         if ('ignore' === $name) {
             return $this->ignore;
-        };
+        }
         if ('into' === $name) {
             return $this->table;
-        };
+        }
         if ('columns' === $name) {
             return $this->columns;
-        };
+        }
         if ('values' === $name) {
             return $this->values;
-        };
+        }
         if ('select' === $name) {
             return $this->select;
-        };
+        }
     }
 }

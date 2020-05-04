@@ -99,12 +99,12 @@ class Delete extends DML
     {
         if ('table' === $name) {
             return $this->table;
-        };
+        }
         if ('from' === $name) {
             return $this->table;
-        };
+        }
         if ('where' === $name) {
             return $this->where ?? $this->where = new Where();
-        };
+        }
     }
 }
