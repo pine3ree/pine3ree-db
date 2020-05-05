@@ -14,19 +14,32 @@ namespace P3\Db\Sql;
 class Driver
 {
     /**
-     * @var string The quote left char for identifiers/aliases, default is ANSI '"'
+     * @var string The left quote char for identifiers/aliases, default is ANSI '"'
      */
-    protected $ql = '"';
+    protected $ql;
 
     /**
-     * @var string The quote right char for identifiers/aliases, default is ANSI '"'
+     * @var string The right quote char for identifiers/aliases, default is ANSI '"'
      */
-    protected $qr = '"';
+    protected $qr;
 
     /**
-     * @var string The quote char for values
+     * @var string The quote char for values, default is single-quote char "'"
      */
-    protected $qv = "'";
+    protected $qv;
+
+    /**
+     *
+     * @param string $ql left-quote char
+     * @param string $qr right-quote char
+     * @param string $qv quote char for values
+     */
+    public function __construct(string $ql = '"', string $qr = '"', string $qv = "'")
+    {
+        $this->ql = $ql;
+        $this->qr = $qr;
+        $this->qv = $qv;
+    }
 
     /**
      * Quote a yet unquoted identifier that represents a table column

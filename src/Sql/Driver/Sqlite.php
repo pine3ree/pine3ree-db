@@ -15,6 +15,8 @@ use P3\Db\Sql\Driver;
  */
 class Sqlite extends Driver
 {
-    protected $qr = '"';
-    protected $ql = '"';
+    public function __construct()
+    {
+        parent::__construct('"', '"', "'");
+    }
 }
