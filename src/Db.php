@@ -303,6 +303,11 @@ class Db
 
         return $stmt;
     }
+
+    public function lastInsertId(string $name = null): string
+    {
+        return $this->getPDO()->lastInsertId($name);
+    }
 //
 //    /**
 //     * Prepare and execute a Statement returning the result of PDOStatement::execute()
