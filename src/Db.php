@@ -296,10 +296,10 @@ class Db
         if ($bind && $stmt instanceof PDOStatement) {
             $params = $statement->getParams();
             $ptypes = $statement->getParamsTypes();
-            foreach ($params as $key => $value) {
+            foreach ($params as $marker => $value) {
                 $stmt->bindValue(
-                    $key,
-                    is_bool($value) ? (int)$value : $value,
+                    $marker,
+                    $this->castValue($value),
                     $ptypes[$key] ?? $this->getParamType($value)
                 );
             }
@@ -313,7 +313,19 @@ class Db
         return $this->getPDO()->lastInsertId($name);
     }
 
-    private function getParamType(&$value): int
+    private function castValue($value)
+    {
+        if (is_bool($value)) {
+            return (int)$value;
+        }
+        if (is_float($value)) {
+            $value = (string)$value;
+        }
+
+        return $value;
+    }
+
+    private function getParamType($value): int
     {
         if (null === $value) {
             return PDO::PARAM_NULL;
