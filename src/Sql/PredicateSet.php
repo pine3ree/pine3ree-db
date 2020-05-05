@@ -261,7 +261,7 @@ class PredicateSet extends Predicate
 
         $sqls = [];
         foreach ($this->predicates as $predicate) {
-            $sql = trim($predicate->getSQL());
+            $sql = $predicate->getSQL();
             if ($this->isEmptySQL($sql)) {
                 continue;
             }
