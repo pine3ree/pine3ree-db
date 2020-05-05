@@ -107,6 +107,11 @@ class Select extends DML
     }
 
     /**
+     * Set the column(s) names / literal esxpressions to fetch or the sql-asterisk
+     * '*' to fetch all the columns
+     *
+     * The array keys may be used to specify aliases for the columns names / literal
+     * expressions
      *
      * @param string|string[] $columns
      * @return $this
@@ -119,8 +124,11 @@ class Select extends DML
 
         // was a single column or the sql-asterisk "*" provided?
         if (is_string($columns)) {
-            $columns = [$columns => $columns];
+            $column = trim($columns);
+            $columns = [$column => $column];
         }
+
+        self::assertValidColumns($columns);
 
         // trim column names
         foreach ($columns as $key => $column) {
@@ -128,8 +136,6 @@ class Select extends DML
                 $column = $columns[$key] = trim($column);
             }
         }
-
-        self::assertValidColumns($columns);
 
         $this->columns = $columns;
 
@@ -142,15 +148,16 @@ class Select extends DML
     {
         if (!is_array($columns)) {
             throw new InvalidArgumentException(sprintf(
-                "The SELECT columns argument must be either the ASTERISK string"
-                . " or an array of column names, '%s' provided!",
+                "The SELECT columns argument must be either the ASTERISK string,"
+                . " a column name or an array of column names / literal expressions,"
+                . " '%s' provided!",
                 gettype($columns)
             ));
         }
 
         foreach ($columns as $key => $column) {
             if (is_string($column)) {
-                if ('' === $column) {
+                if ('' === trim($column)) {
                     throw new InvalidArgumentException(
                         "A table column string must be non empty string for index/column-alias `{$key}`!"
                     );
