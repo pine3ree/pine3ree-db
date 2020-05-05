@@ -231,13 +231,13 @@ class Select extends DML
      * @param string $type The join type (LEFT, RIGHT, INNER, ...)
      * @param string $table The join table name
      * @param string $alias The join table alias
-     * @param On|PredicateSet|Predicate|Literal|Predicate\Literal|array|string $cond
+     * @param On|PredicateSet|Predicate|array|string $cond
      *      The join conditional usually an ON clause, but may be changed using Literal classes
      * @return $this
      */
     private function addJoin(string $type, string $table, string $alias, $cond = null): self
     {
-        if (! $cond instanceof On && ! $cond instanceof Literal) {
+        if (! $cond instanceof On) {
             $cond = new On(Sql::AND, $cond);
         }
 
