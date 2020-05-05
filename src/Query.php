@@ -34,13 +34,8 @@ abstract class Query
         $this->statement = $statement;
     }
 
-//     protected function execute(&$stmt = null): bool
-//     {
-//         $stmt = $this->db->prepare($this->statement, true);
-//         return $stmt === false ? false : $stmt->execute();
-//     }
-
     /**
+     * Prepare the SQL statement
      *
      * @param bool $bind
      * @return PDOStatement|false
