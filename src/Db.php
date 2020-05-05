@@ -296,9 +296,9 @@ class Db
         if ($bind && $stmt instanceof PDOStatement) {
             $params = $statement->getParams();
             $ptypes = $statement->getParamsTypes();
-            foreach ($params as $marker => $value) {
+            foreach ($params as $markerOrIndex => $value) {
                 $stmt->bindValue(
-                    $marker,
+                    $markerOrIndex,
                     $this->castValue($value),
                     $ptypes[$key] ?? $this->getParamType($value)
                 );
