@@ -187,7 +187,7 @@ class Sql
         self::ALL      => self::ALL,
     ];
 
-    public static function isSupportedOperator($operator): bool
+    public static function isSupportedOperator(string $operator): bool
     {
         return !empty(self::OPERATORS[strtoupper($operator)]);
     }
