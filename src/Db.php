@@ -297,7 +297,11 @@ class Db
             $params = $statement->getParams();
             $ptypes = $statement->getParamsTypes();
             foreach ($params as $key => $value) {
-                $stmt->bindValue($key, $value, $ptypes[$key] ?? $this->getParamType($value));
+                $stmt->bindValue(
+                    $key,
+                    is_bool($value) ? (int)$value : $value,
+                    $ptypes[$key] ?? $this->getParamType($value)
+                );
             }
         }
 
@@ -315,10 +319,6 @@ class Db
             return PDO::PARAM_NULL;
         }
         if (is_int($value) || is_bool($value)) {
-            return PDO::PARAM_INT;
-        }
-        if (is_bool($value)) {
-            $value = (int)$value;
             return PDO::PARAM_INT;
         }
 
