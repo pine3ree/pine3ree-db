@@ -194,7 +194,8 @@ class Db
     /**
      * Create and return a new Select statement
      *
-     * @param array|string $columns
+     * @param array|string $columns An array of columns with optional key-as-alias,
+     *      a column or the asterisk
      * @param string|array|null $table
      * @return Select
      */
