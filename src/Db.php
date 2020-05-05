@@ -309,12 +309,16 @@ class Db
         return $this->getPDO()->lastInsertId($name);
     }
 
-    private function getParamType($value): int
+    private function getParamType(&$value): int
     {
         if (null === $value) {
             return PDO::PARAM_NULL;
         }
         if (is_int($value) || is_bool($value)) {
+            return PDO::PARAM_INT;
+        }
+        if (is_bool($value)) {
+            $value = (int)$value;
             return PDO::PARAM_INT;
         }
 
