@@ -175,14 +175,29 @@ class Select extends Query
         return $this;
     }
 
-    public function fetchAll(): array
-    {
+    /**
+     * Fetch all the rows resulting by executing the composed sql-statement
+     *
+     * @see \PDOStatement::fetchAll()
+     *
+     * @param int $fetch_mode
+     * @param type $fetch_argument
+     * @param array $ctor_args
+     * @return array
+     */
+    public function fetchAll(
+        int $fetch_mode = PDO::FETCH_ASSOC,
+        $fetch_argument = null,
+        array $ctor_args = null
+    ): array {
+        $this->statement->distinct();
+
         $stmt = $this->prepare(true);
         if ($stmt === false || false === $stmt->execute()) {
             return [];
         }
 
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $stmt->fetchAll(...func_get_args());
         $stmt->closeCursor();
 
         if (empty($rows)) {
@@ -202,8 +217,21 @@ class Select extends Query
         return $indexed;
     }
 
-    public function fetchOne(): ?array
-    {
+    /**
+     * Fetch the first row, if any, after executing the composed sql statement
+     *
+     * @see \PDOStatement::fetch()
+     *
+     * @param int $fetch_mode
+     * @param type $fetch_argument
+     * @param array $ctor_args
+     * @return array|null
+     */
+    public function fetchOne(
+        int $fetch_mode = PDO::FETCH_ASSOC,
+        $fetch_argument = null,
+        array $ctor_args = null
+    ) {
         $this->statement->limit(1);
 
         $stmt = $this->prepare(true);
@@ -211,7 +239,7 @@ class Select extends Query
             return null;
         }
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(...func_get_args());
         $stmt->closeCursor();
 
         return is_array($row) ? $row : null;
