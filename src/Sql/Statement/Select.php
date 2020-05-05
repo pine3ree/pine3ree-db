@@ -237,9 +237,7 @@ class Select extends DML
      */
     private function addJoin(string $type, string $table, string $alias, $cond = null): self
     {
-        if (! $cond instanceof On
-            && ! $cond instanceof Literal
-        ) {
+        if (! $cond instanceof On && ! $cond instanceof Literal) {
             $cond = new On(Sql::AND, $cond);
         }
 
