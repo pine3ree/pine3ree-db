@@ -185,7 +185,9 @@ abstract class Expression implements JsonSerializable
             return 'NULL';
         }
 
-        return "'{$this->escapeValue($value)}'";
+        $q = $this->qv;
+
+        return "{$q}{$this->escapeValue($value)}{$q}";
     }
 
     /**
