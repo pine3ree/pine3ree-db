@@ -9,7 +9,7 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
-use P3\Db\Driver;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\DML;
 use P3\Db\Sql\Statement\Select;

@@ -9,7 +9,7 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
-use P3\Db\Driver;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Condition\Having;
 use P3\Db\Sql\Condition\On;

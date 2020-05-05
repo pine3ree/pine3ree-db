@@ -9,7 +9,7 @@
 namespace P3\Db\Sql;
 
 use PDO;
-use P3\Db\Driver;
+use P3\Db\Sql\Driver;
 
 use function addcslashes;
 use function is_bool;

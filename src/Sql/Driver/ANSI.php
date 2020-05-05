@@ -6,14 +6,14 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Driver;
+namespace P3\Db\Sql\Driver;
 
-use P3\Db\Driver;
+use P3\Db\Sql\Driver;
 
 /**
- * Class MySql
+ * Class ANSI
  */
-class Sqlite extends Driver
+class ANSI extends Driver
 {
     protected $qr = '"';
     protected $ql = '"';

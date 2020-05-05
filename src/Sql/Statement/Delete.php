@@ -11,7 +11,7 @@ namespace P3\Db\Sql\Statement\DML;
 namespace P3\Db\Sql\Statement;
 
 use RuntimeException;
-use P3\Db\Driver;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\DML;
