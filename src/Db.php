@@ -11,7 +11,6 @@ namespace P3\Db;
 use PDO;
 use PDOStatement;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Predicate\Comparison;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Delete;
 use P3\Db\Sql\Statement\Insert;
@@ -87,13 +86,15 @@ class Db
      */
     public function fetchOneBy(string $table, string $column, $value): ?array
     {
-        return $this->fetchOne($table, new Comparison($column, '=', $value));
+        return $this->fetchOne(
+            $table,
+            new Predicate\Comparison($column, '=', $value)
+        );
     }
 
     public function fetchOne(string $table, $where = null, $order = null): ?array
     {
         $select = $this->select()->from($table);
-
         if (isset($where)) {
             $select->where($where);
         }
