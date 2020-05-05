@@ -483,8 +483,6 @@ class Select extends DML
     public function indexBy(string $indexBy): self
     {
         $this->indexBy = $indexBy;
-        $this->groupBy($indexBy);
-
         return $this;
     }
 
