@@ -12,6 +12,7 @@ use PDO;
 use P3\Db\Db;
 use P3\Db\Query;
 use P3\Db\Sql\Statement\Select as SqlSelect;
+use RuntimeException;
 
 /**
  * Class Select
@@ -185,11 +186,8 @@ class Select extends Query
      * @param array $ctor_args
      * @return array
      */
-    public function fetchAll(
-        int $fetch_mode = PDO::FETCH_,
-        $fetch_argument = null,
-        array $ctor_args = null
-    ): array {
+    public function fetchAll(): array
+    {
         $this->statement->distinct();
 
         $stmt = $this->prepare(true);
@@ -197,10 +195,10 @@ class Select extends Query
             return [];
         }
 
-        $rows = $stmt->fetchAll(...func_get_args());
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
 
-        if (empty($rows)) {
+        if (empty($rows) || !is_array($rows)) {
             return [];
         }
 
@@ -208,35 +206,27 @@ class Select extends Query
         if (empty($indexBy)) {
             return $rows;
         }
-
-        $indexed = [];
-        foreach ($rows as $index => $row) {
-            if (is_array($row)) {
-                $index = $row[$indexBy] ?? $index;
-            } elseif (is_object($row)) {
-                $index = $row->{$indexBy} ?? $index;
-            }
-            $indexed[$index] = $row;
+        if (!isset($rows[0][$indexBy])) {
+            throw new RuntimeException(
+                "The indexBy identifier `{$indexBy}` is not a valid key in the result rows!"
+            );
         }
 
-        return $indexed;
+        $indexed = [];
+        foreach ($rows as $row) {
+            $indexed[$row[$indexBy]] = $row;
+        }
+
+        return $rows;
     }
 
     /**
      * Fetch the first row, if any, after executing the composed sql statement
      *
-     * @see \PDOStatement::fetch()
-     *
-     * @param int $fetch_mode
-     * @param type $fetch_argument
-     * @param array $ctor_args
      * @return array|null
      */
-    public function fetchOne(
-        int $fetch_mode = PDO::FETCH_ASSOC,
-        $fetch_argument = null,
-        array $ctor_args = null
-    ) {
+    public function fetchOne()
+    {
         $this->statement->limit(1);
 
         $stmt = $this->prepare(true);
@@ -244,9 +234,29 @@ class Select extends Query
             return null;
         }
 
-        $row = $stmt->fetch(...func_get_args());
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
 
         return is_array($row) ? $row : null;
+    }
+
+    /**
+     * Fetch a column of first row, if any, after executing the composed sql statement
+     *
+     * @return null|string
+     */
+    public function fetchScalar(string $identifier): ?string
+    {
+        $this->statement->limit(1);
+
+        $stmt = $this->prepare(true);
+        if ($stmt === false || false === $stmt->execute()) {
+            return null;
+        }
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        return $row[$identifier] ?? null;
     }
 }
