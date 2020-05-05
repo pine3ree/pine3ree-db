@@ -25,11 +25,19 @@ class Delete extends Query
         parent::__construct($db, new SqlDelete($table));
     }
 
+    /**
+     * @see SqlDelete::from()
+     * @return $this
+     */
     public function from($table)
     {
         $this->statement->from($table);
     }
 
+    /**
+     * @see SqlDelete::where()
+     * @return $this
+     */
     public function where($where)
     {
         $this->statement->where($where);

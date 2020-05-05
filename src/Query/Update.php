@@ -26,12 +26,20 @@ class Update extends Query
         parent::__construct($db, new SqlUpdate($table));
     }
 
+    /**
+     * @see SqlUpdate::table()
+     * @return $this
+     */
     public function table($table): self
     {
         $this->statement->table($table);
         return $this;
     }
 
+    /**
+     * @see SqlUpdate::set()
+     * @return $this
+     */
     public function set($columnOrRow, $value = null): self
     {
         $this->statement->set($columnOrRow, $value);
