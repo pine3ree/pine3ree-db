@@ -61,19 +61,4 @@ abstract class Condition extends PredicateSet
 
         return $this->__name;
     }
-
-    /**
-     * Strip any surrounding matching pair of parentheses
-     *
-     * @param string $sql
-     * @return bool
-     */
-    protected function stripParentheses(string $sql): string
-    {
-        if ('(' === substr($sql, 0, 1) && substr($sql, -1) === ')') {
-            return mb_substr($sql, 1, -1);
-        }
-
-        return $sql;
-    }
 }
