@@ -33,9 +33,14 @@ class Expression implements ExpressionInterface
     protected $sql;
 
     /**
-     * @var string The quote char for identifiers
+     * @var string The quote left char for identifiers
      */
-    protected $qi = '`';
+    protected $ql = '`';
+
+    /**
+     * @var string The quote right char for identifiers
+     */
+    protected $qr = '`';
 
     /**
      * @var string The quote char for values
@@ -131,9 +136,7 @@ class Expression implements ExpressionInterface
      */
     protected function quoteIdentifier(string $identifier): string
     {
-        $q = $this->qi;
-
-        if ($identifier === '*' || $q === '') {
+        if ($identifier === '*') {
             return $identifier;
         }
 
@@ -141,25 +144,29 @@ class Expression implements ExpressionInterface
             return $identifier;
         }
 
-        $identifier = trim($identifier, $q);
+        $ql = $this->ql;
+        $qr = $this->qr;
+
+        $identifier = ltrim(rtrim($identifier, $qr), $ql);
 
         if (false === strpos($identifier, '.')) {
-            return "{$q}{$identifier}{$q}";
+            return "{$ql}{$identifier}{$qr}";
         }
 
-        $quoted = $q . str_replace('.', "{$q}.{$q}", $identifier) . $q;
-        $quoted = str_replace("{$q}*{$q}", '*', $quoted); // unquote the sql asterisk
+        $quoted = $ql . str_replace('.', "{$qr}.{$ql}", $identifier) . $qr;
+        $quoted = str_replace("{$ql}*{$qr}", '*', $quoted); // unquote the sql asterisk
 
         return $quoted;
     }
 
     protected function isQuoted(string $identifier)
     {
-        $q = $this->qi;
+        $ql = $this->ql;
+        $qr = $this->qr;
 
-        return ($q !== ''
-            && $q === substr($identifier, 0, 1)
-            && $q === substr($identifier, -1)
+        return ($ql !== ''
+            && $ql === substr($identifier, 0, 1)
+            && $qr === substr($identifier, -1)
         );
     }
 
@@ -172,8 +179,10 @@ class Expression implements ExpressionInterface
      */
     protected function quoteAlias(string $alias): string
     {
-        $q = $this->qi;
-        return $q . trim($alias, $q) . $q;
+        $ql = $this->ql;
+        $qr = $this->qr;
+
+        return $ql. ltrim(rtrim($identifier, $qr), $ql) . $qr;
     }
 
     /**
