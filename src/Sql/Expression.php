@@ -10,6 +10,7 @@ namespace P3\Db\Sql;
 
 use JsonSerializable;
 use PDO;
+use P3\Db\Sql\ExpressionInterface;
 
 use function addcslashes;
 use function is_bool;
@@ -24,7 +25,7 @@ use function trim;
  * This abstract class represents a generic SQL Expression and is the ancestor
  * of all the other sql-related classes.
  */
-abstract class Expression implements JsonSerializable
+class Expression implements ExpressionInterface
 {
     /**
      * @var string The rendered SQL statement string with optional parameter markers
@@ -61,6 +62,15 @@ abstract class Expression implements JsonSerializable
      */
     protected const MAX_INDEX = 999999;
 
+
+    public function __construct(string $expression, array $params = [])
+    {
+        $this->sql = trim($expression);
+        foreach ($params as $key => $value) {
+            $this->setParam($expression, $value);
+        }
+    }
+
     public function hasParams(): bool
     {
         return !empty($this->params);
@@ -93,7 +103,10 @@ abstract class Expression implements JsonSerializable
         }
     }
 
-    abstract public function getSQL(): string;
+    public function getSQL(): string
+    {
+        return $this->sql ?? '';
+    }
 
     public function __toString(): string
     {
@@ -259,13 +272,5 @@ abstract class Expression implements JsonSerializable
     public function __clone()
     {
         unset($this->sql);
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'class'  => static::class,
-            'getSQL' => $this->getSQL(),
-        ];
     }
 }

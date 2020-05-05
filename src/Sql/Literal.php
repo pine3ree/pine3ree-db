@@ -17,11 +17,6 @@ class Literal extends Expression
 {
     public function __construct(string $literal)
     {
-        $this->sql = trim($literal);
-    }
-
-    public function getSQL(): string
-    {
-        return $this->sql;
+        parent::__construct($literal);
     }
 }

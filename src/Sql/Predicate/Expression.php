@@ -22,8 +22,10 @@ class Expression extends Predicate
 
     public function __construct(string $expression, array $params = [])
     {
-        $this->sql = $expression;
-        $this->params = $params;
+        $this->sql = trim($expression);
+        foreach ($params as $key => $value) {
+            $this->setParam($expression, $value);
+        }
     }
 
     public function getSQL(): string
