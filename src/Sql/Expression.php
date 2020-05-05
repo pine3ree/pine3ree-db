@@ -185,22 +185,7 @@ class Expression implements ExpressionInterface
     }
 
     /**
-     * Escape a value, when appliable, for SQL expression
-     *
-     * @param mixed $value The target identifier (column or alias)
-     * @deprecated
-     */
-    protected function escapeValue($value): string
-    {
-        if (null === $value) {
-            return 'NULL';
-        }
-
-        return addcslashes((string)$value, "\x00\n\r\\'\"\x1a");
-    }
-
-    /**
-     * Quote a value, when appliable, for SQL expression
+     * Quote a value, when necessary, for SQL expression
      *
      * @param mixed $value The target identifier (column or alias)
      * @deprecated
@@ -213,8 +198,22 @@ class Expression implements ExpressionInterface
         if (is_int($value)) {
             return (string)$value;
         }
+        if (is_bool($value)) {
+            return (string)(int)$value;
+        }
 
-        return "{$this->ql}{$this->escapeValue($value)}{$this->qr}";
+        return "{$this->ql}{$this->escapeValue((string)$value)}{$this->qr}";
+    }
+
+    /**
+     * Escape a string for SQL expression
+     *
+     * @param string $value
+     * @deprecated
+     */
+    protected function escape(string $value): string
+    {
+        return addcslashes($value, "\x00\n\r\\'\"\x1a");
     }
 
     /**
