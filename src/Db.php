@@ -96,10 +96,17 @@ class Db
             return $this->driver;
         }
 
-        $driver_name = $this->getPDO()->getAttribute(PDO::ATTR_DRIVER_NAME);
-        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver\ANSI::class;
+        if (isset($this->pdo)) {
+            $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+            $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
+            // cache the driver instance
+            return $this->driver = new $driver_fqcn();
+        }
 
-        return $this->driver = new $driver_fqcn();
+        $driver_name = explode(':', $this->dsn)[0];
+        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
+        // do not cache the driver instance
+        return new $driver_fqcn();
     }
 
     /**

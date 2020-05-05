@@ -9,9 +9,9 @@
 namespace P3\Db\Sql;
 
 /**
- * Interface Driver
+ * The default ANSI SQL Driver
  */
-abstract class Driver
+class Driver
 {
     /**
      * @var string The quote left char for identifiers/aliases, default is ANSI '"'
@@ -63,7 +63,7 @@ abstract class Driver
     {
         return ($this->ql !== ''
             && $this->ql === substr($identifier, 0, 1)
-            && $this->ql === substr($identifier, -1)
+            && $this->qr === substr($identifier, -1)
         );
     }
 
