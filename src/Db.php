@@ -324,24 +324,4 @@ class Db
 
         return PDO::PARAM_STR;
     }
-//
-//    /**
-//     * Prepare and execute a Statement returning the result of PDOStatement::execute()
-//     *
-//     * @param \P3\Db\Statement $statement
-//     * @return bool
-//     */
-//    public function executeStatement(Statement $statement): bool
-//    {
-//        $stmt = $this->prepare($statement, true);
-//
-//        if ($stmt instanceof PDOStatement) {
-//            $result = $stmt->execute();
-//            $stmt->closeCursor();
-//
-//            return $result;
-//        }
-//
-//        return false;
-//    }
 }
