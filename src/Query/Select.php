@@ -26,7 +26,7 @@ class Select extends Query
     }
 
     /**
-     * @param string $quantifier
+     * @see SqlSelect::quantifier()
      * @return $this
      */
     public function quantifier(string $quantifier): self
@@ -36,7 +36,7 @@ class Select extends Query
     }
 
     /**
-     * @param string $quantifier
+     * @see SqlSelect::distinct()
      * @return $this
      */
     public function distinct(): self
@@ -46,7 +46,7 @@ class Select extends Query
     }
 
     /**
-     * @param array|string $columns
+     * @see SqlSelect::columns()
      * @return $this
      */
     public function columns($columns): self
@@ -55,6 +55,10 @@ class Select extends Query
         return $this;
     }
 
+    /**
+     * @see SqlSelect::from()
+     * @return $this
+     */
     public function from($table, string $alias = null): self
     {
         $this->statement->from($table, $alias);
@@ -141,12 +145,20 @@ class Select extends Query
         return $this;
     }
 
+    /**
+     * @see SqlSelect::limit()
+     * @return $this
+     */
     public function limit(int $limit): self
     {
         $this->statement->limit($limit);
         return $this;
     }
 
+    /**
+     * @see SqlSelect::offset()
+     * @return $this
+     */
     public function offset(int $offset): self
     {
         $this->statement->offset($offset);
