@@ -11,12 +11,12 @@ namespace P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver;
 
 /**
- * Sqlite sql-driver
+ * SqlSrv sql-driver
  */
-class Sqlite extends Driver
+class SqlSrv extends Driver
 {
     public function __construct()
     {
-        parent::__construct('"', '"', "'");
+        parent::__construct('[', ']', "'");
     }
 }
