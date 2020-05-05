@@ -186,7 +186,7 @@ class Select extends Query
      * @return array
      */
     public function fetchAll(
-        int $fetch_mode = PDO::FETCH_ASSOC,
+        int $fetch_mode = PDO::FETCH_,
         $fetch_argument = null,
         array $ctor_args = null
     ): array {
@@ -205,13 +205,18 @@ class Select extends Query
         }
 
         $indexBy = $this->statement->indexedBy();
-        if (empty($indexBy) || !isset($rows[0][$indexBy])) {
+        if (empty($indexBy)) {
             return $rows;
         }
 
         $indexed = [];
-        foreach ($rows as $row) {
-            $indexed[$row[$indexBy]] = $row;
+        foreach ($rows as $index => $row) {
+            if (is_array($row)) {
+                $index = $row[$indexBy] ?? $index;
+            } elseif (is_object($row)) {
+                $index = $row->{$indexBy} ?? $index;
+            }
+            $indexed[$index] = $row;
         }
 
         return $indexed;
