@@ -78,7 +78,7 @@ abstract class Driver
         $ql = $this->ql;
         $qr = $this->qr;
 
-        return $ql. ltrim(rtrim($identifier, $qr), $ql) . $qr;
+        return $ql. ltrim(rtrim($alias, $qr), $ql) . $qr;
     }
 
     /**
