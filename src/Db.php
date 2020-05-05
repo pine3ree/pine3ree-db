@@ -11,6 +11,7 @@ namespace P3\Db;
 use PDO;
 use PDOStatement;
 use P3\Db\Sql\Predicate;
+use P3\Db\Sql\Predicate\Comparison;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Delete;
 use P3\Db\Sql\Statement\Insert;
@@ -77,30 +78,16 @@ class Db
     }
 
     /**
-     * Fetch a single row for given primary-key value, if any
+     * Fetch a single row for given column value, if any
      *
      * @param string $table
-     * @param int|string $pk_value
-     * @param string $pk_column The primary-key table column
+     * @param string $column
+     * @param mixed $value
      * @return array|null
      */
-    public function fetchByPK(string $table, $pk_value, string $pk = 'id'): ?array
+    public function fetchOneBy(string $table, string $column, $value): ?array
     {
-        $select = $this->select()->from($table);
-        $select->where->addPredicate(
-            new Predicate\Comparison($pk, '=', $pk_value)
-        );
-        $select;
-
-        $stmt = $this->prepare($select, true);
-        if (false === $stmt || false === $stmt->execute()) {
-            return null;
-        }
-
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stmt->closeCursor();
-
-        return is_array($row) ? $row : null;
+        return $this->fetchOne($table, new Comparison($column, '=', $value));
     }
 
     public function fetchOne(string $table, $where = null, $order = null): ?array
