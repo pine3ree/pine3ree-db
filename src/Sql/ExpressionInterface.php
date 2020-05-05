@@ -31,5 +31,4 @@ interface ExpressionInterface
     public function getParams(): array;
 
     public function getParamsTypes(): array;
-
 }
