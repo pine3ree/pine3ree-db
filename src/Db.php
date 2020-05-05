@@ -10,6 +10,7 @@ namespace P3\Db;
 
 use PDO;
 use PDOStatement;
+use P3\Db\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Delete;
@@ -27,15 +28,28 @@ use function is_int;
  */
 class Db
 {
-    /**
-     * @var PDO
-     */
+    /** @var PDO */
     private $pdo;
 
+    /** @var string */
     private $dsn;
+
+    /** @var string|null */
     private $username;
+
+    /** @var string|null */
     private $password;
+
+    /** @var array */
     private $options = [];
+
+    /** @var Driver */
+    private $driver;
+
+    private const DRIVER_CLASS = [
+        'mysql'  => Driver\MySql::class,
+        'sqlite' => Driver\Sqlite::class,
+    ];
 
     public function __construct(
         string $dsn,
@@ -49,6 +63,10 @@ class Db
         if (isset($options)) {
             $this->options = $options;
         }
+
+        $driver = explode(':', $dsn)[0];
+        $driver_class = self::DRIVER_CLASS[$driver] ?? Driver\ANSI::class;
+        $this->driver = new $driver_class();
     }
 
     private function connect()
@@ -74,6 +92,11 @@ class Db
             $this->password,
             $this->options
         );
+    }
+
+    public function getDriver(): ?Driver
+    {
+        return $this->driver;
     }
 
     /**
@@ -292,7 +315,7 @@ class Db
      */
     public function prepare(Statement $statement, bool $bind_params = false)
     {
-        $stmt = $this->getPDO()->prepare($statement->getSQL());
+        $stmt = $this->getPDO()->prepare($statement->getSQL($this->driver));
 
         if ($bind_params && $stmt instanceof PDOStatement) {
             $params_types = $statement->getParamsTypes();
