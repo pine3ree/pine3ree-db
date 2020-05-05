@@ -102,7 +102,7 @@ class Db
      */
     public function fetchOne(string $table, $where = null, $order = null): ?array
     {
-        $select = $this->select()->distinct()->from($table);
+        $select = $this->select()->from($table);
         if (isset($where)) {
             $select->where($where);
         }
