@@ -32,6 +32,16 @@ abstract class Expression implements JsonSerializable
     protected $sql;
 
     /**
+     * @var string The quote char for identifiers
+     */
+    protected $qi = '`';
+
+    /**
+     * @var string The quote char for values
+     */
+    protected $qv = "'";
+
+    /**
      * @var array<int|string: mixed> A collection of indexed substitution parameters
      */
     protected $params = [];
@@ -99,16 +109,17 @@ abstract class Expression implements JsonSerializable
      * Quote a yet unquoted identifier that represents a table column
      *
      * @param string $identifier The target identifier (column, table.column, t.column)
-     * @param string $q The quote char
      * @return string
      */
-    protected function quoteIdentifier(string $identifier, string $q = '`'): string
+    protected function quoteIdentifier(string $identifier): string
     {
+        $q = $this->qi;
+
         if ($identifier === '*' || $q === '') {
             return $identifier;
         }
 
-        if ($this->isQuoted($identifier, $q)) {
+        if ($this->isQuoted($identifier)) {
             return $identifier;
         }
 
@@ -124,8 +135,10 @@ abstract class Expression implements JsonSerializable
         return $quoted;
     }
 
-    protected function isQuoted(string $identifier, string $q = '`')
+    protected function isQuoted(string $identifier)
     {
+        $q = $this->qi;
+
         return ($q !== ''
             && $q === substr($identifier, 0, 1)
             && $q === substr($identifier, -1)
@@ -139,8 +152,9 @@ abstract class Expression implements JsonSerializable
      * @param string $q The quote char
      * @return string
      */
-    protected function quoteAlias(string $alias, string $q = '`'): string
+    protected function quoteAlias(string $alias): string
     {
+        $q = $this->qi;
         return $q . trim($alias, $q) . $q;
     }
 
