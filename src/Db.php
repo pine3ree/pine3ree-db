@@ -336,4 +336,19 @@ class Db
 
         return PDO::PARAM_STR;
     }
+
+    public function beginTransaction(): bool
+    {
+        return $this->getPDO()->beginTransaction();
+    }
+
+    public function commit(): bool
+    {
+        return $this->getPDO()->commit();
+    }
+
+    public function rollBack(): bool
+    {
+        return $this->getPDO()->rollBack();
+    }
 }
