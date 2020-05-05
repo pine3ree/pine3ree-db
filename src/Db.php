@@ -63,10 +63,6 @@ class Db
         if (isset($options)) {
             $this->options = $options;
         }
-
-        $driver = explode(':', $dsn)[0];
-        $driver_class = self::DRIVER_CLASS[$driver] ?? Driver\ANSI::class;
-        $this->driver = new $driver_class();
     }
 
     private function connect()
@@ -94,9 +90,16 @@ class Db
         );
     }
 
-    public function getDriver(): ?Driver
+    public function getDriver(): Driver
     {
-        return $this->driver;
+        if (isset($this->driver)) {
+            return $this->driver;
+        }
+
+        $driver_name = $this->getPDO()->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver\ANSI::class;
+
+        return $this->driver = new $driver_fqcn();
     }
 
     /**
@@ -315,7 +318,7 @@ class Db
      */
     public function prepare(Statement $statement, bool $bind_params = false)
     {
-        $stmt = $this->getPDO()->prepare($statement->getSQL($this->driver));
+        $stmt = $this->getPDO()->prepare($statement->getSQL($this->getDriver()));
 
         if ($bind_params && $stmt instanceof PDOStatement) {
             $params_types = $statement->getParamsTypes();
