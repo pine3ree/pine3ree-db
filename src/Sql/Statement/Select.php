@@ -142,10 +142,19 @@ class Select extends DML
         }
 
         foreach ($columns as $key => $column) {
-            if (!is_string($column) || '' === $column) {
+            if (is_string($column)) {
+                if ('' === $column) {
+                    throw new InvalidArgumentException(
+                        "A table column string must be non empty string for index `{$key}`!"
+                    );
+                }
+                continue;
+            }
+            if (! $column instanceof Literal || '' === $column->getSQL()) {
                 throw new InvalidArgumentException(sprintf(
-                    "A table column must be a non emtoy string, `%s provided` for index `{$key}`!",
-                    gettype($column)
+                    "A table column must be a non empty string or Literal "
+                    . "expression, `%s provided` for index `{$key}`!",
+                    is_object($column) ? get_class($column) : gettype($column)
                 ));
             }
         }
