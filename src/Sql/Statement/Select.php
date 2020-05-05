@@ -122,6 +122,13 @@ class Select extends DML
             $columns = [$columns => $columns];
         }
 
+        // trim column names
+        foreach ($columns as $key => $column) {
+            if (is_string($column)) {
+                $column = $columns[$key] = trim($column);
+            }
+        }
+
         self::assertValidColumns($columns);
 
         $this->columns = $columns;
@@ -145,7 +152,7 @@ class Select extends DML
             if (is_string($column)) {
                 if ('' === $column) {
                     throw new InvalidArgumentException(
-                        "A table column string must be non empty string for index `{$key}`!"
+                        "A table column string must be non empty string for index/column-alias `{$key}`!"
                     );
                 }
                 continue;
@@ -153,14 +160,11 @@ class Select extends DML
             if (! $column instanceof Literal || '' === $column->getSQL()) {
                 throw new InvalidArgumentException(sprintf(
                     "A table column must be a non empty string or Literal "
-                    . "expression, `%s provided` for index `{$key}`!",
+                    . "expression, `%s provided` for index/column-alias `{$key}`!",
                     is_object($column) ? get_class($column) : gettype($column)
                 ));
             }
         }
-
-        $columns = array_map('trim', $columns);
-
     }
 
     private function getColumnsSQL(): string
