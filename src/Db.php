@@ -297,7 +297,7 @@ class Db
             $params = $statement->getParams();
             $ptypes = $statement->getParamsTypes();
             foreach ($params as $key => $value) {
-                $stmt->bindValue($key, $value, $ptypes[$key] ?? PDO::PARAM_STR);
+                $stmt->bindValue($key, $value, $ptypes[$key] ?? $this->getParamType($value));
             }
         }
 
@@ -307,6 +307,18 @@ class Db
     public function lastInsertId(string $name = null): string
     {
         return $this->getPDO()->lastInsertId($name);
+    }
+
+    private function getParamType($value): int
+    {
+        if (null === $value) {
+            return PDO::PARAM_NULL;
+        }
+        if (is_int($value) || is_bool($value)) {
+            return PDO::PARAM_INT;
+        }
+
+        return PDO::PARAM_STR;
     }
 //
 //    /**
