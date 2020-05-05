@@ -33,12 +33,12 @@ class Expression implements ExpressionInterface
     protected $sql;
 
     /**
-     * @var string The quote left char for identifiers
+     * @var string The quote left char for identifiers/aliases
      */
     protected $ql = '`';
 
     /**
-     * @var string The quote right char for identifiers
+     * @var string The quote right char for identifiers/aliases
      */
     protected $qr = '`';
 
@@ -159,7 +159,7 @@ class Expression implements ExpressionInterface
         return $quoted;
     }
 
-    protected function isQuoted(string $identifier)
+    private function isQuoted(string $identifier)
     {
         $ql = $this->ql;
         $qr = $this->qr;
@@ -174,7 +174,6 @@ class Expression implements ExpressionInterface
      * Quote an alias
      *
      * @param string $alias The alias string to quote
-     * @param string $q The quote char
      * @return string
      */
     protected function quoteAlias(string $alias): string
@@ -211,10 +210,11 @@ class Expression implements ExpressionInterface
         if (null === $value) {
             return 'NULL';
         }
+        if (is_int($value)) {
+            return (string)$value;
+        }
 
-        $q = $this->qv;
-
-        return "{$q}{$this->escapeValue($value)}{$q}";
+        return "{$this->ql}{$this->escapeValue($value)}{$this->qr}";
     }
 
     /**
