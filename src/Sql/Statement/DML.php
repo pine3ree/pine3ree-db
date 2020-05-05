@@ -64,12 +64,11 @@ abstract class DML extends Statement
      * Prepend the dml-statement primary-table alias if not already present
      *
      * @param string $column
-     * @param string $q
      * @return string
      */
-    protected function normalizeColumn(string $column, string $q = '`'): string
+    protected function normalizeColumn(string $column): string
     {
-        $column = str_replace($q, '', $column); // unquote the column first
+        $column = trim($column, $this->qi); // unquote the column first
         if (false === strpos($column, '.')) {
             return $this->alias ? "{$this->alias}.{$column}" : $column;
         }
