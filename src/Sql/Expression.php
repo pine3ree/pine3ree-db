@@ -55,6 +55,11 @@ class Expression implements ExpressionInterface
      */
     protected $params_types = [];
 
+    /**
+     * The parameter index counter
+     *
+     * @var int
+     */
     protected static $index = 1;
 
     /**
