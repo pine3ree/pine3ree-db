@@ -33,14 +33,14 @@ class Expression implements ExpressionInterface
     protected $sql;
 
     /**
-     * @var string The quote left char for identifiers/aliases
+     * @var string The quote left char for identifiers/aliases, default is ANSI '"'
      */
-    protected $ql = '`';
+    protected $ql = '"';
 
     /**
-     * @var string The quote right char for identifiers/aliases
+     * @var string The quote right char for identifiers/aliases, default is ANSI '"'
      */
-    protected $qr = '`';
+    protected $qr = '"';
 
     /**
      * @var string The quote char for values
