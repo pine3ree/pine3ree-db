@@ -165,6 +165,16 @@ class Select extends Query
         return $this;
     }
 
+    /**
+     * @see SqlSelect::indexBy()
+     * @return $this
+     */
+    public function indexBy(string $indexBy): self
+    {
+        $this->statement->indexBy($indexBy);
+        return $this;
+    }
+
     public function fetchAll(): array
     {
         $stmt = $this->prepare(true);
@@ -175,7 +185,21 @@ class Select extends Query
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
 
-        return is_array($rows) ? $rows : [];
+        if (empty($rows)) {
+            return [];
+        }
+
+        $indexBy = $this->statement->indexedBy();
+        if (empty($indexBy) || !isset($rows[0][$indexBy])) {
+            return $rows;
+        }
+
+        $indexed = [];
+        foreach ($rows as $row) {
+            $indexed[$row[$indexBy]] = $row;
+        }
+
+        return $indexed;
     }
 
     public function fetchOne(): ?array

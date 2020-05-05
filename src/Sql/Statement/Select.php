@@ -69,6 +69,9 @@ class Select extends DML
     /** @var int|null */
     protected $offset;
 
+    /** @var string|null */
+    protected $indexBy;
+
     public function __construct($columns = null, $table = null)
     {
         if (!empty($columns)) {
@@ -337,7 +340,12 @@ class Select extends DML
             return '';
         }
 
-        return "GROUP BY " . implode(", ", $this->groupBy);
+        $groupBy = $this->groupBy;
+        foreach ($groupBy as $key => $identifier) {
+            $groupBy[$key] = $this->quoteIdentifier($identifier);
+        }
+
+        return "GROUP BY " . implode(", ", $groupBy);
     }
 
     /**
@@ -470,6 +478,19 @@ class Select extends DML
         }
 
         return $this->sqls['limit'] = $sql;
+    }
+
+    public function indexBy(string $indexBy): self
+    {
+        $this->indexBy = $indexBy;
+        $this->groupBy($indexBy);
+
+        return $this;
+    }
+
+    public function indexedBy(): ?string
+    {
+        return $this->indexBy;
     }
 
     public function getSQL(bool $stripConditionsParentheses = false): string
