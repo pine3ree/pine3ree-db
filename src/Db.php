@@ -92,6 +92,14 @@ class Db
         );
     }
 
+    /**
+     * Fetch first rows from a table matching provided criteria, if any
+     *
+     * @param string $table
+     * @param Where|Predicate|array|string $where
+     * @param string|array $order
+     * @return array|null
+     */
     public function fetchOne(string $table, $where = null, $order = null): ?array
     {
         $select = $this->select()->from($table);
@@ -114,6 +122,16 @@ class Db
         return is_array($row) ? $row : null;
     }
 
+    /**
+     * Fetch all rows from a table using provided criteria
+     *
+     * @param string $table
+     * @param Where|Predicate|array|string $where
+     * @param string|array $order
+     * @param int $limit
+     * @param int $offset
+     * @return array[]
+     */
     public function fetchAll(
         string $table,
         $where = null,
