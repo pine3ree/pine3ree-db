@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use P3\Db\Driver;
 use P3\Db\Sql\Predicate;
 
 /**
@@ -25,7 +26,7 @@ class Literal extends Predicate
         $this->literal = $literal;
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         return $this->literal ?? '';
     }

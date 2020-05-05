@@ -9,6 +9,7 @@
 namespace P3\Db\Sql;
 
 use InvalidArgumentException;
+use P3\Db\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
@@ -253,7 +254,7 @@ class PredicateSet extends Predicate
         return empty($this->predicates);
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -261,7 +262,7 @@ class PredicateSet extends Predicate
 
         $sqls = [];
         foreach ($this->predicates as $predicate) {
-            $sql = $predicate->getSQL();
+            $sql = $predicate->getSQL($driver);
             if ($this->isEmptySQL($sql)) {
                 continue;
             }
@@ -280,14 +281,5 @@ class PredicateSet extends Predicate
         $AND_OR = self::COMB[$this->combined_by];
 
         return $this->sql = "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'class'  => static::class,
-            'getSQL' => $this->getSQL(),
-            'comby' => self::COMB[$this->combined_by],
-        ];
     }
 }

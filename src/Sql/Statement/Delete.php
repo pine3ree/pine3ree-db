@@ -11,6 +11,7 @@ namespace P3\Db\Sql\Statement\DML;
 namespace P3\Db\Sql\Statement;
 
 use RuntimeException;
+use P3\Db\Driver;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\DML;
@@ -53,7 +54,7 @@ class Delete extends DML
         return $this;
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -65,9 +66,9 @@ class Delete extends DML
             );
         }
 
-        $table = $this->quoteIdentifier($this->table);
+        $table = ($driver ?? $this)->quoteIdentifier($this->table);
 
-        $where_sql = $this->getWhereSQL();
+        $where_sql = $this->getWhereSQL($driver);
         if ($this->isEmptySQL($where_sql)) {
             throw new RuntimeException(
                 "DELETE queries without conditions are not allowed!"
@@ -90,9 +91,9 @@ class Delete extends DML
         return $this;
     }
 
-    private function getWhereSQL(): string
+    private function getWhereSQL(Driver $driver = null): string
     {
-        return $this->getConditionSQL('where');
+        return $this->getConditionSQL('where', $driver);
     }
 
     public function __get(string $name)

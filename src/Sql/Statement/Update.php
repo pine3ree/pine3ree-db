@@ -9,12 +9,13 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
-use RuntimeException;
+use P3\Db\Driver;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\DML;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
+use RuntimeException;
 
 /**
  * This class represents an UPDATE sql-statement expression
@@ -95,15 +96,15 @@ class Update extends DML
         ));
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
         }
 
-        $base_sql = $this->getBaseSQL();
+        $base_sql = $this->getBaseSQL($driver);
 
-        $where_sql = $this->getWhereSQL();
+        $where_sql = $this->getWhereSQL($driver);
         if ($this->isEmptySQL($where_sql)) {
             throw new RuntimeException(
                 "UPDATE queries without conditions are not allowed!"
@@ -114,7 +115,7 @@ class Update extends DML
         return $this->sql;
     }
 
-    private function getBaseSQL(): string
+    private function getBaseSQL(Driver $driver = null): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(
@@ -128,14 +129,18 @@ class Update extends DML
             );
         }
 
-        $table = $this->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias = $this->quoteAlias($this->alias)) {
+        $quoter = $driver ?? $this;
+
+        $table = $quoter->quoteIdentifier($this->table);
+        if (!empty($this->alias) && $alias = $quoter->quoteAlias($this->alias)) {
             $table .= " {$alias}";
         }
 
+        $quoter = $driver ?? $this;
+
         $set = [];
         foreach ($this->set as $column => $value) {
-            $column = $this->quoteIdentifier($column);
+            $column = $quoter->quoteIdentifier($column);
             $param  = $value instanceof Literal
                 ? $val->getSQL()
                 : $this->createNamedParam($value);
@@ -157,9 +162,9 @@ class Update extends DML
         return $this;
     }
 
-    private function getWhereSQL(): string
+    private function getWhereSQL(Driver $driver = null): string
     {
-        return $this->getConditionSQL('where');
+        return $this->getConditionSQL('where', $driver);
     }
 
     public function __get(string $name)

@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Statement\Traits;
 
+use P3\Db\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Condition;
 use P3\Db\Sql\Predicate;
@@ -61,7 +62,7 @@ trait ConditionAwareTrait
      * @param string $property The sql-statement property in which the clause is stored
      * @return string
      */
-    private function getConditionSQL(string $property): string
+    private function getConditionSQL(string $property, Driver $driver = null): string
     {
         if (!isset($this->{$property})) {
             return '';
@@ -69,7 +70,7 @@ trait ConditionAwareTrait
 
         $condition = $this->{$property};
 
-        $sql = $condition->getSQL();
+        $sql = $condition->getSQL($driver);
         if ($condition->hasParams()) {
             $this->importParams($condition);
         }

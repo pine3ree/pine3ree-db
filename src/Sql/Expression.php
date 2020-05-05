@@ -8,8 +8,8 @@
 
 namespace P3\Db\Sql;
 
-use JsonSerializable;
 use PDO;
+use P3\Db\Driver;
 use P3\Db\Sql\ExpressionInterface;
 
 use function addcslashes;
@@ -113,14 +113,9 @@ class Expression implements ExpressionInterface
         }
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         return $this->sql ?? '';
-    }
-
-    public function __toString(): string
-    {
-        return $this->getSQL();
     }
 
     protected function isEmptySQL($sql): bool

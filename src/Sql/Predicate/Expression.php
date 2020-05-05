@@ -28,7 +28,7 @@ class Expression extends Predicate
         }
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         return $this->sql ?? '';
     }

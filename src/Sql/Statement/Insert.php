@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
+use P3\Db\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\DML;
 use P3\Db\Sql\Statement\Select;
@@ -267,7 +268,7 @@ class Insert extends DML
         return $this;
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -286,9 +287,9 @@ class Insert extends DML
         }
 
         $insert  = $this->ignore ? "INSERT IGNORE" : "INSERT";
-        $table   = $this->quoteIdentifier($this->table);
-        $columns = $this->getColumnsSQL();
-        $values  = $this->getValuesSQL();
+        $table   = ($driver ?? $this)->quoteIdentifier($this->table);
+        $columns = $this->getColumnsSQL($driver);
+        $values  = $this->getValuesSQL($driver);
 
         $column_list = empty($columns) ? "" : "{$columns} ";
 
@@ -305,7 +306,7 @@ class Insert extends DML
         return $this->sql = "{$insert} INTO {$table} {$column_list}VALUES {$values}";
     }
 
-    private function getColumnsSQL(): string
+    private function getColumnsSQL(Driver $driver = null): string
     {
         if (empty($this->columns)) {
             return '';
@@ -315,15 +316,17 @@ class Insert extends DML
             return $this->sqls['columns'];
         }
 
+        $quoter = $driver ?? $this;
+
         $sqls = [];
         foreach ($this->columns as $column) {
-            $sqls[] = $this->quoteIdentifier($column);
+            $sqls[] = $quoter->quoteIdentifier($column);
         }
 
         return $this->sqls['columns'] = "(" . implode(", ", $sqls) . ")";
     }
 
-    private function getValuesSQL(): string
+    private function getValuesSQL(Driver $driver = null): string
     {
         if (isset($this->sqls['values'])) {
             return $this->sqls['values'];
@@ -331,7 +334,7 @@ class Insert extends DML
 
         // INSERT...SELECT
         if ($this->select instanceof Select) {
-            $sql = $this->select->getSQL();
+            $sql = $this->select->getSQL($driver);
             if ($this->isEmptySQL($sql)) {
                 return $this->sqls['values'] = '';
             }

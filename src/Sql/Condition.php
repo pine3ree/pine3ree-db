@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql;
 
+use P3\Db\Driver;
 use P3\Db\Sql\PredicateSet;
 
 /**
@@ -25,9 +26,9 @@ abstract class Condition extends PredicateSet
      */
     protected $__name;
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
-        $predicates_sql = parent::getSQL();
+        $predicates_sql = parent::getSQL($driver);
 
         if ($this->isEmptySQL($predicates_sql)) {
             return '';

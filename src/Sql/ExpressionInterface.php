@@ -8,8 +8,8 @@
 
 namespace P3\Db\Sql;
 
-use JsonSerializable;
 use PDO;
+use P3\Db\Driver;
 
 use function addcslashes;
 use function is_bool;
@@ -26,7 +26,7 @@ use function trim;
  */
 interface ExpressionInterface
 {
-    public function getSQL(): string;
+    public function getSQL(Driver $driver = null): string;
 
     public function getParams(): array;
 

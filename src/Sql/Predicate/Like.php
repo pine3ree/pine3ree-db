@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
+use P3\Db\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
@@ -50,7 +51,7 @@ class Like extends Predicate
         }
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -58,7 +59,7 @@ class Like extends Predicate
 
         $identifier = $this->identifier instanceof Literal
             ? $this->identifier->getSQL()
-            : $this->quoteIdentifier($this->identifier);
+            : ($driver ?? $this)->quoteIdentifier($this->identifier);
 
         $operator = ($this->not ? "NOT " : "") . "LIKE";
 

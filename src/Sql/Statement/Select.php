@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
+use P3\Db\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Condition\Having;
 use P3\Db\Sql\Condition\On;
@@ -174,24 +175,26 @@ class Select extends DML
         }
     }
 
-    private function getColumnsSQL(): string
+    private function getColumnsSQL(Driver $driver = null): string
     {
         if (isset($this->sqls['columns'])) {
             return $this->sqls['columns'];
         }
 
+        $quoter = $driver ?? $this;
+
         $sqls = [];
         foreach ($this->columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
-                $column_sql = $this->alias ? $this->quoteAlias($this->alias) . ".*" : "*";
+                $column_sql = $this->alias ? $quoter->quoteAlias($this->alias) . ".*" : "*";
             } else {
                 $column_sql = $column instanceof Literal
                     ? $column->getSQL()
-                    : $this->quoteIdentifier(
+                    : $quoter->quoteIdentifier(
                         $this->normalizeColumn($column)
                     );
                 if (!is_numeric($key) && $key !== '' && $key !== $column) {
-                    $column_sql .= " AS " . $this->quoteAlias($key);
+                    $column_sql .= " AS " . $quoter->quoteAlias($key);
                 }
             }
             $sqls[] = $column_sql;
@@ -276,7 +279,7 @@ class Select extends DML
         return $this;
     }
 
-    private function getJoinSQL(): string
+    private function getJoinSQL(Driver $driver = null): string
     {
         if (empty($this->joins)) {
             return '';
@@ -286,11 +289,13 @@ class Select extends DML
             return $this->sqls['join'];
         }
 
+        $quoter = $driver ?? $this;
+
         $sqls = [];
         foreach ($this->joins as $join) {
             $type  = isset(Sql::JOIN_TYPES[$join['type']]) ? $join['type'] : '';
-            $table = $this->quoteIdentifier($join['table']);
-            $alias = $this->quoteAlias($join['alias']);
+            $table = $quoter->quoteIdentifier($join['table']);
+            $alias = $quoter->quoteAlias($join['alias']);
             $cond  = $join['cond'];
 
             if ($cond->hasParams()) {
@@ -316,9 +321,9 @@ class Select extends DML
         return $this;
     }
 
-    private function getWhereSQL(): string
+    private function getWhereSQL(Driver $driver = null): string
     {
-        return $this->getConditionSQL('where');
+        return $this->getConditionSQL('where', $driver);
     }
 
     /**
@@ -354,15 +359,17 @@ class Select extends DML
         return $this;
     }
 
-    private function getGroupBySQL(): string
+    private function getGroupBySQL(Driver $driver = null): string
     {
         if (empty($this->groupBy)) {
             return '';
         }
 
+        $quoter = $driver ?? $this;
+
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
-            $groupBy[$key] = $this->quoteIdentifier($identifier);
+            $groupBy[$key] = $quoter->quoteIdentifier($identifier);
         }
 
         return "GROUP BY " . implode(", ", $groupBy);
@@ -380,9 +387,9 @@ class Select extends DML
         return $this;
     }
 
-    private function getHavingSQL(): string
+    private function getHavingSQL(Driver $driver = null): string
     {
-        return $this->getConditionSQL('having');
+        return $this->getConditionSQL('having', $driver);
     }
 
     /**
@@ -444,7 +451,7 @@ class Select extends DML
         return $normalized;
     }
 
-    private function getOrderBySQL(): string
+    private function getOrderBySQL(Driver $driver = null): string
     {
         if (empty($this->orderBy)) {
             return '';
@@ -454,10 +461,12 @@ class Select extends DML
             return $this->sqls['order'];
         }
 
+        $quoter = $driver ?? $this;
+
         $sql = [];
         foreach ($this->orderBy as $identifier => $direction) {
             // do not quote identifier or alias, do it programmatically
-            $sql[] = $this->quoteIdentifier($identifier) . " {$direction}";
+            $sql[] = $quoter->quoteIdentifier($identifier) . " {$direction}";
         }
 
         $this->sqls['order'] = $sql = "ORDER BY " . implode(", ", $sql);
@@ -481,7 +490,7 @@ class Select extends DML
         return $this;
     }
 
-    private function getLimitSQL(): string
+    private function getLimitSQL(Driver $driver = null): string
     {
         if (isset($this->sqls['limit'])) {
             return $this->sqls['limit'];
@@ -511,21 +520,21 @@ class Select extends DML
         return $this->indexBy;
     }
 
-    public function getSQL(bool $stripConditionsParentheses = false): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
         }
 
-        $base_sql = $this->getBaseSQL();
-        $clauses_sql = $this->getClausesSQL($stripConditionsParentheses);
+        $base_sql = $this->getBaseSQL($driver);
+        $clauses_sql = $this->getClausesSQL($driver);
 
         $this->sql = rtrim("{$base_sql} {$clauses_sql}");
 
         return $this->sql;
     }
 
-    private function getBaseSQL(): string
+    private function getBaseSQL(Driver $driver = null): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(
@@ -538,26 +547,28 @@ class Select extends DML
             $select .= " {$this->quantifier}";
         }
 
-        $columns = $this->getColumnsSQL();
+        $columns = $this->getColumnsSQL($driver);
 
-        $table = $this->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias = $this->quoteAlias($this->alias)) {
+        $quoter = $driver ?? $this;
+
+        $table = $quoter->quoteIdentifier($this->table);
+        if (!empty($this->alias) && $alias = $quoter->quoteAlias($this->alias)) {
             $table .= " {$alias}";
         }
 
         return "{$select} {$columns} FROM {$table}";
     }
 
-    private function getClausesSQL(bool $stripConditionsParentheses = false): string
+    private function getClausesSQL(Driver $driver = null): string
     {
         $sqls = [];
 
-        $sqls[] = $this->getJoinSQL($stripConditionsParentheses);
-        $sqls[] = $this->getWhereSQL($stripConditionsParentheses);
-        $sqls[] = $this->getGroupBySQL();
-        $sqls[] = $this->getHavingSQL($stripConditionsParentheses);
-        $sqls[] = $this->getOrderBySQL();
-        $sqls[] = $this->getLimitSQL();
+        $sqls[] = $this->getJoinSQL($driver);
+        $sqls[] = $this->getWhereSQL($driver);
+        $sqls[] = $this->getGroupBySQL($driver);
+        $sqls[] = $this->getHavingSQL($driver);
+        $sqls[] = $this->getOrderBySQL($driver);
+        $sqls[] = $this->getLimitSQL($driver);
 
         foreach ($sqls as $index => $sql) {
             if ($this->isEmptySQL($sql)) {

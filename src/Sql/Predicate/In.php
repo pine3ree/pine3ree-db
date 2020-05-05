@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
+use P3\Db\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
@@ -73,7 +74,7 @@ class In extends Predicate
      *
      * @return string
      */
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -81,12 +82,12 @@ class In extends Predicate
 
         $identifier = $this->identifier instanceof Literal
             ? $this->identifier->getSQL()
-            : $this->quoteIdentifier($this->identifier);
+            : ($driver ?? $this)->quoteIdentifier($this->identifier);
 
         $operator = ($this->not ? "NOT " : "") . "IN";
 
         if ($this->value_list instanceof Select) {
-            $select_sql = $this->value_list->getSQL();
+            $select_sql = $this->value_list->getSQL($driver);
             $this->importParams($this->value_list);
 
             return $this->sql = "{$identifier} {$operator} ({$select_sql})";
@@ -100,7 +101,7 @@ class In extends Predicate
                 continue;
             }
             $values[] = $value instanceof Literal
-                ? $value->getSQL()
+                ? $value->getSQL($driver)
                 : $this->createNamedParam($value);
         }
 

@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
+use P3\Db\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
@@ -55,7 +56,7 @@ class Between extends Predicate
         }
     }
 
-    public function getSQL(): string
+    public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -63,7 +64,7 @@ class Between extends Predicate
 
         $identifier = $this->identifier instanceof Literal
             ? $this->identifier->getSQL()
-            : $this->quoteIdentifier($this->identifier);
+            : ($driver ?? $this)->quoteIdentifier($this->identifier);
 
         $operator = ($this->not ? "NOT " : "") . "BETWEEN";
 
@@ -72,7 +73,7 @@ class Between extends Predicate
             : $this->createNamedParam($this->min_value);
 
         $max = $this->max_value instanceof Literal
-            ? $this->getSQL()
+            ? $this->max_value->getSQL()
             : $this->createNamedParam($this->max_value);
 
         return $this->sql = "{$identifier} {$operator} {$min} AND {$max}";
