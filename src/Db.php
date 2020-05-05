@@ -102,7 +102,7 @@ class Db
      */
     public function fetchOne(string $table, $where = null, $order = null): ?array
     {
-        $select = $this->select()->from($table);
+        $select = $this->select()->distinct()->from($table);
         if (isset($where)) {
             $select->where($where);
         }
@@ -123,7 +123,7 @@ class Db
     }
 
     /**
-     * Fetch all rows from a table using provided criteria
+     * Fetch all the distinct rows from a table using provided criteria
      *
      * @param string $table
      * @param Where|Predicate|array|string $where
@@ -139,7 +139,7 @@ class Db
         int $limit = null,
         int $offset = null
     ): array {
-        $select = $this->select()->from($table);
+        $select = $this->select()->distinct()->from($table);
 
         if (isset($where)) {
             $select->where($where);
