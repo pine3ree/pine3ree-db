@@ -294,13 +294,12 @@ class Db
         $stmt = $this->getPDO()->prepare($statement->getSQL());
 
         if ($bind && $stmt instanceof PDOStatement) {
-            $params = $statement->getParams();
-            $ptypes = $statement->getParamsTypes();
-            foreach ($params as $markerOrIndex => $value) {
+            $params_types = $statement->getParamsTypes();
+            foreach ($statement->getParams() as $markerOrIndex => $value) {
                 $stmt->bindValue(
                     $markerOrIndex,
                     $this->castValue($value),
-                    $ptypes[$key] ?? $this->getParamType($value)
+                    $params_types[$key] ?? $this->getParamType($value)
                 );
             }
         }
