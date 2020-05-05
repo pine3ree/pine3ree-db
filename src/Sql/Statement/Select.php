@@ -393,7 +393,7 @@ class Select extends DML
     {
         if (is_string($orderBy)) {
             if (false === strpos($orderBy, ',')) {
-                $orderBy = [$orderBy];
+                $orderBy = [trim($orderBy)];
             } else {
                 $orderBy = array_map('trim', explode(',', $orderBy));
             }
@@ -411,14 +411,14 @@ class Select extends DML
             if (is_numeric($identifier)) {
                 $identifier = $direction;
                 $direction  = $sort;
+                if (strpos($identifier, ' ')) {
+                    $parts = array_map('trim', explode(' ', $identifier));
+                    $identifier = $parts[0];
+                    $direction  = $parts[1];
+                }
             }
 
-            $parts = array_map('trim', explode(' ', $identifier));
-            $identifier = $parts[0];
-            $direction  = $parts[1] ?? $direction ?? Sql::ASC;
-            $direction  = $direction === Sql::DESC ? $direction : Sql::ASC;
-
-            $normalized[$identifier] = $direction;
+            $normalized[$identifier] = $direction === Sql::DESC ? $direction : Sql::ASC;
         }
 
         return $normalized;
@@ -437,7 +437,7 @@ class Select extends DML
         $sql = [];
         foreach ($this->orderBy as $identifier => $direction) {
             // do not quote identifier or alias, do it programmatically
-            $sql[] = "{$identifier} {$direction}";
+            $sql[] = $this->quoteIdentifier($identifier) . " {$direction}";
         }
 
         $this->sqls['order'] = $sql = "ORDER BY " . implode(", ", $sql);
