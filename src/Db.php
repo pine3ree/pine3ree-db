@@ -287,13 +287,14 @@ class Db
      * prepared/binded PDOStatement
      *
      * @param Statement $statement
+     * @param bool $bind Bind statement parameters?
      * @return PDOStatement|false
      */
-    public function prepare(Statement $statement, bool $bind = false)
+    public function prepare(Statement $statement, bool $bind_params = false)
     {
         $stmt = $this->getPDO()->prepare($statement->getSQL());
 
-        if ($bind && $stmt instanceof PDOStatement) {
+        if ($bind_params && $stmt instanceof PDOStatement) {
             $params_types = $statement->getParamsTypes();
             foreach ($statement->getParams() as $markerOrIndex => $value) {
                 $stmt->bindValue(
