@@ -61,7 +61,7 @@ trait ConditionAwareTrait
      * @param string $property The sql-statement property in which the clause is stored
      * @return string
      */
-    private function getConditionSQL(string $property, bool $stripParentheses = false): string
+    private function getConditionSQL(string $property): string
     {
         if (!isset($this->{$property})) {
             return '';
@@ -69,7 +69,7 @@ trait ConditionAwareTrait
 
         $condition = $this->{$property};
 
-        $sql = $condition->getSQL($stripParentheses);
+        $sql = $condition->getSQL();
         if ($condition->hasParams()) {
             $this->importParams($condition);
         }

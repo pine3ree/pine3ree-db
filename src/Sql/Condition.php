@@ -25,16 +25,12 @@ abstract class Condition extends PredicateSet
      */
     protected $__name;
 
-    public function getSQL(bool $stripParentheses = false): string
+    public function getSQL(): string
     {
         $predicates_sql = parent::getSQL();
 
         if ($this->isEmptySQL($predicates_sql)) {
             return '';
-        }
-
-        if ($stripParentheses) {
-            $predicates_sql = $this->stripParentheses($predicates_sql);
         }
 
         return "{$this->getName()} {$predicates_sql}";

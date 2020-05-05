@@ -293,9 +293,9 @@ class Select extends DML
         return $this;
     }
 
-    private function getWhereSQL(bool $stripParentheses = false): string
+    private function getWhereSQL(): string
     {
-        return $this->getConditionSQL('where', $stripParentheses);
+        return $this->getConditionSQL('where');
     }
 
     /**
@@ -352,9 +352,9 @@ class Select extends DML
         return $this;
     }
 
-    private function getHavingSQL(bool $stripParentheses = false): string
+    private function getHavingSQL(): string
     {
-        return $this->getConditionSQL('having', $stripParentheses);
+        return $this->getConditionSQL('having');
     }
 
     /**

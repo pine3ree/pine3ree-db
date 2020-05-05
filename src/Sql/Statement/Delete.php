@@ -90,9 +90,9 @@ class Delete extends DML
         return $this;
     }
 
-    private function getWhereSQL(bool $stripParentheses = false): string
+    private function getWhereSQL(): string
     {
-        return $this->getConditionSQL('where', $stripParentheses);
+        return $this->getConditionSQL('where');
     }
 
     public function __get(string $name)
