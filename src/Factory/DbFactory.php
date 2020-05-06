@@ -64,9 +64,9 @@ class DbFactory
             );
         }
 
-        if (!in_array($driver, ['mysql', 'sqlite', 'pgsql', 'oci', 'sqlsrv'], true)) {
+        if (!Db::supportsDriver($driver)) {
             throw new InvalidArgumentException(
-                "Invalid PDO driver type `{$driver}`!"
+                "Unsupported or invalid PDO driver type `{$driver}`!"
             );
         }
 
@@ -85,11 +85,15 @@ class DbFactory
             case 'sqlite':
                 return "sqlite:{$dbname}";
             case 'oci':
+                return $this->buildDsnForOci($dbname, $config);
             case 'sqlsrv':
+                throw new RuntimeException(
+                    "Driver `{$driver}` is not implemented yet!"
+                );
         }
 
         throw new RuntimeException(
-            "Unable to build a DSN for driver {$driver}!"
+            "Unable to build a DSN for driver `{$driver}`!"
         );
     }
 
