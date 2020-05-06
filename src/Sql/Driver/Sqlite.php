@@ -16,7 +16,7 @@ use P3\Db\Sql\Driver;
  */
 class Sqlite extends Driver
 {
-    public function __construct(PDO  $pdo = null)
+    public function __construct(PDO $pdo = null)
     {
         parent::__construct($pdo, '"', '"', "'");
     }

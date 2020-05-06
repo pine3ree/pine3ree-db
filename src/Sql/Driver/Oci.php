@@ -30,7 +30,7 @@ class Oci extends Driver
      */
     public const RN = '"__oci_rn"';
 
-    public function __construct(PDO  $pdo = null)
+    public function __construct(PDO $pdo = null)
     {
         parent::__construct($pdo, '"', '"', "'");
     }
