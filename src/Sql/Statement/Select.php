@@ -266,6 +266,46 @@ class Select extends DML
     }
 
     /**
+     * @see self::addJoin()
+     */
+    public function naturalJoin(string $table, string $alias, $cond = null): self
+    {
+        return $this->addJoin(Sql::JOIN_NATURAL, $table, $alias, $cond);
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function naturalLeftJoin(string $table, string $alias, $cond = null): self
+    {
+        return $this->addJoin(Sql::JOIN_NATURAL_LEFT, $table, $alias, $cond);
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function naturalRightJoin(string $table, string $alias, $cond = null): self
+    {
+        return $this->addJoin(Sql::JOIN_NATURAL_RIGHT, $table, $alias, $cond);
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function crossJoin(string $table, string $alias, $cond = null): self
+    {
+        return $this->addJoin(Sql::JOIN_CROSS, $table, $alias, $cond);
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function straightJoin(string $table, string $alias, $cond = null): self
+    {
+        return $this->addJoin(Sql::JOIN_STRAIGHT, $table, $alias, $cond);
+    }
+
+    /**
      * Add a join specification to this statement
      *
      * @param string $type The join type (LEFT, RIGHT, INNER, ...)

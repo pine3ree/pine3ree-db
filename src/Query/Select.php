@@ -77,6 +77,16 @@ class Select extends Query
     }
 
     /**
+     * @see SqlSelect::innerJoin()
+     * @return $this
+     */
+    public function innerJoin(string $table, string $alias, $cond): self
+    {
+        $this->statement->innerJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
      * @see SqlSelect::leftJoin()
      * @return $this
      */
@@ -97,12 +107,47 @@ class Select extends Query
     }
 
     /**
-     * @see SqlSelect::innerJoin()
-     * @return $this
+     * @see self::addJoin()
      */
-    public function innerJoin(string $table, string $alias, $cond): self
+    public function naturalJoin(string $table, string $alias, $cond = null): self
     {
-        $this->statement->innerJoin($table, $alias, $cond);
+        $this->statement->naturalJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function naturalLeftJoin(string $table, string $alias, $cond = null): self
+    {
+        $this->statement->naturalLeftJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function naturalRightJoin(string $table, string $alias, $cond = null): self
+    {
+        $this->statement->naturalRightJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function crossJoin(string $table, string $alias, $cond = null): self
+    {
+        $this->statement->crossJoin($table, $alias, $cond);
+        return $this;
+    }
+
+    /**
+     * @see self::addJoin()
+     */
+    public function straightJoin(string $table, string $alias, $cond = null): self
+    {
+        return $this->straightJoin($table, $alias, $cond);
         return $this;
     }
 
