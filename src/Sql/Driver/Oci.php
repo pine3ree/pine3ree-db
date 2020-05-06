@@ -55,7 +55,7 @@ class Oci extends Driver
         return $identifier;
     }
 
-    public function getLimitSQL(int $limit = null, int $offset = null): string
+    public function getLimitSQL(Select $select): string
     {
         return '';
     }
