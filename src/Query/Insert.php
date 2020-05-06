@@ -57,7 +57,7 @@ class Insert extends Query
     }
 
     /**
-     * @see SqlUpdate::values()
+     * @see SqlInsert::values()
      * @return $this
      */
     public function values(array $values, bool $reset = false)
