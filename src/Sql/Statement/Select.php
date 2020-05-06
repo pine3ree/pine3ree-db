@@ -539,9 +539,13 @@ class Select extends DML
         $base_sql = $this->getBaseSQL($driver);
         $clauses_sql = $this->getClausesSQL($driver);
 
-        $this->sql = rtrim("{$base_sql} {$clauses_sql}");
+        $sql = rtrim("{$base_sql} {$clauses_sql}");
 
-        return $this->sql;
+        if (isset($driver) && is_callable([$driver, 'decorateSelectSQL'])) {
+            $sql = $driver->decorateSelectSQL($this, $sql);
+        }
+
+        return $this->sql = $sql;
     }
 
     private function getBaseSQL(Driver $driver = null): string

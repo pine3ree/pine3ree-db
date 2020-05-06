@@ -8,11 +8,18 @@
 
 namespace P3\Db\Sql;
 
+use PDO;
+
 /**
  * The default ANSI SQL Driver
  */
 class Driver
 {
+    /**
+     * @var PDO|null
+     */
+    protected $pdo;
+
     /**
      * @var string The left quote char for identifiers/aliases, default is ANSI '"'
      */
@@ -23,22 +30,28 @@ class Driver
      */
     protected $qr;
 
+    protected $qlr;
+
     /**
      * @var string The quote char for values, default is single-quote char "'"
      */
     protected $qv;
 
     /**
-     *
+     * @param Db $db the database connection, if any
      * @param string $ql left-quote char
      * @param string $qr right-quote char
      * @param string $qv quote char for values
      */
-    public function __construct(string $ql = '"', string $qr = '"', string $qv = "'")
+    public function __construct(PDO $pdo = null, string $ql = '"', string $qr = '"', string $qv = "'")
     {
+        $this->pdo = $pdo;
+
         $this->ql = $ql;
         $this->qr = $qr;
         $this->qv = $qv;
+
+        $this->qlr = "{$ql}{$qr}";
     }
 
     /**
@@ -49,7 +62,7 @@ class Driver
      */
     public function quoteIdentifier(string $identifier): string
     {
-        if ($identifier === '*') {
+        if ($identifier === '*' || empty($this->qlr)) {
             return $identifier;
         }
 
@@ -72,9 +85,9 @@ class Driver
         return $quoted;
     }
 
-    private function isQuoted(string $identifier)
+    protected function isQuoted(string $identifier)
     {
-        return ($this->ql !== ''
+        return (!empty($this->qlr)
             && $this->ql === substr($identifier, 0, 1)
             && $this->qr === substr($identifier, -1)
         );
@@ -88,6 +101,10 @@ class Driver
      */
     public function quoteAlias(string $alias): string
     {
+        if (empty($this->qlr)) {
+            return $alias;
+        }
+
         $ql = $this->ql;
         $qr = $this->qr;
 
@@ -105,6 +122,30 @@ class Driver
         if (null === $value) {
             return 'NULL';
         }
+
+        if (isset($this->pdo)) {
+            try {
+                if (is_int($value)) {
+                    $parameter_type = PDO::PARAM_INT;
+                } elseif (is_bool($value)) {
+                    $parameter_type = PDO::PARAM_INT;
+                    $value = (int)$value;
+                } else {
+                    $parameter_type = PDO::PARAM_STR;
+                    if (!is_string($value)) {
+                        $value = (string)$value;
+                    }
+                }
+
+                $quoted = $this->pdo->quote($value, $parameter_type);
+                if ($quoted !== false) {
+                    return $quoted;
+                }
+            } catch (Exception $ex) {
+                // do nothing
+            }
+        }
+
         if (is_int($value)) {
             return (string)$value;
         }
@@ -116,7 +157,7 @@ class Driver
             $value = (string)$value;
         }
 
-        return "{$this->ql}{$this->escape($value)}{$this->qr}";
+        return "{$this->qv}{$this->escape($value)}{$this->qv}";
     }
 
     /**
@@ -127,5 +168,10 @@ class Driver
     public function escape(string $value): string
     {
         return addcslashes($value, "\x00\n\r\\'\"\x1a");
+    }
+
+    public function setPDO(PDO $pdo)
+    {
+        $this->pdo = $pdo;
     }
 }

@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Driver;
 
+use P3\Db\Db;
 use P3\Db\Sql\Driver;
 
 /**
@@ -15,9 +16,9 @@ use P3\Db\Sql\Driver;
  */
 class MySql extends Driver
 {
-    public function __construct()
+    public function __construct(PDO $pdo = null)
     {
-        parent::__construct('`', '`', "'");
+        parent::__construct($pdo, '`', '`', "'");
     }
 
     public function getLimitSQL(int $limit = null, int $offset = null): string

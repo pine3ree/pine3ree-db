@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Driver;
 
+use PDO;
 use P3\Db\Sql\Driver;
 
 /**
@@ -15,8 +16,8 @@ use P3\Db\Sql\Driver;
  */
 class SqlSrv extends Driver
 {
-    public function __construct()
+    public function __construct(PDO  $pdo = null)
     {
-        parent::__construct('[', ']', "'");
+        parent::__construct($pdo, '[', ']', "'");
     }
 }

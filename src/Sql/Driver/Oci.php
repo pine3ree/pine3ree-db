@@ -8,19 +8,34 @@
 
 namespace P3\Db\Sql\Driver;
 
+use PDO;
 use P3\Db\Sql\Driver;
-
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Insert;
+
+use function strtoupper;
 
 /**
  * Oci sql-driver
  */
 class Oci extends Driver
 {
-    public function __construct()
+    public function __construct(PDO  $pdo = null)
     {
-        parent::__construct('"', '"', "'");
+        parent::__construct($pdo, '"', '"', "'");
+    }
+
+    public function quoteIdentifier(string $identifier): string
+    {
+        if ($identifier === '*') {
+            return $identifier;
+        }
+
+        if ($this->isQuoted($identifier)) {
+            return $identifier;
+        }
+
+        return parent::quoteIdentifier(strtoupper($identifier));
     }
 
     public function getLimitSQL(int $limit = null, int $offset = null): string
@@ -38,11 +53,9 @@ class Oci extends Driver
         }
 
         if (isset($offset) && $offset > 0) {
-            if (!isset($limit)) {
-                $limit = PHP_INT_MAX;
-            }
-            $limit_sql = "SELECT *, ROWNUM AS __rownum FROM ({$sql}) WHERE ROWNUM <= {$limit}";
-            return "SELECT * FROM ($limit_sql) WHERE __rownum > {$offset}";
+            $limit = isset($limit) ? ($limit + $offset) : PHP_INT_MAX;
+            $limit_sql = "SELECT \"__oci_tb\".*, ROWNUM AS \"__oci_rn\" FROM ({$sql}) \"__oci_tb\" WHERE ROWNUM <= {$limit}";
+            return "SELECT * FROM ($limit_sql) WHERE \"__oci_rn\" > {$offset}";
         }
 
         return $sql;
