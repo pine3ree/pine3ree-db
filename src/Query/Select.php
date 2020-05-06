@@ -236,9 +236,6 @@ class Select extends Query
      *
      * @see \PDOStatement::fetchAll()
      *
-     * @param int $fetch_mode
-     * @param type $fetch_argument
-     * @param array $ctor_args
      * @return array
      */
     public function fetchAll(): array
