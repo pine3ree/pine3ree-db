@@ -17,6 +17,6 @@ class PgSql extends Driver
 {
     public function __construct()
     {
-        parent::__construct('[', ']', "'");
+        parent::__construct('"', '"', "'");
     }
 }
