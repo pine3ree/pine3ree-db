@@ -104,12 +104,19 @@ class Db
 
     private function createPDO(): PDO
     {
-        return new PDO(
+        $pdo = new PDO(
             $this->dsn,
             $this->username,
             $this->password,
             $this->options
         );
+
+        // return lowercase column-names in result set for oci-driver
+        if ('oci' === $driver_name = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
+            $pdo->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
+        }
+
+        return $pdo;
     }
 
     public function getDriver(): Driver
