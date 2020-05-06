@@ -26,6 +26,7 @@ use RuntimeException;
  * This class represents a SELECT sql-statement expression
  *
  * @property-read string|null $table The db table to select from if already set
+ * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read string[] $columns The columns to be returned
  * @property-read string|null $from Alias of $table
@@ -181,15 +182,17 @@ class Select extends DML
             return $this->sqls['columns'];
         }
 
-        if (empty($this->columns)) {
+        $quoter = $driver ?? $this;
 
+        if (empty($this->columns)) {
+            $sql = $this->alias ? $quoter->quoteAlias($this->alias) . ".*" : "*";
+            $this->sqls['columns'] = $sql;
+            return $sql;
         }
 
         if (isset($driver) && is_callable([$driver, 'getColumnsSQL'])) {
-            return $this->sqls['limit'] = $driver->getColumnsSQL($this);
+            return $this->sqls['columns'] = $driver->getColumnsSQL($this);
         }
-
-        $quoter = $driver ?? $this;
 
         $sqls = [];
         foreach ($this->columns as $key => $column) {

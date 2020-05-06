@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Driver;
 
 use PDO;
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Insert;
@@ -23,12 +24,12 @@ class Oci extends Driver
     /**
      * @const string Quoted table alias for LIMIT+OFFSET statements
      */
-    public const TB = '"__oci_tb"';
+    private const TB = '"__oci_tb"';
 
     /**
      * @const string Quoted ROWNUM alias for LIMIT+OFFSET statements
      */
-    public const RN = '"__oci_rn"';
+    private const RN = '"__oci_rn"';
 
     public function __construct(PDO $pdo = null)
     {
@@ -48,20 +49,30 @@ class Oci extends Driver
         }
 
         // table and column names starting with the underscore char must be quoted
-        if ('_' === substr($identifier, 0, 1)) {
-            return parent::quoteIdentifier($identifier);
+        if (false === strpos($identifier, '.')) {
+            if ('_' === substr($segment, 0, 1)) {
+                $segments[$i] = parent::quoteIdentifier($segment);
+            }
+            return $identifier;
         }
 
-        return $identifier;
-    }
+        $segments = explode('.', $identifier);
+        foreach ($segments as $i => $segment) {
+            if ('_' === substr($segment, 0, 1)) {
+                $segments[$i] = parent::quoteIdentifier($segment);
+            }
+        }
 
-    public function getLimitSQL(Select $select): string
-    {
-        return '';
+        return implode('.', $segments);
     }
 
     public function decorateSelectSQL(Select $select, string $sql): string
     {
+        // quote primary any unquoted table alias prefix
+        if ($tb_alias = $select->alias) {
+            $sql = str_replace(" {$tb_alias}.", " {$this->quoteAlias($tb_alias)}.", $sql);
+        }
+
         $limit  = $select->limit;
         $offset = $select->offset;
 
@@ -78,5 +89,39 @@ class Oci extends Driver
         }
 
         return $sql;
+    }
+
+    public function getColumnsSQL(Select $select): string
+    {
+        $sqls = [];
+        $tb_alias = $select->alias;
+        foreach ($select->columns as $key => $column) {
+            if ($column === Sql::ASTERISK) {
+                $column_sql = $tb_alias ? $this->quoteAlias($tb_alias) . ".*" : "*";
+            } else {
+                if ($column instanceof Literal) {
+                    $column_sql = $column->getSQL();
+                } else {
+                    $column_sql = $this->quoteIdentifier(
+                        $select->normalizeColumn($column)
+                    );
+                }
+                // add alias
+                if (!is_numeric($key) && $key !== '') {
+                    $column_sql .= " AS " . $this->quoteAlias($key);
+                } elseif (! $column instanceof Literal) {
+                    $column = end(explode('.', $column));
+                    $column_sql .= " AS " . $this->quoteAlias($column);
+                }
+            }
+            $sqls[] = $column_sql;
+        }
+
+        return trim(implode(", ", $sqls));
+    }
+
+    public function getLimitSQL(Select $select): string
+    {
+        return '';
     }
 }
