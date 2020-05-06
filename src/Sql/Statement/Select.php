@@ -496,18 +496,27 @@ class Select extends DML
             return $this->sqls['limit'];
         }
 
+        if (!isset($this->limit) && (int)$this->offset === 0) {
+            return $this->sqls['limit'] = '';
+        }
+
+        if (isset($driver) && is_callable([$driver, 'getLimitSQL'])) {
+            return $this->sqls['limit'] = $driver->getLimitSQL($this->limit, $this->offset);
+        }
+
         if (isset($this->limit)) {
             $limit = $this->createNamedParam($this->limit, PDO::PARAM_INT);
             $sql = "LIMIT {$limit}";
-        } else {
-            $sql = "LIMIT " . PHP_INT_MAX;
         }
         if (isset($this->offset) && $this->offset > 0) {
+            if (!isset($sql)) {
+                $sql = "LIMIT " . PHP_INT_MAX;
+            }
             $offset = $this->createNamedParam($this->offset, PDO::PARAM_INT);
-            $sql .= "OFFSET {$offset}";
+            $sql .= " OFFSET {$offset}";
         }
 
-        return $this->sqls['limit'] = $sql;
+        return $this->sqls['limit'] = $sql ?? '';
     }
 
     public function indexBy(string $indexBy): self
