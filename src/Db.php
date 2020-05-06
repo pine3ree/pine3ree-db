@@ -45,6 +45,8 @@ class Db
 
     /** @var Driver */
     private $driver;
+    /** @var Driver connection-less driver */
+    private $_driver;
 
     private const DRIVER_CLASS = [
         'mysql'  => Driver\MySql::class,
@@ -117,16 +119,24 @@ class Db
         }
 
         if (isset($this->pdo)) {
+            if (isset($this->_driver)) {
+                $this->_driver->setPDO($this->pdo);
+                return $this->driver = $this->_driver;
+            }
             $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
             $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
             // cache the driver instance
             return $this->driver = new $driver_fqcn();
         }
 
+        if (isset($this->_driver)) {
+            return $this->_driver;
+        }
+
         $driver_name = explode(':', $this->dsn)[0];
         $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
         // do not cache the driver instance
-        return new $driver_fqcn();
+        return $this->_driver = new $driver_fqcn();
     }
 
     /**
