@@ -131,18 +131,12 @@ class Expression implements ExpressionInterface
      */
     protected function quoteIdentifier(string $identifier): string
     {
-        if ($identifier === '*') {
-            return $identifier;
-        }
-
-        if ($this->isQuoted($identifier)) {
+        if ($identifier === '*' || $this->isQuoted($identifier)) {
             return $identifier;
         }
 
         $ql = $this->ql;
         $qr = $this->qr;
-
-        $identifier = ltrim(rtrim($identifier, $qr), $ql);
 
         if (false === strpos($identifier, '.')) {
             return "{$ql}{$identifier}{$qr}";
@@ -154,15 +148,15 @@ class Expression implements ExpressionInterface
         return $quoted;
     }
 
-    private function isQuoted(string $identifier)
+    protected function isQuoted(string $identifier): bool
     {
-        $ql = $this->ql;
-        $qr = $this->qr;
-
-        return ($ql !== ''
-            && $ql === substr($identifier, 0, 1)
-            && $qr === substr($identifier, -1)
-        );
+        if ($this->ql === substr($identifier, 0, 1)) {
+            return true;
+        }
+        if ($this->qr === ubstr($identifier, -1)) {
+            return true;
+        }
+        return false;
     }
 
     /**
