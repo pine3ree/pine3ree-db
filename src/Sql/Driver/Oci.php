@@ -20,6 +20,16 @@ use function strtoupper;
  */
 class Oci extends Driver
 {
+    /**
+     * @const string Quoted table alias for LIMIT+OFFSET statements
+     */
+    public const TB = '"__oci_tb"';
+
+    /**
+     * @const string Quoted ROWNUM alias for LIMIT+OFFSET statements
+     */
+    public const RN = '"__oci_rn"';
+
     public function __construct(PDO  $pdo = null)
     {
         parent::__construct($pdo, '"', '"', "'");
@@ -35,6 +45,11 @@ class Oci extends Driver
     {
         if ($identifier === '*' || empty($this->qlr) || $this->isQuoted($identifier)) {
             return $identifier;
+        }
+
+        // table and column names starting with the underscore char must be quoted
+        if ('_' === substr($identifier, 0, 1)) {
+            return parent::quoteIdentifier($identifier);
         }
 
         return $identifier;
@@ -55,9 +70,11 @@ class Oci extends Driver
         }
 
         if (isset($offset) && $offset > 0) {
+            $tb = self::TB;
+            $rn = self::RN;
             $limit = isset($limit) ? ($limit + $offset) : PHP_INT_MAX;
-            $limit_sql = "SELECT \"__oci_tb\".*, ROWNUM AS \"__oci_rn\" FROM ({$sql}) \"__oci_tb\" WHERE ROWNUM <= {$limit}";
-            return "SELECT * FROM ($limit_sql) WHERE \"__oci_rn\" > {$offset}";
+            $limit_sql = "SELECT {$tb}.*, ROWNUM AS {$rn} FROM ({$sql}) {$tb} WHERE ROWNUM <= {$limit}";
+            return "SELECT * FROM ($limit_sql) WHERE {$rn} > {$offset}";
         }
 
         return $sql;
