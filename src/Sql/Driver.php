@@ -62,18 +62,12 @@ class Driver
      */
     public function quoteIdentifier(string $identifier): string
     {
-        if ($identifier === '*' || empty($this->qlr)) {
-            return $identifier;
-        }
-
-        if ($this->isQuoted($identifier)) {
+        if ($identifier === '*' || empty($this->qlr) || $this->isQuoted($identifier)) {
             return $identifier;
         }
 
         $ql = $this->ql;
         $qr = $this->qr;
-
-        $identifier = ltrim(rtrim($identifier, $qr), $ql);
 
         if (false === strpos($identifier, '.')) {
             return "{$ql}{$identifier}{$qr}";
@@ -85,12 +79,15 @@ class Driver
         return $quoted;
     }
 
-    protected function isQuoted(string $identifier)
+    protected function isQuoted(string $identifier): bool
     {
-        return (!empty($this->qlr)
-            && $this->ql === substr($identifier, 0, 1)
-            && $this->qr === substr($identifier, -1)
-        );
+        if (!empty($this->ql) && $this->ql === substr($identifier, 0, 1)) {
+            return true;
+        }
+        if (!empty($this->qr) && $this->qr === ubstr($identifier, -1)) {
+            return true;
+        }
+        return false;
     }
 
     /**
