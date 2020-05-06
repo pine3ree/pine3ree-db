@@ -25,17 +25,19 @@ class Oci extends Driver
         parent::__construct($pdo, '"', '"', "'");
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Quoting Oracle identifiers may introduce errors as Oracle creates uppercase
+     * table and column names if not quoted themself on creation.
+     */
     public function quoteIdentifier(string $identifier): string
     {
-        if ($identifier === '*') {
+        if ($identifier === '*' || empty($this->qlr) || $this->isQuoted($identifier)) {
             return $identifier;
         }
 
-        if ($this->isQuoted($identifier)) {
-            return $identifier;
-        }
-
-        return parent::quoteIdentifier(strtoupper($identifier));
+        return $identifier;
     }
 
     public function getLimitSQL(int $limit = null, int $offset = null): string
