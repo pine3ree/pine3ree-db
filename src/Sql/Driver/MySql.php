@@ -10,6 +10,7 @@ namespace P3\Db\Sql\Driver;
 
 use P3\Db\Db;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Statement\Select;
 
 /**
  * MySql sql-driver
@@ -21,8 +22,11 @@ class MySql extends Driver
         parent::__construct($pdo, '`', '`', "'");
     }
 
-    public function getLimitSQL(int $limit = null, int $offset = null): string
+    public function getLimitSQL(Select $select): string
     {
+        $limit  = $select->limit;
+        $loffset= $select->offset;
+
         if (!isset($limit) && !isset($limit)) {
             return '';
         }

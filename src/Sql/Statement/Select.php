@@ -77,13 +77,13 @@ class Select extends DML
     /** @var string|null */
     protected $indexBy;
 
-    public function __construct($columns = null, $table = null)
+    public function __construct($columns = null, string $table = null, string $alias = null)
     {
         if (!empty($columns)) {
             $this->columns($columns);
         }
         if (!empty($table)) {
-            $this->from($table);
+            $this->from($table, $alias);
         }
     }
 
@@ -223,11 +223,11 @@ class Select extends DML
     /**
      * Set the SELECT FROM table
      *
-     * @param string|array $table
+     * @param string $table
      * @param string|null $alias
      * @return $this
      */
-    public function from($table, string $alias = null): self
+    public function from(string $table, string $alias = null): self
     {
          parent::setTable($table, $alias);
          return $this;
@@ -317,7 +317,9 @@ class Select extends DML
      */
     private function addJoin(string $type, string $table, string $alias, $cond = null): self
     {
-        if (! $cond instanceof On) {
+        if (! $cond instanceof On
+            && ! $cond instanceof Literal // to express USING(column)
+        ) {
             $cond = new On(Sql::AND, $cond);
         }
 

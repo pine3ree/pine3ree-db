@@ -240,12 +240,13 @@ class Db
      *
      * @param array|string $columns An array of columns with optional key-as-alias,
      *      a column or the asterisk
-     * @param string|array|null $table
+     * @param string|null $table The db-table name
+     * @param string|null $alias The db-table alias
      * @return Select
      */
-    public function select($columns = Sql::ASTERISK, $table = null): Select
+    public function select($columns = Sql::ASTERISK, string $table = null, string $alias = null): Select
     {
-        return new Select($columns, $table);
+        return new Select($columns, $table, $alias);
     }
 
     /**

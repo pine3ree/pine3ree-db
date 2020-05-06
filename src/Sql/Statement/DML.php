@@ -8,6 +8,7 @@
 
 namespace P3\Db\Sql\Statement;
 
+use InvalidArgumentException;
 use RuntimeException;
 use P3\Db\Sql\Statement;
 
@@ -34,11 +35,11 @@ abstract class DML extends Statement
     /**
      * Validate and set the query table/alias
      *
-     * @param array|string $table
+     * @param string $table
      * @param string|null $alias
      * @return void
      */
-    protected function setTable($table, string $alias = null): void
+    protected function setTable(string $table, string $alias = null): void
     {
         if (isset($this->table)) {
             throw new RuntimeException(
@@ -46,12 +47,10 @@ abstract class DML extends Statement
             );
         }
 
-        if (is_array($table)) {
-            $key = key($table);
-            $table = current($table);
-            if (!is_numeric($key) && $key !== '') {
-                $this->alias = $key;
-            }
+        if (empty($table)) {
+            throw new InvalidArgumentException(
+                "The db-table name argument cannot be empty!"
+            );
         }
 
         $this->table = $table;

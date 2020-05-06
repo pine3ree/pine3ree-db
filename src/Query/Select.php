@@ -21,9 +21,9 @@ use RuntimeException;
  */
 class Select extends Query
 {
-    public function __construct(Db $db, $columns = null, $table = null)
+    public function __construct(Db $db, $columns = null, string $table = null, string $alias = null)
     {
-        parent::__construct($db, new SqlSelect($columns, $table));
+        parent::__construct($db, new SqlSelect($columns, $table, $alias));
     }
 
     /**
