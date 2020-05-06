@@ -153,7 +153,7 @@ class Expression implements ExpressionInterface
         if ($this->ql === substr($identifier, 0, 1)) {
             return true;
         }
-        if ($this->qr === ubstr($identifier, -1)) {
+        if ($this->qr === substr($identifier, -1)) {
             return true;
         }
         return false;

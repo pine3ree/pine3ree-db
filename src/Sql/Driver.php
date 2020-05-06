@@ -84,7 +84,7 @@ class Driver
         if (!empty($this->ql) && $this->ql === substr($identifier, 0, 1)) {
             return true;
         }
-        if (!empty($this->qr) && $this->qr === ubstr($identifier, -1)) {
+        if (!empty($this->qr) && $this->qr === substr($identifier, -1)) {
             return true;
         }
         return false;
