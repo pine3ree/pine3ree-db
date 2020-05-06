@@ -68,7 +68,7 @@ abstract class DML extends Statement
      */
     public function normalizeColumn(string $column): string
     {
-        $column = trim($column, $this->qi); // unquote the column first
+        $column = str_replace([$this->ql, $this->qr] , '', $column); // unquote the column first
         if (false === strpos($column, '.')) {
             return $this->alias ? "{$this->alias}.{$column}" : $column;
         }
