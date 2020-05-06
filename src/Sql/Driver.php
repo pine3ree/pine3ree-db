@@ -9,6 +9,7 @@
 namespace P3\Db\Sql;
 
 use PDO;
+use Throwable;
 
 /**
  * The default ANSI SQL Driver
@@ -38,7 +39,7 @@ class Driver
     protected $qv;
 
     /**
-     * @param Db $db the database connection, if any
+     * @param PDO $pdo the database connection, if any
      * @param string $ql left-quote char
      * @param string $qr right-quote char
      * @param string $qv quote char for values
@@ -138,7 +139,7 @@ class Driver
                 if ($quoted !== false) {
                     return $quoted;
                 }
-            } catch (Exception $ex) {
+            } catch (Throwable $ex) {
                 // do nothing
             }
         }

@@ -11,6 +11,7 @@ namespace P3\Db\Sql\Driver;
 use PDO;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Insert;
 
