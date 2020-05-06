@@ -66,7 +66,7 @@ abstract class DML extends Statement
      * @param string $column
      * @return string
      */
-    protected function normalizeColumn(string $column): string
+    public function normalizeColumn(string $column): string
     {
         $column = trim($column, $this->qi); // unquote the column first
         if (false === strpos($column, '.')) {
