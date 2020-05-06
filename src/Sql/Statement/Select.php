@@ -181,6 +181,14 @@ class Select extends DML
             return $this->sqls['columns'];
         }
 
+        if (empty($this->columns)) {
+
+        }
+
+        if (isset($driver) && is_callable([$driver, 'getColumnsSQL'])) {
+            return $this->sqls['limit'] = $driver->getColumnsSQL($this);
+        }
+
         $quoter = $driver ?? $this;
 
         $sqls = [];
@@ -501,7 +509,7 @@ class Select extends DML
         }
 
         if (isset($driver) && is_callable([$driver, 'getLimitSQL'])) {
-            return $this->sqls['limit'] = $driver->getLimitSQL($this->limit, $this->offset);
+            return $this->sqls['limit'] = $driver->getLimitSQL($this);
         }
 
         if (isset($this->limit)) {
