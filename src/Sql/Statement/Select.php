@@ -71,6 +71,9 @@ class Select extends DML
     /** @var int|null */
     protected $offset;
 
+    /** @var self|null */
+    protected $union;
+
     /** @var string|null */
     protected $indexBy;
 
@@ -530,6 +533,12 @@ class Select extends DML
         return $this->sqls['limit'] = $sql ?? '';
     }
 
+    public function union(self $select): self
+    {
+        $this->union = $select;
+        return $this;
+    }
+
     public function indexBy(string $indexBy): self
     {
         $this->indexBy = $indexBy;
@@ -594,6 +603,13 @@ class Select extends DML
         $sqls[] = $this->getHavingSQL($driver);
         $sqls[] = $this->getOrderBySQL($driver);
         $sqls[] = $this->getLimitSQL($driver);
+
+        if ($this->union instanceof self) {
+            $union_sql = $this->union->getSQL($driver);
+            if (!$this->isEmptySQL($union_sql)) {
+                $sqls[] = "UNION {$union_sql}";
+            }
+        }
 
         foreach ($sqls as $index => $sql) {
             if ($this->isEmptySQL($sql)) {

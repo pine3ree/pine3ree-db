@@ -167,6 +167,16 @@ class Select extends Query
     }
 
     /**
+     * @see SqlSelect::union()
+     * @return $this
+     */
+    public function union(SqlSelect $select): self
+    {
+        $this->statement->union($select);
+        return $this;
+    }
+
+    /**
      * @see SqlSelect::indexBy()
      * @return $this
      */
