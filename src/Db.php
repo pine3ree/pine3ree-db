@@ -209,7 +209,7 @@ class Db
         int $limit = null,
         int $offset = null
     ): array {
-        $select = $this->select()->distinct()->from($table);
+        $select = $this->select()->from($table);
 
         if (isset($where)) {
             $select->where($where);
@@ -233,6 +233,37 @@ class Db
         $stmt->closeCursor();
 
         return $rows;
+    }
+
+    /**
+     * Count the rows from a table matching provided criteria
+     *
+     * @param string $table
+     * @param Where|Predicate|array|string $where
+     * @return int
+     */
+    public function count(string $table, $where = null): int
+    {
+        $select = $this->select();
+        $select
+            ->columns([
+                new Sql\Literal("COUNT(1)"),
+            ])
+            ->from($table);
+
+        if (isset($where)) {
+            $select->where($where);
+        }
+
+        $stmt = $this->prepare($select, true);
+        if (false === $stmt || false === $stmt->execute()) {
+            return false;
+        }
+
+        $count = (int)$stmt->fetchColumn(0);
+        $stmt->closeCursor();
+
+        return $count;
     }
 
     /**
