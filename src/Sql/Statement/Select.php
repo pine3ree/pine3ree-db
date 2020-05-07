@@ -39,10 +39,10 @@ use RuntimeException;
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  */
-class Select extends DMQL
+class Select extends Statement
 {
     use ConditionAwareTrait;
-    use Traits\TableAwareTrait;
+    use TableAwareTrait;
 
     /** @var string|null */
     protected $quantifier;

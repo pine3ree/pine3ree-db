@@ -9,6 +9,7 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
+use RuntimeException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Literal;
@@ -16,7 +17,6 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
-use RuntimeException;
 
 /**
  * This class represents an UPDATE sql-statement expression
@@ -26,7 +26,7 @@ use RuntimeException;
  * @property-read array $set The SET column/value pairs to be updated
  * @property-read Where|null $where The Where clause, built on-first-access if null
  */
-class Update extends DMQL
+class Update extends Statement
 {
     use ConditionAwareTrait;
     use TableAwareTrait;
