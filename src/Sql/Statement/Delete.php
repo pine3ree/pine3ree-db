@@ -14,8 +14,9 @@ use RuntimeException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement\DMQL;
+use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
+use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 
 /**
  * This class represents a DELETE sql-statement expression
@@ -24,9 +25,10 @@ use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
  * @property-read string|null $from Alias of $table
  * @property-read Where $where The Where clause, built on-first-access if null
  */
-class Delete extends DMQL
+class Delete extends Statement
 {
     use ConditionAwareTrait;
+    use TableAwareTrait;
 
     /** @var Where|null */
     protected $where;

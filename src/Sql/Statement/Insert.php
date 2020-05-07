@@ -11,8 +11,8 @@ namespace P3\Db\Sql\Statement;
 use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\Statement\DMQL;
-use P3\Db\Sql\Statement\Select;
+use P3\Db\Sql\Statement;
+use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 use RuntimeException;
 
 /**
@@ -26,7 +26,7 @@ use RuntimeException;
  * @property-read Select|null $select The source Select statement if any
  * @property-read array[] $rows An array of GROUP BY identifiers
  */
-class Insert extends DMQL
+class Insert extends Statement
 {
     /** @var bool */
     private $ignore = false;
