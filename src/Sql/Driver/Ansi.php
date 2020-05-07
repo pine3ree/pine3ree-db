@@ -23,6 +23,6 @@ class Ansi extends Driver
 
     public function setPDO(PDO $pdo)
     {
-        // do notthing;
+        // do not use PDO for ANSI-SQL;
     }
 }
