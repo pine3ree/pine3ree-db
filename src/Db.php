@@ -240,9 +240,9 @@ class Db
      *
      * @param string $table
      * @param Where|Predicate|array|string $where
-     * @return int
+     * @return int|null
      */
-    public function count(string $table, $where = null): int
+    public function count(string $table, $where = null): ?int
     {
         $select = $this->select();
         $select
@@ -257,7 +257,7 @@ class Db
 
         $stmt = $this->prepare($select, true);
         if (false === $stmt || false === $stmt->execute()) {
-            return false;
+            return null;
         }
 
         $count = (int)$stmt->fetchColumn(0);
