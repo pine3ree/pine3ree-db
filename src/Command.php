@@ -37,12 +37,12 @@ abstract class Command
     /**
      * Prepare the SQL statement
      *
-     * @param bool $bind
+     * @param bool $bind_params
      * @return PDOStatement|false
      */
-    protected function prepare(bool $bind = false)
+    protected function prepare(bool $bind_params = false)
     {
-        return $this->db->prepare($this->statement, $bind);
+        return $this->db->prepare($this->statement, $bind_params);
     }
 
     public function getParams(): array
