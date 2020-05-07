@@ -55,7 +55,7 @@ abstract class Command
         return $this->statement->getParamsTypes();
     }
 
-    public function getStatement(): Statement
+    public function getStatement(): SqlStatement
     {
         return $this->statement;
     }
@@ -66,6 +66,6 @@ abstract class Command
             return $this->statement;
         }
 
-        return $this->statement->$name ?? null;
+        return $this->statement->{$name} ?? null;
     }
 }
