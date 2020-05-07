@@ -321,12 +321,7 @@ class Select extends Command
     public function query(): ?PDOStatement
     {
         $stmt = $this->prepare(true);
-        if ($stmt === false) {
-            return null;
-        }
-
-        if (false === $stmt->execute()) {
-            $stmt->closeCursor();
+        if ($stmt === false || false === $stmt->execute()) {
             return null;
         }
 
