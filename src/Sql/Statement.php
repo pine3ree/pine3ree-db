@@ -23,9 +23,9 @@ abstract class Statement extends Expression
     /**
      * Remove any cached SQL string
      */
-    public function reset()
+    public function clearSQL()
     {
-        parent::reset();
+        parent::clearSQL();
         $this->sqls = [];
     }
 }

@@ -192,13 +192,13 @@ class Expression implements ExpressionInterface
     /**
      * Remove the cached SQL string
      */
-    public function reset()
+    public function clearSQL()
     {
         $this->sql = null;
     }
 
     public function __clone()
     {
-        $this->reset();
+        $this->clearSQL();
     }
 }
