@@ -28,11 +28,6 @@ abstract class DML extends Statement
     protected $alias;
 
     /**
-     * @var string|null The database table primary-key if any
-     */
-    protected $pk;
-
-    /**
      * Validate and set the query table/alias
      *
      * @param string $table
