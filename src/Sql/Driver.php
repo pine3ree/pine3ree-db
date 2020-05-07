@@ -39,6 +39,12 @@ class Driver
     protected $qv;
 
     /**
+     * The basic singleton ansi driver
+     * @var self
+     */
+    private static $ansi;
+
+    /**
      * @param PDO $pdo the database connection, if any
      * @param string $ql left-quote char
      * @param string $qr right-quote char
@@ -171,5 +177,15 @@ class Driver
     public function setPDO(PDO $pdo)
     {
         $this->pdo = $pdo;
+    }
+
+    /**
+     * Return the basic ANSI driver
+     *
+     * @return self
+     */
+    public static function ansi(): self
+    {
+        return self::$ansi ?? self::$ansi = new self();
     }
 }
