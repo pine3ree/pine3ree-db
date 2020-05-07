@@ -69,8 +69,17 @@ class Oci extends Driver
 
     public function decorateSelectSQL(Select $select, string $sql): string
     {
-        // quote primary any unquoted table alias prefix
+        // quote any unquoted table alias prefix
+        $tb_aliases = [];
         if ($tb_alias = $select->alias) {
+            $tb_aliases[] = $select->alias;
+        }
+        foreach ($select->joins as $join) {
+            if ($tb_alias = $join['alias']) {
+                $tb_aliases[] = $tb_alias;
+            }
+        }
+        foreach ($tb_aliases as $tb_alias) {
             $sql = str_replace(" {$tb_alias}.", " {$this->quoteAlias($tb_alias)}.", $sql);
         }
 
