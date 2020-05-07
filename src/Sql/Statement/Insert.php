@@ -286,8 +286,10 @@ class Insert extends DML
             );
         }
 
+        $driver = $driver ?? Driver::ansi();
+
         $insert  = $this->ignore ? "INSERT IGNORE" : "INSERT";
-        $table   = ($driver ?? $this)->quoteIdentifier($this->table);
+        $table   = $driver->quoteIdentifier($this->table);
         $columns = $this->getColumnsSQL($driver);
         $values  = $this->getValuesSQL($driver);
 
@@ -316,11 +318,11 @@ class Insert extends DML
             return $this->sqls['columns'];
         }
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
         $sqls = [];
         foreach ($this->columns as $column) {
-            $sqls[] = $quoter->quoteIdentifier($column);
+            $sqls[] = $driver->quoteIdentifier($column);
         }
 
         return $this->sqls['columns'] = "(" . implode(", ", $sqls) . ")";

@@ -10,6 +10,7 @@ namespace P3\Db\Sql;
 
 use PDO;
 use Throwable;
+use P3\Db\Sql\Driver\Ansi;
 
 /**
  * The default ANSI SQL Driver
@@ -186,6 +187,6 @@ class Driver
      */
     public static function ansi(): self
     {
-        return self::$ansi ?? self::$ansi = new self();
+        return self::$ansi ?? self::$ansi = new Ansi();
     }
 }

@@ -67,9 +67,11 @@ class Comparison extends Predicate
             return $this->sql;
         }
 
+        $driver = $driver ?? Driver::ansi();
+
         $identifier = $this->identifier instanceof Literal
             ? $this->identifier->getSQL()
-            : ($driver ?? $this)->quoteIdentifier($this->identifier);
+            : $driver->quoteIdentifier($this->identifier);
 
         $param = $this->value instanceof Literal
             ? $this->value->getSQL()

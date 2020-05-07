@@ -66,7 +66,9 @@ class Delete extends DML
             );
         }
 
-        $table = ($driver ?? $this)->quoteIdentifier($this->table);
+        $driver = $driver ?? Driver::ansi();
+
+        $table = $driver->quoteIdentifier($this->table);
 
         $where_sql = $this->getWhereSQL($driver);
         if ($this->isEmptySQL($where_sql)) {

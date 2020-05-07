@@ -129,18 +129,18 @@ class Update extends DML
             );
         }
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
-        $table = $quoter->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias = $quoter->quoteAlias($this->alias)) {
+        $table = $driver->quoteIdentifier($this->table);
+        if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
             $table .= " {$alias}";
         }
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
         $set = [];
         foreach ($this->set as $column => $value) {
-            $column = $quoter->quoteIdentifier($column);
+            $column = $driver->quoteIdentifier($column);
             $param  = $value instanceof Literal
                 ? $val->getSQL()
                 : $this->createNamedParam($value);

@@ -185,10 +185,10 @@ class Select extends DML
             return $this->sqls['columns'];
         }
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
         if (empty($this->columns)) {
-            $sql = $this->alias ? $quoter->quoteAlias($this->alias) . ".*" : "*";
+            $sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
             $this->sqls['columns'] = $sql;
             return $sql;
         }
@@ -200,15 +200,15 @@ class Select extends DML
         $sqls = [];
         foreach ($this->columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
-                $column_sql = $this->alias ? $quoter->quoteAlias($this->alias) . ".*" : "*";
+                $column_sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
             } else {
                 $column_sql = $column instanceof Literal
                     ? $column->getSQL()
-                    : $quoter->quoteIdentifier(
+                    : $driver->quoteIdentifier(
                         $this->normalizeColumn($column)
                     );
                 if (!is_numeric($key) && $key !== '' && $key !== $column) {
-                    $column_sql .= " AS " . $quoter->quoteAlias($key);
+                    $column_sql .= " AS " . $driver->quoteAlias($key);
                 }
             }
             $sqls[] = $column_sql;
@@ -345,18 +345,20 @@ class Select extends DML
             return $this->sqls['join'];
         }
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
         $sqls = [];
         foreach ($this->joins as $join) {
             $type  = isset(Sql::JOIN_TYPES[$join['type']]) ? $join['type'] : '';
-            $table = $quoter->quoteIdentifier($join['table']);
-            $alias = $quoter->quoteAlias($join['alias']);
+            $table = $driver->quoteIdentifier($join['table']);
+            $alias = $driver->quoteAlias($join['alias']);
             $cond  = $join['cond'];
 
             if ($cond->hasParams()) {
                 $this->importParams($cond);
             }
+
+            $cond = $cond->getSQL($driver);
 
             $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond}");
         }
@@ -421,11 +423,11 @@ class Select extends DML
             return '';
         }
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
-            $groupBy[$key] = $quoter->quoteIdentifier($identifier);
+            $groupBy[$key] = $driver->quoteIdentifier($identifier);
         }
 
         return "GROUP BY " . implode(", ", $groupBy);
@@ -517,12 +519,12 @@ class Select extends DML
             return $this->sqls['order'];
         }
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
         $sql = [];
         foreach ($this->orderBy as $identifier => $direction) {
             // do not quote identifier or alias, do it programmatically
-            $sql[] = $quoter->quoteIdentifier($identifier) . " {$direction}";
+            $sql[] = $driver->quoteIdentifier($identifier) . " {$direction}";
         }
 
         $this->sqls['order'] = $sql = "ORDER BY " . implode(", ", $sql);
@@ -625,10 +627,10 @@ class Select extends DML
 
         $columns = $this->getColumnsSQL($driver);
 
-        $quoter = $driver ?? $this;
+        $driver = $driver ?? Driver::ansi();
 
-        $table = $quoter->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias = $quoter->quoteAlias($this->alias)) {
+        $table = $driver->quoteIdentifier($this->table);
+        if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
             $table .= " {$alias}";
         }
 
