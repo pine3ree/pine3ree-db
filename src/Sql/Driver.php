@@ -15,7 +15,7 @@ use P3\Db\Sql\Driver\Ansi;
 /**
  * The default ANSI SQL Driver
  */
-class Driver
+abstract class Driver
 {
     /**
      * @var PDO|null
