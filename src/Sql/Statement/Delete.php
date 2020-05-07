@@ -93,7 +93,7 @@ class Delete extends DML
         return $this;
     }
 
-    private function getWhereSQL(Driver $driver = null): string
+    private function getWhereSQL(Driver $driver): string
     {
         return $this->getConditionSQL('where', $driver);
     }

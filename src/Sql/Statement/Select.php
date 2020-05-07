@@ -179,13 +179,11 @@ class Select extends DML
         }
     }
 
-    private function getColumnsSQL(Driver $driver = null): string
+    private function getColumnsSQL(Driver $driver): string
     {
         if (isset($this->sqls['columns'])) {
             return $this->sqls['columns'];
         }
-
-        $driver = $driver ?? Driver::ansi();
 
         if (empty($this->columns)) {
             $sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
@@ -335,7 +333,7 @@ class Select extends DML
         return $this;
     }
 
-    private function getJoinSQL(Driver $driver = null): string
+    private function getJoinSQL(Driver $driver): string
     {
         if (empty($this->joins)) {
             return '';
@@ -344,8 +342,6 @@ class Select extends DML
         if (isset($this->sqls['join'])) {
             return $this->sqls['join'];
         }
-
-        $driver = $driver ?? Driver::ansi();
 
         $sqls = [];
         foreach ($this->joins as $join) {
@@ -379,7 +375,7 @@ class Select extends DML
         return $this;
     }
 
-    private function getWhereSQL(Driver $driver = null): string
+    private function getWhereSQL(Driver $driver): string
     {
         return $this->getConditionSQL('where', $driver);
     }
@@ -417,13 +413,11 @@ class Select extends DML
         return $this;
     }
 
-    private function getGroupBySQL(Driver $driver = null): string
+    private function getGroupBySQL(Driver $driver): string
     {
         if (empty($this->groupBy)) {
             return '';
         }
-
-        $driver = $driver ?? Driver::ansi();
 
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
@@ -445,7 +439,7 @@ class Select extends DML
         return $this;
     }
 
-    private function getHavingSQL(Driver $driver = null): string
+    private function getHavingSQL(Driver $driver): string
     {
         return $this->getConditionSQL('having', $driver);
     }
@@ -509,7 +503,7 @@ class Select extends DML
         return $normalized;
     }
 
-    private function getOrderBySQL(Driver $driver = null): string
+    private function getOrderBySQL(Driver $driver): string
     {
         if (empty($this->orderBy)) {
             return '';
@@ -518,8 +512,6 @@ class Select extends DML
         if (isset($this->sqls['order'])) {
             return $this->sqls['order'];
         }
-
-        $driver = $driver ?? Driver::ansi();
 
         $sql = [];
         foreach ($this->orderBy as $identifier => $direction) {
@@ -548,7 +540,7 @@ class Select extends DML
         return $this;
     }
 
-    private function getLimitSQL(Driver $driver = null): string
+    private function getLimitSQL(Driver $driver): string
     {
         if (isset($this->sqls['limit'])) {
             return $this->sqls['limit'];
@@ -558,7 +550,7 @@ class Select extends DML
             return $this->sqls['limit'] = '';
         }
 
-        if (isset($driver) && is_callable([$driver, 'getLimitSQL'])) {
+        if (is_callable([$driver, 'getLimitSQL'])) {
             return $this->sqls['limit'] = $driver->getLimitSQL($this);
         }
 
@@ -600,10 +592,26 @@ class Select extends DML
             return $this->sql;
         }
 
+        $driver = $driver ?? Driver::ansi();
+
         $base_sql = $this->getBaseSQL($driver);
         $clauses_sql = $this->getClausesSQL($driver);
 
         $sql = rtrim("{$base_sql} {$clauses_sql}");
+
+        // quote any unquoted table alias prefix
+        $tb_aliases = [];
+        if ($this->alias) {
+            $tb_aliases[] = $this->alias;
+        }
+        foreach ($this->joins as $join) {
+            if ($tb_alias = $join['alias']) {
+                $tb_aliases[] = $tb_alias;
+            }
+        }
+        foreach ($tb_aliases as $tb_alias) {
+            $sql = str_replace(" {$tb_alias}.", " {$driver->quoteAlias($tb_alias)}.", $sql);
+        }
 
         if (isset($driver) && is_callable([$driver, 'decorateSelectSQL'])) {
             $sql = $driver->decorateSelectSQL($this, $sql);
@@ -612,7 +620,7 @@ class Select extends DML
         return $this->sql = $sql;
     }
 
-    private function getBaseSQL(Driver $driver = null): string
+    private function getBaseSQL(Driver $driver): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(
@@ -627,8 +635,6 @@ class Select extends DML
 
         $columns = $this->getColumnsSQL($driver);
 
-        $driver = $driver ?? Driver::ansi();
-
         $table = $driver->quoteIdentifier($this->table);
         if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
             $table .= " {$alias}";
@@ -637,7 +643,7 @@ class Select extends DML
         return "{$select} {$columns} FROM {$table}";
     }
 
-    private function getClausesSQL(Driver $driver = null): string
+    private function getClausesSQL(Driver $driver): string
     {
         $sqls = [];
 

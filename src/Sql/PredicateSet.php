@@ -260,6 +260,8 @@ class PredicateSet extends Predicate
             return $this->sql;
         }
 
+        $driver = $driver ?? Driver::ansi();
+
         $sqls = [];
         foreach ($this->predicates as $predicate) {
             $sql = $predicate->getSQL($driver);

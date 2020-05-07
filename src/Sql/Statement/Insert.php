@@ -308,7 +308,7 @@ class Insert extends DML
         return $this->sql = "{$insert} INTO {$table} {$column_list}VALUES {$values}";
     }
 
-    private function getColumnsSQL(Driver $driver = null): string
+    private function getColumnsSQL(Driver $driver): string
     {
         if (empty($this->columns)) {
             return '';
@@ -318,8 +318,6 @@ class Insert extends DML
             return $this->sqls['columns'];
         }
 
-        $driver = $driver ?? Driver::ansi();
-
         $sqls = [];
         foreach ($this->columns as $column) {
             $sqls[] = $driver->quoteIdentifier($column);
@@ -328,7 +326,7 @@ class Insert extends DML
         return $this->sqls['columns'] = "(" . implode(", ", $sqls) . ")";
     }
 
-    private function getValuesSQL(Driver $driver = null): string
+    private function getValuesSQL(Driver $driver): string
     {
         if (isset($this->sqls['values'])) {
             return $this->sqls['values'];

@@ -102,9 +102,11 @@ class Update extends DML
             return $this->sql;
         }
 
-        $base_sql = $this->getBaseSQL($driver);
+        $driver = $driver ?? Driver::ansi();
 
+        $base_sql  = $this->getBaseSQL($driver);
         $where_sql = $this->getWhereSQL($driver);
+
         if ($this->isEmptySQL($where_sql)) {
             throw new RuntimeException(
                 "UPDATE queries without conditions are not allowed!"
@@ -115,7 +117,7 @@ class Update extends DML
         return $this->sql;
     }
 
-    private function getBaseSQL(Driver $driver = null): string
+    private function getBaseSQL(Driver $driver): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(
@@ -129,14 +131,10 @@ class Update extends DML
             );
         }
 
-        $driver = $driver ?? Driver::ansi();
-
         $table = $driver->quoteIdentifier($this->table);
         if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
             $table .= " {$alias}";
         }
-
-        $driver = $driver ?? Driver::ansi();
 
         $set = [];
         foreach ($this->set as $column => $value) {
@@ -162,7 +160,7 @@ class Update extends DML
         return $this;
     }
 
-    private function getWhereSQL(Driver $driver = null): string
+    private function getWhereSQL(Driver $driver): string
     {
         return $this->getConditionSQL('where', $driver);
     }
