@@ -246,10 +246,7 @@ class Select extends Command
      */
     public function fetchAll(): array
     {
-        $this->statement->distinct();
-
-        $stmt = $this->query();
-        if ($stmt === null) {
+        if (null === $stmt = $this->query()) {
             return null;
         }
 
@@ -287,8 +284,7 @@ class Select extends Command
     {
         $this->statement->limit(1);
 
-        $stmt = $this->query();
-        if ($stmt === null) {
+        if (null === $stmt = $this->query()) {
             return null;
         }
 
@@ -307,8 +303,7 @@ class Select extends Command
     {
         $this->statement->limit(1);
 
-        $stmt = $this->query();
-        if ($stmt === null) {
+        if (null === $stmt = $this->query()) {
             return null;
         }
 
@@ -318,6 +313,11 @@ class Select extends Command
         return $row[$identifier] ?? null;
     }
 
+    /**
+     * Prepare anad execute the PDO-statement and return it or return null on failure
+     *
+     * @return PDOStatement|null
+     */
     public function query(): ?PDOStatement
     {
         $stmt = $this->prepare(true);
