@@ -13,9 +13,9 @@ use RuntimeException;
 use P3\Db\Sql\Statement;
 
 /**
- * Class DML
+ * DMQL is the base abstract class for DML and DQL sql-statements
  */
-abstract class DML extends Statement
+abstract class DMQL extends Statement
 {
     /**
      * @var string The database table name

@@ -17,7 +17,7 @@ use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
-use P3\Db\Sql\Statement\DML;
+use P3\Db\Sql\Statement\DMQL;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use PDO;
 use RuntimeException;
@@ -38,7 +38,7 @@ use RuntimeException;
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  */
-class Select extends DML
+class Select extends DMQL
 {
     use ConditionAwareTrait;
 

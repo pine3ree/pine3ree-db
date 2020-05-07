@@ -13,7 +13,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement\DML;
+use P3\Db\Sql\Statement\DMQL;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use RuntimeException;
 
@@ -25,7 +25,7 @@ use RuntimeException;
  * @property-read array $set The SET column/value pairs to be updated
  * @property-read Where|null $where The Where clause, built on-first-access if null
  */
-class Update extends DML
+class Update extends DMQL
 {
     use ConditionAwareTrait;
 

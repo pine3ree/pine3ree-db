@@ -6,7 +6,7 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Statement\DML;
+namespace P3\Db\Sql\Statement\DMQL;
 
 namespace P3\Db\Sql\Statement;
 
@@ -14,7 +14,7 @@ use RuntimeException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement\DML;
+use P3\Db\Sql\Statement\DMQL;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 
 /**
@@ -24,7 +24,7 @@ use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
  * @property-read string|null $from Alias of $table
  * @property-read Where $where The Where clause, built on-first-access if null
  */
-class Delete extends DML
+class Delete extends DMQL
 {
     use ConditionAwareTrait;
 
