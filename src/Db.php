@@ -247,7 +247,7 @@ class Db
         $select = $this->select();
         $select
             ->columns([
-                new Sql\Literal("COUNT(1)"),
+                new Sql\Literal("COUNT(*)"),
             ])
             ->from($table);
 
