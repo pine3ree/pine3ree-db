@@ -12,6 +12,7 @@ use PDO;
 use P3\Db\Db;
 use P3\Db\Command;
 use P3\Db\Sql\Statement\Select as SqlSelect;
+use PDOStatement;
 use RuntimeException;
 
 /**
@@ -247,9 +248,9 @@ class Select extends Command
     {
         $this->statement->distinct();
 
-        $stmt = $this->prepare(true);
-        if ($stmt === false || false === $stmt->execute()) {
-            return [];
+        $stmt = $this->query();
+        if ($stmt === null) {
+            return null;
         }
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -286,8 +287,8 @@ class Select extends Command
     {
         $this->statement->limit(1);
 
-        $stmt = $this->prepare(true);
-        if ($stmt === false || false === $stmt->execute()) {
+        $stmt = $this->query();
+        if ($stmt === null) {
             return null;
         }
 
@@ -306,8 +307,8 @@ class Select extends Command
     {
         $this->statement->limit(1);
 
-        $stmt = $this->prepare(true);
-        if ($stmt === false || false === $stmt->execute()) {
+        $stmt = $this->query();
+        if ($stmt === null) {
             return null;
         }
 
@@ -315,5 +316,20 @@ class Select extends Command
         $stmt->closeCursor();
 
         return $row[$identifier] ?? null;
+    }
+
+    public function query(): ?PDOStatement
+    {
+        $stmt = $this->prepare(true);
+        if ($stmt === false) {
+            return null;
+        }
+
+        if (false === $stmt->execute()) {
+            $stmt->closeCursor();
+            return null;
+        }
+
+        return $stmt;
     }
 }
