@@ -267,7 +267,7 @@ class Db
     }
 
     /**
-     * Create and return a new Select statement
+     * Create and return a new Select sql-statement
      *
      * @param array|string $columns An array of columns with optional key-as-alias,
      *      a column or the asterisk
@@ -281,8 +281,7 @@ class Db
     }
 
     /**
-     * Create an Insert statement and either return it run it if additional
-     * arguments are provided
+     * Create a new Insert sql-statement and either return or execute it
      *
      * @param string|null $table
      * @param array[] $rows
@@ -331,8 +330,7 @@ class Db
     }
 
     /**
-     * Create an Update statement and either return it run it if additional
-     * arguments are provided
+     * Create a new Update sql-statement and either return or execute it
      *
      * @param string|array|null $table
      * @param array|null $data
@@ -361,7 +359,7 @@ class Db
     }
 
     /**
-     * Create and return a new Select statement
+     * Create a new Delete sql-statement and either return or execute it
      *
      * @param string|array|null $table
      * @param string|array|Predicate|Where $where
