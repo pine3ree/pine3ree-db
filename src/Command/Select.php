@@ -10,7 +10,7 @@ namespace P3\Db\Command;
 
 use PDO;
 use P3\Db\Db;
-use P3\Db\Command;
+use P3\Db\Command\DQL;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 use PDOStatement;
 use RuntimeException;
@@ -20,7 +20,7 @@ use RuntimeException;
  *
  * @property-read SqlSelect $statement
  */
-class Select extends Command
+class Select extends DQL
 {
     /** @var string|null */
     protected $indexBy;
@@ -311,20 +311,5 @@ class Select extends Command
         $stmt->closeCursor();
 
         return $row[$identifier] ?? null;
-    }
-
-    /**
-     * Prepare anad execute the PDO-statement and return it or return null on failure
-     *
-     * @return PDOStatement|null
-     */
-    public function query(): ?PDOStatement
-    {
-        $stmt = $this->prepare(true);
-        if ($stmt === false || false === $stmt->execute()) {
-            return null;
-        }
-
-        return $stmt;
     }
 }
