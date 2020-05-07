@@ -119,8 +119,9 @@ abstract class Driver
     /**
      * Quote a value, when appliable, for SQL expression
      *
+     * Potentially dangerous: always prefer parameter binding
+     *
      * @param mixed $value The target identifier (column or alias)
-     * @deprecated
      */
     public function quoteValue($value): string
     {
@@ -141,7 +142,6 @@ abstract class Driver
                         $value = (string)$value;
                     }
                 }
-
                 $quoted = $this->pdo->quote($value, $parameter_type);
                 if ($quoted !== false) {
                     return $quoted;
@@ -167,6 +167,8 @@ abstract class Driver
 
     /**
      * Escape a string for SQL expression
+     *
+     * Potentially dangerous: always prefer parameter binding
      *
      * @param string $value
      */
