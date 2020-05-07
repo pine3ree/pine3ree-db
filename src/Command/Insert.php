@@ -10,7 +10,7 @@ namespace P3\Db\Command;
 
 use PDO;
 use P3\Db\Db;
-use P3\Db\Command;
+use P3\Db\Command\DML;
 use P3\Db\Sql\Statement\Insert as SqlInsert;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 
@@ -19,7 +19,7 @@ use P3\Db\Sql\Statement\Select as SqlSelect;
  *
  * @property-read SqlInsert $statement
  */
-class Insert extends Command
+class Insert extends DML
 {
     public function __construct(Db $db, string $table = null)
     {
@@ -94,15 +94,5 @@ class Insert extends Command
     {
         $this->statement->select($select);
         return $this;
-    }
-
-    public function execute()
-    {
-        $stmt = $this->prepare(true);
-        if ($stmt === false || false === $stmt->execute()) {
-            return false;
-        }
-
-        return $stmt->rowCount();
     }
 }

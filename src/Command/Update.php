@@ -11,7 +11,7 @@ namespace P3\Db\Command;
 use InvalidArgumentException;
 use PDO;
 use P3\Db\Db;
-use P3\Db\Command;
+use P3\Db\Command\DML;
 use P3\Db\Sql\Statement\Update as SqlUpdate;
 
 /**
@@ -19,7 +19,7 @@ use P3\Db\Sql\Statement\Update as SqlUpdate;
  *
  * @property-read SqlUpdate $statement
  */
-class Update extends Command
+class Update extends DML
 {
     public function __construct(Db $db, string $table = null)
     {
@@ -44,15 +44,5 @@ class Update extends Command
     {
         $this->statement->set($columnOrRow, $value);
         return $this;
-    }
-
-    public function execute()
-    {
-        $stmt = $this->prepare(true);
-        if ($stmt === false || false === $stmt->execute()) {
-            return false;
-        }
-
-        return $stmt->rowCount();
     }
 }

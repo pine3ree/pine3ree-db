@@ -10,7 +10,7 @@ namespace P3\Db\Command;
 
 use PDO;
 use P3\Db\Db;
-use P3\Db\Command;
+use P3\Db\Command\DML;
 use P3\Db\Sql\Statement\Delete as SqlDelete;
 
 /**
@@ -18,7 +18,7 @@ use P3\Db\Sql\Statement\Delete as SqlDelete;
  *
  * @property-read SqlDelete $statement
  */
-class Delete extends Command
+class Delete extends DML
 {
     public function __construct(Db $db, string $table = null)
     {
