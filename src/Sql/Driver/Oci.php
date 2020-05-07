@@ -51,8 +51,8 @@ class Oci extends Driver
 
         // table and column names starting with the underscore char must be quoted
         if (false === strpos($identifier, '.')) {
-            if ('_' === substr($segment, 0, 1)) {
-                $segments[$i] = parent::quoteIdentifier($segment);
+            if ('_' === substr($identifier, 0, 1)) {
+                return parent::quoteIdentifier($identifier);
             }
             return $identifier;
         }
