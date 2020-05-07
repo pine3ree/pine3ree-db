@@ -24,7 +24,7 @@ abstract class DML extends Command
     public function execute()
     {
         $stmt = $this->prepare(true);
-        if (false === $stmt || false === $stmt->execute()) {
+        if ($stmt === false || false === $stmt->execute()) {
             return false;
         }
 
