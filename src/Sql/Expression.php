@@ -215,7 +215,7 @@ class Expression implements ExpressionInterface
      *
      * @return string
      */
-    protected function createNamedParam($value, int $type = null): string
+    public function createNamedParam($value, int $type = null): string
     {
         //return $this->createPositionalParam($value, $param_type);
 
@@ -238,7 +238,7 @@ class Expression implements ExpressionInterface
      *
      * @return string
      */
-    protected function createPositionalParam($value, int $type = null): string
+    public function createPositionalParam($value, int $type = null): string
     {
         $this->setParam(self::$index, $value, $type);
 
