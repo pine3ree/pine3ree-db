@@ -28,6 +28,8 @@ use RuntimeException;
  */
 class Insert extends Statement
 {
+    use TableAwareTrait;
+
     /** @var bool */
     private $ignore = false;
 
