@@ -395,7 +395,7 @@ class Db
     {
         $stmt = $this->getPDO()->prepare($statement->getSQL($this->getDriver()));
 
-        if ($bind_params && $stmt !== false) {
+        if ($bind_params && $stmt instanceof PDOStatement) {
             $params_types = $statement->getParamsTypes();
             foreach ($statement->getParams() as $markerOrIndex => $value) {
                 $stmt->bindValue(
