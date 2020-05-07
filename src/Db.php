@@ -384,7 +384,7 @@ class Db
     }
 
     /**
-     * Prepare a Statement and optionally bind its values returning the
+     * Prepare a SQL Statement and optionally bind its values returning the
      * prepared/binded PDOStatement
      *
      * @param Statement $statement
