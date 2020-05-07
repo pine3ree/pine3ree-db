@@ -19,4 +19,13 @@ abstract class Statement extends Expression
      * @var string[] Cached parts of the final sql statement
      */
     protected $sqls = [];
+
+    /**
+     * Remove any cached SQL string
+     */
+    public function reset()
+    {
+        parent::reset();
+        $this->sqls = [];
+    }
 }

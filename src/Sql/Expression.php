@@ -189,8 +189,16 @@ class Expression implements ExpressionInterface
         $this->params_types[$key] = $param_type;
     }
 
+    /**
+     * Remove the cached SQL string
+     */
+    public function reset()
+    {
+        $this->sql = null;
+    }
+
     public function __clone()
     {
-        unset($this->sql);
+        $this->reset();
     }
 }
