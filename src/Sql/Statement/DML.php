@@ -13,7 +13,7 @@ use RuntimeException;
 use P3\Db\Sql\Statement;
 
 /**
- * Class Statement
+ * Class DML
  */
 abstract class DML extends Statement
 {
