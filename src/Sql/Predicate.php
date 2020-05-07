@@ -9,14 +9,14 @@
 namespace P3\Db\Sql;
 
 use InvalidArgumentException;
-use P3\Db\Sql\Expression;
+use P3\Db\Sql\Element;
 
 /**
  * Predicate represents a single SQL condition that can be evaluates by the underlying
  * database software. It is usually part of set of conditions (PredicateSet) such
  * as the WHERE, the HAVING and the ON clauses or their nested sets of conditions.
  */
-abstract class Predicate extends Expression
+abstract class Predicate extends Element
 {
     protected static function assertValidIdentifier($identifier)
     {
