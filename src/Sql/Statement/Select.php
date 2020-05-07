@@ -314,6 +314,8 @@ class Select extends Statement
      */
     private function addJoin(string $type, string $table, string $alias, $cond = null): self
     {
+        Sql::assertValidJoin($type);
+
         if (! $cond instanceof On
             && ! $cond instanceof Literal // to express USING(column)
         ) {
@@ -344,7 +346,7 @@ class Select extends Statement
 
         $sqls = [];
         foreach ($this->joins as $join) {
-            $type  = isset(Sql::JOIN_TYPES[$join['type']]) ? $join['type'] : '';
+            $type  = $join['type'];
             $table = $driver->quoteIdentifier($join['table']);
             $alias = $driver->quoteAlias($join['alias']);
             $cond  = $join['cond'];

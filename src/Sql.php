@@ -187,15 +187,29 @@ class Sql
         self::ALL      => self::ALL,
     ];
 
+    public static function isValidJoin(string $join): bool
+    {
+        return isset(self::JOIN_TYPES[strtoupper($join)]);
+    }
+
+    public static function assertValidJoin(string $join)
+    {
+        if (!self::isValidJoin($join)) {
+            throw new InvalidArgumentException(
+                "Invalid or unsupported SQL JOIN type: '{$join}' provided!"
+            );
+        }
+    }
+
     public static function isSupportedOperator(string $operator): bool
     {
-        return !empty(self::OPERATORS[strtoupper($operator)]);
+        return isset(self::OPERATORS[strtoupper($operator)]);
     }
 
     public static function assertValidOperator($operator)
     {
         if (!is_string($operator)
-            || empty(self::OPERATORS[strtoupper($operator)])
+            || !self::isSupportedOperator($operator)
         ) {
             throw new InvalidArgumentException(sprintf(
                 "Invalid or unsupported SQL operator, '%s' provided!",
