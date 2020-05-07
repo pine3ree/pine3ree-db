@@ -18,7 +18,7 @@ class Ansi extends Driver
 {
     public function __construct()
     {
-        parent::__construct(null, '`', '`', "'");
+        parent::__construct(null, '"', '"', "'");
     }
 
     public function setPDO(PDO $pdo)
