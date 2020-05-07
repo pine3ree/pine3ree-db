@@ -21,6 +21,9 @@ use RuntimeException;
  */
 class Select extends Command
 {
+    /** @var string|null */
+    protected $indexBy;
+
     public function __construct(Db $db, $columns = null, string $table = null, string $alias = null)
     {
         parent::__construct($db, new SqlSelect($columns, $table, $alias));
@@ -222,12 +225,14 @@ class Select extends Command
     }
 
     /**
-     * @see SqlSelect::indexBy()
+     * Index the result by the given identifier
+     *
+     * @var string $indexBy
      * @return $this
      */
-    public function indexBy(string $indexBy): self
+    public function indexBy(string $identifier): self
     {
-        $this->statement->indexBy($indexBy);
+        $this->indexBy = $identifier;
         return $this;
     }
 
@@ -254,7 +259,7 @@ class Select extends Command
             return [];
         }
 
-        $indexBy = $this->statement->indexedBy();
+        $indexBy = $this->indexBy;
         if (empty($indexBy)) {
             return $rows;
         }

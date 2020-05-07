@@ -74,9 +74,6 @@ class Select extends DML
     /** @var self|null */
     protected $union;
 
-    /** @var string|null */
-    protected $indexBy;
-
     public function __construct($columns = null, string $table = null, string $alias = null)
     {
         if (!empty($columns)) {
@@ -573,17 +570,6 @@ class Select extends DML
     {
         $this->union = $select;
         return $this;
-    }
-
-    public function indexBy(string $indexBy): self
-    {
-        $this->indexBy = $indexBy;
-        return $this;
-    }
-
-    public function indexedBy(): ?string
-    {
-        return $this->indexBy;
     }
 
     public function getSQL(Driver $driver = null): string
