@@ -8,7 +8,6 @@
 
 namespace P3\Db\Command;
 
-use PDOStatement;
 use P3\Db\Command;
 
 /**

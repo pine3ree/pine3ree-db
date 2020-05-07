@@ -8,8 +8,6 @@
 
 namespace P3\Db\Command;
 
-use InvalidArgumentException;
-use PDO;
 use P3\Db\Db;
 use P3\Db\Command\DML;
 use P3\Db\Sql\Statement\Update as SqlUpdate;

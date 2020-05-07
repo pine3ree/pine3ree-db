@@ -12,7 +12,6 @@ use PDO;
 use P3\Db\Db;
 use P3\Db\Command\DQL;
 use P3\Db\Sql\Statement\Select as SqlSelect;
-use PDOStatement;
 use RuntimeException;
 
 /**
