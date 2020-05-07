@@ -226,7 +226,7 @@ class Select extends Statement
      */
     public function from(string $table, string $alias = null): self
     {
-         parent::setTable($table, $alias);
+         $this->setTable($table, $alias);
          return $this;
     }
 

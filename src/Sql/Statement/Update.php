@@ -45,7 +45,7 @@ class Update extends Statement
     public function __construct(string $table = null)
     {
         if (!empty($table)) {
-            parent::setTable($table);
+            $this->table($table);
         }
     }
 
@@ -57,7 +57,7 @@ class Update extends Statement
      */
     public function table($table): self
     {
-        parent::setTable($table);
+        $this->setTable($table);
         return $this;
     }
 

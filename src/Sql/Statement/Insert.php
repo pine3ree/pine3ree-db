@@ -59,7 +59,7 @@ class Insert extends Statement
 
     public function into($table): self
     {
-        parent::setTable($table);
+        $this->setTable($table);
         return $this;
     }
 

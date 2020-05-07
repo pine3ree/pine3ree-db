@@ -50,7 +50,7 @@ class Delete extends Statement
      */
     public function from($table): self
     {
-        parent::setTable($table);
+        $this->setTable($table);
         return $this;
     }
 
