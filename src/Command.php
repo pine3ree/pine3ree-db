@@ -9,14 +9,14 @@
 namespace P3\Db;
 
 use PDOStatement;
-use P3\Db\Sql\Statement;
+use P3\Db\Sql\Statement as SqlStatement;
 
 /**
- * Class Query
+ * A Command sends an SQL-statement to the database and returns the result
  *
- * @property-read Statement $statement
+ * @property-read SqlStatement $statement
  */
-abstract class Query
+abstract class Command
 {
     /**
      * @var Db
@@ -24,11 +24,11 @@ abstract class Query
     protected $db;
 
     /**
-     * @var Statement
+     * @var SqlStatement
      */
     protected $statement;
 
-    public function __construct(Db $db, Statement $statement)
+    public function __construct(Db $db, SqlStatement $statement)
     {
         $this->db = $db;
         $this->statement = $statement;

@@ -6,11 +6,11 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Query;
+namespace P3\Db\Command;
 
 use PDO;
 use P3\Db\Db;
-use P3\Db\Query;
+use P3\Db\Command;
 use P3\Db\Sql\Statement\Delete as SqlDelete;
 
 /**
@@ -18,7 +18,7 @@ use P3\Db\Sql\Statement\Delete as SqlDelete;
  *
  * @property-read SqlDelete $statement
  */
-class Delete extends Query
+class Delete extends Command
 {
     public function __construct(Db $db, string $table = null)
     {

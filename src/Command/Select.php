@@ -6,11 +6,11 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Query;
+namespace P3\Db\Command;
 
 use PDO;
 use P3\Db\Db;
-use P3\Db\Query;
+use P3\Db\Command;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 use RuntimeException;
 
@@ -19,7 +19,7 @@ use RuntimeException;
  *
  * @property-read SqlSelect $statement
  */
-class Select extends Query
+class Select extends Command
 {
     public function __construct(Db $db, $columns = null, string $table = null, string $alias = null)
     {
@@ -234,7 +234,7 @@ class Select extends Query
     /**
      * Fetch all the rows resulting by executing the composed sql-statement
      *
-     * @see \PDOStatement::fetchAll()
+     * @see \PDOCommand::fetchAll()
      *
      * @return array
      */

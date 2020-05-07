@@ -6,12 +6,12 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Query;
+namespace P3\Db\Command;
 
 use InvalidArgumentException;
 use PDO;
 use P3\Db\Db;
-use P3\Db\Query;
+use P3\Db\Command;
 use P3\Db\Sql\Statement\Update as SqlUpdate;
 
 /**
@@ -19,7 +19,7 @@ use P3\Db\Sql\Statement\Update as SqlUpdate;
  *
  * @property-read SqlUpdate $statement
  */
-class Update extends Query
+class Update extends Command
 {
     public function __construct(Db $db, string $table = null)
     {

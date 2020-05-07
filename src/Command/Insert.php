@@ -6,11 +6,11 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Query;
+namespace P3\Db\Command;
 
 use PDO;
 use P3\Db\Db;
-use P3\Db\Query;
+use P3\Db\Command;
 use P3\Db\Sql\Statement\Insert as SqlInsert;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 
@@ -19,7 +19,7 @@ use P3\Db\Sql\Statement\Select as SqlSelect;
  *
  * @property-read SqlInsert $statement
  */
-class Insert extends Query
+class Insert extends Command
 {
     public function __construct(Db $db, string $table = null)
     {
