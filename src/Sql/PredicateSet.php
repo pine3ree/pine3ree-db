@@ -218,7 +218,8 @@ class PredicateSet extends Predicate
         }
 
         if ($value instanceof Literal) {
-            return new Predicate\Literal("{$identifier} {$operator} {$value}");
+            $value_sql = $value->getSQL();
+            return new Predicate\Literal("{$identifier} {$operator} {$value_sql}");
         }
 
         if (is_array($value)) {
