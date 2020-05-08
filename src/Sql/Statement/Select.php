@@ -100,7 +100,7 @@ class Select extends Statement
     public function quantifier(string $quantifier): self
     {
         $quantifier = strtoupper($quantifier);
-        if (in_array($quantifier, [Sql::DISTINCT, Sql::ALL], true)) {
+        if (isset(Sql::QUANTIFIERS[$quantifier])) {
             $this->quantifier = $quantifier;
         }
 
@@ -144,7 +144,7 @@ class Select extends Statement
         // trim column names
         foreach ($columns as $key => $column) {
             if (is_string($column)) {
-                $column = $columns[$key] = trim($column);
+                $columns[$key] = trim($column);
             }
         }
 
@@ -176,7 +176,6 @@ class Select extends Statement
             if ($column instanceof Literal && !self::isEmptySQL($column->getSQL())) {
                 continue;
             }
-
             throw new InvalidArgumentException(sprintf(
                 "A table column must be a non empty string, a non empty Literal "
                 . "expression or a Select statement, `%s provided` for index/column-alias `{$key}`!",
