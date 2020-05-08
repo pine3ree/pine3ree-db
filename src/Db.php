@@ -146,6 +146,20 @@ class Db
     }
 
     /**
+     * Create and return a new Select command
+     *
+     * @param array|string $columns An array of columns with optional key-as-alias,
+     *      a column or the asterisk
+     * @param string|null $table The db-table name
+     * @param string|null $alias The db-table alias
+     * @return Select
+     */
+    public function select($columns = Sql::ASTERISK, string $table = null, string $alias = null): Select
+    {
+        return new Select($this, $columns, $table, $alias);
+    }
+
+    /**
      * Fetch a single row for given column value, if any
      *
      * @param string $table
@@ -240,20 +254,6 @@ class Db
         }
 
         return $select->fetchColumn(0);
-    }
-
-    /**
-     * Create and return a new Select command
-     *
-     * @param array|string $columns An array of columns with optional key-as-alias,
-     *      a column or the asterisk
-     * @param string|null $table The db-table name
-     * @param string|null $alias The db-table alias
-     * @return Select
-     */
-    public function select($columns = Sql::ASTERISK, string $table = null, string $alias = null): Select
-    {
-        return new Select($this, $columns, $table, $alias);
     }
 
     /**
