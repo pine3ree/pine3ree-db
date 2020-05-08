@@ -99,8 +99,8 @@ class Oci extends Driver
             if ($column === Sql::ASTERISK) {
                 $column_sql = $tb_alias ? $this->quoteAlias($tb_alias) . ".*" : "*";
             } else {
-                if ($column instanceof Literal) {
-                    $column_sql = $column->getSQL();
+                if ($column instanceof Literal || $column instanceof Select) {
+                    $column_sql = $column->getSQL($this);
                 } else {
                     $column_sql = $this->quoteIdentifier(
                         $select->normalizeColumn($column)
