@@ -174,7 +174,7 @@ abstract class Element
     {
         $this->clearSQL();
 
-        // rewrite the params and types markers
+        // rewrite the params and types index/markers
         $params = $this->params;
         $ptypes = $this->params_types;
 
