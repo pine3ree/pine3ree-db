@@ -144,12 +144,14 @@ class Sql
      */
     public const BETWEEN     = 'BETWEEN';
     public const NOT_BETWEEN = 'NOT BETWEEN';
+    public const EXISTS      = 'EXISTS';
+    public const NOT_EXISTS  = 'NOT EXISTS';
     public const IN          = 'IN';
     public const NOT_IN      = 'NOT IN';
     public const LIKE        = 'LIKE';
     public const NOT_LIKE    = 'NOT LIKE';
 
-    // valid operators excluding boolean
+    // valid operators excluding boolean operators
     public const OPERATORS = [
         self::EQ          => self::EQ,
         self::NEQ         => self::NEQ,
@@ -160,6 +162,8 @@ class Sql
         self::GT          => self::GT,
         self::BETWEEN     => self::BETWEEN,
         self::NOT_BETWEEN => self::NOT_BETWEEN,
+        self::EXISTS      => self::EXISTS,
+        self::NOT_EXISTS  => self::NOT_EXISTS,
         self::IN          => self::IN,
         self::NOT_IN      => self::NOT_IN,
         self::LIKE        => self::LIKE,
