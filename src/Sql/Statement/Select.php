@@ -190,6 +190,8 @@ class Select extends Statement
             return $this->sqls['columns'];
         }
 
+        return $this->sqls['columns'] = $driver->getSelectColumnsSQL($this);
+
         if (empty($this->columns)) {
             $sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
             $this->sqls['columns'] = $sql;
@@ -207,7 +209,7 @@ class Select extends Statement
             } else {
                 if ($column instanceof Literal) {
                     $column_sql = $column->getSQL();
-                } elseif ($column instanceof Literal) {
+                } elseif ($column instanceof Select) {
                     $column_sql = $column->getSQL($driver);
                     $this->importParams($column);
                 } else {
