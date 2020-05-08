@@ -263,14 +263,15 @@ class Select extends Command
         if (empty($indexBy)) {
             return $rows;
         }
-        if (!isset($rows[0][$indexBy])) {
-            throw new RuntimeException(
-                "The indexBy identifier `{$indexBy}` is not a valid key in the result rows!"
-            );
-        }
 
         $indexed = [];
-        foreach ($rows as $row) {
+        foreach ($rows as $i => $row) {
+            if (!isset($row[$indexBy])) {
+                throw new RuntimeException(
+                    "The indexBy identifier `{$indexBy}` is not a valid key in"
+                    . " the result row with index={$i}!"
+                );
+            }
             $indexed[$row[$indexBy]] = $row;
         }
 
