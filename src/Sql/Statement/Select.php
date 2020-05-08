@@ -30,7 +30,7 @@ use RuntimeException;
  * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read string[] $columns The columns to be returned
- * @property-read string|null $from Alias of $table
+ * @property-read string|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read array[] $joins An array of JOIN specs if any
  * @property-read array[] $groupBy An array of GROUP BY identifiers
@@ -727,6 +727,9 @@ class Select extends Statement
         }
         if ('columns' === $name) {
             return $this->columns;
+        }
+        if ('from' === $name) {
+            return $this->from ?? $this->table;
         }
         if ('where' === $name) {
             return $this->where ?? $this->where = new Where();
