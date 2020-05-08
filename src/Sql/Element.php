@@ -91,7 +91,7 @@ abstract class Element
         return $this->sql ?? '';
     }
 
-    protected function isEmptySQL($sql): bool
+    protected static function isEmptySQL($sql): bool
     {
         return !is_string($sql) || '' === trim($sql);
     }
