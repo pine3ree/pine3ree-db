@@ -28,7 +28,7 @@ abstract class Element
     protected $sql;
 
     /**
-     * @var array<int|string: mixed> A collection of indexed substitution parameters
+     * @var array<int|string, mixed> A collection of indexed substitution parameters
      */
     protected $params = [];
 
@@ -36,7 +36,7 @@ abstract class Element
      * A collection of indexed types for substitution parameters
      * Types are expressed using PDO::PARAM_* constants
      *
-     * @var array<int|string: int>
+     * @var array<int|string, int>
      */
     protected $params_types = [];
 
