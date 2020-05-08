@@ -66,9 +66,9 @@ class Select extends Command
      * @see SqlSelect::from()
      * @return $this
      */
-    public function from($table, string $alias = null): self
+    public function from($from, string $alias = null): self
     {
-        $this->statement->from($table, $alias);
+        $this->statement->from($from, $alias);
         return $this;
     }
 
