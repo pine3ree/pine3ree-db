@@ -10,13 +10,13 @@ namespace P3\Db;
 
 use PDO;
 use PDOStatement;
+use P3\Db\Command\Select;
+use P3\Db\Command\Insert;
+use P3\Db\Command\Update;
+use P3\Db\Command\Delete;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
-use P3\Db\Sql\Statement\Delete;
-use P3\Db\Sql\Statement\Insert;
-use P3\Db\Sql\Statement\Select;
-use P3\Db\Sql\Statement\Update;
 use P3\Db\Sql\Condition\Where;
 
 use function func_num_args;
@@ -173,6 +173,7 @@ class Db
     public function fetchOne(string $table, $where = null, $order = null): ?array
     {
         $select = $this->select()->from($table);
+
         if (isset($where)) {
             $select->where($where);
         }
@@ -181,15 +182,7 @@ class Db
         }
         $select->limit(1);
 
-        $stmt = $this->prepare($select, true);
-        if (false === $stmt || false === $stmt->execute()) {
-            return null;
-        }
-
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stmt->closeCursor();
-
-        return is_array($row) ? $row : null;
+        return $select->fetchOne();
     }
 
     /**
@@ -224,15 +217,7 @@ class Db
             }
         }
 
-        $stmt = $this->prepare($select, true);
-        if (false === $stmt || false === $stmt->execute()) {
-            return false;
-        }
-
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $stmt->closeCursor();
-
-        return $rows;
+        return $select->fetchAll();
     }
 
     /**
@@ -255,19 +240,11 @@ class Db
             $select->where($where);
         }
 
-        $stmt = $this->prepare($select, true);
-        if (false === $stmt || false === $stmt->execute()) {
-            return null;
-        }
-
-        $count = (int)$stmt->fetchColumn(0);
-        $stmt->closeCursor();
-
-        return $count;
+        return $select->fetchColumn(0);
     }
 
     /**
-     * Create and return a new Select sql-statement
+     * Create and return a new Select command
      *
      * @param array|string $columns An array of columns with optional key-as-alias,
      *      a column or the asterisk
@@ -277,7 +254,7 @@ class Db
      */
     public function select($columns = Sql::ASTERISK, string $table = null, string $alias = null): Select
     {
-        return new Select($columns, $table, $alias);
+        return new Select($this, $columns, $table, $alias);
     }
 
     /**
@@ -289,21 +266,12 @@ class Db
      */
     public function insert(string $table = null, array $rows = null)
     {
+        $insert = new Insert($table);
         if (func_num_args() < 2) {
-            return new Insert($table);
+            return $insert;
         }
 
-        $insert = new Insert();
-        $insert
-            ->into($table)
-            ->rows($rows);
-
-        $stmt = $this->prepare($insert, true);
-        if (false === $stmt || false === $stmt->execute()) {
-            return false;
-        }
-
-        return $stmt->rowCount();
+        return $insert->rows($rows)->execute();
     }
 
     /**
@@ -317,16 +285,12 @@ class Db
     public function insertRow(string $table, array $row): bool
     {
         $insert = new Insert();
-        $insert
-            ->into($table)
-            ->row($row);
-
-        $stmt = $this->prepare($insert, true);
-        if (false === $stmt || false === $stmt->execute()) {
+        $result = $insert->into($table)->row($row)->execute();
+        if (false === $result) {
             return false;
         }
 
-        return $stmt->rowCount() > 0;
+        return $result > 0;
     }
 
     /**
@@ -341,21 +305,11 @@ class Db
     public function update(string $table = null, array $data = null, $where = null)
     {
         $update = new Update($table);
-
         if (func_num_args() < 2 || !isset($data)) {
             return $update;
         }
 
-        $update
-            ->set($data)
-            ->where($where);
-
-        $stmt = $this->prepare($update, true);
-        if (false === $stmt || false === $stmt->execute()) {
-            return false;
-        }
-
-        return $stmt->rowCount();
+        return $update->set($data)->where($where)->execute();
     }
 
     /**
@@ -368,19 +322,11 @@ class Db
     public function delete($from = null, $where = null)
     {
         $delete = new Delete($from);
-
         if (func_num_args() < 2 || !isset($where)) {
             return $delete;
         }
 
-        $delete->where($where);
-
-        $stmt = $this->prepare($delete, true);
-        if (false === $stmt || false === $stmt->execute()) {
-            return false;
-        }
-
-        return $stmt->rowCount();
+        return $delete->where($where)->execute();
     }
 
     /**
