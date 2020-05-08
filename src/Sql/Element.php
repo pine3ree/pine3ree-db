@@ -107,13 +107,13 @@ abstract class Element
      */
     public function createNamedParam($value, int $type = null): string
     {
-        //return $this->createPositionalParam($value, $param_type);
+        //return $this->createPositionalParam($value, $type);
 
-        $marker = ":" . self::$index . "";
+        $marker = ":" . self::$index;
 
         $this->setParam($marker, $value, $type);
 
-        self::$index = self::$index < self::MAX_INDEX ? (self::$index + 1) : 1;
+        self::incrementIndex();
 
         return $marker;
     }
@@ -132,9 +132,14 @@ abstract class Element
     {
         $this->setParam(self::$index, $value, $type);
 
-        self::$index = self::$index < self::MAX_INDEX ? (self::$index + 1) : 1;
+        self::incrementIndex();
 
         return '?';
+    }
+
+    private static function incrementIndex()
+    {
+        self::$index = self::$index < self::MAX_INDEX ? (self::$index + 1) : 1;
     }
 
     /**
