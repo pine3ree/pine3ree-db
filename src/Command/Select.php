@@ -244,7 +244,7 @@ class Select extends Command
      *
      * @see \PDOCommand::fetchAll()
      *
-     * @return array
+     * @return array<string, mixed>[]
      */
     public function fetchAll(): array
     {
@@ -282,7 +282,7 @@ class Select extends Command
      *
      * @return array|null
      */
-    public function fetchOne()
+    public function fetchOne(): ?array
     {
         $this->statement->limit(1);
 
