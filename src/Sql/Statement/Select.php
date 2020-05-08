@@ -440,7 +440,7 @@ class Select extends Statement
 
     /**
      *
-     * @param string|string[] $groupBy
+     * @param string|string[]|Literal|Literal[] $groupBy
      * @param bool $replace
      * @return $this
      * @throws InvalidArgumentException
