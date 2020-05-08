@@ -60,6 +60,11 @@ abstract class Command
         return $this->statement;
     }
 
+    public function getSQL(): string
+    {
+        return $this->statement->getSQL($this->db->getDriver());
+    }
+
     public function __get(string $name)
     {
         if ('statement' === $name) {
