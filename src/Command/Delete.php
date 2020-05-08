@@ -10,6 +10,7 @@ namespace P3\Db\Command;
 
 use P3\Db\Db;
 use P3\Db\Command;
+use P3\Db\Command\Traits\Writer;
 use P3\Db\Sql\Statement\Delete as SqlDelete;
 
 /**
@@ -19,7 +20,7 @@ use P3\Db\Sql\Statement\Delete as SqlDelete;
  */
 class Delete extends Command
 {
-    use P3\Db\Command\Traits\Writer;
+    use Writer;
 
     public function __construct(Db $db, string $table = null)
     {

@@ -11,6 +11,7 @@ namespace P3\Db\Command;
 use PDO;
 use P3\Db\Db;
 use P3\Db\Command;
+use P3\Db\Command\Traits\Reader;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 use RuntimeException;
 
@@ -21,7 +22,7 @@ use RuntimeException;
  */
 class Select extends Command
 {
-    use P3\Db\Command\Traits\Reader;
+    use Reader;
 
     /** @var string|null */
     protected $indexBy;
