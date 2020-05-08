@@ -38,6 +38,12 @@ class PredicateSet extends Predicate
         self::COMB_OR  => Sql::OR,
     ];
 
+    private const OPERATOR_ALIAS = [
+        'notBetween' => Sql::NOT_BETWEEN,
+        'notIn' => Sql::NOT_IN,
+        'notLike' => Sql::NOT_LIKE,
+    ];
+
     /**
      * ALiases ("||" for "OR" and "&&" for "AND") for nested-predicates array
      * definitons
@@ -194,41 +200,38 @@ class PredicateSet extends Predicate
         $operator   = $specs[1];
         $value      = $specs[2];
 
+        $operator = self::OPERATOR_ALIAS[$operator] ?? strtoupper($operator);
+
         Sql::assertValidOperator($operator);
-        $operator = strtoupper($operator);
 
         if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
             return new Predicate\Comparison($identifier, $operator, $value);
         }
 
-        if ($operator === Sql::BETWEEN) {
-            return new Predicate\Between($identifier, $value);
-        }
-        if ($operator === Sql::NOT_BETWEEN) {
-            return new Predicate\NotBetween($identifier, $value);
-        }
-        if ($operator === Sql::IN) {
-            return new Predicate\In($identifier, $value);
-        }
-        if ($operator === Sql::NOT_IN) {
-            return new Predicate\NotIn($identifier, $value);
-        }
-        if ($operator === Sql::LIKE) {
-            return new Predicate\Like($identifier, $value);
-        }
-        if ($operator === Sql::NOT_LIKE) {
-            return new Predicate\NotLike($identifier, $value);
-        }
-
-        if ($value instanceof Literal) {
-            $value_sql = $value->getSQL();
-            return new Predicate\Literal("{$identifier} {$operator} {$value_sql}");
+        switch ($operator) {
+            case Sql::BETWEEN:
+                return new Predicate\Between($identifier, $value);
+            case Sql::NOT_BETWEEN:
+                return new Predicate\NotBetween($identifier, $value);
+            case Sql::IN:
+                return new Predicate\In($identifier, $value);
+            case Sql::NOT_IN:
+                return new Predicate\NotIn($identifier, $value);
+            case Sql::LIKE:
+                return new Predicate\Like($identifier, $value);
+            case Sql::NOT_LIKE:
+                return new Predicate\NotLike($identifier, $value);
         }
 
         if (is_array($value)) {
              throw new InvalidArgumentException(
                 "Array value not supported for operator `{$operator}`!"
             );
+        }
+
+        if ($value instanceof Literal) {
+            $value_sql = $value->getSQL();
+            return new Predicate\Literal("{$identifier} {$operator} {$value_sql}");
         }
 
         $marker = $this->createNamedParam($value);
