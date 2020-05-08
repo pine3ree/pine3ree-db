@@ -43,82 +43,82 @@ abstract class Predicate extends Element
         }
     }
 
-    public static function literal(string $literal): Predicate\Literal
+    public static function newLiteral(string $literal): Predicate\Literal
     {
         return new Predicate\Literal($literal);
     }
 
-    public static function expression(string $expression, array $params = []): Predicate\Expression
+    public static function newExpression(string $expression, array $params = []): Predicate\Expression
     {
         return new Predicate\Expression($expression, $params);
     }
 
-    public static function between($identifier, array $limits): Predicate\Between
+    public static function newBetween($identifier, array $limits): Predicate\Between
     {
         return new Predicate\Between($identifier, $limits);
     }
 
-    public static function notBetween($identifier, array $limits): Predicate\NotBetween
+    public static function newNotBetween($identifier, array $limits): Predicate\NotBetween
     {
         return new Predicate\NotBetween($identifier, $limits);
     }
 
-    public static function exists(Select $select): Predicate\Exists
+    public static function newExists(Select $select): Predicate\Exists
     {
         return new Predicate\Exists($select);
     }
 
-    public static function notExists(Select $select): Predicate\NotExists
+    public static function newNotExists(Select $select): Predicate\NotExists
     {
         return new Predicate\NotExists($select);
     }
 
-    public static function in($identifier, array $value_list): Predicate\In
+    public static function newIn($identifier, array $value_list): Predicate\In
     {
         return new Predicate\In($identifier, $value_list);
     }
 
-    public static function notIn($identifier, array $value_list): Predicate\NotIn
+    public static function newNotIn($identifier, array $value_list): Predicate\NotIn
     {
         return new Predicate\NotIn($identifier, $value_list);
     }
 
-    public static function like($identifier, array $value): Predicate\like
+    public static function newLike($identifier, array $value): Predicate\like
     {
         return new Predicate\Like($identifier, $value);
     }
 
-    public static function notLike($identifier, array $value): Predicate\notLike
+    public static function newNotLike($identifier, array $value): Predicate\notLike
     {
         return new Predicate\NotLike($identifier, $value);
     }
 
-    public static function equal($identifier, array $value): Predicate\Comparison
+    public static function newEqual($identifier, array $value): Predicate\Comparison
     {
         return new Predicate\Comparison($identifier, Sql::EQUAL, $value);
     }
 
-    public static function notEqual($identifier, array $value): Predicate\Comparison
+    public static function newNotEqual($identifier, array $value): Predicate\Comparison
     {
         return new Predicate\Comparison($identifier, Sql::NOT_EQUAL, $value);
     }
 
-    public static function lessThan($identifier, array $value): Predicate\Comparison
+    public static function newLessThan($identifier, array $value): Predicate\Comparison
     {
         return new Predicate\Comparison($identifier, Sql::LESS_THAN, $value);
     }
 
-    public static function lessThanEqual($identifier, array $value): Predicate\Comparison
+    public static function newLessThanEqual($identifier, array $value): Predicate\Comparison
     {
         return new Predicate\Comparison($identifier, Sql::LESS_THAN_EQUAL, $value);
     }
 
-    public static function greaterThanEqual($identifier, array $value): Predicate\Comparison
+    public static function newGreaterThanEqual($identifier, array $value): Predicate\Comparison
     {
         return new Predicate\Comparison($identifier, Sql::GREATER_THAN_EQUAL, $value);
     }
 
-    public static function greaterThan($identifier, array $value): Predicate\Comparison
+    public static function newGreaterThan($identifier, array $value): Predicate\Comparison
     {
         return new Predicate\Comparison($identifier, Sql::GREATER_THAN, $value);
     }
