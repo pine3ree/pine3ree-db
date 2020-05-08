@@ -52,6 +52,9 @@ class Select extends Statement
         Sql::ASTERISK => Sql::ASTERISK,
     ];
 
+    /** @var string|Select */
+    protected $from;
+
     /** @var Where|null */
     protected $where;
 
@@ -76,6 +79,12 @@ class Select extends Statement
     /** @var self|null */
     protected $union;
 
+    /**
+     *
+     * @param array|string $columns One or many column names
+     * @param string $table
+     * @param string|null $alias
+     */
     public function __construct($columns = null, string $table = null, string $alias = null)
     {
         if (!empty($columns)) {
@@ -199,11 +208,17 @@ class Select extends Statement
             if ($column === Sql::ASTERISK) {
                 $column_sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
             } else {
-                $column_sql = ($column instanceof Literal || $column instanceof self)
-                    ? $column->getSQL($driver)
-                    : $driver->quoteIdentifier(
+                if ($column instanceof Literal) {
+                    $column_sql = $column->getSQL();
+                } elseif ($column instanceof Literal) {
+                    $column_sql = $column->getSQL($driver);
+                    $this->importParams($column);
+                } else {
+                    $column_sql = $driver->quoteIdentifier(
                         $this->normalizeColumn($column)
                     );
+                }
+                // add alias?
                 if (!is_numeric($key) && $key !== '' && $key !== $column) {
                     $column_sql .= " AS " . $driver->quoteAlias($key);
                 }
@@ -220,14 +235,31 @@ class Select extends Statement
     /**
      * Set the SELECT FROM table
      *
-     * @param string $table
+     * @param string!Select $from
      * @param string|null $alias
      * @return $this
      */
-    public function from(string $table, string $alias = null): self
+    public function from(string $from, string $alias = null): self
     {
-         $this->setTable($table, $alias);
-         return $this;
+        if (is_string($from)) {
+            $this->setTable($from, $alias);
+            $this->from = null;
+            return $this;
+        }
+
+        if (! $from instanceof self) {
+            throw new InvalidArgumentException(sprintf(
+                "The FROM clause argument can be either a table name or a"
+                . " sub-select statement, `%` provided!",
+                is_object($from) ? get_class($from) : gettype($from)
+            ));
+        }
+
+        $this->table = null;
+        $this->from  = $source;
+        $this->alias = $alias;
+
+        return $this;
     }
 
     /**
@@ -625,9 +657,15 @@ class Select extends Statement
 
         $columns = $this->getColumnsSQL($driver);
 
+        if ($this->from instanceof self) {
+            $this->importParams($this->from);
+            $from = $this->from->getSQL($driver);
+            return "{$select} {$columns} FROM ({$from})";
+        }
+
         $table = $driver->quoteIdentifier($this->table);
         if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
-            $table .= " {$alias}";
+            $from .= " {$alias}";
         }
 
         return "{$select} {$columns} FROM {$table}";
