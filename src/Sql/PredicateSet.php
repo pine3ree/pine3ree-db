@@ -12,6 +12,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
+use P3\Db\Sql\Statement\Select;
 
 /**
  * Class PredicateSet
@@ -145,8 +146,9 @@ class PredicateSet extends Predicate
      * @param Predicate|string|array $predicate A Predicate/PredicateSet instance
      *      or a specs-array [identifier, operator, value] or [identifier => value]
      * @throws InvalidArgumentException
+     * @return $this Provides fluent interface
      */
-    public function addPredicate($predicate)
+    public function addPredicate($predicate): self
     {
         if (is_string($predicate)) {
             $predicate = new Predicate\Literal($predicate);
@@ -165,6 +167,8 @@ class PredicateSet extends Predicate
 
         $this->predicates[] = $predicate;
         unset($this->sql); // remove rendered sql
+
+        return $this;
     }
 
     protected function buildPredicateFromSpecs(array $specs): Predicate
@@ -283,5 +287,103 @@ class PredicateSet extends Predicate
         $AND_OR = self::COMB[$this->combined_by];
 
         return $this->sql = "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
+    }
+
+    public function between($identifier, array $limits): self
+    {
+        return $this->addPredicate(
+            new Predicate\Between($identifier, $limits)
+        );
+    }
+
+    public function notBetween($identifier, array $limits): self
+    {
+        return $this->addPredicate(
+            new Predicate\NotBetween($identifier, $limits)
+        );
+    }
+
+    public function exists(Select $select): self
+    {
+        return $this->addPredicate(
+            new Predicate\Exists($select)
+        );
+    }
+
+    public function notExists(Select $select): self
+    {
+        return $this->addPredicate(
+            new Predicate\NotExists($select)
+        );
+    }
+
+    public function in($identifier, array $value_list): self
+    {
+        return $this->addPredicate(
+            new Predicate\In($identifier, $value_list)
+        );
+    }
+
+    public function notIn($identifier, array $value_list): self
+    {
+        return $this->addPredicate(
+            new Predicate\NotIn($identifier, $value_list)
+        );
+    }
+
+    public function like($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Like($identifier, $value)
+        );
+    }
+
+    public function notLike($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\NotLike($identifier, $value)
+        );
+    }
+
+    public function equal($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::EQUAL, $value)
+        );
+    }
+
+    public function notEqual($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::NOT_EQUAL, $value)
+        );
+    }
+
+    public function lessThan($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::LESS_THAN, $value)
+        );
+    }
+
+    public function lessThanEqual($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::LESS_THAN_EQUAL, $value)
+        );
+    }
+
+    public function greaterThanEqual($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::GREATER_THAN_EQUAL, $value)
+        );
+    }
+
+    public function greaterThan($identifier, array $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::GREATER_THAN, $value)
+        );
     }
 }
