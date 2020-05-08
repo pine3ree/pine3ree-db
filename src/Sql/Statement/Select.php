@@ -160,21 +160,21 @@ class Select extends Statement
         }
 
         foreach ($columns as $key => $column) {
-            if (is_string($column)) {
-                if ('' === trim($column)) {
-                    throw new InvalidArgumentException(
-                        "A table column string must be non empty string for index/column-alias `{$key}`!"
-                    );
-                }
+            if (is_string($column) && '' !== trim($column)) {
                 continue;
             }
-            if (! $column instanceof Literal || '' === $column->getSQL()) {
-                throw new InvalidArgumentException(sprintf(
-                    "A table column must be a non empty string or Literal "
-                    . "expression, `%s provided` for index/column-alias `{$key}`!",
-                    is_object($column) ? get_class($column) : gettype($column)
-                ));
+            if ($column instanceof self) {
+                 continue;
             }
+            if ($column instanceof Literal && !self::isEmptySQL($column->getSQL())) {
+                continue;
+            }
+
+            throw new InvalidArgumentException(sprintf(
+                "A table column must be a non empty string, a non empty Literal "
+                . "expression or a Select statement, `%s provided` for index/column-alias `{$key}`!",
+                is_object($column) ? get_class($column) : gettype($column)
+            ));
         }
     }
 
@@ -199,8 +199,8 @@ class Select extends Statement
             if ($column === Sql::ASTERISK) {
                 $column_sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
             } else {
-                $column_sql = $column instanceof Literal
-                    ? $column->getSQL()
+                $column_sql = ($column instanceof Literal || $column instanceof self)
+                    ? $column->getSQL($driver)
                     : $driver->quoteIdentifier(
                         $this->normalizeColumn($column)
                     );
