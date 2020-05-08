@@ -233,7 +233,7 @@ class Select extends Statement
     }
 
     /**
-     * Set the SELECT FROM table
+     * Set the SELECT FROM table or sub-Select
      *
      * @param string!Select $from
      * @param string|null $alias
@@ -244,6 +244,7 @@ class Select extends Statement
         if (is_string($from)) {
             $this->setTable($from, $alias);
             $this->from = null;
+            unset($this->sqls['from']);
             return $this;
         }
 
@@ -256,10 +257,35 @@ class Select extends Statement
         }
 
         $this->table = null;
-        $this->from  = $source;
+        $this->from  = $from;
         $this->alias = $alias;
 
+        unset($this->sqls['from']);
+
         return $this;
+    }
+
+    private function getFromSQL(Driver $driver): string
+    {
+        if (isset($this->sqls['from'])) {
+            return $this->sqls['from'];
+        }
+
+        if ($this->from instanceof self) {
+            $from = "(" . $this->from->getSQL($driver) . ")";
+            $this->importParams($this->from);
+        } else {
+            $from = $driver->quoteIdentifier($this->table);
+        }
+
+        if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
+            $from .= " {$alias}";
+        }
+
+        $sql = "FROM {$from}";
+        $this->sqls['from'] = $sql;
+
+        return $sql;
     }
 
     /**
@@ -644,9 +670,9 @@ class Select extends Statement
 
     private function getBaseSQL(Driver $driver): string
     {
-        if (empty($this->table)) {
+        if (empty($this->table) && empty($this->from)) {
             throw new RuntimeException(
-                "The SELECT FROM table has not been defined!"
+                "The SELECT FROM source has not been defined!"
             );
         }
 
@@ -656,19 +682,9 @@ class Select extends Statement
         }
 
         $columns = $this->getColumnsSQL($driver);
+        $from = $this->getFromSQL($driver);
 
-        if ($this->from instanceof self) {
-            $this->importParams($this->from);
-            $from = $this->from->getSQL($driver);
-            return "{$select} {$columns} FROM ({$from})";
-        }
-
-        $table = $driver->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
-            $from .= " {$alias}";
-        }
-
-        return "{$select} {$columns} FROM {$table}";
+        return "{$select} {$columns} {$from}";
     }
 
     private function getClausesSQL(Driver $driver): string
