@@ -248,7 +248,7 @@ class Select extends Command
      */
     public function fetchAll(): array
     {
-        if (null === $stmt = $this->query()) {
+        if (null === $stmt = $this->execute()) {
             return null;
         }
 
@@ -286,7 +286,7 @@ class Select extends Command
     {
         $this->statement->limit(1);
 
-        if (null === $stmt = $this->query()) {
+        if (null === $stmt = $this->execute()) {
             return null;
         }
 
@@ -305,7 +305,7 @@ class Select extends Command
     {
         $this->statement->limit(1);
 
-        if (null === $stmt = $this->query()) {
+        if (null === $stmt = $this->execute()) {
             return null;
         }
 
@@ -324,7 +324,7 @@ class Select extends Command
     {
         $this->statement->limit(1);
 
-        if (null === $stmt = $this->query()) {
+        if (null === $stmt = $this->execute()) {
             return null;
         }
 

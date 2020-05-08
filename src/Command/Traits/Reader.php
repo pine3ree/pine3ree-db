@@ -16,11 +16,11 @@ use PDOStatement;
 trait Reader
 {
     /**
-     * Prepare anad execute the PDO-statement and return it or return null on failure
+     * Prepare and execute the PDO-statement and return it or return null on failure
      *
      * @return PDOStatement|null
      */
-    public function query(): ?PDOStatement
+    public function execute(): ?PDOStatement
     {
         $stmt = $this->prepare(true);
         if ($stmt === false || false === $stmt->execute()) {
