@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @package     package
- * @subpackage  package-subpackage
+ * @package     p3-db
+ * 
  * @author      pine3ree https://github.com/pine3ree
  */
 
