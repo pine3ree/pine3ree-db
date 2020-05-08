@@ -79,8 +79,7 @@ class Select extends Statement
     protected $union;
 
     /**
-     *
-     * @param array|string $columns One or many column names
+     * @param string[]|string $columns One or many column names
      * @param string $table
      * @param string|null $alias
      */
