@@ -225,7 +225,7 @@ class Db
         }
         if (isset($limit)) {
             $select->limit($limit);
-            if (isset($limit)) {
+            if (isset($offset)) {
                 $select->offset($offset);
             }
         }
@@ -257,34 +257,22 @@ class Db
     }
 
     /**
-     * Create a new Insert sql-statement and either return or execute it
+     * Create a new Insert db-command and either return it or execute it trying
+     * to create a new row
      *
      * @param string|null $table
-     * @param array[] $rows
-     * @return Insert|false|int
+     * @param array<string, mixed> $row
+     * @return Insert|bool
      */
-    public function insert(string $table = null, array $rows = null)
+    public function insert(string $table = null, array $row = null)
     {
-        $insert = new Insert($table);
+        $insert = new Insert($this, $table);
         if (func_num_args() < 2) {
             return $insert;
         }
 
-        return $insert->rows($rows)->execute();
-    }
+        $result = $insert->row($row)->execute();
 
-    /**
-     * Insert a new row/record into the a db-table
-     *
-     * @param string $table
-     * @param array $row
-     *
-     * @return bool
-     */
-    public function insertRow(string $table, array $row): bool
-    {
-        $insert = new Insert();
-        $result = $insert->into($table)->row($row)->execute();
         if (false === $result) {
             return false;
         }
@@ -293,7 +281,20 @@ class Db
     }
 
     /**
-     * Create a new Update sql-statement and either return or execute it
+     * Insert multiple rows into the given db-table
+     *
+     * @param string $table
+     * @param array<string, mixed>[] $rows
+     *
+     * @return int|false The number of inserted rows or false on failure
+     */
+    public function insertRows(string $table, array $rows)
+    {
+        return (new Insert($this, $table))->rows($rows)->execute();
+    }
+
+    /**
+     * Create a new Update db-command and either return or execute it
      *
      * @param string|array|null $table
      * @param array|null $data
@@ -303,7 +304,7 @@ class Db
      */
     public function update(string $table = null, array $data = null, $where = null)
     {
-        $update = new Update($table);
+        $update = new Update($this, $table);
         if (func_num_args() < 2 || !isset($data)) {
             return $update;
         }
@@ -312,7 +313,7 @@ class Db
     }
 
     /**
-     * Create a new Delete sql-statement and either return or execute it
+     * Create a new Delete db-command and either return or execute it
      *
      * @param string|array|null $table
      * @param string|array|Predicate|Where $where
@@ -320,7 +321,7 @@ class Db
      */
     public function delete($from = null, $where = null)
     {
-        $delete = new Delete($from);
+        $delete = new Delete($this, $from);
         if (func_num_args() < 2 || !isset($where)) {
             return $delete;
         }
