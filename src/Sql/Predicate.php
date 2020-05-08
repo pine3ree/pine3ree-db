@@ -43,6 +43,16 @@ abstract class Predicate extends Element
         }
     }
 
+    public static function literal(string $literal): Predicate\Literal
+    {
+        return new Predicate\Literal($literal);
+    }
+
+    public static function expression(string $expression, array $params = []): Predicate\Expression
+    {
+        return new Predicate\Expression($expression, $params);
+    }
+
     public static function between($identifier, array $limits): Predicate\Between
     {
         return new Predicate\Between($identifier, $limits);

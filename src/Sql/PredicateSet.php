@@ -289,6 +289,20 @@ class PredicateSet extends Predicate
         return $this->sql = "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
     }
 
+    public function literal(string $literal): self
+    {
+        return $this->addPredicate(
+            new Predicate\Literal($literal)
+        );
+    }
+
+    public function expression(string $expression, array $params = []): self
+    {
+        return $this->addPredicate(
+            new Predicate\Expression($expression, $params)
+        );
+    }
+
     public function between($identifier, array $limits): self
     {
         return $this->addPredicate(
