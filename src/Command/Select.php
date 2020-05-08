@@ -275,7 +275,7 @@ class Select extends Command
             $indexed[$row[$indexBy]] = $row;
         }
 
-        return $rows;
+        return $indexed;
     }
 
     /**
