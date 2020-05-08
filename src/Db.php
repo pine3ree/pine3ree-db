@@ -20,7 +20,6 @@ use P3\Db\Sql\Statement;
 use P3\Db\Sql\Condition\Where;
 
 use function func_num_args;
-use function is_array;
 use function is_int;
 
 /**
