@@ -18,7 +18,8 @@ use function implode;
 use function is_null;
 
 /**
- * This class represents a sql comparison condition
+ * This class represents a sql comparison predicate for the following operators:
+ * "=", "!=", "<", "<=", ">=", ">".
  */
 class Comparison extends Predicate
 {
