@@ -297,7 +297,7 @@ class Select extends Command
     }
 
     /**
-     * Fetch a column of first row, if any, after executing the composed sql statement
+     * Fetch a column of the first row, if any, after executing the composed sql statement
      *
      * @return null|string
      */
@@ -313,5 +313,24 @@ class Select extends Command
         $stmt->closeCursor();
 
         return $row[$identifier] ?? null;
+    }
+
+    /**
+     * Fetch the first column of the first row, if any, after executing the composed sql statement
+     *
+     * @return null|string
+     */
+    public function fetchColumn(int $column_number = 0): ?string
+    {
+        $this->statement->limit(1);
+
+        if (null === $stmt = $this->query()) {
+            return null;
+        }
+
+        $value = $stmt->fetchColumn($column_number);
+        $stmt->closeCursor();
+
+        return $value;
     }
 }
