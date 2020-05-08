@@ -34,7 +34,7 @@ use RuntimeException;
  * @property-read array[] $joins An array of JOIN specs if any
  * @property-read array[] $groupBy An array of GROUP BY identifiers
  * @property-read Having $having The Having clause, built on-first-access if null
- * @property-read array[] $orderBy An array of ORDER BY identifier to sort-direction pairs
+ * @property-read array<string, string>[] $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  */
