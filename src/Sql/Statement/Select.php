@@ -239,7 +239,7 @@ class Select extends Statement
      * @param string|null $alias
      * @return $this
      */
-    public function from(string $from, string $alias = null): self
+    public function from($from, string $alias = null): self
     {
         if (is_string($from)) {
             $this->setTable($from, $alias);
