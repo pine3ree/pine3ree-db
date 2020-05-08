@@ -458,10 +458,10 @@ class Select extends Statement
             return $this;
         }
 
-        if (!is_string($groupBy)) {
+        if (!is_string($groupBy) && ! $identifier instanceof Literal) {
             throw new InvalidArgumentException(sprintf(
-                "The `groupBy` argument must be either a string or an array of"
-                . " string identifiers, `%s` provided",
+                "The `groupBy` argument must be either a string or Literal or an "
+                . "array of string identifiers or Literals, `%s` provided",
                 gettype($groupBy)
             ));
         }
@@ -479,7 +479,9 @@ class Select extends Statement
 
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
-            $groupBy[$key] = $driver->quoteIdentifier($identifier);
+            $groupBy[$key] = $identifier instanceof Literal
+                ? $identifier->getSQL($driver)
+                : $driver->quoteIdentifier($identifier);
         }
 
         return "GROUP BY " . implode(", ", $groupBy);
