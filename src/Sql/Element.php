@@ -172,15 +172,5 @@ abstract class Element
     public function __clone()
     {
         $this->clearSQL();
-
-        // rewrite the params and types index/markers
-        $params = $this->params;
-        $ptypes = $this->params_types;
-
-        $this->params = $this->params_types = [];
-
-        foreach ($params as $index => $value) {
-            $this->createNamedParam($value, $ptypes[$index] ?? null);
-        }
     }
 }
