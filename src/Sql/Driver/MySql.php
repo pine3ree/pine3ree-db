@@ -24,13 +24,14 @@ class MySql extends Driver
     public function getLimitSQL(Select $select): string
     {
         $limit  = $select->limit;
-        $loffset= $select->offset;
+        $offset = $select->offset;
 
-        if (!isset($limit) && !isset($limit)) {
+        if (!isset($limit) && (int)$offset === 0) {
             return '';
         }
 
         if (isset($limit)) {
+            $limit = $select->createNamedParam($limit, PDO::PARAM_INT);
             $sql = "LIMIT {$limit}";
         }
 
@@ -39,6 +40,7 @@ class MySql extends Driver
             if (!isset($sql)) {
                 $sql = "LIMIT " . PHP_INT_MAX;
             }
+            $offset = $select->createNamedParam($offset, PDO::PARAM_INT);
             $sql .= " OFFSET {$offset}";
         }
 
