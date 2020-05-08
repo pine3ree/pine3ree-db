@@ -6,14 +6,12 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Command;
-
-use P3\Db\Command;
+namespace P3\Db\Command\Traits;
 
 /**
- * A DML command execution returns either false or the number of affected rows
+ * A writer command execution returns either false or the number of affected rows
  */
-abstract class DML extends Command
+trait Writer
 {
     /**
      * Execute the command returning the number of affected row or false on error

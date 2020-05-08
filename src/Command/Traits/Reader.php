@@ -6,15 +6,14 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Command;
+namespace P3\Db\Command\Traits;
 
 use PDOStatement;
-use P3\Db\Command;
 
 /**
- * A DQL command query execution returns rowsets
+ * A reader command query execution returns rowsets
  */
-abstract class DQL extends Command
+trait Reader
 {
     /**
      * Prepare anad execute the PDO-statement and return it or return null on failure
