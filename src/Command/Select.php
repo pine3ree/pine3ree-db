@@ -248,7 +248,7 @@ class Select extends Command
     public function fetchAll(): array
     {
         if (null === $stmt = $this->execute()) {
-            return null;
+            return [];
         }
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
