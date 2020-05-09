@@ -33,7 +33,8 @@ class DbFactory
             $this->params['dsn'],
             $this->params['username'],
             $this->params['password'],
-            $this->params['options']
+            $this->params['options'],
+            $this->params['charset']
         );
     }
 
@@ -53,6 +54,7 @@ class DbFactory
         $this->params['username'] = $config['username'] ?? $config['user'] ?? null;
         $this->params['password'] = $config['password'] ?? $config['passwd'] ?? $config['pass'] ?? null;
         $this->params['options']  = $config['options'] ?? [];
+        $this->params['charset']  = $config['charset'] ?? 'utf8';
     }
 
     private function buildDSN(array $config): string

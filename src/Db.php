@@ -41,6 +41,9 @@ class Db
     /** @var array */
     private $options = [];
 
+    /** @var string */
+    private $charset;
+
     /** @var Driver */
     private $driver;
     /** @var Driver connection-less driver */
@@ -66,13 +69,17 @@ class Db
         string $dsn,
         string $username = null,
         string $password = null,
-        array $options = null
+        array $options = null,
+        string $charset = null
     ) {
         $this->dsn = $dsn;
         $this->username = $username;
         $this->password = $password;
         if (isset($options)) {
             $this->options = $options;
+        }
+        if (isset($charset)) {
+            $this->charset = $charset;
         }
     }
 
