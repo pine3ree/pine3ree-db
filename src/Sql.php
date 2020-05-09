@@ -221,4 +221,8 @@ class Sql
         }
     }
 
+    public static function isEmptySQL($sql): bool
+    {
+        return !is_string($sql) || '' === trim($sql);
+    }
 }
