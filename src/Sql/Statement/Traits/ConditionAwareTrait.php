@@ -23,7 +23,7 @@ trait ConditionAwareTrait
      * Define a clause
      *
      * @param string $property
-     * @param string $fqcn
+     * @param string $fqcn A Condition descendant
      * @param string|array|Predicate|PredicateSet $clause
      */
     private function setCondition(string $property, $fqcn, $clause): self
