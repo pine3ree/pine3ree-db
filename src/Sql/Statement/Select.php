@@ -19,7 +19,6 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
-use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 use PDO;
 use RuntimeException;
 
@@ -48,7 +47,7 @@ use function trim;
  * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read string[] $columns The columns to be returned
- * @property-read string|null $from The db table to select from or a sub-select if already set
+ * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read array[] $joins An array of JOIN specs if any
  * @property-read array[] $groupBy An array of GROUP BY identifiers
@@ -60,7 +59,6 @@ use function trim;
 class Select extends Statement
 {
     use ConditionAwareTrait;
-    use TableAwareTrait;
 
     /** @var string|null */
     protected $quantifier;
@@ -70,6 +68,9 @@ class Select extends Statement
 
     /** @var string|self */
     protected $from;
+
+    /** @var string|null */
+    protected $alias;
 
     /** @var Where|null */
     protected $where;
@@ -266,11 +267,19 @@ class Select extends Statement
      */
     public function from($from, string $alias = null): self
     {
+        if (isset($this->from)) {
+            throw new RuntimeException(sprintf(
+                "Cannot change the `from` for this Select, from is already set to %s!",
+                $this->from instanceof self ? "a sub-select" : "table `$this->from`"
+            ));
+        }
+
         if (is_string($from)) {
-            $this->setTable($from, $alias);
-            $this->from = null;
-            unset($this->sqls['from']);
-            return $this;
+            if (empty($from)) {
+                throw new InvalidArgumentException(
+                    "The db-table name `from` argument cannot be empty!"
+                );
+            }
         }
 
         if (! $from instanceof self) {
@@ -281,11 +290,10 @@ class Select extends Statement
             ));
         }
 
-        $this->table = null;
-        $this->from  = $from;
-        $this->alias = $alias;
-
-        unset($this->sqls['from']);
+        $this->from = $from;
+        if (!empty($alias)) {
+            $this->alias = $alias;
+        }
 
         return $this;
     }
@@ -772,7 +780,7 @@ class Select extends Statement
     public function __get(string $name)
     {
         if ('table' === $name) {
-            return $this->table;
+            return is_string($this->from) ? $this->from : null;
         }
         if ('alias' === $name) {
             return $this->alias;
@@ -784,7 +792,7 @@ class Select extends Statement
             return $this->columns;
         }
         if ('from' === $name) {
-            return $this->from ?? $this->table;
+            return $this->from;
         }
         if ('where' === $name) {
             return $this->where ?? $this->where = new Where();
