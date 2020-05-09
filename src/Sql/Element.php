@@ -63,8 +63,28 @@ abstract class Element
         return $this->params;
     }
 
-    public function getParamsTypes(): array
+    public function getParamsTypes(bool $show_pdo_const_names = false): array
     {
+        if ($show_names && !empty($this->params_types)) {
+            $types = [];
+            foreach ($this->params_types as $key => $type) {
+                if ($type === PDO::PARAM_STR) {
+                    $pdo_const = 'PDO::PARAM_STR';
+                } elseif ($type === PDO::PARAM_INT) {
+                    $pdo_const = 'PDO::PARAM_INT';
+                } elseif ($type === PDO::PARAM_NULL) {
+                    $pdo_const = 'PDO::PARAM_NULL';
+                } elseif ($type === PDO::PARAM_LOB) {
+                    $pdo_const = 'PDO::PARAM_LOB';
+                } else {
+                    $pdo_const = 'UNKNOWN';
+                }
+                $types[$key] = $pdo_const;
+            }
+
+            return $types;
+        }
+
         return $this->params_types;
     }
 
