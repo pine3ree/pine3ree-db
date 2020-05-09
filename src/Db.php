@@ -243,22 +243,21 @@ class Db
      *
      * @param string $table
      * @param Where|Predicate|array|string $where
+     * @param string $identifier The count indentifier ('*', '1')
      * @return int|null
      */
-    public function count(string $table, $where = null): ?int
+    public function count(string $table, $where = null, string $identifier = '*'): ?int
     {
-        $select = $this->select();
-        $select
-            ->columns([
-                new Sql\Literal("COUNT(*)"),
-            ])
-            ->from($table);
-
+        $select = $this->select(new Sql\Literal("COUNT({$identifier})"), $table);
         if (isset($where)) {
             $select->where($where);
         }
 
-        return $select->fetchColumn(0);
+        if (null === $count = $select->fetchColumn(0)) {
+            return null;
+        }
+
+        return (int)$count;
     }
 
     /**
