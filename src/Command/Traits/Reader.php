@@ -10,7 +10,7 @@ namespace P3\Db\Command\Traits;
 use PDOStatement;
 
 /**
- * A reader command query execution returns rowsets
+ * A reader-command's execution returns row-sets
  */
 trait Reader
 {

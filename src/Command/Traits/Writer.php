@@ -8,7 +8,7 @@
 namespace P3\Db\Command\Traits;
 
 /**
- * A writer command execution returns either false or the number of affected rows
+ * A writer-command's execution affects persisted data
  */
 trait Writer
 {
