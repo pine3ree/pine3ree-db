@@ -69,7 +69,7 @@ abstract class Element
     }
 
     /**
-     * Import parameters and types from inner expression
+     * Import parameters and types from inner elements
      *
      * @param self $expr
      * @internal
