@@ -109,9 +109,16 @@ class Db
             $this->options
         );
 
-        // return lowercase column-names in result set for oci-driver
-        if ('oci' === $driver_name = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
-            $pdo->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
+        $driver_name = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        switch ($driver_name) {
+            // return lowercase column-names in result set for oci-driver
+            case 'oci':
+                $pdo->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
+                break;
+            // set charset for pgsql
+            case 'pgsql':
+                $pdo->exec("SET NAMES '{$this->charset}'");
+                break;
         }
 
         return $pdo;
