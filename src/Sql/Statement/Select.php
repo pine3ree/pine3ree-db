@@ -219,7 +219,7 @@ class Select extends Statement
             return $sql;
         }
 
-        if (isset($driver) && is_callable([$driver, 'getColumnsSQL'])) {
+        if (is_callable([$driver, 'getColumnsSQL'])) {
             return $this->sqls['columns'] = $driver->getColumnsSQL($this);
         }
 
@@ -686,7 +686,7 @@ class Select extends Statement
             $sql = str_replace(" {$tb_alias}.", " {$driver->quoteAlias($tb_alias)}.", $sql);
         }
 
-        if (isset($driver) && is_callable([$driver, 'decorateSelectSQL'])) {
+        if (is_callable([$driver, 'decorateSelectSQL'])) {
             $sql = $driver->decorateSelectSQL($this, $sql);
         }
 
