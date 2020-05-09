@@ -7,13 +7,27 @@
 
 namespace P3\Db\Sql;
 
-use PDO;
-use Throwable;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\Statement;
+use P3\Db\Sql\PredicateSet;
 use P3\Db\Sql\Statement\Select;
+use PDO;
+use Throwable;
+
+use function addcslashes;
+use function count;
+use function implode;
+use function is_bool;
+use function is_int;
+use function is_numeric;
+use function is_string;
+use function ltrim;
+use function rtrim;
+use function str_replace;
+use function strpos;
+use function substr;
+use function trim;
 
 /**
  * The default ANSI SQL Driver
