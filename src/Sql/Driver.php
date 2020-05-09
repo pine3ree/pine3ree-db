@@ -92,13 +92,10 @@ abstract class Driver
 
     protected function isQuoted(string $identifier): bool
     {
-        if (!empty($this->ql) && $this->ql === substr($identifier, 0, 1)) {
-            return true;
-        }
-        if (!empty($this->qr) && $this->qr === substr($identifier, -1)) {
-            return true;
-        }
-        return false;
+        return (
+               $this->ql === substr($identifier, 0, 1)
+            && $this->qr === substr($identifier, -1)
+        );
     }
 
     /**
