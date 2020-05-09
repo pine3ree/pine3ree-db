@@ -111,7 +111,7 @@ class Sql
      */
     public const EQUAL              = '=';
     public const NOT_EQUAL          = '!=';
-    public const LESS_GREATER       = '<>'; // NOT EQUAL ANSI-SQL
+    public const NOT_EQUAL_ANSI     = '<>'; // NOT EQUAL ANSI-SQL
     public const LESS_THAN          = '<';
     public const LESS_THAN_EQUAL    = '<=';
     public const GREATER_THAN_EQUAL = '>=';
@@ -121,7 +121,7 @@ class Sql
      */
     public const EQ  = self::EQUAL;
     public const NEQ = self::NOT_EQUAL;
-    public const NE  = self::LESS_GREATER;
+    public const NE  = self::NOT_EQUAL_ANSI;
     public const LT  = self::LESS_THAN;
     public const LTE = self::LESS_THAN_EQUAL;
     public const GTE = self::GREATER_THAN_EQUAL;
