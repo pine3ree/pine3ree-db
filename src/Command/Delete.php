@@ -30,18 +30,20 @@ class Delete extends Command
      * @see SqlDelete::from()
      * @return $this
      */
-    public function from($table)
+    public function from($table): self
     {
         $this->statement->from($table);
+        return $this;
     }
 
     /**
      * @see SqlDelete::where()
      * @return $this
      */
-    public function where($where)
+    public function where($where): self
     {
         $this->statement->where($where);
+        return $this;
     }
 
     public function execute()
