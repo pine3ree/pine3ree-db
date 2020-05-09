@@ -245,20 +245,16 @@ class Db
      * @param string $table
      * @param Where|Predicate|array|string $where
      * @param string $identifier The count indentifier ('*', '1')
-     * @return int|null
+     * @return int
      */
-    public function count(string $table, $where = null, string $identifier = '*'): ?int
+    public function count(string $table, $where = null, string $identifier = '*'): int
     {
         $select = $this->select(new Sql\Literal("COUNT({$identifier})"), $table);
         if (isset($where)) {
             $select->where($where);
         }
 
-        if (null === $count = $select->fetchColumn(0)) {
-            return null;
-        }
-
-        return (int)$count;
+        return (int)$select->fetchColumn(0);
     }
 
     /**
@@ -267,35 +263,28 @@ class Db
      *
      * @param string|null $table
      * @param array<string, mixed> $row
-     * @return Insert|bool
+     * @return Insert|bool|int
      */
-    public function insert(string $table = null, array $row = null)
+    public function insert(string $table = null, array $rowOrRows = null)
     {
         $insert = new Insert($this, $table);
         if (func_num_args() < 2) {
             return $insert;
         }
 
-        $result = $insert->row($row)->execute();
-
-        if (false === $result) {
-            return false;
+        if (empty($rowOrRows)) {
+            return 0;
         }
 
-        return $result > 0;
-    }
+        // multiple rows insert
+        if (is_array(reset($rowOrRows))) {
+            return $insert->rows($rowOrRows)->execute();
+        }
 
-    /**
-     * Insert multiple rows into the given db-table
-     *
-     * @param string $table
-     * @param array<string, mixed>[] $rows
-     *
-     * @return int|false The number of inserted rows or false on failure
-     */
-    public function insertRows(string $table, array $rows)
-    {
-        return (new Insert($this, $table))->rows($rows)->execute();
+        // single row insert
+        $result = $insert->row($row)->execute();
+
+        return $result === false ? false : ($result > 0);
     }
 
     /**
