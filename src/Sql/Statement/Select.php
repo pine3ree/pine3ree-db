@@ -303,16 +303,17 @@ class Select extends Statement
         if ($this->from instanceof self) {
             $from = "(" . $this->from->getSQL($driver) . ")";
             $this->importParams($this->from);
-        } else {
+        } elseif (!empty($this->table)) {
             $from = $driver->quoteIdentifier($this->table);
+        } else {
+            return '';
         }
 
         if (!empty($this->alias)) {
             $from = trim("{$from} " . $driver->quoteAlias($this->alias));
         }
 
-        $sql = "FROM {$from}";
-        $this->sqls['from'] = $sql;
+        $this->sqls['from'] = $sql = "FROM {$from}";
 
         return $sql;
     }
@@ -726,11 +727,11 @@ class Select extends Statement
 
     private function getBaseSQL(Driver $driver): string
     {
-        if (empty($this->table) && empty($this->from)) {
-            throw new RuntimeException(
-                "The SELECT FROM source has not been defined!"
-            );
-        }
+//        if (empty($this->table) && empty($this->from)) {
+//            throw new RuntimeException(
+//                "The SELECT FROM source has not been defined!"
+//            );
+//        }
 
         $select = "SELECT";
         if ($this->quantifier) {
@@ -740,7 +741,7 @@ class Select extends Statement
         $columns = $this->getColumnsSQL($driver);
         $from = $this->getFromSQL($driver);
 
-        return "{$select} {$columns} {$from}";
+        return trim("{$select} {$columns} {$from}");
     }
 
     private function getClausesSQL(Driver $driver): string
