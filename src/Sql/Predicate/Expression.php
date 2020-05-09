@@ -7,8 +7,11 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
+use P3\Db\Sql\Traits\ExpressionTrait;
+
 use function trim;
 
 /**
@@ -16,21 +19,21 @@ use function trim;
  */
 class Expression extends Predicate
 {
-    /**
-     * @pvar string The literal SQL expression
-     */
-    private $expression;
+    use ExpressionTrait;
 
     public function __construct(string $expression, array $params = [])
     {
-        $this->sql = trim($expression);
-        foreach ($params as $key => $value) {
-            $this->setParam($key, $value);
+        $sql = trim($expression);
+        if ('' === $sql) {
+            throw new InvalidArgumentException(
+                "A SQL Expression predicate cannot be empty!"
+            );
         }
-    }
-
-    public function getSQL(Driver $driver = null): string
-    {
-        return $this->sql ?? '';
+        $this->expression = $expression;
+        if (!empty($params)) {
+            foreach (array_values($params) as $i => $value) {
+                $this->setParam($i, $value);
+            }
+        }
     }
 }
