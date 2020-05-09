@@ -86,10 +86,7 @@ abstract class Element
         }
     }
 
-    public function getSQL(Driver $driver = null): string
-    {
-        return $this->sql ?? '';
-    }
+    abstract public function getSQL(Driver $driver = null): string;
 
     /**
      * Create a statement string marker for a given value
