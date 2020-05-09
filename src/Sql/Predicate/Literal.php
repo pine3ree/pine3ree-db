@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 
@@ -15,18 +16,19 @@ use P3\Db\Sql\Predicate;
  */
 class Literal extends Predicate
 {
-    /**
-     * @pvar string The literal SQL expression
-     */
-    private $literal;
-
     public function __construct(string $literal)
     {
-        $this->literal = $literal;
+        $sql = trim($literal);
+        if ('' === $sql) {
+            throw new InvalidArgumentException(
+                "A SQL Literal predicate cannot be empty!"
+            );
+        }
+        $this->sql = $sql;
     }
 
     public function getSQL(Driver $driver = null): string
     {
-        return $this->literal ?? '';
+        return $this->sql;
     }
 }
