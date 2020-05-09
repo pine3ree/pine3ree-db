@@ -200,7 +200,6 @@ class Db
     public function fetchOne(string $table, $where = null, $order = null): ?array
     {
         $select = $this->select()->from($table);
-
         if (isset($where)) {
             $select->where($where);
         }
@@ -230,7 +229,6 @@ class Db
         int $offset = null
     ): array {
         $select = $this->select()->from($table);
-
         if (isset($where)) {
             $select->where($where);
         }
