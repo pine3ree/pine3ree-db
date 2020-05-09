@@ -259,6 +259,22 @@ class Select extends Statement
     }
 
     /**
+     * Prepend the dml-statement primary-table alias if not already present
+     *
+     * @param string $column
+     * @return string
+     */
+    public function normalizeColumn(string $column): string
+    {
+        $column = str_replace([$this->ql, $this->qr] , '', $column); // unquote the column first
+        if (false === strpos($column, '.')) {
+            return $this->alias ? "{$this->alias}.{$column}" : $column;
+        }
+
+        return $column;
+    }
+
+    /**
      * Set the SELECT FROM table or sub-Select
      *
      * @param string!self $from

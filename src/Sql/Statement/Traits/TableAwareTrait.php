@@ -14,28 +14,22 @@ use function str_replace;
 use function strpos;
 
 /**
- * Trait for statements that are related to a main database table
+ * Trait for statements that always operate on a target database table
  */
 trait TableAwareTrait
 {
     /**
      * @var string The database table name
      */
-    protected $table;
-
-    /**
-     * @var string The database table alias
-     */
-    protected $alias;
+    private $table;
 
     /**
      * Validate and set the query table/alias
      *
      * @param string $table
-     * @param string|null $alias
      * @return void
      */
-    protected function setTable(string $table, string $alias = null): void
+    protected function setTable(string $table): void
     {
         if (isset($this->table)) {
             throw new RuntimeException(
@@ -50,24 +44,5 @@ trait TableAwareTrait
         }
 
         $this->table = $table;
-        if (!empty($alias)) {
-            $this->alias = $alias;
-        }
-    }
-
-    /**
-     * Prepend the dml-statement primary-table alias if not already present
-     *
-     * @param string $column
-     * @return string
-     */
-    public function normalizeColumn(string $column): string
-    {
-        $column = str_replace([$this->ql, $this->qr] , '', $column); // unquote the column first
-        if (false === strpos($column, '.')) {
-            return $this->alias ? "{$this->alias}.{$column}" : $column;
-        }
-
-        return $column;
     }
 }
