@@ -280,9 +280,7 @@ class Select extends Statement
                     "The db-table name `from` argument cannot be empty!"
                 );
             }
-        }
-
-        if (! $from instanceof self) {
+        } elseif (! $from instanceof self) {
             throw new InvalidArgumentException(sprintf(
                 "The FROM clause argument can be either a table name or a"
                 . " sub-select statement, `%` provided!",
