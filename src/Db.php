@@ -50,19 +50,12 @@ class Db
     private $_driver;
 
     private const DRIVER_CLASS = [
+        'ansi'   => Driver\Ansi::class,
         'mysql'  => Driver\MySql::class,
         'sqlite' => Driver\Sqlite::class,
         'pgsql'  => Driver\PgSql::class,
         'oci'    => Driver\Oci::class,
         'sqlsrv' => Driver\SqlSrv::class,
-    ];
-
-    private const SUPPORTED_DRIVERS = [
-        'mysql'  => true,
-        'sqlite' => true,
-        'pgsql'  => true,
-        'oci'    => true,
-        'sqlsrv' => false,
     ];
 
     public function __construct(
@@ -89,7 +82,7 @@ class Db
      */
     public static function supportsDriver(string $driver): bool
     {
-        return !empty(self::SUPPORTED_DRIVERS[$driver]);
+        return !empty(self::DRIVER_CLASS[$driver]);
     }
 
     private function connect()
