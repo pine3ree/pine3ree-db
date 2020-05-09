@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Traits;
 
+use P3\Db\Sql\Driver;
 use function preg_replace;
 
 /**
