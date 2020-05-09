@@ -108,7 +108,7 @@ class Update extends Statement
         $base_sql  = $this->getBaseSQL($driver);
         $where_sql = $this->getWhereSQL($driver);
 
-        if ($this->isEmptySQL($where_sql)) {
+        if (Sql::isEmptySQL($where_sql)) {
             throw new RuntimeException(
                 "UPDATE queries without conditions are not allowed!"
             );

@@ -9,7 +9,11 @@ namespace P3\Db\Sql;
 
 use PDO;
 use Throwable;
+use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
+use P3\Db\Sql\Literal;
+use P3\Db\Sql\Statement;
+use P3\Db\Sql\Statement\Select;
 
 /**
  * The default ANSI SQL Driver
@@ -189,5 +193,110 @@ abstract class Driver
     public static function ansi(): self
     {
         return self::$ansi ?? self::$ansi = new Ansi();
+    }
+
+    public function getSelectColumnsSQL(Select $select): string
+    {
+        $columns = $select->columns;
+        $alias = $select->alias;
+
+        if (empty($columns)) {
+            return $alias ? $this->quoteAlias($alias) . ".*" : "*";
+        }
+
+        $sqls = [];
+        foreach ($columns as $key => $column) {
+            if ($column === Sql::ASTERISK) {
+                $column_sql = $alias ? $this->quoteAlias($alias) . ".*" : "*";
+            } else {
+                if ($column instanceof Literal) {
+                    $column_sql = $column->getSQL();
+                } elseif ($column instanceof Select) {
+                    $column_sql = $column->getSQL($this);
+                    $select->importParams($column);
+                } else {
+                    $column_sql = $this->quoteIdentifier(
+                        $select->normalizeColumn($column)
+                    );
+                }
+                // add alias?
+                if (!is_numeric($key) && $key !== '' && $key !== $column) {
+                    $column_sql .= " AS " . $this->quoteAlias($key);
+                }
+            }
+            $sqls[] = $column_sql;
+        }
+
+        return trim(implode(", ", $sqls));
+    }
+
+    public function getSelectFromSQL(Select $select): string
+    {
+        $from  = $select->from;
+        $table = $select->table;
+        $alias = $select->alias;
+
+        if ($from instanceof Select) {
+            $from = "(" . $from->getSQL($this) . ")";
+            $select->importParams($from);
+        } else {
+            $from = $this->quoteIdentifier($table);
+        }
+
+        if (!empty($alias)) {
+            $from = trim("{$from} " . $this->quoteAlias($alias));
+        }
+
+        return "FROM {$from}";
+    }
+
+    public function getSelectJoinSQL(Select $select): string
+    {
+        $sqls = [];
+        foreach ($select->joins as $join) {
+            $type  = $join['type'];
+            $table = $this->quoteIdentifier($join['table']);
+            $alias = $this->quoteAlias($join['alias']);
+            $cond  = $join['cond'];
+
+            $cond_sql = $cond->getSQL($this);
+            if ($cond->hasParams()) {
+                $select->importParams($cond);
+            }
+
+            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond_sql}");
+        }
+
+        return trim(implode(" ", $sqls));
+    }
+
+    public function getPredicateSetSQL(PredicateSet $predicateSet)
+    {
+        $predicates = $predicateSet->getPredicates();
+        if (empty($predicates)) {
+            return '';
+        }
+
+        $sqls = [];
+        foreach ($predicates as $predicate) {
+            $sql = $predicate->getSQL($driver);
+            if (Sql::isEmptySQL($sql)) {
+                continue;
+            }
+            $sqls[] = $sql;
+            $predicateSet->importParams($predicate);
+        }
+
+        if (empty($sqls)) {
+            return '';
+        }
+
+        if (1 === count($sqls)) {
+            return $sqls[0];
+        }
+
+        $AND_OR = $predicateSet->getCombinedBy();
+
+        return "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
     }
 }

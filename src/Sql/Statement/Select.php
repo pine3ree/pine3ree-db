@@ -270,6 +270,8 @@ class Select extends Statement
             return $this->sqls['from'];
         }
 
+        return $this->sqls['from'] = $driver->getSelectFromSQL($this);
+
         if ($this->from instanceof self) {
             $from = "(" . $this->from->getSQL($driver) . ")";
             $this->importParams($this->from);
@@ -277,8 +279,8 @@ class Select extends Statement
             $from = $driver->quoteIdentifier($this->table);
         }
 
-        if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
-            $from .= " {$alias}";
+        if (!empty($this->alias)) {
+            $from = trim("{$from} " . $driver->quoteAlias($this->alias));
         }
 
         $sql = "FROM {$from}";
@@ -401,6 +403,8 @@ class Select extends Statement
             return $this->sqls['join'];
         }
 
+        return $this->sqls['join'] = $driver->getSelectJoinSQL($this);
+
         $sqls = [];
         foreach ($this->joins as $join) {
             $type  = $join['type'];
@@ -408,13 +412,12 @@ class Select extends Statement
             $alias = $driver->quoteAlias($join['alias']);
             $cond  = $join['cond'];
 
+            $cond_sql = $cond->getSQL($driver);
             if ($cond->hasParams()) {
                 $this->importParams($cond);
             }
 
-            $cond = $cond->getSQL($driver);
-
-            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond}");
+            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond_sql}");
         }
 
         $this->sqls['join'] = $sql = trim(implode(" ", $sqls));
@@ -701,13 +704,13 @@ class Select extends Statement
 
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
-            if (!$this->isEmptySQL($union_sql)) {
+            if (!Sql::isEmptySQL($union_sql)) {
                 $sqls[] = "UNION {$union_sql}";
             }
         }
 
         foreach ($sqls as $index => $sql) {
-            if ($this->isEmptySQL($sql)) {
+            if (Sql::isEmptySQL($sql)) {
                 unset($sqls[$index]);
             }
         }

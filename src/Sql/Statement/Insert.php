@@ -336,7 +336,7 @@ class Insert extends Statement
         // INSERT...SELECT
         if ($this->select instanceof Select) {
             $sql = $this->select->getSQL($driver);
-            if ($this->isEmptySQL($sql)) {
+            if (Sql::isEmptySQL($sql)) {
                 return $this->sqls['values'] = '';
             }
             if ($this->select->hasParams()) {

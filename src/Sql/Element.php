@@ -91,11 +91,6 @@ abstract class Element
         return $this->sql ?? '';
     }
 
-    protected static function isEmptySQL($sql): bool
-    {
-        return !is_string($sql) || '' === trim($sql);
-    }
-
     /**
      * Create a statement string marker for a given value
      *

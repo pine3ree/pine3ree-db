@@ -269,10 +269,12 @@ class PredicateSet extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
+        return $this->sql = $driver->getPredicateSetSQL($this);
+
         $sqls = [];
         foreach ($this->predicates as $predicate) {
             $sql = $predicate->getSQL($driver);
-            if ($this->isEmptySQL($sql)) {
+            if (Sql::isEmptySQL($sql)) {
                 continue;
             }
             $sqls[] = $sql;

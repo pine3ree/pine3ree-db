@@ -29,7 +29,7 @@ abstract class Condition extends PredicateSet
     {
         $predicates_sql = parent::getSQL($driver ?? Driver::ansi());
 
-        if ($this->isEmptySQL($predicates_sql)) {
+        if (Sql::isEmptySQL($predicates_sql)) {
             return '';
         }
 
