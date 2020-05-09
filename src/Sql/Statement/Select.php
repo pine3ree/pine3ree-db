@@ -66,9 +66,7 @@ class Select extends Statement
     protected $quantifier;
 
     /** @var string[] */
-    protected $columns = [
-        Sql::ASTERISK => Sql::ASTERISK,
-    ];
+    protected $columns = [];
 
     /** @var string|self */
     protected $from;
