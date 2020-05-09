@@ -31,6 +31,10 @@ use function trim;
 
 /**
  * The default ANSI SQL Driver
+ *
+ * @property-read string $ql The left quote char, if any
+ * @property-read string $qr The right quote char, if any
+ * @property-read string $qv The value quote char, if any
  */
 abstract class Driver
 {
@@ -309,5 +313,18 @@ abstract class Driver
         $AND_OR = $predicateSet->getCombinedBy();
 
         return "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
+    }
+
+    public function __get(string $name)
+    {
+        if ($name = 'ql') {
+            return $this->ql;
+        }
+        if ($name = 'qr') {
+            return $this->qr;
+        }
+        if ($name = 'qv') {
+            return $this->qv;
+        }
     }
 }
