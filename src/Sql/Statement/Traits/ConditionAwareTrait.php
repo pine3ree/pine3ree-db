@@ -11,6 +11,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -66,6 +67,11 @@ trait ConditionAwareTrait
         }
 
         $condition = $this->{$property};
+        if (! $condition instanceof Predicate) {
+            throw new InvalidArgumentException(
+                "Property {$property} does not hold a Predicate instance!"
+            );
+        }
 
         $sql = $condition->getSQL($driver);
         if ($condition->hasParams()) {
