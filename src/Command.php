@@ -48,9 +48,9 @@ abstract class Command
         return $this->statement->getParams();
     }
 
-    public function getParamsTypes(): array
+    public function getParamsTypes(bool $show_pdo_const_names = false): array
     {
-        return $this->statement->getParamsTypes();
+        return $this->statement->getParamsTypes($show_pdo_const_names);
     }
 
     public function getStatement(): SqlStatement
