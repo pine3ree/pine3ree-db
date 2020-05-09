@@ -75,10 +75,10 @@ class Db
         $this->dsn = $dsn;
         $this->username = $username;
         $this->password = $password;
-        if (isset($options)) {
+        if (!empty($options)) {
             $this->options = $options;
         }
-        if (isset($charset)) {
+        if (!empty($charset)) {
             $this->charset = $charset;
         }
     }
