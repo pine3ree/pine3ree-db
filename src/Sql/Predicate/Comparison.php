@@ -18,23 +18,13 @@ use function is_null;
 
 /**
  * This class represents a sql comparison predicate for the following operators:
- * "=", "!=", "<", "<=", ">=", ">".
+ * "=", "!=", "<>", "<", "<=", ">=", ">".
  */
 class Comparison extends Predicate
 {
     protected $identifier;
     protected $operator;
     protected $value;
-
-    private const OPERATORS = [
-        Sql::EQ  => Sql::EQ,
-        Sql::NEQ => Sql::NEQ,
-        Sql::NE  => Sql::NE,
-        Sql::LT  => Sql::LT,
-        Sql::LTE => Sql::LTE,
-        Sql::GTE => Sql::GTE,
-        Sql::GT  => Sql::GT,
-    ];
 
     /**
      * @param string|Literal $identifier
@@ -53,10 +43,10 @@ class Comparison extends Predicate
 
     private static function assertValidOperator(string $operator)
     {
-        if (!isset(self::OPERATORS[$operator])) {
+        if (!isset(Sql::COMPARISON_OPERATORS[$operator])) {
             throw new InvalidArgumentException(
                 "Invalid comparison operator `{$operator}`, must be one of "
-                . implode(', ', self::OPERATORS) . "!"
+                . implode(', ', Sql::COMPARISON_OPERATORS) . "!"
             );
         }
     }
