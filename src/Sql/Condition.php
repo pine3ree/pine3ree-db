@@ -10,6 +10,11 @@ namespace P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\PredicateSet;
 
+use function ltrim;
+use function preg_replace;
+use function strrchr;
+use function strtoupper;
+
 /**
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
  */
@@ -51,11 +56,8 @@ abstract class Condition extends PredicateSet
             return $this->__name;
         }
 
-        // e.g P3\Db\Sql\Condition\Having => HAVING
-        // e.g P3\Db\Sql\Condition\GroupBy => GROUP BY
         $class_basename = ltrim(strrchr(static::class, '\\'), '\\');
         $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $class_basename);
-
         $this->__name = strtoupper($name);
 
         return $this->__name;
