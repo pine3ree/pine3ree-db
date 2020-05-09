@@ -80,11 +80,11 @@ class Comparison extends Predicate
         $operator = $this->operator;
         if (is_null($this->value)) {
             switch ($operator) {
-                case Sql::EQ:
+                case Sql::EQUAL:
                     $operator = "IS";
                     break;
-                case Sql::NEQ:
-                case Sql::NE:
+                case Sql::NOT_EQUAL:
+                case Sql::NOT_EQUAL_ANSI:
                     $operator = "IS NOT";
                     break;
             }
