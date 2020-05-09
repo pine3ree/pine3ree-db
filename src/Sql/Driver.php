@@ -290,7 +290,7 @@ abstract class Driver
 
         $sqls = [];
         foreach ($predicates as $predicate) {
-            $sql = $predicate->getSQL($driver);
+            $sql = $predicate->getSQL($this);
             if (Sql::isEmptySQL($sql)) {
                 continue;
             }
