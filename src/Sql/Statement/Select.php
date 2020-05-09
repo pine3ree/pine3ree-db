@@ -323,8 +323,8 @@ class Select extends Statement
         if ($this->from instanceof self) {
             $from = "(" . $this->from->getSQL($driver) . ")";
             $this->importParams($this->from);
-        } elseif (!empty($this->table)) {
-            $from = $driver->quoteIdentifier($this->table);
+        } elseif (!empty($this->from)) {
+            $from = $driver->quoteIdentifier($this->from);
         } else {
             return '';
         }

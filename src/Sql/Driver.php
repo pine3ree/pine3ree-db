@@ -249,14 +249,13 @@ abstract class Driver
     public function getSelectFromSQL(Select $select): string
     {
         $from  = $select->from;
-        $table = $select->table;
         $alias = $select->alias;
 
         if ($from instanceof Select) {
             $from = "(" . $from->getSQL($this) . ")";
-            $select->importParams($from);
-        } elseif (!empty($table)) {
-            $from = $this->quoteIdentifier($table);
+            $select->importParams($select->from);
+        } elseif (!empty($from)) {
+            $from = $this->quoteIdentifier($from);
         } else {
             return '';
         }
