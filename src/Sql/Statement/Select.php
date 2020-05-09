@@ -8,11 +8,11 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
-use P3\Db\Sql\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Condition\Having;
 use P3\Db\Sql\Condition\On;
 use P3\Db\Sql\Condition\Where;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
@@ -21,6 +21,24 @@ use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 use PDO;
 use RuntimeException;
+
+use function array_map;
+use function explode;
+use function get_class;
+use function gettype;
+use function implode;
+use function is_array;
+use function is_callable;
+use function is_numeric;
+use function is_object;
+use function is_string;
+use function max;
+use function rtrim;
+use function sprintf;
+use function str_replace;
+use function strpos;
+use function strtoupper;
+use function trim;
 
 /**
  * This class represents a SELECT sql-statement expression
@@ -51,7 +69,7 @@ class Select extends Statement
         Sql::ASTERISK => Sql::ASTERISK,
     ];
 
-    /** @var string|Select */
+    /** @var string|self */
     protected $from;
 
     /** @var Where|null */
@@ -212,7 +230,7 @@ class Select extends Statement
             } else {
                 if ($column instanceof Literal) {
                     $column_sql = $column->getSQL();
-                } elseif ($column instanceof Select) {
+                } elseif ($column instanceof self) {
                     $column_sql = $column->getSQL($driver);
                     $this->importParams($column);
                 } else {
@@ -237,7 +255,7 @@ class Select extends Statement
     /**
      * Set the SELECT FROM table or sub-Select
      *
-     * @param string!Select $from
+     * @param string!self $from
      * @param string|null $alias
      * @return $this
      */

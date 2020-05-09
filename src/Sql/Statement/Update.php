@@ -8,14 +8,25 @@
 namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
-use RuntimeException;
-use P3\Db\Sql\Driver;
+use P3\Db\Sql;
 use P3\Db\Sql\Condition\Where;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
+use RuntimeException;
+
+use function get_class;
+use function gettype;
+use function implode;
+use function is_array;
+use function is_numeric;
+use function is_object;
+use function is_string;
+use function sprintf;
+use function trim;
 
 /**
  * This class represents an UPDATE sql-statement expression

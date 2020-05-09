@@ -9,6 +9,8 @@ namespace P3\Db\Sql;
 
 use P3\Db\Sql\Element;
 
+use function trim;
+
 /**
  * This class represents a literal SQL expression without parameters
  */

@@ -8,8 +8,15 @@
 namespace P3\Db\Sql;
 
 use InvalidArgumentException;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Element;
-use P3\Db\Sql\Statement\Select;
+
+use function get_class;
+use function gettype;
+use function is_object;
+use function is_scalar;
+use function is_string;
+use function sprintf;
 
 /**
  * Predicate represents a single SQL condition that can be evaluates by the underlying

@@ -10,6 +10,9 @@ namespace P3\Db\Sql\Statement\Traits;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function str_replace;
+use function strpos;
+
 /**
  * Trait for statements that are related to a main database table
  */

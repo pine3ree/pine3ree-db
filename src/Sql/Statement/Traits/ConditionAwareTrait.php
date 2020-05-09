@@ -7,12 +7,17 @@
 
 namespace P3\Db\Sql\Statement\Traits;
 
-use P3\Db\Sql\Driver;
+use InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
-use InvalidArgumentException;
 use RuntimeException;
+
+use function count;
+use function current;
+use function is_array;
+use function key;
 
 /**
  * A trait for sql-statements that can include WHERE, HAVING and ON clauses

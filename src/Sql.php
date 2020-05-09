@@ -12,9 +12,11 @@ use InvalidArgumentException;
 use function gettype;
 use function is_string;
 use function sprintf;
+use function strtoupper;
+use function trim;
 
 /**
- * Class Sql
+ * Class Sql exposes common SQL constants and utility methods
  */
 class Sql
 {

@@ -12,7 +12,10 @@ use P3\Db\Db;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
-use function in_array;
+use function array_change_key_case;
+use function filter_var;
+use function implode;
+use function is_int;
 
 /**
  * DbFactory builds a Db instance from configuration retrieved from the container

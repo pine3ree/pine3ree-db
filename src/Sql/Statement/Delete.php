@@ -7,13 +7,16 @@
 
 namespace P3\Db\Sql\Statement;
 
-use RuntimeException;
-use P3\Db\Sql\Driver;
+use P3\Db\Sql;
 use P3\Db\Sql\Condition\Where;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
+use RuntimeException;
+
+use function trim;
 
 /**
  * This class represents a DELETE sql-statement expression

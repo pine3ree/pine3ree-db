@@ -8,14 +8,30 @@
 namespace P3\Db\Sql;
 
 use InvalidArgumentException;
-use P3\Db\Sql\Driver;
 use P3\Db\Sql;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
+use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
+
+use function array_unshift;
+use function count;
+use function current;
+use function get_class;
+use function gettype;
+use function implode;
+use function is_array;
+use function is_numeric;
+use function is_object;
+use function is_string;
+use function key;
+use function sprintf;
+use function strtoupper;
+use function trim;
 
 /**
- * Class PredicateSet
+ * PredicateSet represents a group of predicates combined either by AND or OR
  */
 class PredicateSet extends Predicate
 {
@@ -48,7 +64,7 @@ class PredicateSet extends Predicate
      * ALiases ("||" for "OR" and "&&" for "AND") for nested-predicates array
      * definitons
      *
-     * @see \P3\Db\Sql\Statement\Traits\ConditionAwareTrait::setCondition()
+     * @see ConditionAwareTrait::setCondition()
      */
     public const COMB_ID = [
         self::COMB_AND => self::COMB_AND,
@@ -86,7 +102,7 @@ class PredicateSet extends Predicate
             return;
         }
 
-        if ($predicates instanceof PredicateSet) {
+        if ($predicates instanceof self) {
             $this->predicates  = $predicates->getPredicates();
             $this->combined_by = $combined_by ?? $predicates->getCombinedBy();
             return;
@@ -101,7 +117,7 @@ class PredicateSet extends Predicate
 
         foreach ($predicates as $key => $predicate) {
             // nested predicate-set
-            if ($predicate instanceof PredicateSet) {
+            if ($predicate instanceof self) {
                 $comb_by = self::COMB_ID[$key] ?? null;
                 if (isset($comb_by) && $comb_by !== $predicate->getCombinedBy()) {
                     $nestedSet = new PredicateSet($comb_by, $predicate->getPredicates());
@@ -121,7 +137,7 @@ class PredicateSet extends Predicate
                 // $key is "||" or "&&" for predicate-set array definitions
                 $comb_by = self::COMB_ID[$key] ?? null;
                 if (isset($comb_by)) {
-                    $nestedSet = new PredicateSet($comb_by, $predicate);
+                    $nestedSet = new self($comb_by, $predicate);
                     $this->addPredicate($nestedSet);
                     continue;
                 }

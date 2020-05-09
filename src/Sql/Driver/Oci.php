@@ -7,14 +7,19 @@
 
 namespace P3\Db\Sql\Driver;
 
-use PDO;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select;
-use P3\Db\Sql\Statement\Insert;
+use PDO;
 
-use function strtoupper;
+use function end;
+use function explode;
+use function implode;
+use function is_numeric;
+use function strpos;
+use function substr;
+use function trim;
 
 /**
  * Oci sql-driver
