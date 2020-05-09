@@ -72,6 +72,7 @@ abstract class Element
      * Import parameters and types from inner expression
      *
      * @param self $expr
+     * @internal
      */
     public function importParams(self $expr): void
     {
