@@ -13,6 +13,7 @@ use P3\Db\Sql\Condition\Having;
 use P3\Db\Sql\Condition\On;
 use P3\Db\Sql\Condition\Where;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\PredicateSet;
@@ -156,7 +157,10 @@ class Select extends Statement
         if (is_string($columns)) {
             $columns = [$columns => $columns];
         }
-        if ($columns instanceof Literal || $columns instanceof self) {
+        if ($columns instanceof Literal
+            || $columns instanceof Expression
+            || $columns instanceof self
+        ) {
             $columns = [$columns];
         }
 
@@ -182,7 +186,7 @@ class Select extends Statement
             throw new InvalidArgumentException(sprintf(
                 "The SELECT columns argument must be either the ASTERISK string,"
                 . " a column name or an array of column names / literal expressions,"
-                . " '%s' provided!",
+                . " expressions or sub-selects, '%s' provided!",
                 gettype($columns)
             ));
         }
@@ -197,8 +201,11 @@ class Select extends Statement
             if ($column instanceof Literal && !Sql::isEmptySQL($column->getSQL())) {
                 continue;
             }
+            if ($column instanceof Expression && !Sql::isEmptySQL($column->getSQL())) {
+                continue;
+            }
             throw new InvalidArgumentException(sprintf(
-                "A table column must be a non empty string, a non empty Literal "
+                "A table column must be a non empty string, a non empty Expression or Literal "
                 . "expression or a Select statement, `%s provided` for index/column-alias `{$key}`!",
                 is_object($column) ? get_class($column) : gettype($column)
             ));
@@ -230,7 +237,7 @@ class Select extends Statement
             } else {
                 if ($column instanceof Literal) {
                     $column_sql = $column->getSQL();
-                } elseif ($column instanceof self) {
+                } elseif ($column instanceof Expression || $column instanceof self) {
                     $column_sql = $column->getSQL($driver);
                     $this->importParams($column);
                 } else {
@@ -690,7 +697,31 @@ class Select extends Statement
             $sql = $driver->decorateSelectSQL($this, $sql);
         }
 
+//        // rewrite all params?
+//        $sql = $this->rewriteParams($sql, $driver->qv);
+
         return $this->sql = $sql;
+    }
+
+    private function rewriteParams(string $sql, string $qv)
+    {
+        $i = 1;
+        $regexp_str = "/([^\\{$qv}]|^)%s([^\\{$qv}]|$)/";
+
+        $params = $params_types = [];
+
+        foreach ($this->params as $marker => $value) {
+            $params[$i] = $value;
+            $params_types[$i] = $this->params_types[$marker] ?? PDO::PARAM_STR;
+            $regexp = sprintf($regexp_str, preg_quote($marker, '/'));
+            $sql = preg_replace($regexp, "$1?$2", $sql, 1);
+            $i += 1;
+        }
+
+        $this->params = $params;
+        $this->params_types = $params_types;
+
+        return $sql;
     }
 
     private function getBaseSQL(Driver $driver): string

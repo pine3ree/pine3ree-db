@@ -9,6 +9,7 @@ namespace P3\Db\Sql\Driver;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select;
 use PDO;
@@ -103,8 +104,11 @@ class Oci extends Driver
             if ($column === Sql::ASTERISK) {
                 $column_sql = $tb_alias ? $this->quoteAlias($tb_alias) . ".*" : "*";
             } else {
-                if ($column instanceof Literal || $column instanceof Select) {
+                if ($column instanceof Literal) {
+                    $column_sql = $column->getSQL();
+                } elseif ($column instanceof Expression || $column instanceof Select) {
                     $column_sql = $column->getSQL($this);
+                    $select->importParams($column);
                 } else {
                     $column_sql = $this->quoteIdentifier(
                         $select->normalizeColumn($column)

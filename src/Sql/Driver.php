@@ -9,6 +9,7 @@ namespace P3\Db\Sql;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
+use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\PredicateSet;
 use P3\Db\Sql\Statement\Select;
@@ -226,7 +227,7 @@ abstract class Driver
             } else {
                 if ($column instanceof Literal) {
                     $column_sql = $column->getSQL();
-                } elseif ($column instanceof Select) {
+                } elseif ($column instanceof Expression || $column instanceof Select) {
                     $column_sql = $column->getSQL($this);
                     $select->importParams($column);
                 } else {
@@ -254,8 +255,10 @@ abstract class Driver
         if ($from instanceof Select) {
             $from = "(" . $from->getSQL($this) . ")";
             $select->importParams($from);
-        } else {
+        } elseif (!empty($table)) {
             $from = $this->quoteIdentifier($table);
+        } else {
+            return '';
         }
 
         if (!empty($alias)) {
