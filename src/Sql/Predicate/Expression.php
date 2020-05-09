@@ -25,7 +25,7 @@ class Expression extends Predicate
     {
         $this->sql = trim($expression);
         foreach ($params as $key => $value) {
-            $this->setParam($expression, $value);
+            $this->setParam($key, $value);
         }
     }
 
