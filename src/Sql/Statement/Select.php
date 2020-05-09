@@ -136,10 +136,10 @@ class Select extends Statement
 
         // was a single column provided?
         if (is_string($columns)) {
-            $columns = [$column => $column];
+            $columns = [$columns => $columns];
         }
         if ($columns instanceof Literal || $columns instanceof self) {
-            $columns = [$column];
+            $columns = [$columns];
         }
 
         self::assertValidColumns($columns);
