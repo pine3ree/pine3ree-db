@@ -7,19 +7,27 @@
 
 namespace P3\Db;
 
+use P3\Db\Command\Delete;
+use P3\Db\Command\Insert;
+use P3\Db\Command\Select;
+use P3\Db\Command\Update;
+use P3\Db\Sql;
+use P3\Db\Sql\Condition\Where;
+use P3\Db\Sql\Driver;
+use P3\Db\Sql\Literal;
+use P3\Db\Sql\Predicate;
+use P3\Db\Sql\Predicate\Literal as Literal2;
+use P3\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
-use P3\Db\Command\Select;
-use P3\Db\Command\Insert;
-use P3\Db\Command\Update;
-use P3\Db\Command\Delete;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement;
-use P3\Db\Sql\Condition\Where;
 
+use function explode;
 use function func_num_args;
+use function is_array;
+use function is_bool;
+use function is_float;
 use function is_int;
+use function reset;
 
 /**
  * Class Db
@@ -153,7 +161,7 @@ class Db
     /**
      * Create and return a new Select command
      *
-     * @param array|string|string[]|Literal|Literal[]|Select|Select[] $columns
+     * @param array|string|string[]|Literal2|Literal2[]|Select|Select[] $columns
      *      An array of columns with optional key-as-alias or a single column or
      *      the sql-asterisk
      * @param string!Select|null $from The db-table name or a sub-select statement
@@ -249,7 +257,7 @@ class Db
      */
     public function count(string $table, $where = null, string $identifier = '*'): int
     {
-        $select = $this->select(new Sql\Literal("COUNT({$identifier})"), $table);
+        $select = $this->select(new Literal("COUNT({$identifier})"), $table);
         if (isset($where)) {
             $select->where($where);
         }
