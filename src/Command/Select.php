@@ -250,15 +250,15 @@ class Select extends Command
      *
      * @see \PDOCommand::fetchAll()
      *
-     * @return array<string, mixed>[]
+     * @return array<string|int, mixed>[]
      */
-    public function fetchAll(): array
+    public function fetchAll(int $fetch_mode = PDO::FETCH_ASSOC): array
     {
         if (null === $stmt = $this->execute()) {
             return [];
         }
 
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $stmt->fetchAll(...func_get_args());
         $stmt->closeCursor();
 
         if (empty($rows) || !is_array($rows)) {
@@ -289,7 +289,7 @@ class Select extends Command
      *
      * @return array|null
      */
-    public function fetchOne(): ?array
+    public function fetchOne(int $fetch_mode = PDO::FETCH_ASSOC): ?array
     {
         $this->statement->limit(1);
 
@@ -297,7 +297,7 @@ class Select extends Command
             return null;
         }
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(...func_get_args());
         $stmt->closeCursor();
 
         return is_array($row) ? $row : null;
@@ -325,9 +325,9 @@ class Select extends Command
     /**
      * Fetch the first column of the first row, if any, after executing the composed sql statement
      *
-     * @return null|string
+     * @return mixed
      */
-    public function fetchColumn(int $column_number = 0): ?string
+    public function fetchColumn(int $column_number = 0)
     {
         $this->statement->limit(1);
 
