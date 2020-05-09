@@ -106,9 +106,7 @@ abstract class Element
         //return $this->createPositionalParam($value, $type);
 
         $marker = ":" . self::$index;
-
         $this->setParam($marker, $value, $type);
-
         self::incrementIndex();
 
         return $marker;
@@ -127,7 +125,6 @@ abstract class Element
     public function createPositionalParam($value, int $type = null): string
     {
         $this->setParam(self::$index, $value, $type);
-
         self::incrementIndex();
 
         return '?';
