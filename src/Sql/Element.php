@@ -136,7 +136,7 @@ abstract class Element
      * @param mixed $value
      * @param int $type
      */
-    private function setParam($key, $value, int $type = null)
+    protected function setParam($key, $value, int $type = null)
     {
         $this->params[$key] = $value;
 
