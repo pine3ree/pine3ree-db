@@ -50,7 +50,6 @@ class Db
     private $_driver;
 
     private const DRIVER_CLASS = [
-        'ansi'   => Driver\Ansi::class,
         'mysql'  => Driver\MySql::class,
         'sqlite' => Driver\Sqlite::class,
         'pgsql'  => Driver\PgSql::class,
