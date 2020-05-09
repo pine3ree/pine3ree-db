@@ -14,4 +14,5 @@ use P3\Db\Sql\Condition;
  */
 class Where extends Condition
 {
+    protected static $name = "WHERE";
 }

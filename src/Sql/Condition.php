@@ -16,7 +16,7 @@ use P3\Db\Sql\PredicateSet;
 abstract class Condition extends PredicateSet
 {
     /**
-     * @var string WHERE|HAVING|ON consition clauses
+     * @var string The SQL-clause name: WHERE|HAVING|ON condition clauses
      */
     protected static $name;
 
