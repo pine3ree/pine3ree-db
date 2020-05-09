@@ -73,7 +73,7 @@ abstract class Element
      *
      * @param self $expr
      */
-    protected function importParams(self $expr): void
+    public function importParams(self $expr): void
     {
         if (empty($expr->params)) {
             return;
