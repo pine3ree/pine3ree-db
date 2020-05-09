@@ -26,9 +26,16 @@ class Select extends Command
     /** @var string|null */
     protected $indexBy;
 
-    public function __construct(Db $db, $columns = null, string $table = null, string $alias = null)
+    /**
+     *
+     * @param Db $db
+     * @param string|string[]|Literal|Literal[]|SqlSelect|SqlSelect[] $columns
+     * @param string!SqlSelect|null $from The db-table name or a sub-select statement
+     * @param string|null $alias
+     */
+    public function __construct(Db $db, $columns = null, $from = null, string $alias = null)
     {
-        parent::__construct($db, new SqlSelect($columns, $table, $alias));
+        parent::__construct($db, new SqlSelect($columns, $from, $alias));
     }
 
     /**

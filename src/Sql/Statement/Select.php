@@ -79,17 +79,18 @@ class Select extends Statement
     protected $union;
 
     /**
-     * @param string[]|string $columns One or many column names
-     * @param string $table
+     * @param string[]|string|Literal[]|Literal|self|self[] $columns One or
+     *      many column names, Literal expressions or sub-select statements
+     * @param string|self $from A db-table name or a sub-select statement
      * @param string|null $alias
      */
-    public function __construct($columns = null, string $table = null, string $alias = null)
+    public function __construct($columns = null, $from = null, string $alias = null)
     {
         if (!empty($columns)) {
             $this->columns($columns);
         }
-        if (!empty($table)) {
-            $this->from($table, $alias);
+        if (!empty($from)) {
+            $this->from($from, $alias);
         }
     }
 
@@ -124,7 +125,7 @@ class Select extends Statement
      * The array keys may be used to specify aliases for the columns names / literal
      * expressions
      *
-     * @param string|string[]|Literal|Literal[] $columns
+     * @param string|string[]|Literal|Literal[]|self|self[] $columns
      * @return $this
      */
     public function columns($columns): self
@@ -133,9 +134,12 @@ class Select extends Statement
             return $this;
         }
 
-        // was a single column or the sql-asterisk "*" provided?
-        if (is_string($columns) || $columns instanceof Literal) {
+        // was a single column provided?
+        if (is_string($columns)) {
             $columns = [$column => $column];
+        }
+        if ($columns instanceof Literal || $columns instanceof self) {
+            $columns = [$column];
         }
 
         self::assertValidColumns($columns);
@@ -172,7 +176,7 @@ class Select extends Statement
             if ($column instanceof self) {
                  continue;
             }
-            if ($column instanceof Literal && !self::isEmptySQL($column->getSQL())) {
+            if ($column instanceof Literal && !Sql::isEmptySQL($column->getSQL())) {
                 continue;
             }
             throw new InvalidArgumentException(sprintf(

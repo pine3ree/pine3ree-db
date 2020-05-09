@@ -153,15 +153,16 @@ class Db
     /**
      * Create and return a new Select command
      *
-     * @param array|string $columns An array of columns with optional key-as-alias,
-     *      a column or the asterisk
-     * @param string|null $table The db-table name
+     * @param array|string|string[]|Literal|Literal[]|Select|Select[] $columns
+     *      An array of columns with optional key-as-alias or a single column or
+     *      the sql-asterisk
+     * @param string!Select|null $from The db-table name or a sub-select statement
      * @param string|null $alias The db-table alias
      * @return Select
      */
-    public function select($columns = Sql::ASTERISK, string $table = null, string $alias = null): Select
+    public function select($columns = Sql::ASTERISK, $from = null, string $alias = null): Select
     {
-        return new Select($this, $columns, $table, $alias);
+        return new Select($this, $columns, $from, $alias);
     }
 
     /**
