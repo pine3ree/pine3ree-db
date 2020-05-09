@@ -208,8 +208,8 @@ abstract class Driver
 
     public function getSelectColumnsSQL(Select $select): string
     {
-        $columns = $select->columns;
         $alias = $select->alias;
+        $columns = $select->columns;
 
         if (empty($columns)) {
             return $alias ? $this->quoteAlias($alias) . ".*" : "*";
