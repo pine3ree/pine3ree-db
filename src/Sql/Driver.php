@@ -317,13 +317,13 @@ abstract class Driver
 
     public function __get(string $name)
     {
-        if ($name = 'ql') {
+        if ($name === 'ql') {
             return $this->ql;
         }
-        if ($name = 'qr') {
+        if ($name === 'qr') {
             return $this->qr;
         }
-        if ($name = 'qv') {
+        if ($name === 'qv') {
             return $this->qv;
         }
     }
