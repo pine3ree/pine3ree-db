@@ -34,23 +34,23 @@ class Delete extends Statement
     protected $where;
 
     /**
-     * @param string|array $from The db table to delete from as a string or
+     * @param string|array $table The db table to delete from as a string or
      *      [alias => name] array
      */
-    public function __construct(string $from = null)
+    public function __construct(string $table = null)
     {
-        if (!empty($from)) {
-            $this->from($from);
+        if (!empty($table)) {
+            $this->from($table);
         }
     }
 
     /**
      * Set the db table to delete from
      *
-     * @param string|array $table
+     * @param string $table
      * @return $this
      */
-    public function from($table): self
+    public function from(string $table): self
     {
         $this->setTable($table);
         return $this;
