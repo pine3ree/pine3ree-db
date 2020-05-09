@@ -15,7 +15,7 @@ use RuntimeException;
 use function in_array;
 
 /**
- * Class DbFactory
+ * DbFactory builds a Db instance from configuration retrieved from the container
  */
 class DbFactory
 {
@@ -50,7 +50,7 @@ class DbFactory
         $this->params['dsn'] = $config['dsn'] ?? $this->buildDSN($config);
         $this->params['username'] = $config['username'] ?? $config['user'] ?? null;
         $this->params['password'] = $config['password'] ?? $config['passwd'] ?? $config['pass'] ?? null;
-        $this->params['options']  = $config['options'] ?? [];
+        $this->params['options'] = $config['options'] ?? [];
     }
 
     private function buildDSN(array $config): string
