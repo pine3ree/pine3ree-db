@@ -103,8 +103,6 @@ abstract class Element
      */
     public function createNamedParam($value, int $type = null): string
     {
-        //return $this->createPositionalParam($value, $type);
-
         $marker = ":" . self::$index;
         $this->setParam($marker, $value, $type);
         self::incrementIndex();
