@@ -30,14 +30,19 @@ trait ExpressionTrait
             return $this->sql = $this->expression ;
         }
 
+        $driver = $driver ?? Driver::ansi();
+
         // rewrite the `?` markers
         $sql = $this->expression;
 
-        $params = [];
-        $params_types = [];
+        $qv = $driver->qv;
+        $regexp = "/([^\\{$qv}]|^)\?([^\\{$qv}]|$)/";
+
+        $params = $params_types = [];
+
         foreach ($this->params as $index => $value) {
             $marker = $this->createNamedParam($value);
-            $sql = preg_replace('/\?/', $marker, $sql, 1);
+            $sql = preg_replace($regexp, "\$1{$marker}\$2", $sql, 1);
             $params[$marker] = $value;
             $params_types[$marker] = $this->params_types[$index];
         }
