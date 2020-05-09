@@ -124,7 +124,7 @@ class Select extends Statement
      * The array keys may be used to specify aliases for the columns names / literal
      * expressions
      *
-     * @param string|string[] $columns
+     * @param string|string[]|Literal|Literal[] $columns
      * @return $this
      */
     public function columns($columns): self
@@ -134,8 +134,7 @@ class Select extends Statement
         }
 
         // was a single column or the sql-asterisk "*" provided?
-        if (is_string($columns)) {
-            $column = trim($columns);
+        if (is_string($columns) || $columns instanceof Literal) {
             $columns = [$column => $column];
         }
 
