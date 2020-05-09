@@ -94,8 +94,6 @@ abstract class Element
     /**
      * Create a statement string marker for a given value
      *
-     * @staticvar int $i Increment counter
-     *
      * @param mixed $value The parameter value
      * @param int $type The optional forced parameter type
      *
@@ -112,8 +110,6 @@ abstract class Element
 
     /**
      * Create a statement string marker for a given value
-     *
-     * @staticvar int $i Increment counter
      *
      * @param mixed $value The parameter value
      * @param int $type The optional forced parameter type
