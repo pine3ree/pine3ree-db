@@ -262,12 +262,10 @@ class Select extends Command
             return [];
         }
 
-        $args = func_get_args();
-        if (empty($args)) {
-            $args[0] = $fetch_mode;
-        }
+        $rows = empty($args)
+            ? $stmt->fetchAll($fetch_mode)
+            : $stmt->fetchAll(...$args);
 
-        $rows = $stmt->fetchAll(...$args);
         $stmt->closeCursor();
 
         if (empty($rows) || !is_array($rows)) {
@@ -306,12 +304,10 @@ class Select extends Command
             return null;
         }
 
-        $args = func_get_args();
-        if (empty($args)) {
-            $args[0] = $fetch_mode;
-        }
+        $row = empty($args)
+            ? $stmt->fetch($fetch_mode)
+            : $stmt->fetch(...$args);
 
-        $row = $stmt->fetch(...$args);
         $stmt->closeCursor();
 
         return is_array($row) ? $row : null;
