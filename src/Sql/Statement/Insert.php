@@ -32,7 +32,7 @@ use function sprintf;
 /**
  * This class represent an INSERT SQL statement
  *
- * @property-read string|null $table The db table to inserto into if already set
+ * @property-read string|null $table The db table to insert into if already set
  * @property-read bool $ignore Is it an INSERT IGNORE statement
  * @property-read string|null $into Alias of $table
  * @property-read string[] $columns The insert column list
