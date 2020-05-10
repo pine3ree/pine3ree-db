@@ -74,7 +74,8 @@ class Update extends Statement
     /**
      * Set new value(s) for column(s)
      *
-     * @param string|array<string: mixed> $columnOrRow A single column or a set of column:value pairs
+     * @param scalar|null|string|Literal|array<string: scalar|null|string|Literal> $columnOrRow
+     *      A single column or a set of column:value pairs
      * @param mixed $value The value for a single column
      * @return $this
      * @throws InvalidArgumentException
