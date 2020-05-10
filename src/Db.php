@@ -315,7 +315,7 @@ class Db
         }
 
         // single row insert
-        $result = $insert->row($row, true)->execute();
+        $result = $insert->row($rowOrRows, true)->execute();
 
         return $result === false ? false : ($result > 0);
     }
