@@ -16,7 +16,7 @@ use function preg_replace;
 trait ExpressionTrait
 {
     /**
-     * @var string The "?"-parametrized SQL-expression
+     * @var string The "{name}"-parametrized SQL-expression
      */
     private $expression;
 
@@ -32,7 +32,7 @@ trait ExpressionTrait
 
         $driver = $driver ?? Driver::ansi();
 
-        // rewrite the `?` markers
+        // rewrite the `{name}` markers
         $sql = $this->expression;
 
         // replace unquoted ? markers with freshly generated named markers
@@ -41,9 +41,9 @@ trait ExpressionTrait
 
         $params = $params_types = [];
 
-        foreach ($this->params as $index => $value) {
+        foreach ($this->params as $key => $value) {
             $marker = $this->createNamedParam($value);
-            $sql = preg_replace($regexp, "\$1{$marker}\$2", $sql, 1);
+            $sql = str_replace("{{$key}}", $marker, $sql);
             $params[$marker] = $value;
             $params_types[$marker] = $this->params_types[$index];
         }
