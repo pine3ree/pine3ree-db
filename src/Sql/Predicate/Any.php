@@ -12,7 +12,7 @@ use P3\Db\Sql\Predicate\CompareTo;
 /**
  * This class represents a sql operator-ANY(SELECT...) condition
  */
-class All extends CompareTo
+class Any extends CompareTo
 {
     /** @var Select */
     protected static $quantifier = 'ANY';
