@@ -72,8 +72,8 @@ abstract class CompareTo extends Predicate
         $select_sql = $this->select->getSQL($driver);
         $this->importParams($this->select);
 
-        $quantifier = self::$quantifier;
+        $quantifier = static::$quantifier;
 
-        return $this->sql = "{$identifier} {$this->operator} {$this->quantifier}({$select_sql})";
+        return $this->sql = "{$identifier} {$this->operator} {$quantifier}({$select_sql})";
     }
 }

@@ -14,6 +14,6 @@ use P3\Db\Sql\Predicate\CompareTo;
  */
 class Any extends CompareTo
 {
-    /** @var Select */
+    /** @var string */
     protected static $quantifier = 'ANY';
 }
