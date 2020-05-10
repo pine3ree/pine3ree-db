@@ -72,6 +72,7 @@ class Update extends Statement
     }
 
     /**
+     * Set new value(s) for column(s)
      *
      * @param string|array<string: mixed> $columnOrRow A single column or a set of column:value pairs
      * @param mixed $value The value for a single column
@@ -102,7 +103,7 @@ class Update extends Statement
         }
 
         throw new InvalidArgumentException(sprintf(
-            "The set() columnOrRow argument muste be either a string or an array"
+            "The set() columnOrRow argument must be either a string or an array"
             . " of column:value pairs, `%s` provided!",
             is_object($columnOrRow) ? get_class($columnOrRow) : gettype($columnOrRow)
         ));
@@ -118,10 +119,9 @@ class Update extends Statement
 
         $base_sql  = $this->getBaseSQL($driver);
         $where_sql = $this->getWhereSQL($driver);
-
         if (Sql::isEmptySQL($where_sql)) {
             throw new RuntimeException(
-                "UPDATE queries without conditions are not allowed!"
+                "UPDATE statements without conditions are not allowed!"
             );
         }
 
