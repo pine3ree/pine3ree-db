@@ -366,6 +366,20 @@ class PredicateSet extends Predicate
         );
     }
 
+    public function isNull($identifier): self
+    {
+        return $this->addPredicate(
+            new Predicate\IsNull($identifier)
+        );
+    }
+
+    public function isNotNull($identifier): self
+    {
+        return $this->addPredicate(
+            new Predicate\IsNotNull($identifier)
+        );
+    }
+
     public function like($identifier, array $value): self
     {
         return $this->addPredicate(
