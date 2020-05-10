@@ -22,8 +22,11 @@ use function is_null;
  */
 class Comparison extends Predicate
 {
+    /** @var string|Literal */
     protected $identifier;
+    /** @var string */
     protected $operator;
+    /** @var string|int|bool|Literal */
     protected $value;
 
     /**
