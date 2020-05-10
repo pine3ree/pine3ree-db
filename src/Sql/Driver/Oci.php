@@ -7,20 +7,15 @@
 
 namespace P3\Db\Sql\Driver;
 
-use P3\Db\Sql;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Literal;
+use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 
-use function end;
 use function explode;
 use function implode;
-use function is_numeric;
 use function strpos;
 use function substr;
-use function trim;
 
 /**
  * Oci sql-driver
@@ -78,6 +73,7 @@ class Oci extends Driver
         $offset = $select->offset;
 
         if (isset($limit) && !isset($offset)) {
+            $limit = $select->createNamedParam($limit + $offset, PDO::PARAM_INT);
             return "SELECT * FROM ({$sql}) WHERE ROWNUM <= {$limit}";
         }
 
@@ -96,39 +92,7 @@ class Oci extends Driver
         return $sql;
     }
 
-    public function getColumnsSQL(Select $select): string
-    {
-        $sqls = [];
-        $tb_alias = $select->alias;
-        foreach ($select->columns as $key => $column) {
-            if ($column === Sql::ASTERISK) {
-                $column_sql = $tb_alias ? $this->quoteAlias($tb_alias) . ".*" : "*";
-            } else {
-                if ($column instanceof Literal) {
-                    $column_sql = $column->getSQL();
-                } elseif ($column instanceof Expression || $column instanceof Select) {
-                    $column_sql = $column->getSQL($this);
-                    $select->importParams($column);
-                } else {
-                    $column_sql = $this->quoteIdentifier(
-                        $select->normalizeColumn($column)
-                    );
-                }
-                // add alias
-                if (!is_numeric($key) && $key !== '') {
-                    $column_sql .= " AS " . $this->quoteAlias($key);
-                } elseif (! $column instanceof Literal) {
-                    $column = end(explode('.', $column));
-                    $column_sql .= " AS " . $this->quoteAlias($column);
-                }
-            }
-            $sqls[] = $column_sql;
-        }
-
-        return trim(implode(", ", $sqls));
-    }
-
-    public function getLimitSQL(Select $select): string
+    public function getLimitSQL(Statement $statement): string
     {
         return '';
     }
