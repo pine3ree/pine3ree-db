@@ -62,7 +62,7 @@ class Insert extends Statement
      */
     public function __construct(string $table = null)
     {
-        if (!empty($table)) {
+        if (isset($table)) {
             $this->into($table);
         }
     }

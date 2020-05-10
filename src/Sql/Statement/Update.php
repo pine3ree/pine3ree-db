@@ -54,7 +54,7 @@ class Update extends Statement
      */
     public function __construct(string $table = null)
     {
-        if (!empty($table)) {
+        if (isset($table)) {
             $this->table($table);
         }
     }
