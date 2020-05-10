@@ -36,8 +36,8 @@ class Expression extends Element
         }
         $this->expression = $expression;
         if (!empty($params)) {
-            foreach (array_values($params) as $i => $value) {
-                $this->setParam($i, $value);
+            foreach ($params as $key => $value) {
+                $this->setParam($key, $value);
             }
         }
     }
