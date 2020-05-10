@@ -78,6 +78,16 @@ class Insert extends Command
     }
 
     /**
+     * @see SqlInsert::row()
+     * @return $this
+     */
+    public function row(array $row)
+    {
+        $this->statement->row($row);
+        return $this;
+    }
+
+    /**
      * @see SqlInsert::rows()
      * @return $this
      */
