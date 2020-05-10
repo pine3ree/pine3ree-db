@@ -42,7 +42,7 @@ abstract class Predicate extends Element
         $is_valid = is_scalar($value) || null === value || $value instanceof Literal;
         if (!$is_valid) {
             throw new InvalidArgumentException(sprintf(
-                "A predicte value must be either a scalar or an Sql Literal"
+                "A predicate value must be either a scalar or an Sql Literal"
                 . " expression instance, `%s` provided in class``%s!",
                 is_object($value) ? get_class($value) : gettype($value),
                 static::class
