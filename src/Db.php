@@ -22,6 +22,7 @@ use PDO;
 use PDOStatement;
 
 use function explode;
+use function func_get_args;
 use function func_num_args;
 use function is_array;
 use function is_bool;
@@ -160,6 +161,28 @@ class Db
         $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
         // cache the pdo-less driver instance
         return $this->_driver = new $driver_fqcn();
+    }
+
+    /**
+     * Proxy to PDO::query()
+     *
+     * @param string $sql
+     * @return \PDOStatement|false Returns a PDO prepared statement or false on failure
+     */
+    public function query(string $sql)
+    {
+        return $this->getPDO()->query(...func_get_args());
+    }
+
+    /**
+     * Proxy to PDO::exec()
+     *
+     * @param string $sql
+     * @return int|false Returns the number of affected rows or false on failure
+     */
+    public function exec(string $sql)
+    {
+        return $this->getPDO()->exec($sql);
     }
 
     /**
