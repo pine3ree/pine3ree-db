@@ -315,13 +315,13 @@ class Db
     /**
      * Create a new Delete db-command and either return or execute it
      *
-     * @param string|array|null $table
+     * @param string|null $table The db-table to delete from
      * @param string|array|Predicate|Where $where
      * @return Delete|bool|int
      */
-    public function delete($from = null, $where = null)
+    public function delete($table = null, $where = null)
     {
-        $delete = new Delete($this, $from);
+        $delete = new Delete($this, $table);
         if (func_num_args() < 2 || !isset($where)) {
             return $delete;
         }
