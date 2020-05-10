@@ -39,7 +39,7 @@ abstract class Predicate extends Element
 
     protected static function assertValidValue($value)
     {
-        $is_valid = is_scalar($value) || null === value || $value instanceof Literal;
+        $is_valid = is_scalar($value) || null === $value || $value instanceof Literal;
         if (!$is_valid) {
             throw new InvalidArgumentException(sprintf(
                 "A predicate value must be either a scalar or an Sql Literal"
