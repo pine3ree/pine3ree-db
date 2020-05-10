@@ -45,4 +45,14 @@ class Update extends Command
         $this->statement->set($columnOrRow, $value);
         return $this;
     }
+
+    /**
+     * @see SqlUpdate::where()
+     * @return $this
+     */
+    public function where($where): self
+    {
+        $this->statement->where($where);
+        return $this;
+    }
 }
