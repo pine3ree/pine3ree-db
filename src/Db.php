@@ -131,6 +131,9 @@ class Db
         return $pdo;
     }
 
+    /**
+     * @return Driver The SQL driver matching the PDO configuration or instance
+     */
     public function getDriver(): Driver
     {
         if (isset($this->driver)) {
