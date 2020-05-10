@@ -295,7 +295,7 @@ class Db
      * to create a new row
      *
      * @param string|null $table
-     * @param array<string, mixed> $row
+     * @param array<string, mixed> $rowOrRows
      * @return Insert|bool|int
      */
     public function insert(string $table = null, array $rowOrRows = null)
