@@ -43,6 +43,7 @@ abstract class CompareTo extends Predicate
         self::assertValidOperator($operator);
 
         $this->identifier = $identifier;
+        $this->operator = $operator;
         $this->select = $select;
     }
 
@@ -73,6 +74,6 @@ abstract class CompareTo extends Predicate
 
         $quantifier = self::$quantifier;
 
-        return $this->sql = "{$identifier} {$operator} {$quantifier}({$select_sql})";
+        return $this->sql = "{$identifier} {$this->operator} {$this->quantifier}({$select_sql})";
     }
 }
