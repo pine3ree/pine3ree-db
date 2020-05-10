@@ -10,10 +10,10 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\CompareTo;
 
 /**
- * This class represents a sql operator-ALL(SELECT...) condition
+ * This class represents a sql operator-SOME(SELECT...) condition
  */
-class All extends CompareTo
+class Some extends CompareTo
 {
     /** @var Select */
-    protected static $quantifier = 'ALL';
+    protected static $quantifier = 'SOME';
 }
