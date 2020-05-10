@@ -141,13 +141,14 @@ class Db
         }
 
         if (isset($this->pdo)) {
+            // hydrate the pdo-less instance, if any,  with the active pdo connection
             if (isset($this->_driver)) {
                 $this->_driver->setPDO($this->pdo);
                 return $this->driver = $this->_driver;
             }
             $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
             $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
-            // cache the driver instance
+            // cache the pdo-aware driver instance
             return $this->driver = new $driver_fqcn();
         }
 
@@ -157,7 +158,7 @@ class Db
 
         $driver_name = explode(':', $this->dsn)[0];
         $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
-        // do not cache the driver instance
+        // cache the pdo-less driver instance
         return $this->_driver = new $driver_fqcn();
     }
 
