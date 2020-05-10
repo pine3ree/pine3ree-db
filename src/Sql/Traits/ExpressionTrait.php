@@ -32,15 +32,9 @@ trait ExpressionTrait
 
         $driver = $driver ?? Driver::ansi();
 
-        // rewrite the `{name}` markers
+        // rewrite the `{name}` or `{index}` markers
         $sql = $this->expression;
-
-        // replace unquoted ? markers with freshly generated named markers
-        $qv = $driver->qv;
-        $regexp = "/([^\\{$qv}]|^)\?([^\\{$qv}]|$)/";
-
         $params = $params_types = [];
-
         foreach ($this->params as $key => $value) {
             $marker = $this->createNamedParam($value);
             $sql = str_replace("{{$key}}", $marker, $sql);
