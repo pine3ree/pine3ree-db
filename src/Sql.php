@@ -152,23 +152,35 @@ class Sql
     public const LIKE        = 'LIKE';
     public const NOT_LIKE    = 'NOT LIKE';
 
+    /**
+     * REGEX operators
+     */
+    public const REGEX         = '~';
+    public const REGEX_CS      = '~*';
+    public const NOT_REGEX     = '!~';
+    public const NOT_REGEX_CS  = '!~*';
+
     // valid operators excluding boolean operators
     public const OPERATORS = [
-        self::EQ          => self::EQ,
-        self::NEQ         => self::NEQ,
-        self::NE          => self::NE,
-        self::LT          => self::LT,
-        self::LTE         => self::LTE,
-        self::GTE         => self::GTE,
-        self::GT          => self::GT,
-        self::BETWEEN     => self::BETWEEN,
-        self::NOT_BETWEEN => self::NOT_BETWEEN,
-        self::EXISTS      => self::EXISTS,
-        self::NOT_EXISTS  => self::NOT_EXISTS,
-        self::IN          => self::IN,
-        self::NOT_IN      => self::NOT_IN,
-        self::LIKE        => self::LIKE,
-        self::NOT_LIKE    => self::NOT_LIKE,
+        self::EQ           => self::EQ,
+        self::NEQ          => self::NEQ,
+        self::NE           => self::NE,
+        self::LT           => self::LT,
+        self::LTE          => self::LTE,
+        self::GTE          => self::GTE,
+        self::GT           => self::GT,
+        self::BETWEEN      => self::BETWEEN,
+        self::NOT_BETWEEN  => self::NOT_BETWEEN,
+        self::EXISTS       => self::EXISTS,
+        self::NOT_EXISTS   => self::NOT_EXISTS,
+        self::IN           => self::IN,
+        self::NOT_IN       => self::NOT_IN,
+        self::LIKE         => self::LIKE,
+        self::NOT_LIKE     => self::NOT_LIKE,
+        self::REGEX        => self::REGEX,
+        self::REGEX_CS     => self::REGEX_CS,
+        self::NOT_REGEX    => self::NOT_REGEX,
+        self::NOT_REGEX_CS => self::NOT_REGEX_CS,
     ];
 
     /**
