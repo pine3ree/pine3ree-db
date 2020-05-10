@@ -35,6 +35,7 @@ trait ExpressionTrait
         // rewrite the `?` markers
         $sql = $this->expression;
 
+        // replace unquoted ? markers with freshly generated named markers
         $qv = $driver->qv;
         $regexp = "/([^\\{$qv}]|^)\?([^\\{$qv}]|$)/";
 
