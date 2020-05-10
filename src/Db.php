@@ -374,7 +374,7 @@ class Db
                 $stmt->bindValue(
                     $markerOrIndex,
                     $this->castValue($value),
-                    $params_types[$key] ?? $this->getParamType($value)
+                    $params_types[$markerOrIndex] ?? $this->getParamType($value)
                 );
             }
         }
