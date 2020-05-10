@@ -218,7 +218,9 @@ class Select extends Statement
             return $this->sqls['columns'];
         }
 
-        return $this->sqls['columns'] = $driver->getSelectColumnsSQL($this);
+        if (is_callable([$driver, 'getSelectColumnsSQL'])) {
+            return $this->sqls['columns'] = $driver->getSelectColumnsSQL($this);
+        }
 
         if (empty($this->columns)) {
             $sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
@@ -332,7 +334,10 @@ class Select extends Statement
             return $this->sqls['from'];
         }
 
-        return $this->sqls['from'] = $driver->getSelectFromSQL($this);
+        if (is_callable([$driver, 'getSelectFromSQL'])) {
+            $this->sqls['from'] = $sql = $driver->getSelectFromSQL($this);
+            return $sql;
+        }
 
         if ($this->from instanceof self) {
             $from = "(" . $this->from->getSQL($driver) . ")";
@@ -348,7 +353,6 @@ class Select extends Statement
         }
 
         $this->sqls['from'] = $sql = "FROM {$from}";
-
         return $sql;
     }
 
