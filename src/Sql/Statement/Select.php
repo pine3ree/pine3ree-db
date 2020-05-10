@@ -32,6 +32,7 @@ use function is_callable;
 use function is_numeric;
 use function is_object;
 use function is_string;
+use function ltrim;
 use function max;
 use function rtrim;
 use function sprintf;
@@ -229,10 +230,17 @@ class Select extends Statement
             return $this->sqls['columns'] = $driver->getColumnsSQL($this);
         }
 
+        $table = $this->table;
+        $add_tb_prefix = !empty($table) && !empty($this->joins);
+
         $sqls = [];
         foreach ($this->columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
-                $column_sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
+                $prefix = $this->alias ? $this->quoteAlias($this->alias) : null;
+                if (empty($prefix) && $add_tb_prefix) {
+                    $prefix = $this->quoteIdentifier($this->table);
+                }
+                $column_sql = $prefix ? "{$prefix}.*" : "*";
             } else {
                 if ($column instanceof Literal) {
                     $column_sql = $column->getSQL();
@@ -241,7 +249,7 @@ class Select extends Statement
                     $this->importParams($column);
                 } else {
                     $column_sql = $driver->quoteIdentifier(
-                        $this->normalizeColumn($column)
+                        $this->normalizeColumn($column, $add_tb_prefix)
                     );
                 }
                 // add alias?
@@ -262,13 +270,19 @@ class Select extends Statement
      * Prepend the dml-statement primary-table alias if not already present
      *
      * @param string $column
+     * @param bool $add_tb_prefix Add table prefix?
      * @return string
      */
-    public function normalizeColumn(string $column): string
+    public function normalizeColumn(string $column, bool $add_tb_prefix = false): string
     {
-        $column = str_replace([$this->ql, $this->qr] , '', $column); // unquote the column first
+        $column = ltrim(rtrim($column, $this->qr), $this->ql); // unquote the column first
         if (false === strpos($column, '.')) {
-            return $this->alias ? "{$this->alias}.{$column}" : $column;
+            $prefix = $this->alias ?: (
+                $add_tb_prefix ? (
+                    is_string($this->from) ? $this->from : null
+                ) : null
+            );
+            return $prefix ? "{$prefix}.{$column}" : $column;
         }
 
         return $column;
@@ -570,7 +584,7 @@ class Select extends Statement
 
         $sort = is_string($sortOrReplace) ? strtoupper($sortOrReplace) : null;
 
-        $orderBy = $this->nomalizeOrderBy($orderBy, $sort);
+        $orderBy = $this->normalizeOrderBy($orderBy, $sort);
         if (empty($orderBy)) {
             return $this;
         }
@@ -580,7 +594,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function nomalizeOrderBy($orderBy, string $sort = null): array
+    private function normalizeOrderBy($orderBy, string $sort = null): array
     {
         if (is_string($orderBy)) {
             if (false === strpos($orderBy, ',')) {

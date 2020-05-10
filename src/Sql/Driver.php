@@ -213,17 +213,25 @@ abstract class Driver
 
     public function getSelectColumnsSQL(Select $select): string
     {
-        $alias = $select->alias;
+        $table   = $select->table;
+        $alias   = $select->alias;
         $columns = $select->columns;
+        $joins   = $select->joins;
 
         if (empty($columns)) {
             return $alias ? $this->quoteAlias($alias) . ".*" : "*";
         }
 
+        $add_tb_prefix = !empty($table) && !empty($joins);
+
         $sqls = [];
         foreach ($columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
-                $column_sql = $alias ? $this->quoteAlias($alias) . ".*" : "*";
+                $prefix = $alias ? $this->quoteAlias($alias) : null;
+                if (empty($prefix) && $add_tb_prefix && !empty($table)) {
+                    $prefix = $this->quoteIdentifier($table);
+                }
+                $column_sql = $prefix ? "{$prefix}.*" : "*";
             } else {
                 if ($column instanceof Literal) {
                     $column_sql = $column->getSQL();
@@ -232,7 +240,7 @@ abstract class Driver
                     $select->importParams($column);
                 } else {
                     $column_sql = $this->quoteIdentifier(
-                        $select->normalizeColumn($column)
+                        $select->normalizeColumn($column, $add_tb_prefix)
                     );
                 }
                 // add alias?
