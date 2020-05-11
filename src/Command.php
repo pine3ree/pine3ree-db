@@ -65,7 +65,7 @@ abstract class Command
 
     /**
      * @return PDOStatement|null|false|int Returns a PDOStatement or null for
-     *      reader-commands, false or int for writer commands
+     *      reader-commands, false or int for writer-commands
      */
     abstract public function execute();
 
