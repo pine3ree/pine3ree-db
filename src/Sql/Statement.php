@@ -10,7 +10,9 @@ namespace P3\Db\Sql;
 use P3\Db\Sql\Element;
 
 /**
- * Class Statement
+ * A sql-statement object's goal is to abstract a sql statement collecting parts
+ * (abtractions for clauses, predicates, ...) later compiled by a sql-driver into
+ * a platform pecific SQL-string
  */
 abstract class Statement extends Element
 {
