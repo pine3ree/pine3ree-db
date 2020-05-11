@@ -94,14 +94,22 @@ class Db
         return !empty(self::DRIVER_CLASS[$driver]);
     }
 
-    private function connect()
-    {
-        $this->pdo = $this->createPDO();
-    }
-
     public function isConnected(): bool
     {
         return isset($this->pdo);
+    }
+
+    private function connect()
+    {
+        if (!isset($this->pdo)) {
+            $this->pdo = $this->createPDO();
+        }
+    }
+
+    private function reconnect()
+    {
+        $this->pdo = null;
+        $this->pdo = $this->createPDO();
     }
 
     public function getPDO(): ?PDO
@@ -154,9 +162,10 @@ class Db
                 return $this->driver = $this->_driver;
             }
             $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-            $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver\Ansi::class;
+            $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? null;
             // cache the pdo-aware driver instance
-            return $this->driver = new $driver_fqcn();
+            $this->driver = !empty($driver_fqcn) ? new $driver_fqcn() : Driver::ansi();
+            return $this->driver;
         }
 
         if (isset($this->_driver)) {
@@ -164,9 +173,10 @@ class Db
         }
 
         $driver_name = explode(':', $this->dsn)[0];
-        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
+        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? null;
         // cache the pdo-less driver instance
-        return $this->_driver = new $driver_fqcn();
+        return $this->_driver = !empty($driver_fqcn) ? new $driver_fqcn() : Driver::ansi();
+        return $this->_driver;
     }
 
     /**
