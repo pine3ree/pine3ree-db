@@ -101,6 +101,12 @@ abstract class Element
             return;
         }
 
+        if (!isset($element->sql)) {
+            throw RuntimeException(
+                "Cannot import parameters from sql-element without a compiled SQL string!"
+            );
+        }
+
         foreach ($element->params as $key => $value) {
             $this->params[$key] = $value;
             $this->params_types[$key] = $element->params_types[$key] ?? null;
