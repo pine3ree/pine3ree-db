@@ -390,21 +390,16 @@ class Db
 
         if ($bind_params && $stmt instanceof PDOStatement) {
             $params_types = $statement->getParamsTypes();
-            foreach ($statement->getParams() as $markerOrIndex => $value) {
+            foreach ($statement->getParams() as $index => $value) {
                 $stmt->bindValue(
-                    $markerOrIndex,
+                    $index,
                     $this->castValue($value),
-                    $params_types[$markerOrIndex] ?? $this->getParamType($value)
+                    $params_types[$index] ?? $this->getParamType($value)
                 );
             }
         }
 
         return $stmt;
-    }
-
-    public function lastInsertId(string $name = null): string
-    {
-        return $this->pdo()->lastInsertId($name);
     }
 
     private function castValue($value)
@@ -429,6 +424,15 @@ class Db
         }
 
         return PDO::PARAM_STR;
+    }
+
+    public function lastInsertId(string $name = null): string
+    {
+        if (isset($this->pdo)) {
+            return $this->pdo->lastInsertId($name);
+        }
+
+        return '';
     }
 
     public function beginTransaction(): bool
