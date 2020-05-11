@@ -392,7 +392,7 @@ class Db
             $params_types = $statement->getParamsTypes();
             foreach ($statement->getParams() as $index => $value) {
                 $stmt->bindValue(
-                    $index,
+                    $index, // string marker (:name) or the 1-indexed position
                     $this->castValue($value),
                     $params_types[$index] ?? $this->getParamType($value)
                 );
