@@ -92,18 +92,18 @@ abstract class Element
     /**
      * Import parameters and types from inner elements
      *
-     * @param self $expr
+     * @param self $element
      * @internal
      */
-    public function importParams(self $expr): void
+    public function importParams(self $element): void
     {
-        if (empty($expr->params)) {
+        if (empty($element->params)) {
             return;
         }
 
-        foreach ($expr->params as $key => $value) {
+        foreach ($element->params as $key => $value) {
             $this->params[$key] = $value;
-            $this->params_types[$key] = $expr->params_types[$key] ?? PDO::PARAM_STR;
+            $this->params_types[$key] = $element->params_types[$key] ?? null;
         }
     }
 
