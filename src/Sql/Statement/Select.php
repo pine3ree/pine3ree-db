@@ -32,7 +32,6 @@ use function is_callable;
 use function is_numeric;
 use function is_object;
 use function is_string;
-use function ltrim;
 use function max;
 use function rtrim;
 use function sprintf;
@@ -277,7 +276,7 @@ class Select extends Statement
      */
     public function normalizeColumn(string $column, bool $add_tb_prefix = false): string
     {
-        $column = ltrim(rtrim($column, $this->qr), $this->ql); // unquote the column first
+        $column = str_replace([$this->ql, $this->qr], '', $column); // unquote the column first
         if (false === strpos($column, '.')) {
             $prefix = $this->alias ?: (
                 $add_tb_prefix ? (
