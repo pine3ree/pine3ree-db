@@ -55,6 +55,7 @@ class Db
 
     /** @var Driver */
     private $driver;
+
     /** @var Driver connection-less driver */
     private $_driver;
 
@@ -103,7 +104,12 @@ class Db
         return isset($this->pdo);
     }
 
-    public function getPDO(): PDO
+    public function getPDO(): ?PDO
+    {
+        return $this->pdo;
+    }
+
+    private function pdo(): PDO
     {
         return $this->pdo ?? $this->pdo = $this->createPDO();
     }
@@ -148,7 +154,7 @@ class Db
                 return $this->driver = $this->_driver;
             }
             $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-            $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver::class;
+            $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? Driver\Ansi::class;
             // cache the pdo-aware driver instance
             return $this->driver = new $driver_fqcn();
         }
@@ -166,23 +172,26 @@ class Db
     /**
      * Proxy to PDO::query()
      *
-     * @param string $sql
-     * @return \PDOStatement|false Returns a PDO prepared statement or false on failure
+     * @param string $sql The sql-statement
+     * @return \PDOStatement|false Execute the statement and returns either a
+     *      PDO prepared statement or false on failure
      */
     public function query(string $sql)
     {
-        return $this->getPDO()->query(...func_get_args());
+        return $this->pdo()->query(...func_get_args());
     }
 
     /**
      * Proxy to PDO::exec()
      *
-     * @param string $sql
-     * @return int|false Returns the number of affected rows or false on failure
+     * @param string $sql The DML/DDL/DCL sql-statement
+     *
+     * @return int|false Execute the statement and returns either the number of
+     *      affected rows or false on failure
      */
     public function exec(string $sql)
     {
-        return $this->getPDO()->exec($sql);
+        return $this->pdo()->exec($sql);
     }
 
     /**
@@ -233,7 +242,6 @@ class Db
         if (isset($order)) {
             $select->orderBy($order);
         }
-        $select->limit(1);
 
         return $select->fetchOne();
     }
@@ -366,7 +374,7 @@ class Db
      */
     public function prepare(Statement $statement, bool $bind_params = false)
     {
-        $stmt = $this->getPDO()->prepare($statement->getSQL($this->getDriver()));
+        $stmt = $this->pdo()->prepare($statement->getSQL($this->getDriver()));
 
         if ($bind_params && $stmt instanceof PDOStatement) {
             $params_types = $statement->getParamsTypes();
@@ -384,7 +392,7 @@ class Db
 
     public function lastInsertId(string $name = null): string
     {
-        return $this->getPDO()->lastInsertId($name);
+        return $this->pdo()->lastInsertId($name);
     }
 
     private function castValue($value)
@@ -413,16 +421,16 @@ class Db
 
     public function beginTransaction(): bool
     {
-        return $this->getPDO()->beginTransaction();
+        return $this->pdo()->beginTransaction();
     }
 
     public function commit(): bool
     {
-        return $this->getPDO()->commit();
+        return $this->pdo()->commit();
     }
 
     public function rollBack(): bool
     {
-        return $this->getPDO()->rollBack();
+        return $this->pdo()->rollBack();
     }
 }
