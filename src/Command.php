@@ -10,7 +10,7 @@ use PDOStatement;
 use P3\Db\Sql\Statement as Statement;
 
 /**
- * A db-command sends an sql-statement to the database and returns the result
+ * A db-command sends a sql-statement to the database and returns the result
  *
  * @property-read Statement $statement
  */
