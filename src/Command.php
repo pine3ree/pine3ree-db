@@ -7,12 +7,12 @@
 namespace P3\Db;
 
 use PDOStatement;
-use P3\Db\Sql\Statement as SqlStatement;
+use P3\Db\Sql\Statement as Statement;
 
 /**
  * A Command sends an SQL-statement to the database and returns the result
  *
- * @property-read SqlStatement $statement
+ * @property-read Statement $statement
  */
 abstract class Command
 {
@@ -22,11 +22,11 @@ abstract class Command
     protected $db;
 
     /**
-     * @var SqlStatement
+     * @var Statement
      */
     protected $statement;
 
-    public function __construct(Db $db, SqlStatement $statement)
+    public function __construct(Db $db, Statement $statement)
     {
         $this->db = $db;
         $this->statement = $statement;
@@ -53,7 +53,7 @@ abstract class Command
         return $this->statement->getParamsTypes($return_pdo_const_names);
     }
 
-    public function getStatement(): SqlStatement
+    public function getStatement(): Statement
     {
         return $this->statement;
     }
