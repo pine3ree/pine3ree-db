@@ -65,7 +65,9 @@ abstract class Element
 
     public function getParamsTypes(bool $show_pdo_const_names = false): array
     {
-        if ($show_pdo_const_names && !empty($this->params_types)) {
+        if ($show_pdo_const_names
+            && !empty($this->params_types)
+        ) {
             $types = [];
             foreach ($this->params_types as $key => $type) {
                 if ($type === PDO::PARAM_STR) {
