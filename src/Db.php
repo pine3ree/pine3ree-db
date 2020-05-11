@@ -194,7 +194,7 @@ class Db
     /**
      * Proxy to PDO::exec()
      *
-     * @param string $sql The DML/DDL/DCL sql-statement
+     * @param string $sql The DML/DDL/DCL statement sql-string
      *
      * @return int|false Execute the statement and returns either the number of
      *      affected rows or false on failure
