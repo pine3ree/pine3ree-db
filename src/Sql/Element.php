@@ -63,9 +63,9 @@ abstract class Element
         return $this->params;
     }
 
-    public function getParamsTypes(bool $show_pdo_const_names = false): array
+    public function getParamsTypes(bool $return_pdo_const_names = false): array
     {
-        if ($show_pdo_const_names
+        if ($return_pdo_const_names
             && !empty($this->params_types)
         ) {
             $types = [];
