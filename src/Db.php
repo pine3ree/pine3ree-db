@@ -147,7 +147,9 @@ class Db
     }
 
     /**
-     * @return Driver The SQL driver matching the PDO configuration or instance
+     * Return the SQL driver matching the PDO configuration or instance
+     *
+     * @return Driver
      */
     public function getDriver(): Driver
     {
@@ -156,7 +158,7 @@ class Db
         }
 
         if (isset($this->pdo)) {
-            // hydrate the pdo-less instance, if any,  with the active pdo connection
+            // hydrate the pdo-less instance, if any, with the active pdo connection
             if (isset($this->_driver)) {
                 $this->_driver->setPDO($this->pdo);
                 return $this->driver = $this->_driver;
