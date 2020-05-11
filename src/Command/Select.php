@@ -262,6 +262,8 @@ class Select extends Command
             return [];
         }
 
+        $args = func_get_args();
+
         $rows = empty($args)
             ? $stmt->fetchAll($fetch_mode)
             : $stmt->fetchAll(...$args);
@@ -303,6 +305,8 @@ class Select extends Command
         if (null === $stmt = $this->execute()) {
             return null;
         }
+
+        $args = func_get_args();
 
         $row = empty($args)
             ? $stmt->fetch($fetch_mode)
