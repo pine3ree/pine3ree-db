@@ -92,6 +92,52 @@ class Oci extends Driver
         return $sql;
     }
 
+    public function getColumnsSQL(Select $select): string
+    {
+        $table   = $select->table;
+        $alias   = $select->alias;
+        $columns = $select->columns;
+        $joins   = $select->joins;
+
+        if (empty($columns)) {
+            return $alias ? $this->quoteAlias($alias) . ".*" : "*";
+        }
+
+        $add_tb_prefix = !empty($table) && !empty($joins);
+
+        $sqls = [];
+        foreach ($columns as $key => $column) {
+            if ($column === Sql::ASTERISK) {
+                $prefix = $alias ? $this->quoteAlias($alias) : null;
+                if (empty($prefix) && $add_tb_prefix && !empty($table)) {
+                    $prefix = $this->quoteIdentifier($table);
+                }
+                $column_sql = $prefix ? "{$prefix}.*" : "*";
+            } else {
+                if ($column instanceof Literal) {
+                    $column_sql = $column->getSQL();
+                } elseif ($column instanceof Expression || $column instanceof Select) {
+                    $column_sql = $column->getSQL($this);
+                    $select->importParams($column);
+                } else {
+                    $column_sql = $this->quoteIdentifier(
+                        $select->normalizeColumn($column, $add_tb_prefix)
+                    );
+                }
+                // add alias?
+                if (!is_numeric($key) && $key !== '' && $key !== $column) {
+                    $column_sql .= " AS " . $this->quoteAlias($key);
+                } elseif (is_string($column)) {
+                    $column = end(explode('.', $column));
+                    $column_sql .= " AS " . $this->quoteAlias($column);
+                }
+            }
+            $sqls[] = $column_sql;
+        }
+
+        return trim(implode(", ", $sqls));
+    }
+
     public function getLimitSQL(Statement $statement): string
     {
         return '';
