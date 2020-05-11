@@ -393,25 +393,13 @@ class Db
             foreach ($statement->getParams() as $index => $value) {
                 $stmt->bindValue(
                     $index, // string marker (:name) or the 1-indexed position
-                    $this->castValue($value),
+                    $value,
                     $params_types[$index] ?? $this->getParamType($value)
                 );
             }
         }
 
         return $stmt;
-    }
-
-    private function castValue($value)
-    {
-        if (is_bool($value)) {
-            return (int)$value;
-        }
-        if (is_float($value)) {
-            $value = (string)$value;
-        }
-
-        return $value;
     }
 
     private function getParamType($value): int
