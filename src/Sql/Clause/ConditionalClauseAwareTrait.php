@@ -25,13 +25,13 @@ use function key;
 trait ConditionalClauseAwareTrait
 {
     /**
-     * Define a clause
+     * Set a conditional clause into a consumer class property
      *
      * @param string $property
      * @param string $fqcn A ConditionalClause descendant class
-     * @param string|array|Predicate|PredicateSet|ConditionalClause $condition
+     * @param ConditionalClause|PredicateSet|Predicate|array|string $clause
      */
-    private function setConditionalClause(string $property, $fqcn, $condition): self
+    private function setConditionalClause(string $property, $fqcn, $clause): self
     {
         if (isset($this->{$property})) {
             throw new RuntimeException(
@@ -39,20 +39,18 @@ trait ConditionalClauseAwareTrait
             );
         }
 
-        if (is_array($condition)) {
+        if (is_array($clause)) {
             // ["&&" => conditions] or ["||" => conditions]
-            if (count($condition) === 1
-                && isset(PredicateSet::COMB_ID[$comb_id = key($condition)])
-                && is_array($conditions = current($condition))
+            if (count($clause) === 1
+                && isset(PredicateSet::COMB_ID[$comb_id = key($clause)])
+                && is_array($conditions = current($clause))
             ) {
                 $clause = new $fqcn($comb_id, $conditions);
             } else {
-                $clause = new $fqcn(Sql::AND, $condition);
+                $clause = new $fqcn(Sql::AND, $clause);
             }
-        } elseif ($condition instanceof $fqcn) {
-            $clause = $condition;
-        } else {
-            $clause = new $fqcn(Sql::AND, $condition);
+        } elseif (! $clause instanceof $fqcn) {
+            $clause = new $fqcn(Sql::AND, $clause);
         }
 
         $this->{$property} = $clause;
