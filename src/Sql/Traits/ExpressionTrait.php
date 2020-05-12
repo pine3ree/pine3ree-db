@@ -7,8 +7,12 @@
 
 namespace P3\Db\Sql\Traits;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Driver;
-use function preg_replace;
+
+use function str_replace;
+use function strpos;
+use function trim;
 
 /**
  * Provide the getSQL() method for parametric sql-expression
