@@ -13,7 +13,6 @@ use P3\Db\Command\Select;
 use P3\Db\Command\Update;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\Where;
-use P3\Db\Sql\Element;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
@@ -413,11 +412,6 @@ class Db
         }
         if (is_int($value) || is_bool($value)) {
             return PDO::PARAM_INT;
-        }
-        if (is_resource($value)
-            || (is_string($value) && strlen($value) > Element::PARAM_STR_MAX_LENGTH)
-        ) {
-            return PDO::PARAM_LOB;
         }
 
         return PDO::PARAM_STR;
