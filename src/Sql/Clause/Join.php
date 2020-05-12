@@ -14,7 +14,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Set as PredicateSet;
-use P3\Db\Sql\Predicate\Set\ConditionAwareTrait ;
+use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
 use P3\Db\Sql\Predicate\Set\On;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 
@@ -29,7 +29,7 @@ use function strtoupper;
 class Join extends Element
 {
     use TableAwareTrait;
-    use ConditionAwareTrait;
+    use ConditionalClauseAwareTrait;
 
     /** @var string */
     private $type;
@@ -64,7 +64,7 @@ class Join extends Element
             if ($specification instanceof Literal) {
                 $this->specification = $specification;
             } else {
-                $this->setCondition('specification', On::class, $specification);
+                $this->setConditionalClause('specification', On::class, $specification);
             }
         }
     }
@@ -90,7 +90,7 @@ class Join extends Element
         if ($this->specification instanceof Literal) {
             $specification = $this->on->getSQL();
         } elseif ($this->specification instanceof On) {
-           $specification = $this->getConditionSQL('on', $driver);
+           $specification = $this->getConditionalClauseSQL('on', $driver);
            if (!Sql::isEmptySQL($specification)) {
                $this->importParams($this->specification);
            }
