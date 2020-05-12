@@ -8,10 +8,10 @@
 namespace P3\Db\Sql\Clause;
 
 use P3\Db\Sql;
+use P3\Db\Sql\Clause;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
 use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Element;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Set as PredicateSet;
@@ -22,10 +22,12 @@ use function trim;
 /**
  * Class Join
  */
-class Join extends Element
+class Join extends Clause
 {
     use TableAwareTrait;
     use ConditionalClauseAwareTrait;
+
+    protected static $name = Sql::JOIN;
 
     /** @var string */
     private $type;
@@ -78,8 +80,10 @@ class Join extends Element
             $table .= " " .  $driver->quoteAlias($this->alias);
         }
 
+        $join = $this->getName();
+
         if (empty($this->specification)) {
-            $this->sql = trim("{$this->type} JOIN {$table}");
+            $this->sql = "{$join} {$table}";
             return $this->sql;
         }
 
@@ -92,7 +96,12 @@ class Join extends Element
            }
         }
 
-        $this->sql = trim("{$this->type} JOIN {$table} {$specification}");
+        $this->sql = trim("{$join} {$table} {$specification}");
         return $this->sql;
+    }
+
+    protected function getName(): string
+    {
+        return !empty($this->type) ? "{$this->type} JOIN" : "JOIN";
     }
 }

@@ -8,8 +8,8 @@
 namespace P3\Db\Sql\Clause;
 
 use P3\Db\Sql;
+use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Element;
 use P3\Db\Sql\Predicate;
 
 use function ltrim;
@@ -20,18 +20,8 @@ use function strtoupper;
 /**
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
  */
-abstract class ConditionalClause extends Element
+abstract class ConditionalClause extends Clause
 {
-    /**
-     * @var string The SQL-clause name: WHERE|HAVING|ON condition clauses
-     */
-    protected static $name;
-
-    /**
-     * @var string WHERE|HAVING|ON Resolved name cache
-     */
-    protected $__name;
-
     /**
      * @var Predicate\Set
      */
@@ -95,32 +85,9 @@ abstract class ConditionalClause extends Element
         return $this->sql;
     }
 
-    /**
-     * Return the SQL name for the clause (uppercase class-basename)
-     * @return string
-     */
-    protected function getName(): string
+    public function __call(string $method, array $arguments)
     {
-        // use the statically defined name if set
-        if (isset(static::$name)) {
-            return static::$name;
-        }
-
-        // use the cached name value if set
-        if (isset($this->__name)) {
-            return $this->__name;
-        }
-
-        $class_basename = ltrim(strrchr(static::class, '\\'), '\\');
-        $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $class_basename);
-        $this->__name = strtoupper($name);
-
-        return $this->__name;
-    }
-
-    public function __call(string $methodName, array $arguments)
-    {
-        switch ($methodName) {
+        switch ($method) {
             case 'all':
                return $this->conditions->all(...$arguments);
 

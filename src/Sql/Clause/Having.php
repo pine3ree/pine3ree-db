@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Clause;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 
 /**
@@ -14,5 +15,5 @@ use P3\Db\Sql\Clause\ConditionalClause;
  */
 class Having extends ConditionalClause
 {
-    protected static $name = "HAVING";
+    protected static $name = Sql::HAVING;
 }
