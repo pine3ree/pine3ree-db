@@ -19,25 +19,4 @@ use function trim;
 class Expression extends Element
 {
     use ExpressionTrait;
-
-    /**
-     * @param string $expression The SQL expression with optional {named} placeholders
-     * @param array $params A list of parameters for the expression indexed by placeholder
-     * @throws InvalidArgumentException
-     */
-    public function __construct(string $expression, array $params = [])
-    {
-        $expression = trim($expression);
-        if ('' === $expression) {
-            throw new InvalidArgumentException(
-                "A SQL-expression cannot be empty!"
-            );
-        }
-        $this->expression = $expression;
-        if (!empty($params)) {
-            foreach ($params as $key => $value) {
-                $this->setParam($key, $value);
-            }
-        }
-    }
 }

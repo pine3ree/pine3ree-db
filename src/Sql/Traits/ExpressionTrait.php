@@ -20,30 +20,57 @@ trait ExpressionTrait
      */
     private $expression;
 
+    /**
+     * @var array
+     */
+    private $substitutions;
+
+    /**
+     * @param string $expression The SQL expression with optional {name}-placeholders
+     * @param array $substitutions A list of substitution parameters for the expression
+     *      indexed by placeholder
+     * @throws InvalidArgumentException
+     */
+    public function __construct(string $expression, array $substitutions = [])
+    {
+        $expression = trim($expression);
+        if ('' === $expression) {
+            throw new InvalidArgumentException(
+                "A SQL-expression cannot be empty!"
+            );
+        }
+        $this->expression = $expression;
+        foreach ($substitutions as $name => $value) {
+            if (false === strpos($expression, "{{$name}}")) {
+                throw new InvalidArgumentException(
+                    "Placeholder `{{$name}}` not found in the sql-expression!"
+                );
+            }
+            $this->substitutions[$name] = $value;
+        }
+    }
+
     public function getSQL(Driver $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
         }
 
-        if (empty($this->params)) {
-            return $this->sql = $this->expression ;
+        if (empty($this->substitutions)) {
+            return $this->sql = $this->expression;
         }
 
         $driver = $driver ?? Driver::ansi();
 
-        // rewrite the `{name}` or `{index}` markers
-        $sql = $this->expression;
-        $params = $params_types = [];
-        foreach ($this->params as $key => $value) {
-            $marker = $this->createNamedParam($value);
-            $sql = str_replace("{{$key}}", $marker, $sql);
-            $params[$marker] = $value;
-            $params_types[$marker] = $this->params_types[$index];
-        }
+        // reset any previous parameters
+        $this->params = $this->params_types = [];
 
-        $this->params = $params;
-        $this->params_types = $params_types;
+        // replace the `{name}`-placeholders with `:name`-markers
+        $sql = $this->expression;
+        foreach ($this->substitutions as $name => $value) {
+            $marker = $this->createNamedParam($value);
+            $sql = str_replace("{{$name}}", $marker, $sql);
+        }
 
         return $this->sql = $sql;
     }
