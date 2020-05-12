@@ -16,7 +16,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\PredicateSet;
+use P3\Db\Sql\Predicate\Set as PredicateSet;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use PDO;

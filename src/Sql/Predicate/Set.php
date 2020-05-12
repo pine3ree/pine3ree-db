@@ -5,7 +5,7 @@
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql;
+namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
 use P3\Db\Sql;
@@ -31,9 +31,9 @@ use function strtoupper;
 use function trim;
 
 /**
- * PredicateSet represents a group of predicates combined either by AND or OR
+ * Predicate\Set represents a group of predicates combined either by AND or OR
  */
-class PredicateSet extends Predicate
+class Set extends Predicate
 {
     /** @var Predicate[] */
     protected $predicates = [];
@@ -89,8 +89,8 @@ class PredicateSet extends Predicate
      *  ]
      * </pre>
      *
-     * @param string $combined_by
-     * @param null|Predicate[]|PredicateSet|Predicate|array|string $predicates
+     * @param string $combined_by One of `AND`, `OR`, `&&`, `||`
+     * @param null|Predicate[]|self|Predicate|array|string $predicates
      */
     public function __construct(string $combined_by = null, $predicates = null)
     {
@@ -120,7 +120,7 @@ class PredicateSet extends Predicate
             if ($predicate instanceof self) {
                 $comb_by = self::COMB_ID[$key] ?? null;
                 if (isset($comb_by) && $comb_by !== $predicate->getCombinedBy()) {
-                    $nestedSet = new PredicateSet($comb_by, $predicate->getPredicates());
+                    $nestedSet = new self($comb_by, $predicate->getPredicates());
                     $this->addPredicate($nestedSet);
                 } else {
                     $this->addPredicate($predicate);
@@ -165,7 +165,7 @@ class PredicateSet extends Predicate
     /**
      * Add a predicate or a predicate-set
      *
-     * @param Predicate|string|array $predicate A Predicate/PredicateSet instance
+     * @param Predicate|string|array $predicate A Predicate|Predicate\Set instance
      *      or a specs-array [identifier, operator, value] or [identifier => value]
      * @throws InvalidArgumentException
      * @return $this Provides fluent interface
@@ -181,7 +181,7 @@ class PredicateSet extends Predicate
         if (! $predicate instanceof Predicate) {
             throw new InvalidArgumentException(sprintf(
                 "Adding a predicate must be done using either as a string, a"
-                . " Predicate/PredicateSet instance or an predicate specs-array such as "
+                . " Predicate|Predicate\Set instance or an predicate specs-array such as "
                 . "[identifier, operator, value] or [identifier => value], `%s` provided!",
                 is_object($predicate) ? get_class($predicate) : gettype($predicate)
             ));
@@ -285,7 +285,7 @@ class PredicateSet extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        return $this->sql = $driver->getPredicateSetSQL($this);
+        //return $this->sql = $driver->getPredicateSetSQL($this);
 
         $sqls = [];
         foreach ($this->predicates as $predicate) {
@@ -321,6 +321,27 @@ class PredicateSet extends Predicate
     {
         return $this->addPredicate(
             new Predicate\Expression($expression, $params)
+        );
+    }
+
+    public function all($identifier, string $operator, Select $select): self
+    {
+        return $this->addPredicate(
+            new Predicate\All($identifier, $operator, $select)
+        );
+    }
+
+    public function any($identifier, string $operator, Select $select): self
+    {
+        return $this->addPredicate(
+            new Predicate\Any($identifier, $operator, $select)
+        );
+    }
+
+    public function some($identifier, string $operator, Select $select): self
+    {
+        return $this->addPredicate(
+            new Predicate\Some($identifier, $operator, $select)
         );
     }
 

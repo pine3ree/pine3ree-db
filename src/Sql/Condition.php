@@ -9,7 +9,7 @@ namespace P3\Db\Sql;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\PredicateSet;
+use P3\Db\Sql\Predicate\Set as PredicateSet;
 
 use function ltrim;
 use function preg_replace;

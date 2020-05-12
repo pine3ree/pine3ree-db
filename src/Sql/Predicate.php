@@ -20,7 +20,7 @@ use function sprintf;
 
 /**
  * Predicate represents a single SQL condition that can be evaluates by the underlying
- * database software. It is usually part of set of conditions (PredicateSet) such
+ * database software. It is usually part of set of conditions (Predicate\Set) such
  * as the WHERE, the HAVING and the ON clauses or their nested sets of conditions.
  */
 abstract class Predicate extends Element

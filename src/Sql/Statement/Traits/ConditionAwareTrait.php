@@ -11,7 +11,7 @@ use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\PredicateSet;
+use P3\Db\Sql\Predicate\Set as PredicateSet;
 use RuntimeException;
 
 use function count;

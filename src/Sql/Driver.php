@@ -11,7 +11,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\PredicateSet;
+use P3\Db\Sql\Predicate\Set as PredicateSet;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 use Throwable;
