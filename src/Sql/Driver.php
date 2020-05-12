@@ -282,12 +282,12 @@ abstract class Driver
             $type  = $join['type'];
             $table = $this->quoteIdentifier($join['table']);
             $alias = $this->quoteAlias($join['alias']);
-            $cond  = $join['cond'];
+            $spec  = $join['spec'];
 
-            $cond_sql = $cond->getSQL($this);
-            $select->importParams($cond);
+            $spec_sql = $spec->getSQL($this);
+            $select->importParams($spec);
 
-            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond_sql}");
+            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$spec_sql}");
         }
 
         return trim(implode(" ", $sqls));

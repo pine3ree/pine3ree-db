@@ -358,73 +358,73 @@ class Select extends Statement
     /**
      * @see self::addJoin()
      */
-    public function join(string $table, string $alias, $cond = null): self
+    public function join(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_AUTO, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_AUTO, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function innerJoin(string $table, string $alias, $cond = null): self
+    public function innerJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_INNER, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_INNER, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function leftJoin(string $table, string $alias, $cond = null): self
+    public function leftJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_LEFT, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_LEFT, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function rightJoin(string $table, string $alias, $cond = null): self
+    public function rightJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_RIGHT, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_RIGHT, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function naturalJoin(string $table, string $alias, $cond = null): self
+    public function naturalJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_NATURAL, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_NATURAL, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function naturalLeftJoin(string $table, string $alias, $cond = null): self
+    public function naturalLeftJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_NATURAL_LEFT, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_NATURAL_LEFT, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function naturalRightJoin(string $table, string $alias, $cond = null): self
+    public function naturalRightJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_NATURAL_RIGHT, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_NATURAL_RIGHT, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function crossJoin(string $table, string $alias, $cond = null): self
+    public function crossJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_CROSS, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_CROSS, $table, $alias, $specification);
     }
 
     /**
      * @see self::addJoin()
      */
-    public function straightJoin(string $table, string $alias, $cond = null): self
+    public function straightJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_STRAIGHT, $table, $alias, $cond);
+        return $this->addJoin(Sql::JOIN_STRAIGHT, $table, $alias, $specification);
     }
 
     /**
@@ -433,25 +433,25 @@ class Select extends Statement
      * @param string $type The join type (LEFT, RIGHT, INNER, ...)
      * @param string $table The join table name
      * @param string $alias The join table alias
-     * @param On|PredicateSet|Predicate|array|string $cond
+     * @param On!Literal|PredicateSet|Predicate|array|string $specification
      *      The join conditional usually an ON clause, but may be changed using Literal classes
      * @return $this
      */
-    private function addJoin(string $type, string $table, string $alias, $cond = null): self
+    private function addJoin(string $type, string $table, string $alias, $specification = null): self
     {
         Sql::assertValidJoin($type);
 
-        if (! $cond instanceof On
-            && ! $cond instanceof Literal // to express USING(column)
+        if (! $specification instanceof On
+            && ! $specification instanceof Literal // to express USING(column)
         ) {
-            $cond = new On(Sql::AND, $cond);
+            $specification = new On(Sql::AND, $specification);
         }
 
         $this->joins[] = [
             'type'  => $type,
             'table' => $table,
             'alias' => $alias,
-            'cond'  => $cond,
+            'spec'  => $specification,
         ];
 
         unset($this->sql, $this->sqls['join']);
@@ -476,12 +476,12 @@ class Select extends Statement
             $type  = $join['type'];
             $table = $driver->quoteIdentifier($join['table']);
             $alias = $driver->quoteAlias($join['alias']);
-            $cond  = $join['cond'];
+            $spec  = $join['spec'];
 
-            $cond_sql = $cond->getSQL($driver);
-            $this->importParams($cond);
+            $spec_sql = $spec->getSQL($driver);
+            $this->importParams($spec);
 
-            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond_sql}");
+            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$spec_sql}");
         }
 
         $this->sqls['join'] = $sql = trim(implode(" ", $sqls));
