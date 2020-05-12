@@ -53,11 +53,6 @@ abstract class Element
     protected const MAX_INDEX = 999999;
 
 
-    public function hasParams(): bool
-    {
-        return !empty($this->params);
-    }
-
     public function getParams(): array
     {
         return $this->params;

@@ -285,9 +285,7 @@ abstract class Driver
             $cond  = $join['cond'];
 
             $cond_sql = $cond->getSQL($this);
-            if ($cond->hasParams()) {
-                $select->importParams($cond);
-            }
+            $select->importParams($cond);
 
             $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond_sql}");
         }

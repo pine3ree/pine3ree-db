@@ -79,9 +79,7 @@ trait ConditionAwareTrait
         }
 
         $sql = $condition->getSQL($driver);
-        if ($condition->hasParams()) {
-            $this->importParams($condition);
-        }
+        $this->importParams($condition);
 
         return $sql;
     }

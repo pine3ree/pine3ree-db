@@ -479,9 +479,7 @@ class Select extends Statement
             $cond  = $join['cond'];
 
             $cond_sql = $cond->getSQL($driver);
-            if ($cond->hasParams()) {
-                $this->importParams($cond);
-            }
+            $this->importParams($cond);
 
             $sqls[] = trim("{$type} JOIN {$table} {$alias} {$cond_sql}");
         }

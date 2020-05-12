@@ -354,9 +354,8 @@ class Insert extends Statement
             if (Sql::isEmptySQL($sql)) {
                 return $this->sqls['values'] = '';
             }
-            if ($this->select->hasParams()) {
-                $this->importParams($this->select);
-            }
+            $this->importParams($this->select);
+
             return $this->sqls['values'] = "({$sql})";
         }
 
