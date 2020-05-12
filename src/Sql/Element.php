@@ -101,9 +101,10 @@ abstract class Element
             );
         }
 
-        foreach ($element->params as $key => $value) {
+        $params_types = $element->getParamsTypes();
+        foreach ($element->getParams() as $key => $value) {
             $this->params[$key] = $value;
-            $this->params_types[$key] = $element->params_types[$key] ?? null;
+            $this->params_types[$key] = $params_types[$key] ?? null;
         }
     }
 
