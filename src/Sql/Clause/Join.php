@@ -9,13 +9,13 @@ namespace P3\Db\Sql\Clause;
 
 use InvalidArgumentException;
 use P3\Db\Sql;
-use P3\Db\Sql\Element;
+use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
+use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Element;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Set as PredicateSet;
-use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
-use P3\Db\Sql\Predicate\Set\On;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 
 use function ltrim;
