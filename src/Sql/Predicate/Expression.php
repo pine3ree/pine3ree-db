@@ -8,7 +8,6 @@
 namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
-use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Traits\ExpressionTrait;
 
@@ -21,6 +20,11 @@ class Expression extends Predicate
 {
     use ExpressionTrait;
 
+    /**
+     * @param string $expression The SQL expression with optional {named} placeholders
+     * @param array $params A list of parameters for the expression indexed by placeholder
+     * @throws InvalidArgumentException
+     */
     public function __construct(string $expression, array $params = [])
     {
         $sql = trim($expression);
