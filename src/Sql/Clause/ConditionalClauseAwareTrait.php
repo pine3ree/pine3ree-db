@@ -74,15 +74,15 @@ trait ConditionalClauseAwareTrait
             return '';
         }
 
-        $condition = $this->{$property};
-        if (! $condition instanceof ConditionalClause) {
+        $conditional_clause = $this->{$property};
+        if (! $conditional_clause instanceof ConditionalClause) {
             throw new InvalidArgumentException(
                 "Property {$property} does not hold a ConditionalClause instance!"
             );
         }
 
-        $sql = $condition->getSQL($driver);
-        $this->importParams($condition);
+        $sql = $conditional_clause->getSQL($driver);
+        $this->importParams($conditional_clause);
 
         return $sql;
     }
