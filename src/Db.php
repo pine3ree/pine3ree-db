@@ -12,7 +12,7 @@ use P3\Db\Command\Insert;
 use P3\Db\Command\Select;
 use P3\Db\Command\Update;
 use P3\Db\Sql;
-use P3\Db\Sql\Condition\Where;
+use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
