@@ -144,11 +144,6 @@ abstract class Element
         return '?';
     }
 
-    private static function incrementIndex()
-    {
-        self::$index = self::$index < self::MAX_INDEX ? (self::$index + 1) : 1;
-    }
-
     /**
      * Add a parameter and its type to the internal list
      *
@@ -171,6 +166,11 @@ abstract class Element
         }
 
         $this->params_types[$key] = $param_type;
+    }
+
+    private static function incrementIndex()
+    {
+        self::$index = self::$index < self::MAX_INDEX ? (self::$index + 1) : 1;
     }
 
     /**
