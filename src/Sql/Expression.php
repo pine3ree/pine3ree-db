@@ -11,7 +11,6 @@ use InvalidArgumentException;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Traits\ExpressionTrait;
 
-use function preg_replace;
 use function trim;
 
 /**
@@ -22,8 +21,8 @@ class Expression extends Element
     use ExpressionTrait;
 
     /**
-     * @param string $expression The SQL expression with optional '?' markers
-     * @param array $params
+     * @param string $expression The SQL expression with optional {named} placeholders
+     * @param array $params A list of parameters for the expression indexed by placeholder
      * @throws InvalidArgumentException
      */
     public function __construct(string $expression, array $params = [])
