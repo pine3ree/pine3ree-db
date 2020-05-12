@@ -7,7 +7,6 @@
 
 namespace P3\Db\Sql\Clause;
 
-use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Driver;
@@ -77,16 +76,16 @@ trait ConditionalClauseAwareTrait
 
         $conditional_clause = $this->{$property};
         if (! $conditional_clause instanceof ConditionalClause) {
-            throw new InvalidArgumentException(
+            throw new RuntimeException(
                 "Property {$property} does not hold a ConditionalClause instance!"
             );
         }
 
         $sql = $conditional_clause->getSQL($driver);
-        die($sql);
         if (Sql::isEmptySQL($sql)) {
             return '';
         }
+
         $this->importParams($conditional_clause);
 
         return $sql;

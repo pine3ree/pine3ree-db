@@ -67,8 +67,6 @@ class Join extends Element
 
     public function getSQL(Driver $driver = null): string
     {
-        var_dump($this->sql);
-        exit;
         if (isset($this->sql)) {
             return $this->sql;
         }
@@ -81,8 +79,6 @@ class Join extends Element
         }
 
         if (empty($this->specification)) {
-            var_dump($this->specification);
-            exit;
             $this->sql = trim("{$this->type} JOIN {$table}");
             return $this->sql;
         }
@@ -90,7 +86,7 @@ class Join extends Element
         if ($this->specification instanceof Literal) {
             $specification = $this->on->getSQL();
         } elseif ($this->specification instanceof On) {
-           $specification = $this->getConditionalClauseSQL('on', $driver);
+           $specification = $this->getConditionalClauseSQL('specification', $driver);
            if (!Sql::isEmptySQL($specification)) {
                $this->importParams($this->specification);
            }

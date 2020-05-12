@@ -48,13 +48,18 @@ abstract class ConditionalClause extends Element
 
     public function getSQL(Driver $driver = null): string
     {
+        if (isset($this->sql)) {
+            return $this->sql;
+        }
+
         $predicates_sql = $this->conditions->getSQL($driver ?? Driver::ansi());
         if (Sql::isEmptySQL($predicates_sql)) {
-            return '';
+            return $this->sql = '';
         }
         $this->importParams($this->conditions);
 
-        return "{$this->getName()} {$predicates_sql}";
+        $this->sql = "{$this->getName()} {$predicates_sql}";
+        return $this->sql;
     }
 
     /**
