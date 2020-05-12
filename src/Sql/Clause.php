@@ -16,6 +16,8 @@ use function strtoupper;
 
 /**
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
+ *
+ * @property-read string $name The Clause Name
  */
 abstract class Clause extends Element
 {
@@ -50,5 +52,12 @@ abstract class Clause extends Element
         $this->__name = strtoupper($name);
 
         return $this->__name;
+    }
+
+    public function __get($name)
+    {
+        if ('name' === $name) {
+            return static::$name ?? $this->__name ?? $this->getName();
+        }
     }
 }
