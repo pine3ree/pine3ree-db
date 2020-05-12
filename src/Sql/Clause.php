@@ -38,12 +38,12 @@ abstract class Clause extends Element
     protected function getName(): string
     {
         // use the statically defined name if set
-        if (!empty(static::$name)) {
+        if (isset(static::$name)) {
             return static::$name;
         }
 
         // use the cached name value if set
-        if (!empty($this->__name)) {
+        if (isset($this->__name)) {
             return $this->__name;
         }
 
