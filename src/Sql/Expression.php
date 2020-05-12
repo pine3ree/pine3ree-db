@@ -7,11 +7,8 @@
 
 namespace P3\Db\Sql;
 
-use InvalidArgumentException;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Traits\ExpressionTrait;
-
-use function trim;
 
 /**
  * This abstract class represents a generic SQL Expression with parameters
