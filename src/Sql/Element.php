@@ -155,17 +155,17 @@ abstract class Element
     {
         $this->params[$key] = $value;
 
-        if (!isset($param_type)) {
+        if (!isset($type)) {
             if (is_null($value)) {
-                $param_type = PDO::PARAM_NULL;
+                $type = PDO::PARAM_NULL;
             } elseif (is_int($value) || is_bool($value)) {
-                $param_type = PDO::PARAM_INT;
+                $type = PDO::PARAM_INT;
             } else {
-                $param_type = PDO::PARAM_STR;
+                $type = PDO::PARAM_STR;
             }
         }
 
-        $this->params_types[$key] = $param_type;
+        $this->params_types[$key] = $type;
     }
 
     private static function incrementIndex()
