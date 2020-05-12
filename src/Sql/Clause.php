@@ -7,9 +7,7 @@
 
 namespace P3\Db\Sql;
 
-use P3\Db\Sql;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Predicate\Set as PredicateSet;
+use P3\Db\Sql\Element;
 
 use function ltrim;
 use function preg_replace;
@@ -19,7 +17,7 @@ use function strtoupper;
 /**
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
  */
-abstract class Condition extends PredicateSet
+abstract class Clause extends Element
 {
     /**
      * @var string The SQL-clause name: WHERE|HAVING|ON condition clauses
@@ -30,16 +28,6 @@ abstract class Condition extends PredicateSet
      * @var string WHERE|HAVING|ON Resolved name cache
      */
     protected $__name;
-
-    public function getSQL(Driver $driver = null): string
-    {
-        $predicates_sql = parent::getSQL($driver ?? Driver::ansi());
-        if (Sql::isEmptySQL($predicates_sql)) {
-            return '';
-        }
-
-        return "{$this->getName()} {$predicates_sql}";
-    }
 
     /**
      * Return the SQL name for the clause (uppercase class-basename)
