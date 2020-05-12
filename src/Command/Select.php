@@ -280,14 +280,33 @@ class Select extends Command
         }
 
         $indexed = [];
+
+        if ($fetch_mode === PDO::FETCH_CLASS
+            || $fetch_mode === PDO::FETCH_OBJ
+        ) {
+            foreach ($rows as $i => $obj) {
+                $index = $obj->{$indexBy};
+                if (!isset($index)) {
+                    throw new RuntimeException(
+                        "The indexBy identifier `{$indexBy}` is not a valid property"
+                        . " in the result object with index={$i}!"
+                    );
+                }
+                $indexed[$index] = $obj;
+            }
+
+            return $indexed;
+        }
+
         foreach ($rows as $i => $row) {
-            if (!isset($row[$indexBy])) {
+            $index = $row[$indexBy];
+            if (!isset($index)) {
                 throw new RuntimeException(
                     "The indexBy identifier `{$indexBy}` is not a valid key in"
                     . " the result row with index={$i}!"
                 );
             }
-            $indexed[$row[$indexBy]] = $row;
+            $indexed[$index] = $row;
         }
 
         return $indexed;
