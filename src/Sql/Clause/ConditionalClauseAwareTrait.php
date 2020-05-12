@@ -75,9 +75,9 @@ trait ConditionalClauseAwareTrait
         }
 
         $condition = $this->{$property};
-        if (! $condition instanceof Predicate) {
+        if (! $condition instanceof ConditionalClause) {
             throw new InvalidArgumentException(
-                "Property {$property} does not hold a Predicate instance!"
+                "Property {$property} does not hold a ConditionalClause instance!"
             );
         }
 
