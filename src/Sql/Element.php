@@ -7,8 +7,9 @@
 
 namespace P3\Db\Sql;
 
-use PDO;
 use P3\Db\Sql\Driver;
+use PDO;
+use RuntimeException;
 
 use function is_bool;
 use function is_int;
@@ -95,7 +96,7 @@ abstract class Element
         }
 
         if (!isset($element->sql)) {
-            throw RuntimeException(
+            throw new RuntimeException(
                 "Cannot import parameters from sql-element without a compiled SQL string!"
             );
         }
