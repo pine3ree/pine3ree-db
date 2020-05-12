@@ -9,11 +9,11 @@ namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
-use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 
 use function array_unshift;
 use function count;
@@ -61,10 +61,10 @@ class Set extends Predicate
     ];
 
     /**
-     * ALiases ("||" for "OR" and "&&" for "AND") for nested-predicates array
+     * Aliases ("||" for "OR" and "&&" for "AND") for nested-predicates array
      * definitons
      *
-     * @see ConditionAwareTrait::setCondition()
+     * @see ConditionalClauseAwareTrait::setConditionalClause()
      */
     public const COMB_ID = [
         self::COMB_AND => self::COMB_AND,

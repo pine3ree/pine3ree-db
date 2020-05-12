@@ -9,12 +9,12 @@ namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
 use P3\Db\Sql;
-use P3\Db\Sql\Condition\Where;
+use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
+use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
-use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 use RuntimeException;
 
@@ -38,7 +38,7 @@ use function trim;
  */
 class Update extends Statement
 {
-    use ConditionAwareTrait;
+    use ConditionalClauseAwareTrait;
     use TableAwareTrait;
 
     /**
@@ -169,13 +169,13 @@ class Update extends Statement
      */
     public function where($where): self
     {
-        $this->setCondition('where', Where::class, $where);
+        $this->setConditionalClause('where', Where::class, $where);
         return $this;
     }
 
     private function getWhereSQL(Driver $driver): string
     {
-        return $this->getConditionSQL('where', $driver);
+        return $this->getConditionalClauseSQL('where', $driver);
     }
 
     public function __get(string $name)

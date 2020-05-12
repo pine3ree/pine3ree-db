@@ -9,16 +9,16 @@ namespace P3\Db\Sql\Statement;
 
 use InvalidArgumentException;
 use P3\Db\Sql;
-use P3\Db\Sql\Condition\Having;
-use P3\Db\Sql\Condition\On;
-use P3\Db\Sql\Condition\Where;
+use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
+use P3\Db\Sql\Clause\Having;
+use P3\Db\Sql\Clause\On;
+use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Set as PredicateSet;
 use P3\Db\Sql\Statement;
-use P3\Db\Sql\Statement\Traits\ConditionAwareTrait;
 use PDO;
 use RuntimeException;
 
@@ -58,7 +58,7 @@ use function trim;
  */
 class Select extends Statement
 {
-    use ConditionAwareTrait;
+    use ConditionalClauseAwareTrait;
 
     /** @var string|null */
     protected $quantifier;
@@ -498,13 +498,13 @@ class Select extends Statement
      */
     public function where($where): self
     {
-        $this->setCondition('where', Where::class, $where);
+        $this->setConditionalClause('where', Where::class, $where);
         return $this;
     }
 
     private function getWhereSQL(Driver $driver): string
     {
-        return $this->getConditionSQL('where', $driver);
+        return $this->getConditionalClauseSQL('where', $driver);
     }
 
     /**
@@ -564,13 +564,13 @@ class Select extends Statement
      */
     public function having($having): self
     {
-        $this->setCondition('having', Having::class, $having);
+        $this->setConditionalClause('having', Having::class, $having);
         return $this;
     }
 
     private function getHavingSQL(Driver $driver): string
     {
-        return $this->getConditionSQL('having', $driver);
+        return $this->getConditionalClauseSQL('having', $driver);
     }
 
     /**

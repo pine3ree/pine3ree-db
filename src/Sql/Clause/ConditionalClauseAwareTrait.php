@@ -28,7 +28,7 @@ trait ConditionalClauseAwareTrait
      * Define a clause
      *
      * @param string $property
-     * @param string $fqcn A Condition descendant
+     * @param string $fqcn A ConditionalClause descendant class
      * @param string|array|Predicate|PredicateSet|ConditionalClause $condition
      */
     private function setConditionalClause(string $property, $fqcn, $condition): self
