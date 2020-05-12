@@ -15,7 +15,8 @@ use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
-use function array_unshift;
+use function array_map;
+use function array_values;
 use function count;
 use function current;
 use function get_class;
@@ -121,10 +122,10 @@ class Set extends Predicate
                 $comb_by = self::COMB_ID[$key] ?? null;
                 if (isset($comb_by) && $comb_by !== $predicate->getCombinedBy()) {
                     $nestedSet = new self($comb_by, $predicate->getPredicates());
-                    $this->addPredicate($nestedSet);
                 } else {
-                    $this->addPredicate($nestedSet = $predicate);
+                    $nestedSet = $predicate;
                 }
+                $this->addPredicate($nestedSet);
                 continue;
             }
 
@@ -147,9 +148,14 @@ class Set extends Predicate
                 // conditions for a single identifier
                 foreach ($predicate as $specs) {
                     if (is_array($specs) && 2 === count($specs)) {
-                        array_unshift($specs, $key);
-                        $this->addPredicate($specs);
+                        $specs = array_values($specs);
+                        $this->addPredicate($specs = [$key, $specs[0], $specs[1]]);
                     }
+                    throw new InvalidArgumentException(sprintf(
+                        "Invalid predicate-specs for key/identifier `{$key}`, the"
+                        . " allowed form is [operator, value], `%s` provided!",
+                        '[' . array_map('gettype', $specs) . ']'
+                    ));
                 }
                 continue;
             }
