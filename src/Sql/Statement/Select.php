@@ -675,12 +675,12 @@ class Select extends Statement
             return $this->sqls['limit'];
         }
 
-        if (!isset($this->limit) && (int)$this->offset === 0) {
-            return $this->sqls['limit'] = '';
-        }
-
         if (is_callable([$driver, 'getLimitSQL'])) {
             return $this->sqls['limit'] = $driver->getLimitSQL($this);
+        }
+
+        if (!isset($this->limit) && (int)$this->offset === 0) {
+            return $this->sqls['limit'] = '';
         }
 
         if (isset($this->limit)) {
