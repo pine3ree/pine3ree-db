@@ -51,6 +51,7 @@ abstract class Element
      */
     protected const MAX_INDEX = 999999;
 
+    public const PARAM_STR_MAX_LENGTH = 4096;
 
     public function getParams(): array
     {
@@ -160,6 +161,10 @@ abstract class Element
                 $type = PDO::PARAM_NULL;
             } elseif (is_int($value) || is_bool($value)) {
                 $type = PDO::PARAM_INT;
+            } elseif (is_resource($value)
+                || (is_string($value) && strlen($value) > self::PARAM_STR_MAX_LENGTH)
+            ) {
+                $type = PDO::PARAM_LOB;
             } else {
                 $type = PDO::PARAM_STR;
             }
