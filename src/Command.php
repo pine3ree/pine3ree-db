@@ -78,4 +78,9 @@ abstract class Command
 
         return $this->statement->{$name} ?? null;
     }
+
+    public function __clone()
+    {
+        $this->statement = clone $this->statement;
+    }
 }
