@@ -53,12 +53,18 @@ class Db
     /** @var string */
     private $charset;
 
+    /** @var string */
+    private const DEFAULT_CHARSET = 'utf8';
+
     /** @var Driver */
     private $driver;
 
     /** @var Driver connection-less driver */
     private $_driver;
 
+    /**
+     * @const array<string, string> An driver-name to driver-class map
+     */
     private const DRIVER_CLASS = [
         'mysql'  => Driver\MySql::class,
         'sqlite' => Driver\Sqlite::class,
@@ -71,8 +77,7 @@ class Db
         string $dsn,
         string $username = null,
         string $password = null,
-        array $options = null,
-        string $charset = null
+        array $options = null
     ) {
         $this->dsn = $dsn;
         $this->username = $username;
@@ -80,9 +85,7 @@ class Db
         if (!empty($options)) {
             $this->options = $options;
         }
-        if (!empty($charset)) {
-            $this->charset = $charset;
-        }
+        $this->charset = $options['charset'] ?? self::DEFAULT_CHARSET;
     }
 
     /**
