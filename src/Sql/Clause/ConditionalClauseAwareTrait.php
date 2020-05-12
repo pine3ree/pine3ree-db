@@ -39,16 +39,13 @@ trait ConditionalClauseAwareTrait
             );
         }
 
-        if (is_array($clause)) {
+        if (is_array($clause)
             // ["&&" => conditions] or ["||" => conditions]
-            if (count($clause) === 1
-                && isset(PredicateSet::COMB_ID[$comb_id = key($clause)])
-                && is_array($conditions = current($clause))
-            ) {
-                $clause = new $fqcn($comb_id, $conditions);
-            } else {
-                $clause = new $fqcn(Sql::AND, $clause);
-            }
+            && count($clause) === 1
+            && isset(PredicateSet::COMB_ID[$comb_id = key($clause)])
+            && is_array($conditions = current($clause))
+        ) {
+            $clause = new $fqcn($comb_id, $conditions);
         } elseif (! $clause instanceof $fqcn) {
             $clause = new $fqcn(Sql::AND, $clause);
         }
