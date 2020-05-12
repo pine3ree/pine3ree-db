@@ -123,7 +123,7 @@ class Set extends Predicate
                     $nestedSet = new self($comb_by, $predicate->getPredicates());
                     $this->addPredicate($nestedSet);
                 } else {
-                    $this->addPredicate($predicate);
+                    $this->addPredicate($nestedSet = $predicate);
                 }
                 continue;
             }
