@@ -104,7 +104,8 @@ class Insert extends Statement
         $this->columns = $columns;
         $this->values = [];
 
-        unset($this->sql, $this->sqls['columns'], $this->sqls['values']);
+        $this->sql = null;
+        unset($this->sqls['columns'], $this->sqls['values']);
 
         return $this;
     }
@@ -136,7 +137,8 @@ class Insert extends Statement
         $this->select = null;
         $this->values[] = array_values($values);
 
-        unset($this->sql, $this->sqls['values']);
+        $this->sql = null;
+        unset($this->sqls['values']);
 
         return $this;
     }
@@ -164,7 +166,8 @@ class Insert extends Statement
             $this->values($values);
         }
 
-        unset($this->sql, $this->sqls['values']);
+        $this->sql = null;
+        unset($this->sqls['values']);
 
         return $this;
     }
@@ -227,7 +230,8 @@ class Insert extends Statement
 
         if ($reset) {
             $this->columns = $this->values = [];
-            unset($this->sql, $this->sqls['columns'], $this->sqls['values']);
+            $this->sql = null;
+            unset($this->sqls['columns'], $this->sqls['values']);
         }
 
         if (empty($this->columns)) {
@@ -245,7 +249,8 @@ class Insert extends Statement
         $this->select = null;
         $this->values[] = array_values($row);
 
-        unset($this->sql, $this->sqls['values']);
+        $this->sql = null;
+        unset($this->sqls['values']);
 
         return $this;
     }
@@ -279,7 +284,8 @@ class Insert extends Statement
         $this->values = null;
         $this->select = $select;
 
-        unset($this->sql, $this->sqls['values']);
+        $this->sql = null;
+        unset($this->sqls['values']);
 
         return $this;
     }

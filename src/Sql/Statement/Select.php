@@ -174,7 +174,8 @@ class Select extends Statement
 
         $this->columns = $columns;
 
-        unset($this->sql, $this->sqls['columns']);
+        $this->sql = null;
+        unset($this->sqls['columns']);
 
         return $this;
     }
@@ -454,7 +455,8 @@ class Select extends Statement
             'spec'  => $specification,
         ];
 
-        unset($this->sql, $this->sqls['join']);
+        $this->sql = null;
+        unset($this->sqls['join']);
 
         return $this;
     }

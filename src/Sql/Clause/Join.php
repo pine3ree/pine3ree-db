@@ -7,7 +7,6 @@
 
 namespace P3\Db\Sql\Clause;
 
-use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
 use P3\Db\Sql\Clause\On;
@@ -18,10 +17,7 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Set as PredicateSet;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 
-use function ltrim;
-use function preg_replace;
-use function strrchr;
-use function strtoupper;
+use function trim;
 
 /**
  * Class Join
@@ -71,6 +67,8 @@ class Join extends Element
 
     public function getSQL(Driver $driver = null): string
     {
+        var_dump($this->sql);
+        exit;
         if (isset($this->sql)) {
             return $this->sql;
         }
@@ -83,6 +81,8 @@ class Join extends Element
         }
 
         if (empty($this->specification)) {
+            var_dump($this->specification);
+            exit;
             $this->sql = trim("{$this->type} JOIN {$table}");
             return $this->sql;
         }

@@ -57,7 +57,8 @@ trait ConditionalClauseAwareTrait
         }
 
         $this->{$property} = $clause;
-        unset($this->sql, $this->sqls[$property]);
+        $this->sql = null;
+        unset($this->sqls[$property]);
 
         return $this;
     }
@@ -82,6 +83,10 @@ trait ConditionalClauseAwareTrait
         }
 
         $sql = $conditional_clause->getSQL($driver);
+        die($sql);
+        if (Sql::isEmptySQL($sql)) {
+            return '';
+        }
         $this->importParams($conditional_clause);
 
         return $sql;

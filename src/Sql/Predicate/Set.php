@@ -188,7 +188,7 @@ class Set extends Predicate
         }
 
         $this->predicates[] = $predicate;
-        unset($this->sql); // remove rendered sql
+        $this->sql = null; // remove rendered sql
 
         return $this;
     }
