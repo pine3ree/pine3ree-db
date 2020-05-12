@@ -91,7 +91,8 @@ abstract class Element
      */
     public function importParams(self $element): void
     {
-        if (empty($element->params)) {
+        $params = $element->getParams();
+        if (empty($params)) {
             return;
         }
 
@@ -102,7 +103,7 @@ abstract class Element
         }
 
         $params_types = $element->getParamsTypes();
-        foreach ($element->getParams() as $key => $value) {
+        foreach ($params as $key => $value) {
             $this->params[$key] = $value;
             $this->params_types[$key] = $params_types[$key] ?? null;
         }
