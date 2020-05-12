@@ -20,7 +20,11 @@ use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 use function trim;
 
 /**
- * Class Join
+ * Join represents a SQL-JOIN clause
+ *
+ * @property-read On|Literal|null $$on The ON-specification, if any
+ * @property-read On|null $on The ON-clause (current or new instance) if the specification
+ *      is not already set to a Literal
  */
 class Join extends Clause
 {
@@ -42,11 +46,10 @@ class Join extends Clause
     private $specification;
 
     /**
-     *
-     * @param string $type
-     * @param string $table
-     * @param string $alias
-     * @param On|Predicate|PredicateSet|array|string|Literal $specification
+     * @param string $type The join type
+     * @param string $table The joined table name
+     * @param string|null $alias The joined table alias, if any
+     * @param On|Predicate|Predicate\Set|array|string|Literal $specification
      */
     public function __construct(string $type, string $table, string $alias = null, $specification = null)
     {
@@ -90,10 +93,10 @@ class Join extends Clause
         if ($this->specification instanceof Literal) {
             $specification = $this->on->getSQL();
         } elseif ($this->specification instanceof On) {
-           $specification = $this->getConditionalClauseSQL('specification', $driver);
-           if (!Sql::isEmptySQL($specification)) {
+            $specification = $this->getConditionalClauseSQL('specification', $driver);
+            if (!Sql::isEmptySQL($specification)) {
                $this->importParams($this->specification);
-           }
+            }
         }
 
         $this->sql = trim("{$join} {$table} {$specification}");
@@ -102,6 +105,30 @@ class Join extends Clause
 
     protected function getName(): string
     {
-        return !empty($this->type) ? "{$this->type} JOIN" : "JOIN";
+        if (isset($this->__name)) {
+            return $this->__name;
+        }
+
+        $this->__name = !empty($this->type) ? "{$this->type} JOIN" : "JOIN";
+        return $this->__name;
+    }
+
+    public function __get(string $name)
+    {
+        if ('name' === $name) {
+            return $this->__name ?? $this->getName();
+        }
+        if ('specification' === $name) {
+            return $this->specification;
+        }
+        if ('on' === $name) {
+            if ($this->specification === null) {
+                return $this->specification = new On();
+            }
+            if ($this->specification instanceof On) {
+                return $this->specification;
+            }
+            return null;
+        }
     }
 }
