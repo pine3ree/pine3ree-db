@@ -290,7 +290,7 @@ class Set extends Predicate
             return $this->sql;
         }
 
-        if (isset($this->predicates)) {
+        if (empty($this->predicates)) {
             return $this->sql = '';
         }
 
