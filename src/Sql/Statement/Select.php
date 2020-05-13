@@ -156,8 +156,7 @@ class Select extends Statement
         // was a single column provided?
         if (is_string($columns)) {
             $columns = [$columns => $columns];
-        }
-        if ($columns instanceof Literal
+        } elseif ($columns instanceof Literal
             || $columns instanceof Expression
             || $columns instanceof self
         ) {
