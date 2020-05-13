@@ -44,7 +44,7 @@ class DbFactory
     {
         $config = $config['pdo'] ?? $config['db'] ?? null;
 
-        if (!isset($config)) {
+        if (empty($config)) {
             throw new InvalidArgumentException(
                 "Missind `PDO` configuration!"
             );
