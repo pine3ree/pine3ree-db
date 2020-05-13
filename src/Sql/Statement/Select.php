@@ -442,22 +442,6 @@ class Select extends Statement
     private function addJoin(string $type, string $table, string $alias, $specification = null): self
     {
         $this->joins[] = new Join($type, $table, $alias, $specification);
-        return $this;
-
-        Sql::assertValidJoin($type);
-
-        if (! $specification instanceof On
-            && ! $specification instanceof Literal // to express USING(column)
-        ) {
-            $specification = new On(Sql::AND, $specification);
-        }
-
-        $this->joins[] = [
-            'type'  => $type,
-            'table' => $table,
-            'alias' => $alias,
-            'spec'  => $specification,
-        ];
 
         $this->sql = null;
         unset($this->sqls['join']);

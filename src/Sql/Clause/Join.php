@@ -22,7 +22,11 @@ use function trim;
 /**
  * Join represents a SQL-JOIN clause
  *
- * @property-read On|Literal|null $$on The ON-specification, if any
+ * @property-read string $name The join sql-name ("join-type JOIN")
+ * @property-read string $type The join type
+ * @property-read string $table The joined-table
+ * @property-read string|null $alias The joined-table alias, if any
+ * @property-read On|Literal|null $on The ON-specification, if any
  * @property-read On|null $on The ON-clause (current or new instance) if the specification
  *      is not already set to a Literal
  */
@@ -35,9 +39,6 @@ class Join extends Clause
 
     /** @var string */
     private $type;
-
-    /** @var string */
-    private $table;
 
     /** @var string|null */
     private $alias;
@@ -117,6 +118,15 @@ class Join extends Clause
     {
         if ('name' === $name) {
             return $this->__name ?? $this->getName();
+        }
+        if ('type' === $name) {
+            return $this->type;
+        }
+        if ('table' === $name) {
+            return $this->table;
+        }
+        if ('alias' === $name) {
+            return $this->alias;
         }
         if ('specification' === $name) {
             return $this->specification;
