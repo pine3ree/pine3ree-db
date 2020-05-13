@@ -760,16 +760,16 @@ class Select extends Statement
         $sqls[] = $this->getOrderBySQL($driver);
         $sqls[] = $this->getLimitSQL($driver);
 
+        foreach ($sqls as $index => $sql) {
+            if (Sql::isEmptySQL($sql)) {
+                unset($sqls[$index]);
+            }
+        }
+
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
             if (!Sql::isEmptySQL($union_sql)) {
                 $sqls[] = "UNION {$union_sql}";
-            }
-        }
-
-        foreach ($sqls as $index => $sql) {
-            if (Sql::isEmptySQL($sql)) {
-                unset($sqls[$index]);
             }
         }
 
