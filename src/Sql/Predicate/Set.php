@@ -150,6 +150,7 @@ class Set extends Predicate
                     if (is_array($specs) && 2 === count($specs)) {
                         $specs = array_values($specs);
                         $this->addPredicate($specs = [$key, $specs[0], $specs[1]]);
+                        continue;
                     }
                     throw new InvalidArgumentException(sprintf(
                         "Invalid predicate-specs for key/identifier `{$key}`, the"
