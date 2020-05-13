@@ -277,8 +277,12 @@ abstract class Driver
 
     public function getSelectJoinSQL(Select $select): string
     {
+        if (empty($select->joins)) {
+            return '';
+        }
+
         $sqls = [];
-        foreach ($this->joins as $join) {
+        foreach ($select->joins as $join) {
             $join_sql = $join->getSQL($driver);
             if (Sql::isEmptySQL($join_sql)) {
                 continue;
