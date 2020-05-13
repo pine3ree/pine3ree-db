@@ -571,6 +571,10 @@ class Select extends Statement
             $this->orderBy = [];
         }
 
+        if (empty($orderBy)) {
+            return $this;
+        }
+
         $sort = is_string($sortOrReplace) ? strtoupper($sortOrReplace) : null;
 
         $orderBy = $this->normalizeOrderBy($orderBy, $sort);
@@ -692,6 +696,11 @@ class Select extends Statement
             );
         }
 
+        if (!empty($select->orderBy)) {
+            $select = clone $select;
+            $select->orderBy = [];
+        }
+
         $this->union = $select;
         $this->union_all = $all;
 
@@ -704,6 +713,11 @@ class Select extends Statement
             throw new RuntimeException(
                 "Canno add an INTERSECT clause when a UNION clause is already set!"
             );
+        }
+
+        if (!empty($select->orderBy)) {
+            $select = clone $select;
+            $select->orderBy = [];
         }
 
         $this->intersect = $select;
