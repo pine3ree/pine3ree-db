@@ -701,7 +701,7 @@ class Select extends Statement
         $sql = rtrim("{$base_sql} {$clauses_sql}");
 
         // quote any unquoted table alias prefix
-        $sql = $this->quoteTableAliases($sql);
+        $sql = $this->quoteTableAliases($sql, $driver);
 
         if (is_callable([$driver, 'decorateSelectSQL'])) {
             $sql = $driver->decorateSelectSQL($this, $sql);
@@ -710,7 +710,7 @@ class Select extends Statement
         return $this->sql = $sql;
     }
 
-    private function quoteTableAliases(string $sql): string
+    private function quoteTableAliases(string $sql, Driver $driver): string
     {
         $tb_aliases = [];
         if ($this->alias) {
@@ -738,12 +738,6 @@ class Select extends Statement
 
     private function getBaseSQL(Driver $driver): string
     {
-//        if (empty($this->table) && empty($this->from)) {
-//            throw new RuntimeException(
-//                "The SELECT FROM source has not been defined!"
-//            );
-//        }
-
         $select = "SELECT";
         if ($this->quantifier) {
             $select .= " {$this->quantifier}";
