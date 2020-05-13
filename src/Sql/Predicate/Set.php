@@ -290,6 +290,10 @@ class Set extends Predicate
             return $this->sql;
         }
 
+        if (isset($this->predicates)) {
+            return $this->sql = '';
+        }
+
         $driver = $driver ?? Driver::ansi();
 
         //return $this->sql = $driver->getPredicateSetSQL($this);
