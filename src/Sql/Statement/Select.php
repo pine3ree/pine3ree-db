@@ -707,6 +707,30 @@ class Select extends Statement
         return $this;
     }
 
+    private function getUnionOrIntersectSQL(Driver $driver): string
+    {
+        if ($this->union instanceof self) {
+            $union_sql = $this->union->getSQL($driver);
+            if (!Sql::isEmptySQL($union_sql)) {
+                $quantifier = $this->union_all ? " ALL" : "";
+                $sql = "UNION{$quantifier} {$union_sql}";
+                $this->importParams($this->union);
+                return $sql;
+            }
+        }
+
+        if ($this->intersect instanceof self) {
+            $intersect_sql = $this->intersect->getSQL($driver);
+            if (!Sql::isEmptySQL($intersect_sql)) {
+                $sql = "INTERSECT {$intersect_sql}";
+                $this->importParams($this->intersect);
+                return $sql;
+            }
+        }
+
+        return '';
+    }
+
     public function intersect(self $select): self
     {
         if (isset($this->union)) {
@@ -795,28 +819,13 @@ class Select extends Statement
         $sqls[] = $this->getWhereSQL($driver);
         $sqls[] = $this->getGroupBySQL($driver);
         $sqls[] = $this->getHavingSQL($driver);
+        $sqls[] = $this->getUnionOrIntersectSQL($driver);
         $sqls[] = $this->getOrderBySQL($driver);
         $sqls[] = $this->getLimitSQL($driver);
 
         foreach ($sqls as $index => $sql) {
             if (Sql::isEmptySQL($sql)) {
                 unset($sqls[$index]);
-            }
-        }
-
-        // check for combination with other select statement
-        if ($this->union instanceof self) {
-            $union_sql = $this->union->getSQL($driver);
-            if (!Sql::isEmptySQL($union_sql)) {
-                $quantifier = $this->union_all ? " ALL" : "";
-                $sqls[] = "UNION{$quantifier} {$union_sql}";
-                $this->importParams($this->union);
-            }
-        } elseif ($this->intersect instanceof self) {
-            $intersect_sql = $this->intersect->getSQL($driver);
-            if (!Sql::isEmptySQL($intersect_sql)) {
-                $sqls[] = "INTERSECT {$intersect_sql}";
-                $this->importParams($this->intersect);
             }
         }
 
