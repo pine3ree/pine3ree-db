@@ -58,6 +58,7 @@ use function trim;
  * @property-read int|null $offset The Having clause if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
  * @property-read bool $union_all Is it a UNION ALL clause?
+ * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
  */
 class Select extends Statement
 {
@@ -685,8 +686,27 @@ class Select extends Statement
 
     public function union(self $select, bool $all = false): self
     {
+        if (isset($this->intersect)) {
+            throw new RuntimeException(
+                "Canno add a UNION clause when an INTERSECT clause is already set!"
+            );
+        }
+
         $this->union = $select;
         $this->union_all = $all;
+
+        return $this;
+    }
+
+    public function intersect(self $select): self
+    {
+        if (isset($this->union)) {
+            throw new RuntimeException(
+                "Canno add an INTERSECT clause when a UNION clause is already set!"
+            );
+        }
+
+        $this->intersect = $select;
 
         return $this;
     }
@@ -770,11 +790,17 @@ class Select extends Statement
             }
         }
 
+        // check for combination with other select statement
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
             if (!Sql::isEmptySQL($union_sql)) {
                 $quantifier = $this->union_all ? " ALL" : "";
                 $sqls[] = "UNION{$quantifier} {$union_sql}";
+            }
+        } elseif ($this->intersect instanceof self) {
+            $intersect_sql = $this->intersect->getSQL($driver);
+            if (!Sql::isEmptySQL($intersect_sql)) {
+                $sqls[] = "INTERSECT {$intersect_sql}";
             }
         }
 
@@ -824,6 +850,9 @@ class Select extends Statement
         }
         if ('union_all' === $name) {
             return $this->union_all;
+        }
+        if ('intersect' === $name) {
+            return $this->intersect;
         }
     }
 }

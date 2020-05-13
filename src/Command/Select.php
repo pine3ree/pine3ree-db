@@ -238,6 +238,16 @@ class Select extends Command
     }
 
     /**
+     * @see SqlSelect::intersect()
+     * @return $this
+     */
+    public function intersect(SqlSelect $select): self
+    {
+        $this->statement->intersect($select);
+        return $this;
+    }
+
+    /**
      * Index the result by the given identifier
      *
      * @var string $indexBy
