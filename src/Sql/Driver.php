@@ -303,11 +303,11 @@ abstract class Driver
 
         $sqls = [];
         foreach ($predicates as $predicate) {
-            $sql = $predicate->getSQL($this);
+            $predicate_sql = $predicate->getSQL($this);
             if (Sql::isEmptySQL($sql)) {
                 continue;
             }
-            $sqls[] = $sql;
+            $sqls[] = $predicate_sql;
             $predicateSet->importParams($predicate);
         }
 
