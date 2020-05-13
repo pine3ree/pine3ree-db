@@ -796,11 +796,13 @@ class Select extends Statement
             if (!Sql::isEmptySQL($union_sql)) {
                 $quantifier = $this->union_all ? " ALL" : "";
                 $sqls[] = "UNION{$quantifier} {$union_sql}";
+                $this->importParams($this->union);
             }
         } elseif ($this->intersect instanceof self) {
             $intersect_sql = $this->intersect->getSQL($driver);
             if (!Sql::isEmptySQL($intersect_sql)) {
                 $sqls[] = "INTERSECT {$intersect_sql}";
+                $this->importParams($this->intersect);
             }
         }
 
