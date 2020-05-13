@@ -231,9 +231,9 @@ class Select extends Command
      * @see SqlSelect::union()
      * @return $this
      */
-    public function union(SqlSelect $select): self
+    public function union(SqlSelect $select, bool $all = false): self
     {
-        $this->statement->union($select);
+        $this->statement->union($select, $all);
         return $this;
     }
 

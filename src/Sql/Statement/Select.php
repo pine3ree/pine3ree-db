@@ -56,6 +56,8 @@ use function trim;
  * @property-read array<string, string>[] $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
+ * @property-read self|null $union The sql-select statement for the UNION clause, if any
+ * @property-read bool $union_all Is it a UNION ALL clause?
  */
 class Select extends Statement
 {
@@ -490,6 +492,7 @@ class Select extends Statement
     }
 
     /**
+     * Add or set the GROUP BY clause elements
      *
      * @param string|string[]|Literal|Literal[] $groupBy
      * @param bool $replace
@@ -680,9 +683,11 @@ class Select extends Statement
         return $this->sqls['limit'] = $sql ?? '';
     }
 
-    public function union(self $select): self
+    public function union(self $select, bool $all = false): self
     {
         $this->union = $select;
+        $this->union_all = $all;
+
         return $this;
     }
 
@@ -768,7 +773,8 @@ class Select extends Statement
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
             if (!Sql::isEmptySQL($union_sql)) {
-                $sqls[] = "UNION {$union_sql}";
+                $quantifier = $this->union_all ? " ALL" : "";
+                $sqls[] = "UNION{$quantifier} {$union_sql}";
             }
         }
 
@@ -812,6 +818,12 @@ class Select extends Statement
         }
         if ('offset' === $name) {
             return $this->offset;
+        }
+        if ('union' === $name) {
+            return $this->union;
+        }
+        if ('union_all' === $name) {
+            return $this->union_all;
         }
     }
 }
