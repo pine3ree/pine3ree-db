@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Clause\Having;
+use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
@@ -440,6 +441,9 @@ class Select extends Statement
      */
     private function addJoin(string $type, string $table, string $alias, $specification = null): self
     {
+        $this->joins[] = new Join($type, $table, $alias, $specification);
+        return $this;
+
         Sql::assertValidJoin($type);
 
         if (! $specification instanceof On
@@ -470,6 +474,19 @@ class Select extends Statement
         if (isset($this->sqls['join'])) {
             return $this->sqls['join'];
         }
+
+        $sqls = [];
+        foreach ($this->joins as $join) {
+            $join_sql = $join->getSQL($driver);
+            if (Sql::isEmptySQL($join_sql)) {
+                continue;
+            }
+            $this->importParams($join);
+            $sqls[] = $join_sql;
+        }
+
+        $this->sqls['join'] = $sql = trim(implode(" ", $sqls));
+        return $sql;
 
         return $this->sqls['join'] = $driver->getSelectJoinSQL($this);
 
@@ -718,48 +735,39 @@ class Select extends Statement
         $sql = rtrim("{$base_sql} {$clauses_sql}");
 
         // quote any unquoted table alias prefix
-        $tb_aliases = [];
-        if ($this->alias) {
-            $tb_aliases[] = $this->alias;
-        }
-        foreach ($this->joins as $join) {
-            if ($tb_alias = $join['alias']) {
-                $tb_aliases[] = $tb_alias;
-            }
-        }
-        foreach ($tb_aliases as $tb_alias) {
-            $sql = str_replace(" {$tb_alias}.", " {$driver->quoteAlias($tb_alias)}.", $sql);
-        }
+        $sql = $this->quoteTableAliases($sql);
 
         if (is_callable([$driver, 'decorateSelectSQL'])) {
             $sql = $driver->decorateSelectSQL($this, $sql);
         }
 
-//        // rewrite all params?
-//        $sql = $this->rewriteParams($sql, $driver->qv);
-
         return $this->sql = $sql;
     }
 
-    private function rewriteParams(string $sql, string $qv)
+    private function quoteTableAliases(string $sql): string
     {
-        $i = 1;
-        $regexp_str = "/([^\\{$qv}]|^)%s([^\\{$qv}]|$)/";
-
-        $params = $params_types = [];
-
-        foreach ($this->params as $marker => $value) {
-            $params[$i] = $value;
-            $params_types[$i] = $this->params_types[$marker] ?? PDO::PARAM_STR;
-            $regexp = sprintf($regexp_str, preg_quote($marker, '/'));
-            $sql = preg_replace($regexp, "$1?$2", $sql, 1);
-            $i += 1;
+        $tb_aliases = [];
+        if ($this->alias) {
+            $tb_aliases[] = $this->alias;
+        }
+        foreach ($this->joins as $join) {
+            $join_tb_alias = $join->alias;
+            if (!empty($join_tb_alias)) {
+                $tb_aliases[] = $join_tb_alias;
+            }
         }
 
-        $this->params = $params;
-        $this->params_types = $params_types;
+        if (empty($tb_aliases)) {
+            return $sql;
+        }
 
-        return $sql;
+        $search = $replace = [];
+        foreach ($tb_aliases as $tb_alias) {
+            $search[] = " {$tb_alias}.";
+            $replace[] = " {$driver->quoteAlias($tb_alias)}.";
+        }
+
+        return str_replace($search, $replace, $sql);
     }
 
     private function getBaseSQL(Driver $driver): string
