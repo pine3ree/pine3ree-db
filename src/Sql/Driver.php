@@ -278,16 +278,13 @@ abstract class Driver
     public function getSelectJoinSQL(Select $select): string
     {
         $sqls = [];
-        foreach ($select->joins as $join) {
-            $type  = $join['type'];
-            $table = $this->quoteIdentifier($join['table']);
-            $alias = $this->quoteAlias($join['alias']);
-            $spec  = $join['spec'];
-
-            $spec_sql = $spec->getSQL($this);
-            $select->importParams($spec);
-
-            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$spec_sql}");
+        foreach ($this->joins as $join) {
+            $join_sql = $join->getSQL($driver);
+            if (Sql::isEmptySQL($join_sql)) {
+                continue;
+            }
+            $this->importParams($join);
+            $sqls[] = $join_sql;
         }
 
         return trim(implode(" ", $sqls));
