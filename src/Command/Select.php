@@ -320,7 +320,6 @@ class Select extends Command
     public function fetchOne(int $fetch_mode = PDO::FETCH_ASSOC): ?array
     {
         $this->statement->limit(1);
-
         if (null === $stmt = $this->execute()) {
             return null;
         }
@@ -344,7 +343,6 @@ class Select extends Command
     public function fetchScalar(string $identifier): ?string
     {
         $this->statement->limit(1);
-
         if (null === $stmt = $this->execute()) {
             return null;
         }
@@ -363,7 +361,6 @@ class Select extends Command
     public function fetchColumn(int $column_number = 0)
     {
         $this->statement->limit(1);
-
         if (null === $stmt = $this->execute()) {
             return null;
         }
