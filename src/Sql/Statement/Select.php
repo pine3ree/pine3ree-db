@@ -471,24 +471,6 @@ class Select extends Statement
 
         $this->sqls['join'] = $sql = trim(implode(" ", $sqls));
         return $sql;
-
-        return $this->sqls['join'] = $driver->getSelectJoinSQL($this);
-
-        $sqls = [];
-        foreach ($this->joins as $join) {
-            $type  = $join['type'];
-            $table = $driver->quoteIdentifier($join['table']);
-            $alias = $driver->quoteAlias($join['alias']);
-            $spec  = $join['spec'];
-
-            $spec_sql = $spec->getSQL($driver);
-            $this->importParams($spec);
-
-            $sqls[] = trim("{$type} JOIN {$table} {$alias} {$spec_sql}");
-        }
-
-        $this->sqls['join'] = $sql = trim(implode(" ", $sqls));
-        return $sql;
     }
 
     /**
