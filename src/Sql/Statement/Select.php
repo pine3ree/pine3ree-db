@@ -50,7 +50,7 @@ use function trim;
  * @property-read string[] $columns The columns to be returned
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
- * @property-read array[] $joins An array of JOIN specs if any
+ * @property-read Join[] $joins An array of Join clauses if any
  * @property-read array[] $groupBy An array of GROUP BY identifiers
  * @property-read Having $having The Having clause, built on-first-access if null
  * @property-read array<string, string>[] $orderBy An array of ORDER BY identifier to sort-direction pairs
@@ -76,7 +76,7 @@ class Select extends Statement
     /** @var Where|null */
     protected $where;
 
-    /** @var array{type: string, table: string, alias: string, cond: On|Literal}[] */
+    /** @var Join[] */
     protected $joins = [];
 
     /** @var array */
