@@ -91,9 +91,7 @@ class DbFactory
             case 'oci':
                 return $this->buildDsnForOci($dbname, $config);
             case 'sqlsrv':
-                throw new RuntimeException(
-                    "Driver `{$driver}` is not implemented yet!"
-                );
+                return $this->buildDsnForSqlSrv($dbname, $config);
         }
 
         throw new RuntimeException(
