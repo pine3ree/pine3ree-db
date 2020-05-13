@@ -187,26 +187,45 @@ class Db
     /**
      * Proxy to PDO::query()
      *
-     * @param string $sql The sql-statement
+     * @param string|Statement $statement The DQL-statement or sql-string
      * @return \PDOStatement|false Execute the statement and returns either a
      *      PDO prepared statement or false on failure
      */
-    public function query(string $sql)
+    public function query($statement)
     {
-        return $this->pdo()->query(...func_get_args());
+        $args = func_get_args();
+        if ($statement instanceof Statement) {
+            $args[0] = $statement->getSQL($this->getDriver());
+        } elseif (!is_string($statement)) {
+            throw new InvalidArgumentException(
+                '$statement must be either a sq-string or a DQL-Statement instance, `%s` provided',
+                is_object($statement) ? get_class($statement) : gettype($statement)
+            );
+        }
+
+        return $this->pdo()->query(...$args);
     }
 
     /**
      * Proxy to PDO::exec()
      *
-     * @param string $sql The DML/DDL/DCL statement sql-string
+     * @param string|Statement $statement The DML/DDL/DCL statement or sql-string
      *
      * @return int|false Execute the statement and returns either the number of
      *      affected rows or false on failure
      */
-    public function exec(string $sql)
+    public function exec($statement)
     {
-        return $this->pdo()->exec($sql);
+        if ($statement instanceof Statement) {
+            $statement->getSQL($this->getDriver());
+        } elseif (!is_string($statement)) {
+            throw new InvalidArgumentException(
+                '$statement must be either a sq-string or a DQL/DDL/DCL-Statement instance, `%s` provided',
+                is_object($statement) ? get_class($statement) : gettype($statement)
+            );
+        }
+
+        return $this->pdo()->exec($statement);
     }
 
     /**
