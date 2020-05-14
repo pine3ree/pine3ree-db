@@ -62,7 +62,7 @@ class Db
     private $_driver;
 
     /**
-     * @const array<string, string> An driver-name to driver-class map
+     * @const array<string, string> An pdo-driver-name to sql-driver-class map
      */
     private const DRIVER_CLASS = [
         'mysql'  => Driver\MySql::class,
