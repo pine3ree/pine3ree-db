@@ -55,10 +55,10 @@ class Db
     /** @var string */
     private const DEFAULT_CHARSET = 'utf8';
 
-    /** @var Driver */
+    /** @var Driver the sql-driver */
     private $driver;
 
-    /** @var Driver connection-less driver */
+    /** @var Driver connection-less sql-driver */
     private $_driver;
 
     /**
