@@ -221,47 +221,41 @@ class Select extends Statement
             return $this->sqls['columns'];
         }
 
+        // overridden by driver?
         if (is_callable([$driver, 'getSelectColumnsSQL'])) {
             return $this->sqls['columns'] = $driver->getSelectColumnsSQL($this);
         }
 
+        $add_tb_prefix = !empty($tthis->table) && !empty($this->joins);
+
         if (empty($this->columns)) {
-            $sql = $this->alias ? $driver->quoteAlias($this->alias) . ".*" : "*";
-            $this->sqls['columns'] = $sql;
-            return $sql;
+            $this->columns = ['*' => '*'];
         }
-
-        if (is_callable([$driver, 'getColumnsSQL'])) {
-            return $this->sqls['columns'] = $driver->getColumnsSQL($this);
-        }
-
-        $table = $this->table;
-        $add_tb_prefix = !empty($table) && !empty($this->joins);
 
         $sqls = [];
         foreach ($this->columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
-                $prefix = $this->alias ? $this->quoteAlias($this->alias) : null;
+                $prefix = $this->alias ? $driver->quoteAlias($this->alias) : null;
                 if (empty($prefix) && $add_tb_prefix) {
-                    $prefix = $this->quoteIdentifier($this->table);
+                    $prefix = $driver->quoteIdentifier($this->table);
                 }
                 $column_sql = $prefix ? "{$prefix}.*" : "*";
-            } else {
-                if ($column instanceof Literal) {
-                    $column_sql = $column->getSQL();
-                } elseif ($column instanceof Expression || $column instanceof self) {
-                    $column_sql = $column->getSQL($driver);
-                    $this->importParams($column);
-                } else {
-                    $column_sql = $driver->quoteIdentifier(
-                        $this->normalizeColumn($column, $add_tb_prefix)
-                    );
-                }
-                // add alias?
-                if (!is_numeric($key) && $key !== '' && $key !== $column) {
-                    $column_sql .= " AS " . $driver->quoteAlias($key);
-                }
+            } elseif (is_string($column)) {
+                $column_sql = $driver->quoteIdentifier(
+                    $this->normalizeColumn($column, $add_tb_prefix)
+                );
+            } elseif ($column instanceof Literal) {
+                $column_sql = $column->getSQL();
+            } elseif ($column instanceof Expression || $column instanceof self) {
+                $column_sql = $column->getSQL($driver);
+                $this->importParams($column);
             }
+
+            // add alias?
+            if (!is_numeric($key) && $key !== '' && $key !== $column) {
+                $column_sql .= " AS " . $driver->quoteAlias($key);
+            }
+
             $sqls[] = $column_sql;
         }
 
@@ -280,12 +274,11 @@ class Select extends Statement
      */
     public function normalizeColumn(string $column, bool $add_tb_prefix = false): string
     {
-        $column = str_replace([$this->ql, $this->qr], '', $column); // unquote the column first
+        // unquote the column first
+        $column = str_replace([$this->ql, $this->qr], '', $column);
         if (false === strpos($column, '.')) {
             $prefix = $this->alias ?: (
-                $add_tb_prefix ? (
-                    is_string($this->from) ? $this->from : null
-                ) : null
+                $add_tb_prefix ? $this->table : null
             );
             return $prefix ? "{$prefix}.{$column}" : $column;
         }
@@ -325,6 +318,11 @@ class Select extends Statement
 
         $this->from = $from;
         if (!empty($alias)) {
+            if (false !== strpos($alias, '.')) {
+                throw new InvalidArgumentException(
+                    "The FROM clause table alias cannot contain a dot!"
+                );
+            }
             $this->alias = $alias;
         }
 
@@ -335,11 +333,6 @@ class Select extends Statement
     {
         if (isset($this->sqls['from'])) {
             return $this->sqls['from'];
-        }
-
-        if (is_callable([$driver, 'getSelectFromSQL'])) {
-            $this->sqls['from'] = $sql = $driver->getSelectFromSQL($this);
-            return $sql;
         }
 
         if ($this->from instanceof self) {
@@ -665,6 +658,7 @@ class Select extends Statement
             return $this->sqls['limit'];
         }
 
+        // overridden by driver?
         if (is_callable([$driver, 'getLimitSQL'])) {
             return $this->sqls['limit'] = $driver->getLimitSQL($this);
         }
