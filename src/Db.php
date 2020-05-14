@@ -332,12 +332,12 @@ class Db
             return 0;
         }
 
-        // multiple rows insert
+        // multiple rows insert: returns int|false
         if (is_array(reset($rowOrRows))) {
             return $insert->rows($rowOrRows)->execute();
         }
 
-        // single row insert
+        // single row insert: returns bool
         $result = $insert->row($rowOrRows, true)->execute();
 
         return $result === false ? false : ($result > 0);
