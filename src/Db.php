@@ -139,7 +139,8 @@ class Db
             case 'oci':
                 $pdo->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
                 break;
-            // set charset for pgsql
+            // set charset for pgsql: since charset is a developer written
+            // configuration value there is no need for escaping
             case 'pgsql':
                 $pdo->exec("SET NAMES '{$this->charset}'");
                 break;
