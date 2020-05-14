@@ -61,13 +61,11 @@ class DbFactory
     private function buildDSN(array $config): string
     {
         $driver = $config['driver'] ?? null;
-
         if (empty($driver)) {
             throw new InvalidArgumentException(
                 "Missing PDO `dsn` or `driver` name!"
             );
         }
-
         if (!Db::supportsDriver($driver)) {
             throw new InvalidArgumentException(
                 "Unsupported or invalid PDO driver type `{$driver}`!"
