@@ -113,7 +113,7 @@ class Oci extends Driver
                     $prefix = $this->quoteIdentifier($table);
                 }
                 $sqls[] = $prefix ? "{$prefix}.*" : "*";
-                continue;
+                continue; // no-alias
             }
 
             if (is_string($column)) {

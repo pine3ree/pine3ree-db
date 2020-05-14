@@ -239,8 +239,11 @@ class Select extends Statement
                 if (empty($prefix) && $add_tb_prefix) {
                     $prefix = $driver->quoteIdentifier($this->table);
                 }
-                $column_sql = $prefix ? "{$prefix}.*" : "*";
-            } elseif (is_string($column)) {
+                $sqls[] = $prefix ? "{$prefix}.*" : "*";
+                continue; // no-alias
+            }
+
+            if (is_string($column)) {
                 $column_sql = $driver->quoteIdentifier(
                     $this->normalizeColumn($column, $add_tb_prefix)
                 );
