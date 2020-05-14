@@ -149,10 +149,7 @@ class DbFactory
 
         $port = $config['port'] ?? null;
         if (is_int($port)) {
-            if (empty($host)) {
-                $host = "localhost";
-            }
-            $dbprefix = "{$host}:{$port}";
+            $dbprefix = ($host ?: 'localhost') . ":{$port}";
         }
 
         if (!empty($dbprefix)) {
