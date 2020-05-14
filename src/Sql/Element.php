@@ -159,6 +159,9 @@ abstract class Element
             if (is_null($value)) {
                 $type = PDO::PARAM_NULL;
             } elseif (is_int($value) || is_bool($value)) {
+                // use int-type for bool:
+                // @see https://bugs.php.net/bug.php?id=38386
+                // @see https://bugs.php.net/bug.php?id=49255
                 $type = PDO::PARAM_INT;
             } else {
                 $type = PDO::PARAM_STR;
