@@ -152,17 +152,17 @@ abstract class Driver
         if (isset($this->pdo)) {
             try {
                 if (is_int($value)) {
-                    $parameter_type = PDO::PARAM_INT;
+                    $param_type = PDO::PARAM_INT;
                 } elseif (is_bool($value)) {
-                    $parameter_type = PDO::PARAM_INT;
+                    $param_type = PDO::PARAM_INT;
                     $value = (int)$value;
                 } else {
-                    $parameter_type = PDO::PARAM_STR;
+                    $param_type = PDO::PARAM_STR;
                     if (!is_string($value)) {
                         $value = (string)$value;
                     }
                 }
-                $quoted_value = $this->pdo->quote($value, $parameter_type);
+                $quoted_value = $this->pdo->quote($value, $param_type);
                 if ($quoted_value !== false) {
                     return $quoted_value;
                 }
