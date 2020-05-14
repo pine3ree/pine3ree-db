@@ -161,7 +161,8 @@ class Db
         }
 
         if (isset($this->pdo)) {
-            // hydrate the pdo-less instance, if any, with the active pdo connection
+            // hydrate and reuse the pdo-less instance, if any, with the active
+            // pdo connection
             if (isset($this->_driver)) {
                 $this->_driver->setPDO($this->pdo);
                 return $this->driver = $this->_driver;
