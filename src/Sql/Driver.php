@@ -217,118 +217,118 @@ abstract class Driver
         return self::$ansi ?? self::$ansi = new Ansi();
     }
 
-    public function getSelectColumnsSQL(Select $select): string
-    {
-        $table   = $select->table;
-        $alias   = $select->alias;
-        $columns = $select->columns;
-        $joins   = $select->joins;
-
-        if (empty($columns)) {
-            return $alias ? $this->quoteAlias($alias) . ".*" : "*";
-        }
-
-        $add_tb_prefix = !empty($table) && !empty($joins);
-
-        $sqls = [];
-        foreach ($columns as $key => $column) {
-            if ($column === Sql::ASTERISK) {
-                $prefix = $alias ? $this->quoteAlias($alias) : null;
-                if (empty($prefix) && $add_tb_prefix && !empty($table)) {
-                    $prefix = $this->quoteIdentifier($table);
-                }
-                $column_sql = $prefix ? "{$prefix}.*" : "*";
-            } else {
-                if ($column instanceof Literal) {
-                    $column_sql = $column->getSQL();
-                } elseif ($column instanceof Expression || $column instanceof Select) {
-                    $column_sql = $column->getSQL($this);
-                    $select->importParams($column);
-                } else {
-                    $column_sql = $this->quoteIdentifier(
-                        $select->normalizeColumn($column, $add_tb_prefix)
-                    );
-                }
-                // add alias?
-                if (!is_numeric($key) && $key !== '' && $key !== $column) {
-                    $column_sql .= " AS " . $this->quoteAlias($key);
-                }
-            }
-            $sqls[] = $column_sql;
-        }
-
-        return trim(implode(", ", $sqls));
-    }
-
-    public function getSelectFromSQL(Select $select): string
-    {
-        $from  = $select->from;
-        $alias = $select->alias;
-
-        if ($from instanceof Select) {
-            $from = "(" . $from->getSQL($this) . ")";
-            $select->importParams($select->from);
-        } elseif (!empty($from)) {
-            $from = $this->quoteIdentifier($from);
-        } else {
-            return '';
-        }
-
-        if (!empty($alias)) {
-            $from = trim("{$from} " . $this->quoteAlias($alias));
-        }
-
-        return "FROM {$from}";
-    }
-
-    public function getSelectJoinSQL(Select $select): string
-    {
-        if (empty($select->joins)) {
-            return '';
-        }
-
-        $sqls = [];
-        foreach ($select->joins as $join) {
-            $join_sql = $join->getSQL($driver);
-            if (Sql::isEmptySQL($join_sql)) {
-                continue;
-            }
-            $this->importParams($join);
-            $sqls[] = $join_sql;
-        }
-
-        return trim(implode(" ", $sqls));
-    }
-
-    public function getPredicateSetSQL(PredicateSet $predicateSet)
-    {
-        $predicates = $predicateSet->getPredicates();
-        if (empty($predicates)) {
-            return '';
-        }
-
-        $sqls = [];
-        foreach ($predicates as $predicate) {
-            $predicate_sql = $predicate->getSQL($this);
-            if (Sql::isEmptySQL($sql)) {
-                continue;
-            }
-            $sqls[] = $predicate_sql;
-            $predicateSet->importParams($predicate);
-        }
-
-        if (empty($sqls)) {
-            return '';
-        }
-
-        if (1 === count($sqls)) {
-            return $sqls[0];
-        }
-
-        $AND_OR = $predicateSet->getCombinedBy();
-
-        return "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
-    }
+//    public function getSelectColumnsSQL(Select $select): string
+//    {
+//        $table   = $select->table;
+//        $alias   = $select->alias;
+//        $columns = $select->columns;
+//        $joins   = $select->joins;
+//
+//        $add_tb_prefix = !empty($table) && !empty($joins);
+//
+//        if (empty($columns)) {
+//            $columns = ['*' => '*'];
+//        }
+//
+//        $sqls = [];
+//        foreach ($columns as $key => $column) {
+//            if ($column === Sql::ASTERISK) {
+//                $prefix = $alias ? $this->quoteAlias($alias) : null;
+//                if (empty($prefix) && $add_tb_prefix && !empty($table)) {
+//                    $prefix = $this->quoteIdentifier($table);
+//                }
+//                $column_sql = $prefix ? "{$prefix}.*" : "*";
+//            } elseif (is_string($column)) {
+//                $column_sql = $this->quoteIdentifier(
+//                    $select->normalizeColumn($column, $add_tb_prefix)
+//                );
+//            } elseif ($column instanceof Literal) {
+//                $column_sql = $column->getSQL();
+//            } elseif ($column instanceof Expression || $column instanceof Select) {
+//                $column_sql = $column->getSQL($this);
+//                $select->importParams($column);
+//            }
+//
+//            // add alias?
+//            if (!is_numeric($key) && $key !== '' && $key !== $column) {
+//                $column_sql .= " AS " . $this->quoteAlias($key);
+//            }
+//
+//            $sqls[] = $column_sql;
+//        }
+//
+//        return trim(implode(", ", $sqls));
+//    }
+//
+//    public function getSelectFromSQL(Select $select): string
+//    {
+//        $from  = $select->from;
+//        $alias = $select->alias;
+//
+//        if ($from instanceof Select) {
+//            $from = "(" . $from->getSQL($this) . ")";
+//            $select->importParams($select->from);
+//        } elseif (!empty($from)) {
+//            $from = $this->quoteIdentifier($from);
+//        } else {
+//            return '';
+//        }
+//
+//        if (!empty($alias)) {
+//            $from = trim("{$from} " . $this->quoteAlias($alias));
+//        }
+//
+//        return "FROM {$from}";
+//    }
+//
+//    public function getSelectJoinSQL(Select $select): string
+//    {
+//        if (empty($select->joins)) {
+//            return '';
+//        }
+//
+//        $sqls = [];
+//        foreach ($select->joins as $join) {
+//            $join_sql = $join->getSQL($driver);
+//            if (Sql::isEmptySQL($join_sql)) {
+//                continue;
+//            }
+//            $this->importParams($join);
+//            $sqls[] = $join_sql;
+//        }
+//
+//        return trim(implode(" ", $sqls));
+//    }
+//
+//    public function getPredicateSetSQL(PredicateSet $predicateSet)
+//    {
+//        $predicates = $predicateSet->getPredicates();
+//        if (empty($predicates)) {
+//            return '';
+//        }
+//
+//        $sqls = [];
+//        foreach ($predicates as $predicate) {
+//            $predicate_sql = $predicate->getSQL($this);
+//            if (Sql::isEmptySQL($sql)) {
+//                continue;
+//            }
+//            $sqls[] = $predicate_sql;
+//            $predicateSet->importParams($predicate);
+//        }
+//
+//        if (empty($sqls)) {
+//            return '';
+//        }
+//
+//        if (1 === count($sqls)) {
+//            return $sqls[0];
+//        }
+//
+//        $AND_OR = $predicateSet->getCombinedBy();
+//
+//        return "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
+//    }
 
     public function __get(string $name)
     {
