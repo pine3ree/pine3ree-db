@@ -429,6 +429,12 @@ class Db
         return $this->pdo()->exec($sql);
     }
 
+    /**
+     * Return the last-inserted value
+     * 
+     * @param string $name The sequence name, if any
+     * @return string
+     */
     public function lastInsertId(string $name = null): string
     {
         if (isset($this->pdo)) {
