@@ -185,31 +185,6 @@ class Db
     }
 
     /**
-     * Proxy to PDO::query()
-     *
-     * @param string $sql The sql-statement
-     * @return \PDOStatement|false Execute the statement and returns either a
-     *      PDO prepared statement or false on failure
-     */
-    public function query(string $sql)
-    {
-        return $this->pdo()->query(...func_get_args());
-    }
-
-    /**
-     * Proxy to PDO::exec()
-     *
-     * @param string $sql The DML/DDL/DCL statement sql-string
-     *
-     * @return int|false Execute the statement and returns either the number of
-     *      affected rows or false on failure
-     */
-    public function exec(string $sql)
-    {
-        return $this->pdo()->exec($sql);
-    }
-
-    /**
      * Create and return a new Select command
      *
      * @param array|string|string[]|Literal2|Literal2[]|Select|Select[] $columns
@@ -418,6 +393,31 @@ class Db
         }
 
         return PDO::PARAM_STR;
+    }
+
+    /**
+     * Proxy to PDO::query()
+     *
+     * @param string $sql The sql-statement
+     * @return \PDOStatement|false Execute the statement and returns either a
+     *      PDO prepared statement or false on failure
+     */
+    public function query(string $sql)
+    {
+        return $this->pdo()->query(...func_get_args());
+    }
+
+    /**
+     * Proxy to PDO::exec()
+     *
+     * @param string $sql The DML/DDL/DCL statement sql-string
+     *
+     * @return int|false Execute the statement and returns either the number of
+     *      affected rows or false on failure
+     */
+    public function exec(string $sql)
+    {
+        return $this->pdo()->exec($sql);
     }
 
     public function lastInsertId(string $name = null): string
