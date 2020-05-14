@@ -56,6 +56,9 @@ abstract class Driver
      */
     protected $qr;
 
+    /**
+     * @var string ql-concat-qr, used only for checks
+     */
     protected $qlr;
 
     /**
