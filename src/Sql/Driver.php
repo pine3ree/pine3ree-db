@@ -162,9 +162,9 @@ abstract class Driver
                         $value = (string)$value;
                     }
                 }
-                $quoted = $this->pdo->quote($value, $parameter_type);
-                if ($quoted !== false) {
-                    return $quoted;
+                $quoted_value = $this->pdo->quote($value, $parameter_type);
+                if ($quoted_value !== false) {
+                    return $quoted_value;
                 }
             } catch (Throwable $ex) {
                 // do nothing
