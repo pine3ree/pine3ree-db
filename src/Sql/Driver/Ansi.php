@@ -41,6 +41,6 @@ class Ansi extends Driver
             $value = (string)$value;
         }
 
-        return "{$this->qv}{$this->escape($value)}{$this->qv}";
+        return "'{$this->escape($value)}'";
     }
 }
