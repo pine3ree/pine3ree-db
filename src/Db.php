@@ -410,6 +410,9 @@ class Db
         if (null === $value) {
             return PDO::PARAM_NULL;
         }
+        // use int-type for bool:
+        // @see https://bugs.php.net/bug.php?id=38386
+        // @see https://bugs.php.net/bug.php?id=49255
         if (is_int($value) || is_bool($value)) {
             return PDO::PARAM_INT;
         }
