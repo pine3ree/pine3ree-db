@@ -68,6 +68,8 @@ abstract class Driver
      */
     private static $ansi;
 
+    protected const ESCAPE_CHARLIST = "\x00\n\r\\'\"\x1a";
+
     /**
      * @param PDO $pdo the database connection, if any
      * @param string $ql left-quote char
@@ -152,22 +154,22 @@ abstract class Driver
         if (isset($this->pdo)) {
             try {
                 if (is_int($value)) {
-                    $param_type = PDO::PARAM_INT;
+                    $parameter_type = PDO::PARAM_INT;
                 } elseif (is_bool($value)) {
-                    $param_type = PDO::PARAM_INT;
+                    $parameter_type = PDO::PARAM_INT;
                     $value = (int)$value;
                 } else {
-                    $param_type = PDO::PARAM_STR;
+                    $parameter_type = PDO::PARAM_STR;
                     if (!is_string($value)) {
                         $value = (string)$value;
                     }
                 }
-                $quoted_value = $this->pdo->quote($value, $param_type);
+                $quoted_value = $this->pdo->quote($value, $parameter_type);
                 if ($quoted_value !== false) {
                     return $quoted_value;
                 }
             } catch (Throwable $ex) {
-                // do nothing
+                // do nothing, falback to the following code
             }
         }
 
@@ -194,7 +196,7 @@ abstract class Driver
      */
     public function escape(string $value): string
     {
-        return addcslashes($value, "\x00\n\r\\'\"\x1a");
+        return addcslashes($value, static::ESCAPE_CHARLIST);
     }
 
     public function setPDO(PDO $pdo)
