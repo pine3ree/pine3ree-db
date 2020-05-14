@@ -302,7 +302,7 @@ class Db
      * to create a new row or multiple new rows
      *
      * @param string|null $table
-     * @param array<string, mixed> $row_or_rows
+     * @param array<string, mixed> $row_or_rows A new table row/row-set
      * @return Insert|bool|int
      */
     public function insert(string $table = null, array $row_or_rows = null)
