@@ -315,7 +315,7 @@ class Db
 
     /**
      * Create a new Insert db-command and either return it or execute it trying
-     * to create a new row
+     * to create a new row or multiple new rows
      *
      * @param string|null $table
      * @param array<string, mixed> $rowOrRows
