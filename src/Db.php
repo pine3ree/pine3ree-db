@@ -168,9 +168,8 @@ class Db
                 return $this->driver = $this->_driver;
             }
             $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-            $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? null;
             // cache the pdo-aware driver instance
-            $this->driver = !empty($driver_fqcn) ? new $driver_fqcn() : Driver::ansi();
+            $this->driver = $this->createDriverFromName($driver_name);
             return $this->driver;
         }
 
@@ -179,10 +178,19 @@ class Db
         }
 
         $driver_name = explode(':', $this->dsn)[0];
-        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? null;
         // cache the pdo-less driver instance
-        return $this->_driver = !empty($driver_fqcn) ? new $driver_fqcn() : Driver::ansi();
+        $this->_driver = $this->createDriverFromName($driver_name);
         return $this->_driver;
+    }
+
+    private function createDriverFromName(string $driver_name): Driver
+    {
+        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? null;
+        if (empty($driver_fqcn) || !is_subclass_of($driver_fqcn, Driver::class, true)) {
+            return Driver::ansi();
+        }
+
+        return new $driver_fqcn($this->pdo);
     }
 
     /**
