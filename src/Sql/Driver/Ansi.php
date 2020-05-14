@@ -11,7 +11,7 @@ use PDO;
 use P3\Db\Sql\Driver;
 
 /**
- * ANSI-SQL sql-driver
+ * The default ANSI SQL Driver
  */
 class Ansi extends Driver
 {
