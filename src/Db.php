@@ -330,7 +330,7 @@ class Db
     /**
      * Create a new Update db-command and either return or execute it
      *
-     * @param string|array|null $table
+     * @param string|null $table
      * @param array|null $data
      * @param string|array|Predicate|Where $where
      *
