@@ -717,6 +717,7 @@ class Select extends Statement
                 $this->importParams($this->union);
                 return $sql;
             }
+            return '';
         }
 
         if ($this->intersect instanceof self) {
