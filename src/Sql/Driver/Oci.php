@@ -112,8 +112,11 @@ class Oci extends Driver
                 if (empty($prefix) && $add_tb_prefix && !empty($table)) {
                     $prefix = $this->quoteIdentifier($table);
                 }
-                $column_sql = $prefix ? "{$prefix}.*" : "*";
-            } elseif (is_string($column)) {
+                $sqls[] = $prefix ? "{$prefix}.*" : "*";
+                continue;
+            }
+
+            if (is_string($column)) {
                 $column_sql = $this->quoteIdentifier(
                     $select->normalizeColumn($column, $add_tb_prefix)
                 );
