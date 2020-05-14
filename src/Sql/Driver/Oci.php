@@ -99,11 +99,11 @@ class Oci extends Driver
         $columns = $select->columns;
         $joins   = $select->joins;
 
-        if (empty($columns)) {
-            return $alias ? $this->quoteAlias($alias) . ".*" : "*";
-        }
-
         $add_tb_prefix = !empty($table) && !empty($joins);
+
+        if (empty($columns)) {
+            $columns = ['*' => '*'];
+        }
 
         $sqls = [];
         foreach ($columns as $key => $column) {
@@ -113,25 +113,25 @@ class Oci extends Driver
                     $prefix = $this->quoteIdentifier($table);
                 }
                 $column_sql = $prefix ? "{$prefix}.*" : "*";
-            } else {
-                if ($column instanceof Literal) {
-                    $column_sql = $column->getSQL();
-                } elseif ($column instanceof Expression || $column instanceof Select) {
-                    $column_sql = $column->getSQL($this);
-                    $select->importParams($column);
-                } else {
-                    $column_sql = $this->quoteIdentifier(
-                        $select->normalizeColumn($column, $add_tb_prefix)
-                    );
-                }
-                // add alias?
-                if (!is_numeric($key) && $key !== '' && $key !== $column) {
-                    $column_sql .= " AS " . $this->quoteAlias($key);
-                } elseif (is_string($column)) {
-                    $column = end(explode('.', $column));
-                    $column_sql .= " AS " . $this->quoteAlias($column);
-                }
+            } elseif (is_string($column)) {
+                $column_sql = $this->quoteIdentifier(
+                    $select->normalizeColumn($column, $add_tb_prefix)
+                );
+            } elseif ($column instanceof Literal) {
+                $column_sql = $column->getSQL();
+            } elseif ($column instanceof Expression || $column instanceof Select) {
+                $column_sql = $column->getSQL($this);
+                $select->importParams($column);
             }
+
+            // add alias?
+            if (!is_numeric($key) && $key !== '' && $key !== $column) {
+                $column_sql .= " AS " . $this->quoteAlias($key);
+            } elseif (is_string($column)) {
+                $column = end(explode('.', $column));
+                $column_sql .= " AS " . $this->quoteAlias($column);
+            }
+
             $sqls[] = $column_sql;
         }
 
