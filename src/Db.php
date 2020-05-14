@@ -26,7 +26,6 @@ use function func_get_args;
 use function func_num_args;
 use function is_array;
 use function is_bool;
-use function is_float;
 use function is_int;
 use function reset;
 
