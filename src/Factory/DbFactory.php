@@ -83,15 +83,15 @@ class DbFactory
 
         switch ($driver) {
             case 'mysql':
-                return $this->buildDsnForMySql($dbname, $config);
+                return $this->buildDSNforMySql($dbname, $config);
             case 'pgsql':
-                return $this->buildDsnForPgSql($dbname, $config);
+                return $this->buildDSNforPgSql($dbname, $config);
             case 'sqlite':
                 return "sqlite:{$dbname}";
             case 'oci':
-                return $this->buildDsnForOci($dbname, $config);
+                return $this->buildDSNforOci($dbname, $config);
             case 'sqlsrv':
-                return $this->buildDsnForSqlSrv($dbname, $config);
+                return $this->buildDSNforSqlSrv($dbname, $config);
         }
 
         throw new RuntimeException(
@@ -99,7 +99,7 @@ class DbFactory
         );
     }
 
-    private function buildDsnForMySql(string $dbname, array $config): string
+    private function buildDSNforMySql(string $dbname, array $config): string
     {
         $dsn = "mysql:dbname={$dbname}";
 
@@ -125,7 +125,7 @@ class DbFactory
         return $dsn;
     }
 
-    private function buildDsnForPgSql(string $dbname, array $config): string
+    private function buildDSNforPgSql(string $dbname, array $config): string
     {
         $dsn = "pgsql:dbname={$dbname}";
 
@@ -142,7 +142,7 @@ class DbFactory
         return $dsn;
     }
 
-    private function buildDsnForOci(string $dbname, array $config): string
+    private function buildDSNforOci(string $dbname, array $config): string
     {
         $host = $config['host'] ?? $config['hostname'] ?? null;
         if (!empty($host)) {
@@ -164,7 +164,7 @@ class DbFactory
         return "oci:dbname={$dbname}";
     }
 
-    private function buildDsnForSqlSrv(string $dbname, array $config): string
+    private function buildDSNforSqlSrv(string $dbname, array $config): string
     {
         $dsn = [];
 
