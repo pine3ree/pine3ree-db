@@ -384,7 +384,7 @@ class Db
      * prepared/binded PDOStatement
      *
      * @param Statement $statement
-     * @param bool $bind Bind statement parameters?
+     * @param bool $bind_params Bind statement parameters (via PDOStatement::bindValue())?
      * @return PDOStatement|false
      */
     public function prepare(Statement $statement, bool $bind_params = false)
