@@ -31,7 +31,9 @@ use function substr;
 use function trim;
 
 /**
- * The default ANSI SQL Driver
+ * A SQL Driver provides methods for quoting identifier, aliases, values and
+ * escaping strings. It may provide additional SQL-string building methods for
+ * database backends that follows less-strictly the SQL standards.
  *
  * @property-read string $ql The left quote char, if any
  * @property-read string $qr The right quote char, if any
@@ -62,8 +64,7 @@ abstract class Driver
     protected $qv;
 
     /**
-     * The basic singleton ansi driver
-     * @var self
+     * @var self The basic singleton ansi driver instance
      */
     private static $ansi;
 
