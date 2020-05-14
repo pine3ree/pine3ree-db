@@ -294,27 +294,27 @@ class Db
      * to create a new row or multiple new rows
      *
      * @param string|null $table
-     * @param array<string, mixed> $rowOrRows
+     * @param array<string, mixed> $row_or_rows
      * @return Insert|bool|int
      */
-    public function insert(string $table = null, array $rowOrRows = null)
+    public function insert(string $table = null, array $row_or_rows = null)
     {
         $insert = new Insert($this, $table);
         if (func_num_args() < 2) {
             return $insert;
         }
 
-        if (empty($rowOrRows)) {
+        if (empty($row_or_rows)) {
             return 0;
         }
 
         // multiple rows insert: returns int|false
-        if (is_array(reset($rowOrRows))) {
-            return $insert->rows($rowOrRows)->execute();
+        if (is_array(reset($row_or_rows))) {
+            return $insert->rows($row_or_rows)->execute();
         }
 
         // single row insert: returns bool
-        $result = $insert->row($rowOrRows, true)->execute();
+        $result = $insert->row($row_or_rows, true)->execute();
 
         return $result === false ? false : ($result > 0);
     }
