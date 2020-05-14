@@ -296,8 +296,6 @@ class Set extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        //return $this->sql = $driver->getPredicateSetSQL($this);
-
         $sqls = [];
         foreach ($this->predicates as $predicate) {
             $sql = $predicate->getSQL($driver);
