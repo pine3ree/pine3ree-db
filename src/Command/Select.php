@@ -28,7 +28,7 @@ class Select extends Command
     use Reader;
 
     /** @var string|null */
-    protected $indexBy;
+    protected $index_by;
 
     /**
      *
@@ -181,9 +181,9 @@ class Select extends Command
      * @see SqlSelect::groupBy()
      * @return $this
      */
-    public function groupBy($groupBy, bool $replace = false): self
+    public function groupBy($group_by, bool $replace = false): self
     {
-        $this->statement->groupBy($groupBy, $replace);
+        $this->statement->groupBy($group_by, $replace);
         return $this;
     }
 
@@ -201,9 +201,9 @@ class Select extends Command
      * @see SqlSelect::orderBy()
      * @return $this
      */
-    public function orderBy($orderBy, $sortOrReplace = null): self
+    public function orderBy($order_by, $dir_or_replace = null): self
     {
-        $this->statement->orderBy($orderBy, $sortOrReplace);
+        $this->statement->orderBy($order_by, $dir_or_replace);
         return $this;
     }
 
@@ -250,12 +250,12 @@ class Select extends Command
     /**
      * Index the result by the given identifier
      *
-     * @var string $indexBy
+     * @var string $identifier
      * @return $this
      */
     public function indexBy(string $identifier): self
     {
-        $this->indexBy = $identifier;
+        $this->index_by = $identifier;
         return $this;
     }
 
@@ -284,8 +284,8 @@ class Select extends Command
             return [];
         }
 
-        $indexBy = $this->indexBy;
-        if (empty($indexBy)) {
+        $index_by = $this->index_by;
+        if (empty($index_by)) {
             return $rows;
         }
 
@@ -295,10 +295,10 @@ class Select extends Command
             || $fetch_mode === PDO::FETCH_OBJ
         ) {
             foreach ($rows as $i => $obj) {
-                $index = $obj->{$indexBy};
+                $index = $obj->{$index_by};
                 if (!isset($index)) {
                     throw new RuntimeException(
-                        "The indexBy identifier `{$indexBy}` is not a valid property"
+                        "The index_by identifier `{$index_by}` is not a valid property"
                         . " in the result object with index={$i}!"
                     );
                 }
@@ -309,10 +309,10 @@ class Select extends Command
         }
 
         foreach ($rows as $i => $row) {
-            $index = $row[$indexBy];
+            $index = $row[$index_by];
             if (!isset($index)) {
                 throw new RuntimeException(
-                    "The indexBy identifier `{$indexBy}` is not a valid key in"
+                    "The index_by identifier `{$index_by}` is not a valid key in"
                     . " the result row with index={$i}!"
                 );
             }
