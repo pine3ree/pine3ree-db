@@ -294,8 +294,8 @@ class Select extends Statement
     /**
      * Set the SELECT FROM table or sub-Select
      *
-     * @param string!self $from
-     * @param string|null $alias
+     * @param string!self $from The db-table name to select from
+     * @param string|null $alias The db-table alias, if any
      * @return $this
      */
     public function from($from, string $alias = null): self
