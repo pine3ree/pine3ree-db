@@ -125,6 +125,8 @@ class Oci extends Driver
             } elseif ($column instanceof Expression || $column instanceof Select) {
                 $column_sql = $column->getSQL($this);
                 $select->importParams($column);
+            } else {
+                continue; // skip or throw?
             }
 
             // add alias?

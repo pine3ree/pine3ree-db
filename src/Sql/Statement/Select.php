@@ -252,6 +252,8 @@ class Select extends Statement
             } elseif ($column instanceof Expression || $column instanceof self) {
                 $column_sql = $column->getSQL($driver);
                 $this->importParams($column);
+            } else {
+                continue; // skip or throw?
             }
 
             // add alias?
