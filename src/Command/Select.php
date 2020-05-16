@@ -7,6 +7,7 @@
 
 namespace P3\Db\Command;
 
+use InvalidArgumentException;
 use P3\Db\Command;
 use P3\Db\Command\Traits\Reader;
 use P3\Db\Db;
@@ -28,7 +29,7 @@ class Select extends Command
     use Reader;
 
     /** @var string|null */
-    protected $index_by;
+    protected $indexBy;
 
     /**
      *
@@ -181,9 +182,9 @@ class Select extends Command
      * @see SqlSelect::groupBy()
      * @return $this
      */
-    public function groupBy($group_by, bool $replace = false): self
+    public function groupBy($groupBy, bool $replace = false): self
     {
-        $this->statement->groupBy($group_by, $replace);
+        $this->statement->groupBy($groupBy, $replace);
         return $this;
     }
 
@@ -201,9 +202,9 @@ class Select extends Command
      * @see SqlSelect::orderBy()
      * @return $this
      */
-    public function orderBy($order_by, $dir_or_replace = null): self
+    public function orderBy($orderBy, $sortdir_or_replace = null): self
     {
-        $this->statement->orderBy($order_by, $dir_or_replace);
+        $this->statement->orderBy($orderBy, $sortdir_or_replace);
         return $this;
     }
 
@@ -255,19 +256,26 @@ class Select extends Command
      */
     public function indexBy(string $identifier): self
     {
-        $this->index_by = $identifier;
+        $this->indexBy = $identifier;
         return $this;
     }
 
     /**
      * Fetch all the rows resulting by executing the composed sql-statement
      *
-     * @see \PDOCommand::fetchAll()
+     * @see \PDOStatement::fetchAll()
      *
+     * @param int $fetch_mode The PDO fetch style
+     * @param mixed $fetch_argument Different meaning depending on the value of the fetch_style parameter
+     * @param array $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS
      * @return array<string|int, mixed>[]
+     * @throws RuntimeException
      */
-    public function fetchAll(int $fetch_mode = PDO::FETCH_ASSOC): array
-    {
+    public function fetchAll(
+        int $fetch_mode = PDO::FETCH_ASSOC,
+        $fetch_argument = null,
+        array $ctor_args = []
+    ): array {
         if (null === $stmt = $this->execute()) {
             return [];
         }
@@ -284,65 +292,114 @@ class Select extends Command
             return [];
         }
 
-        $index_by = $this->index_by;
-        if (empty($index_by)) {
+        $indexBy = $this->indexBy;
+        if (empty($indexBy)) {
             return $rows;
         }
 
         $indexed = [];
-
-        if ($fetch_mode === PDO::FETCH_CLASS
-            || $fetch_mode === PDO::FETCH_OBJ
-        ) {
-            foreach ($rows as $i => $obj) {
-                $index = $obj->{$index_by};
-                if (!isset($index)) {
-                    throw new RuntimeException(
-                        "The index_by identifier `{$index_by}` is not a valid property"
-                        . " in the result object with index={$i}!"
-                    );
+        switch ($fetch_mode) {
+            case PDO::FETCH_ASSOC:
+            case PDO::FETCH_BOTH:
+            case PDO::FETCH_NUMC:
+                foreach ($rows as $i => $row) {
+                    $index = $row[$indexBy] ?? null;
+                    if (!isset($index)) {
+                        throw new RuntimeException(
+                            "The indexBy-identifier `{$indexBy}` is not a valid key in"
+                            . " the result row with index={$i}!"
+                        );
+                    }
+                    $indexed[$index] = $row;
                 }
-                $indexed[$index] = $obj;
-            }
+                return $indexed;
 
-            return $indexed;
+            case PDO::FETCH_CLASS:
+            case PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE:
+            case PDO::FETCH_OBJ:
+            case PDO::FETCH_LAZY:
+                foreach ($rows as $i => $obj) {
+                    $index = $obj->{$indexBy} ?? null;
+                    if (!isset($index)) {
+                        throw new RuntimeException(
+                            "The indexBy-identifier `{$indexBy}` is not a valid property"
+                            . " in the result object with index={$i}!"
+                        );
+                    }
+                    $indexed[$index] = $obj;
+                }
+                return $indexed;
         }
 
-        foreach ($rows as $i => $row) {
-            $index = $row[$index_by];
-            if (!isset($index)) {
-                throw new RuntimeException(
-                    "The index_by identifier `{$index_by}` is not a valid key in"
-                    . " the result row with index={$i}!"
-                );
-            }
-            $indexed[$index] = $row;
-        }
-
-        return $indexed;
+        throw InvalidArgumentException(
+            "Invalid fetch_mode combination pipe `{$fetch_mode}` for indexed-rowset!"
+        );
     }
 
     /**
      * Fetch the first row, if any, after executing the composed sql statement
      *
-     * @return array|null
+     * @see \PDOStatement::fetch()
+     *
+     * @param int $fetch_mode The PDO fetch style
+     * @param mixed $class_or_object Used with PDO::FETCH_CLASS and PDO::FETCH_INTO
+     * @param array $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS
+     * @return array|object|null
      */
-    public function fetchOne(int $fetch_mode = PDO::FETCH_ASSOC): ?array
-    {
+    public function fetchOne(
+        int $fetch_mode = PDO::FETCH_ASSOC,
+        $class_or_object = null,
+        array $ctor_args = []
+    ) {
         $this->statement->limit(1);
         if (null === $stmt = $this->execute()) {
             return null;
         }
 
-        $args = func_get_args();
+        switch ($fetch_mode) {
+            case PDO::FETCH_ASSOC:
+            case PDO::FETCH_BOTH:
+            case PDO::FETCH_NUM:
+                $row = $stmt->fetch($fetch_mode);
+                $stmt->closeCursor();
+                return is_array($row) ? $row : null;
 
-        $row = empty($args)
-            ? $stmt->fetch($fetch_mode)
-            : $stmt->fetch(...$args);
+            case PDO::FETCH_OBJ:
+            case PDO::FETCH_LAZY:
+                $obj = $stmt->fetch($fetch_mode);
+                $stmt->closeCursor();
+                return is_object($obj) ? $obj : null;
 
-        $stmt->closeCursor();
+            case PDO::FETCH_CLASS:
+            case PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE:
+                if (!is_string($class_or_object)) {
+                    throw InvalidArgumentException(sprintf(
+                        "\$class_or_object MUST be an FQCN string when fetch_mode"
+                        . " = `PDO::FETCH_CLASS`, `%s` provided!",
+                        gettype($class_or_object)
+                    ));
+                }
+                $stmt->setFetchMode($fetch_mode, $class_or_object, $ctor_args);
+                $object = $stmt->fetch();
+                $stmt->closeCursor();
+                return is_object($object) ? $object : null;
 
-        return is_array($row) ? $row : null;
+            case PDO::FETCH_INTO:
+                if (!is_object($class_or_object)) {
+                    throw InvalidArgumentException(sprintf(
+                        "\$class_or_object MUST be an object when fetch_mode"
+                        . " = `PDO::FETCH_INTO`, `%s` provided!",
+                        gettype($class_or_object)
+                    ));
+                }
+                $obj = $class_or_object;
+                $obj = $stmt->fetch($fetch_mode);
+                return is_object($obj) ? $obj : null;
+        }
+
+        throw InvalidArgumentException(
+            "Invalid fetch_mode combination pipe `{$fetch_mode}`!"
+        );
     }
 
     /**
@@ -364,8 +421,9 @@ class Select extends Command
     }
 
     /**
-     * Fetch the first column of the first row, if any, after executing the composed sql statement
+     * Fetch the first column value of the first row, if any, after executing the composed sql statement
      *
+     * @param int $column_number The column number to fetch the value from
      * @return mixed
      */
     public function fetchColumn(int $column_number = 0)
