@@ -103,6 +103,9 @@ class Select extends Statement
     /** @var bool|null */
     protected $union_all;
 
+    /** @var self|null */
+    protected $intersect;
+
     /**
      * @param string[]|string|Literal[]|Literal|self|self[] $columns One or
      *      many column names, Literal expressions or sub-select statements
