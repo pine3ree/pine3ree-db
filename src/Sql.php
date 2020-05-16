@@ -7,8 +7,13 @@
 
 namespace P3\Db;
 
+use P3\Db\Sql\Statement\Delete;
+use P3\Db\Sql\Statement\Insert;
+use P3\Db\Sql\Statement\Select;
+use P3\Db\Sql\Statement\Update;
 use InvalidArgumentException;
 
+use function func_num_args;
 use function gettype;
 use function is_string;
 use function sprintf;
@@ -204,6 +209,17 @@ class Sql
         self::ALL      => self::ALL,
     ];
 
+    /**
+     * COMBINED-SETS
+     */
+    public const UNION     = 'UNION';
+    public const INTERSECT = 'INTERSECT';
+
+    public const SETS_COMBINATIONS = [
+        self::UNION      => self::UNION,
+        self::INTERSECT  => self::INTERSECT,
+    ];
+
     public static function isValidJoin(string $join): bool
     {
         return isset(self::JOIN_TYPES[strtoupper($join)]);
@@ -238,5 +254,72 @@ class Sql
     public static function isEmptySQL($sql): bool
     {
         return !is_string($sql) || '' === trim($sql);
+    }
+
+        /**
+     * Create and return a new Select command
+     *
+     * @param array|string|string[]|Literal2|Literal2[]|Select|Select[] $columns
+     *      An array of columns with optional key-as-alias or a single column or
+     *      the sql-asterisk
+     * @param string!Select|null $from The db-table name or a sub-select statement
+     * @param string|null $alias The db-table alias
+     * @return Select
+     */
+    public static function select($columns = Sql::ASTERISK, $from = null, string $alias = null): Select
+    {
+        return new Select($columns, $from, $alias);
+    }
+
+    /**
+     * Create a new Insert db-command and either return it or execute it trying
+     * to create a new row or multiple new rows
+     *
+     * @param string|null $table
+     * @return Insert
+     */
+    public function insert(string $table = null): Insert
+    {
+        return new Insert($table);
+    }
+
+    /**
+     * Create a new Update db-command and either return or execute it
+     *
+     * @param string|null $table
+     * @param array|null $data
+     * @param string|array|Predicate|Where $where
+     * @return Update
+     */
+    public static function update(string $table = null, array $data = null, $where = null): Update
+    {
+        return new Update($table);
+
+        $num_args = func_num_args();
+        if ($num_args < 2 || !isset($data)) {
+            return $update;
+        }
+        if ($num_args === 2 || !isset($where)) {
+            return $update->set($data);
+        }
+
+        return $update->set($data)->where($where);
+    }
+
+    /**
+     * Create a new Delete db-command and either return or execute it
+     *
+     * @param string|null $table The db-table to delete from
+     * @param string|array|Predicate|Where $where
+     * @return Delete|bool|int
+     */
+    public static function delete($table = null, $where = null)
+    {
+        $delete = new Delete($table);
+        if (func_num_args() < 2 || !isset($where)) {
+            return $delete;
+        }
+
+        return $delete->where($where);
     }
 }
