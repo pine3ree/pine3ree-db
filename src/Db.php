@@ -333,7 +333,6 @@ class Db
      * @param string|null $table
      * @param array|null $data
      * @param string|array|Predicate|Where $where
-     *
      * @return Update|false|int
      */
     public function update(string $table = null, array $data = null, $where = null)
