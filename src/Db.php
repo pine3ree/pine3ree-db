@@ -353,7 +353,7 @@ class Db
      * @param string|array|Predicate|Where $where
      * @return Delete|bool|int
      */
-    public function delete($table = null, $where = null)
+    public function delete(string $table = null, $where = null)
     {
         $delete = new Delete($this, $table);
         if (func_num_args() < 2 || !isset($where)) {
