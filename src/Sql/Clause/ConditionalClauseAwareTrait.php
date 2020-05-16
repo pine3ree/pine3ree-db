@@ -51,8 +51,11 @@ trait ConditionalClauseAwareTrait
         }
 
         $this->{$property} = $clause;
+
         $this->sql = null;
-        unset($this->sqls[$property]);
+        if (isset($this->sqls[$property])) {
+            unset($this->sqls[$property]);
+        }
 
         return $this;
     }
