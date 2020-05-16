@@ -40,9 +40,9 @@ class Update extends Command
      * @see SqlUpdate::set()
      * @return $this
      */
-    public function set($columnOrRow, $value = null): self
+    public function set($column_or_row, $value = null): self
     {
-        $this->statement->set($columnOrRow, $value);
+        $this->statement->set($column_or_row, $value);
         return $this;
     }
 

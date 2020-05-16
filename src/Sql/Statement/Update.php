@@ -74,16 +74,16 @@ class Update extends Statement
     /**
      * Set new value(s) for column(s)
      *
-     * @param scalar|null|string|Literal|array<string: scalar|null|string|Literal> $columnOrRow
+     * @param string|array<string: scalar|null|string|Literal> $column_or_row
      *      A single column or a set of column:value pairs
      * @param mixed $value The value for a single column
      * @return $this
      * @throws InvalidArgumentException
      */
-    public function set($columnOrRow, $value = null): self
+    public function set($column_or_row, $value = null): self
     {
-        if (is_array($columnOrRow)) {
-            $row = $columnOrRow;
+        if (is_array($column_or_row)) {
+            $row = $column_or_row;
             foreach ($row as $column => $value) {
                 if (is_numeric($column)) {
                     throw new InvalidArgumentException(
@@ -95,18 +95,18 @@ class Update extends Statement
             return $this;
         }
 
-        if (is_string($columnOrRow)) {
-            $column = trim($columnOrRow);
-            if ($column) {
+        if (is_string($column_or_row)) {
+            $column = trim($column_or_row);
+            if (!empty($column)) {
                 $this->set[$column] = $value;
             }
             return $this;
         }
 
         throw new InvalidArgumentException(sprintf(
-            "The set() columnOrRow argument must be either a string or an array"
+            "The set() `\$column_or_row` argument must be either a string or an array"
             . " of column:value pairs, `%s` provided!",
-            is_object($columnOrRow) ? get_class($columnOrRow) : gettype($columnOrRow)
+            is_object($column_or_row) ? get_class($column_or_row) : gettype($column_or_row)
         ));
     }
 
