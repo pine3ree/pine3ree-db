@@ -407,6 +407,7 @@ class Db
     /**
      * Proxy to PDO::query()
      *
+     * @see PDO::query()
      * @param string $sql The sql-statement
      * @return \PDOStatement|false Execute the statement and returns either a
      *      PDO prepared statement or false on failure
@@ -418,7 +419,8 @@ class Db
 
     /**
      * Proxy to PDO::exec()
-     *
+     * 
+     * @see PDO::exec()
      * @param string $sql The DML/DDL/DCL statement sql-string
      *
      * @return int|false Execute the statement and returns either the number of
