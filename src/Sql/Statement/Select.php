@@ -51,13 +51,13 @@ use function trim;
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any
- * @property-read array[] $group_by An array of GROUP BY identifiers
+ * @property-read array[] $groupBy An array of GROUP BY identifiers
  * @property-read Having $having The Having clause, built on-first-access if null
- * @property-read array<string, string>[] $order_by An array of ORDER BY identifier to sort-direction pairs
+ * @property-read array<string, string>[] $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
- * @property-read bool $union_all Is it a UNION ALL clause?
+ * @property-read bool|null $union_all Is it a UNION ALL clause?
  * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
  */
 class Select extends Statement
@@ -83,13 +83,13 @@ class Select extends Statement
     protected $joins = [];
 
     /** @var array */
-    protected $group_by = [];
+    protected $groupBy = [];
 
     /** @var Having|null */
     protected $having;
 
     /** @var array */
-    protected $order_by = [];
+    protected $orderBy = [];
 
     /** @var int|null */
     protected $limit;
@@ -99,6 +99,9 @@ class Select extends Statement
 
     /** @var self|null */
     protected $union;
+
+    /** @var bool|null */
+    protected $union_all;
 
     /**
      * @param string[]|string|Literal[]|Literal|self|self[] $columns One or
@@ -226,7 +229,7 @@ class Select extends Statement
             return $this->sqls['columns'] = $driver->getSelectColumnsSQL($this);
         }
 
-        $add_tb_prefix = !empty($tthis->table) && !empty($this->joins);
+        $add_tb_prefix = !empty($this->joins) && !empty($this->table);
 
         if (empty($this->columns)) {
             $this->columns = ['*' => '*'];
@@ -493,51 +496,51 @@ class Select extends Statement
     /**
      * Add or set the GROUP BY clause elements
      *
-     * @param string|string[]|Literal|Literal[] $group_by
+     * @param string|string[]|Literal|Literal[] $groupBy
      * @param bool $replace
      * @return $this
      * @throws InvalidArgumentException
      */
-    public function groupBy($group_by, bool $replace = false): self
+    public function groupBy($groupBy, bool $replace = false): self
     {
         if ($replace) {
-            $this->group_by = [];
+            $this->groupBy = [];
         }
 
-        if (is_array($group_by)) {
-            foreach ($this->group_by as $identifier) {
-                $this->group_by($identifier);
+        if (is_array($groupBy)) {
+            foreach ($this->groupBy as $identifier) {
+                $this->groupBy($identifier);
             }
             return $this;
         }
 
-        if (!is_string($group_by) && ! $identifier instanceof Literal) {
+        if (!is_string($groupBy) && ! $identifier instanceof Literal) {
             throw new InvalidArgumentException(sprintf(
-                "The `\$group_by` argument must be either a string or Literal or an "
+                "The `\$groupBy` argument must be either a string or Literal or an "
                 . "array of string identifiers or Literals, `%s` provided",
-                gettype($group_by)
+                gettype($groupBy)
             ));
         }
 
-        $this->group_by[] = $group_by;
+        $this->groupBy[] = $groupBy;
 
         return $this;
     }
 
     private function getGroupBySQL(Driver $driver): string
     {
-        if (empty($this->group_by)) {
+        if (empty($this->groupBy)) {
             return '';
         }
 
-        $group_by = $this->group_by;
-        foreach ($group_by as $key => $identifier) {
-            $group_by[$key] = $identifier instanceof Literal
+        $groupBy = $this->groupBy;
+        foreach ($groupBy as $key => $identifier) {
+            $groupBy[$key] = $identifier instanceof Literal
                 ? $identifier->getSQL($driver)
                 : $driver->quoteIdentifier($identifier);
         }
 
-        return "GROUP BY " . implode(", ", $group_by);
+        return "GROUP BY " . implode(", ", $groupBy);
     }
 
     /**
@@ -559,43 +562,43 @@ class Select extends Statement
 
     /**
      *
-     * @param string|array $order_by
-     * @param null|string|true $dir_or_replace Set the default sort direction or the replace flag
+     * @param string|array $orderBy
+     * @param null|string|true $sortdir_or_replace Set the default sort direction or the replace flag
      * @return $this
      */
-    public function orderBy($order_by, $dir_or_replace = null): self
+    public function orderBy($orderBy, $sortdir_or_replace = null): self
     {
-        if (true === $dir_or_replace) {
-            $this->order_by = [];
+        if (true === $sortdir_or_replace) {
+            $this->orderBy = [];
         }
 
-        if (empty($order_by)) {
+        if (empty($orderBy)) {
             return $this;
         }
 
-        $dir = is_string($dir_or_replace) ? strtoupper($dir_or_replace) : null;
+        $sortdir = is_string($sortdir_or_replace) ? strtoupper($sortdir_or_replace) : null;
 
-        $order_by = $this->normalizeOrderBy($order_by, $dir);
-        if (empty($order_by)) {
+        $orderBy = $this->normalizeOrderBy($orderBy, $sortdir);
+        if (empty($orderBy)) {
             return $this;
         }
 
-        $this->order_by += $order_by;
+        $this->orderBy += $orderBy;
 
         return $this;
     }
 
-    private function normalizeOrderBy($order_by, string $dir = null): array
+    private function normalizeOrderBy($orderBy, string $sortdir = null): array
     {
-        if (is_string($order_by)) {
-            if (false === strpos($order_by, ',')) {
-                $order_by = [trim($order_by)];
+        if (is_string($orderBy)) {
+            if (false === strpos($orderBy, ',')) {
+                $orderBy = [trim($orderBy)];
             } else {
-                $order_by = array_map('trim', explode(',', $order_by));
+                $orderBy = array_map('trim', explode(',', $orderBy));
             }
         }
 
-        if (!is_array($order_by)) {
+        if (!is_array($orderBy)) {
             throw new InvalidArgumentException(
                 "The ORDER BY options must be either an array or a string!"
             );
@@ -603,10 +606,10 @@ class Select extends Statement
 
         $normalized = [];
 
-        foreach ($order_by as $identifier => $direction) {
+        foreach ($orderBy as $identifier => $direction) {
             if (is_numeric($identifier)) {
                 $identifier = $direction;
-                $direction  = $dir;
+                $direction  = $sortdir;
                 if (strpos($identifier, ' ') > 0) {
                     $parts = array_map('trim', explode(' ', $identifier));
                     $identifier = $parts[0];
@@ -614,7 +617,7 @@ class Select extends Statement
                 }
             }
 
-            $normalized[$identifier] = $dir === Sql::DESC ? $dir : Sql::ASC;
+            $normalized[$identifier] = $direction === Sql::DESC ? $direction : Sql::ASC;
         }
 
         return $normalized;
@@ -622,7 +625,7 @@ class Select extends Statement
 
     private function getOrderBySQL(Driver $driver): string
     {
-        if (empty($this->order_by)) {
+        if (empty($this->orderBy)) {
             return '';
         }
 
@@ -631,7 +634,7 @@ class Select extends Statement
         }
 
         $sql = [];
-        foreach ($this->order_by as $identifier => $direction) {
+        foreach ($this->orderBy as $identifier => $direction) {
             // do not quote identifier or alias, do it programmatically
             $sql[] = $driver->quoteIdentifier($identifier) . " {$direction}";
         }
@@ -858,11 +861,11 @@ class Select extends Statement
         if ('having' === $name) {
             return $this->having ?? $this->having = new Having();
         }
-        if ('group_by' === $name) {
-            return $this->group_by;
+        if ('groupBy' === $name) {
+            return $this->groupBy;
         }
-        if ('order_by' === $name) {
-            return $this->order_by;
+        if ('orderBy' === $name) {
+            return $this->orderBy;
         }
         if ('limit' === $name) {
             return $this->limit;
