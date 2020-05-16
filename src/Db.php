@@ -368,7 +368,7 @@ class Db
      * prepared/binded PDOStatement
      *
      * @param Statement $statement
-     * @param bool $bind_params Bind statement parameters (via PDOStatement::bindValue())?
+     * @param bool $bind_params Bind statement parameters values (via PDOStatement::bindValue())?
      * @return PDOStatement|false
      */
     public function prepare(Statement $statement, bool $bind_params = false)
@@ -376,12 +376,12 @@ class Db
         $stmt = $this->pdo()->prepare($statement->getSQL($this->getDriver()));
 
         if ($bind_params && $stmt instanceof PDOStatement) {
-            $params_types = $statement->getParamsTypes();
+            $types = $statement->getParamsTypes();
             foreach ($statement->getParams() as $index => $value) {
                 $stmt->bindValue(
                     $index, // string marker (:name) or the 1-indexed position
                     $value,
-                    $params_types[$index] ?? $this->getParamType($value)
+                    $types[$index] ?? $this->getParamType($value)
                 );
             }
         }
@@ -431,7 +431,7 @@ class Db
 
     /**
      * Return the last-inserted value
-     * 
+     *
      * @param string $name The sequence name, if any
      * @return string
      */
