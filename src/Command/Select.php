@@ -301,7 +301,7 @@ class Select extends Command
         switch ($fetch_mode) {
             case PDO::FETCH_ASSOC:
             case PDO::FETCH_BOTH:
-            case PDO::FETCH_NUMC:
+            case PDO::FETCH_NUM:
                 foreach ($rows as $i => $row) {
                     $index = $row[$indexBy] ?? null;
                     if (!isset($index)) {
