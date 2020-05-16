@@ -16,7 +16,6 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Predicate\Literal as Literal2;
 use P3\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
@@ -196,7 +195,7 @@ class Db
     /**
      * Create and return a new Select command
      *
-     * @param array|string|string[]|Literal2|Literal2[]|Select|Select[] $columns
+     * @param array|string|string[]|Literal|Literal[]|Select|Select[] $columns
      *      An array of columns with optional key-as-alias or a single column or
      *      the sql-asterisk
      * @param string!Select|null $from The db-table name or a sub-select statement
