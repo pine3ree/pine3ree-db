@@ -12,7 +12,6 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\Join;
-use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Expression;
