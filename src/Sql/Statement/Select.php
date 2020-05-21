@@ -510,7 +510,7 @@ class Select extends Statement
         }
 
         if (is_array($groupBy)) {
-            foreach ($this->groupBy as $identifier) {
+            foreach ($groupBy as $identifier) {
                 $this->groupBy($identifier);
             }
             return $this;
