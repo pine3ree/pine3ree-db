@@ -598,9 +598,9 @@ class Select extends Statement
         }
 
         if (is_string($sortdir_or_replace)) {
-            $sortdir = strtoupper($sortdir_or_replace) === self::SORT_DESC
-                ? self::SORT_DESC
-                : self::SORT_ASC;
+            $sortdir = strtoupper($sortdir_or_replace) === Sql::DESC
+                ? Sql::DESC
+                : Sql::ASC;
         } else {
             $sortdir = self::SORT_ASC;
         }
