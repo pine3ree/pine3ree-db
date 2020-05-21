@@ -578,7 +578,34 @@ class Select extends Statement
             return $this;
         }
 
-        $sortdir = is_string($sortdir_or_replace) ? strtoupper($sortdir_or_replace) : null;
+        if (is_array($orderBy)) {
+            foreach ($orderBy as $identifier => $sortdir) {
+                if (is_numeric($identifier)) {
+                    $identifier = $sortdir;
+                    $sortdir = $sortdir_or_replace;
+                }
+                $this->orderBy($orderBy, $sortdir);
+            }
+            return $this;
+        }
+
+        if (!is_array($orderBy)) {
+            throw new InvalidArgumentException(sprintf(
+                "The ORDER BY argument must be either an array of identifier"
+                . " optionally mapped to sort-direction or a string identifier, `%s` provided!",
+                gettext($orderBy)
+            ));
+        }
+
+        if (is_string($sortdir_or_replace)) {
+            $sortdir = strtoupper($sortdir_or_replace) === self::SORT_DESC
+                ? self::SORT_DESC
+                : self::SORT_ASC;
+        } else {
+            $sortdir = self::SORT_ASC;
+        }
+
+        $this->orderBy[$orderBy] = $sortdir;
 
         $orderBy = $this->normalizeOrderBy($orderBy, $sortdir);
         if (empty($orderBy)) {
@@ -588,41 +615,6 @@ class Select extends Statement
         $this->orderBy += $orderBy;
 
         return $this;
-    }
-
-    private function normalizeOrderBy($orderBy, string $sortdir = null): array
-    {
-        if (is_string($orderBy)) {
-            if (false === strpos($orderBy, ',')) {
-                $orderBy = [trim($orderBy)];
-            } else {
-                $orderBy = array_map('trim', explode(',', $orderBy));
-            }
-        }
-
-        if (!is_array($orderBy)) {
-            throw new InvalidArgumentException(
-                "The ORDER BY options must be either an array or a string!"
-            );
-        }
-
-        $normalized = [];
-
-        foreach ($orderBy as $identifier => $direction) {
-            if (is_numeric($identifier)) {
-                $identifier = $direction;
-                $direction  = $sortdir;
-                if (strpos($identifier, ' ') > 0) {
-                    $parts = array_map('trim', explode(' ', $identifier));
-                    $identifier = $parts[0];
-                    $direction  = $parts[1];
-                }
-            }
-
-            $normalized[$identifier] = $direction === Sql::DESC ? $direction : Sql::ASC;
-        }
-
-        return $normalized;
     }
 
     private function getOrderBySQL(Driver $driver): string
