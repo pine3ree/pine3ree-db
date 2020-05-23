@@ -584,16 +584,16 @@ class Select extends Statement
                     $identifier = $sortdir;
                     $sortdir = $sortdir_or_replace;
                 }
-                $this->orderBy($orderBy, $sortdir);
+                $this->orderBy($identifier, $sortdir);
             }
             return $this;
         }
 
-        if (!is_array($orderBy)) {
+        if (!is_string($orderBy)) {
             throw new InvalidArgumentException(sprintf(
                 "The ORDER BY argument must be either an array of identifier"
                 . " optionally mapped to sort-direction or a string identifier, `%s` provided!",
-                gettext($orderBy)
+                gettype($orderBy)
             ));
         }
 
@@ -602,17 +602,10 @@ class Select extends Statement
                 ? Sql::DESC
                 : Sql::ASC;
         } else {
-            $sortdir = self::SORT_ASC;
+            $sortdir = Sql::ASC;
         }
 
         $this->orderBy[$orderBy] = $sortdir;
-
-        $orderBy = $this->normalizeOrderBy($orderBy, $sortdir);
-        if (empty($orderBy)) {
-            return $this;
-        }
-
-        $this->orderBy += $orderBy;
 
         return $this;
     }
