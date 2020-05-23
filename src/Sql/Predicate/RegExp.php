@@ -24,20 +24,21 @@ use function sprintf;
 class RegExp extends Predicate
 {
     protected $identifier;
-    protected $value;
+    protected $regexp;
     protected $case_sensitive = false;
     protected $not = false;
 
     /**
      * @param string|Literal $identifier
-     * @param string|Literal $values
+     * @param string|Literal $regexp
+     * @param bool $case_sensitive
      */
-    public function __construct($identifier, string $value, bool $case_sensitive = false)
+    public function __construct($identifier, string $regexp, bool $case_sensitive = false)
     {
         self::assertValidIdentifier($identifier);
 
         $this->identifier = $identifier;
-        $this->value = $value;
+        $this->regexp = $regexp;
         $this->case_sensitive = $case_sensitive;
     }
 
@@ -61,7 +62,7 @@ class RegExp extends Predicate
             $operator = "{$operator}*";
         }
 
-        $param = $this->createNamedParam($this->value);
+        $param = $this->createNamedParam($this->regexp);
 
         return $this->sql = "{$identifier} {$operator} {$param}";
     }

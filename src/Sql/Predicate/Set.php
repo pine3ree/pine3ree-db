@@ -465,4 +465,18 @@ class Set extends Predicate
             new Predicate\Comparison($identifier, Sql::GREATER_THAN, $value)
         );
     }
+
+    public function regExp($identifier, array $regexp, bool $case_sensitive = false): self
+    {
+        return $this->addPredicate(
+            new Predicate\RegExp($identifier, $regexp, $case_sensitive)
+        );
+    }
+
+    public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): self
+    {
+        return $this->addPredicate(
+            new Predicate\NotRegExp($identifier, $regexp, $case_sensitive)
+        );
+    }
 }

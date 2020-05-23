@@ -271,4 +271,18 @@ abstract class ConditionalClause extends Clause
 
         return $this;
     }
+
+    public function regExp($identifier, array $regexp, bool $case_sensitive = false): self
+    {
+        return $this->conditions->addPredicate(
+            new Predicate\RegExp($identifier, $regexp, $case_sensitive)
+        );
+    }
+
+    public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): self
+    {
+        return $this->conditions->addPredicate(
+            new Predicate\NotRegExp($identifier, $regexp, $case_sensitive)
+        );
+    }
 }

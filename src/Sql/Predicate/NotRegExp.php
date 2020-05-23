@@ -17,9 +17,9 @@ class NotRegExp extends RegExp
     /**
      * @see RegExp::__construct()
      */
-    public function __construct($identifier, string $value, bool $case_sensitive = false)
+    public function __construct($identifier, string $regexp, bool $case_sensitive = false)
     {
-        parent::__construct($identifier, $value, $case_sensitive);
+        parent::__construct($identifier, $regexp, $case_sensitive);
         $this->not = true;
     }
 }
