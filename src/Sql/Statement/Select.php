@@ -258,7 +258,11 @@ class Select extends Statement
                 $column_sql = $column->getSQL($driver);
                 $this->importParams($column);
             } else {
-                continue; // skip or throw?
+                throw new InvalidArgumentException(sprintf(
+                    "Invalid db-table column type! Allowed types are: string, Literal,"
+                    . " Expression, Select, `%s` provided!",
+                    is_object($column) ? get_class($column) : gettype($column)
+                ));
             }
 
             // add alias?
