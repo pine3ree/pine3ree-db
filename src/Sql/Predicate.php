@@ -8,8 +8,8 @@
 namespace P3\Db\Sql;
 
 use InvalidArgumentException;
-use P3\Db\Sql\Literal;
 use P3\Db\Sql\Element;
+use P3\Db\Sql\Literal;
 
 use function get_class;
 use function gettype;
