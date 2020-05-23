@@ -26,32 +26,31 @@ class Between extends Predicate
 
     /**
      * @param string|Literal $identifier
-     * @param array $limits
+     * @param mixed $min_value
+     * @param mixed $max_value
      */
-    public function __construct($identifier, array $limits)
+    public function __construct($identifier, $min_value, $max_value)
     {
         self::assertValidIdentifier($identifier);
         $this->identifier = $identifier;
 
-        self::assertValidLimits($limits);
-
-        $min_value = $limits[0];
-        $max_value = $limits[1];
-
-        self::assertValidValue($min_value);
-        self::assertValidValue($max_value);
+        self::assertValidLimit($min_value);
+        self::assertValidLimit($max_value);
 
         $this->min_value = $min_value;
         $this->max_value = $max_value;
     }
 
-    private static function assertValidLimits(array $limits)
+    protected static function assertValidLimit($value)
     {
-        $count = count($limits);
-        if ($count !== 2) {
-            throw new InvalidArgumentException(
-                "A BETWEEN limits pair must be either a 2-valued array, {$count}-valued array provided!"
-            );
+        $is_valid = is_scalar($value) || $value instanceof Literal;
+        if (!$is_valid) {
+            throw new InvalidArgumentException(sprintf(
+                "A BETWEEN predicate value must be either a scalar or an Sql Literal"
+                . " expression instance, `%s` provided in class``%s!",
+                is_object($value) ? get_class($value) : gettype($value),
+                static::class
+            ));
         }
     }
 

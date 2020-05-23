@@ -160,7 +160,7 @@ class Set extends Predicate
      * Add a predicate or a predicate-set
      *
      * @param Predicate|string|array $predicate A Predicate|Predicate\Set instance
-     *      or a specs-array [identifier, operator, value] or [identifier => value]
+     *      or a specs-array [identifier, operator, value[, extra]] or [identifier => value]
      * @throws InvalidArgumentException
      * @return $this Provides fluent interface
      */
@@ -176,7 +176,8 @@ class Set extends Predicate
             throw new InvalidArgumentException(sprintf(
                 "Adding a predicate must be done using either as a string, a"
                 . " Predicate|Predicate\Set instance or an predicate specs-array such as "
-                . "[identifier, operator, value] or [identifier => value], `%s` provided!",
+                . "[identifier, operator, value[, extra]] or [identifier => value],"
+                . " `%s` provided!",
                 is_object($predicate) ? get_class($predicate) : gettype($predicate)
             ));
         }
@@ -230,7 +231,7 @@ class Set extends Predicate
             case Sql::BETWEEN:
                 return new Predicate\Between($identifier, $value, $extra);
             case Sql::NOT_BETWEEN:
-                return new Predicate\NotBetween($identifier, $value);
+                return new Predicate\NotBetween($identifier, $value, $extra);
             case Sql::IN:
                 return new Predicate\In($identifier, $value);
             case Sql::NOT_IN:
