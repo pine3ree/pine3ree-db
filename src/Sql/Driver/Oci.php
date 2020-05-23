@@ -7,7 +7,10 @@
 
 namespace P3\Db\Sql\Driver;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Expression;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use PDO;
