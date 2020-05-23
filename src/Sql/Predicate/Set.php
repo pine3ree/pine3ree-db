@@ -119,12 +119,6 @@ class Set extends Predicate
         foreach ($predicates as $key => $predicate) {
             // nested predicate-set
             if ($predicate instanceof self) {
-                $comb_by = self::COMB_ID[$key] ?? null;
-                if (isset($comb_by) && $comb_by !== $predicate->getCombinedBy()) {
-                    $nestedSet = new self($comb_by, $predicate->getPredicates());
-                } else {
-                    $nestedSet = $predicate;
-                }
                 $this->addPredicate($nestedSet);
                 continue;
             }
@@ -134,18 +128,10 @@ class Set extends Predicate
                 continue;
             }
 
+            // $key is an identifier and the array may be a predicate-building
+            // spec in the form [operator, value] that allows to set multiple
+            // conditions for a single identifier
             if (is_array($predicate)) {
-                // $key is "||" or "&&" for predicate-set array definitions
-                $comb_by = self::COMB_ID[$key] ?? null;
-                if (isset($comb_by)) {
-                    $nestedSet = new self($comb_by, $predicate);
-                    $this->addPredicate($nestedSet);
-                    continue;
-                }
-
-                // $key is an identifier and the array may be a predicate-building
-                // spec in the form [operator, value] that allows to set multiple
-                // conditions for a single identifier
                 foreach ($predicate as $specs) {
                     if (is_array($specs) && 2 === count($specs)) {
                         $specs = array_values($specs);
@@ -161,6 +147,7 @@ class Set extends Predicate
                 continue;
             }
 
+            // $key is an identifier and $predicate is a value for = operator
             if (! $predicate instanceof Predicate) {
                 $predicate = new Predicate\Comparison($key, '=', $predicate);
             }
@@ -203,7 +190,12 @@ class Set extends Predicate
     protected function buildPredicateFromSpecs(array $specs): Predicate
     {
         if (count($specs) === 1) {
-            if (!is_numeric($key = key($specs))) {
+            $key = key($specs);
+            if (!is_numeric($key)) {
+                $comb_by = self::COMB_ID[$key] ?? null;
+                if (isset($comb_by)) {
+                    return new self($comb_by, current($specs));
+                }
                 return new Predicate\Comparison($key, '=', current($specs));
             }
             throw new InvalidArgumentException(sprintf(
@@ -212,16 +204,19 @@ class Set extends Predicate
             ));
         }
 
-        if (count($specs) !== 3) {
+        $count = count($specs);
+
+        if (count($specs) < 3) {
             throw new InvalidArgumentException(
                 "A predicate specs-array must be provide in one of the following forms"
-                . " [identifier, operator, value] or [identifier => value]!"
+                . " [identifier, operator, value, extra] or [identifier => value] or ['||' => [...]]!"
             );
         }
 
         $identifier = $specs[0]; // identifier or Literal sql expression
         $operator   = $specs[1];
         $value      = $specs[2];
+        $extra      = $specs[3] ?? null;
 
         $operator = self::OPERATOR_ALIAS[$operator] ?? strtoupper($operator);
 
@@ -233,7 +228,7 @@ class Set extends Predicate
 
         switch ($operator) {
             case Sql::BETWEEN:
-                return new Predicate\Between($identifier, $value);
+                return new Predicate\Between($identifier, $value, $extra);
             case Sql::NOT_BETWEEN:
                 return new Predicate\NotBetween($identifier, $value);
             case Sql::IN:
@@ -244,6 +239,10 @@ class Set extends Predicate
                 return new Predicate\Like($identifier, $value);
             case Sql::NOT_LIKE:
                 return new Predicate\NotLike($identifier, $value);
+            case Sql::REGEXP:
+                return new Predicate\RegExp($identifier, $value, (bool)$extra);
+            case Sql::NOT_REGEXP:
+                return new Predicate\NotRegExp($identifier, $value, (bool)$extra);
         }
 
         if (is_array($value)) {
