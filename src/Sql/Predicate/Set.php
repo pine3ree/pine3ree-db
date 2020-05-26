@@ -232,23 +232,23 @@ class Set extends Predicate
 
         switch ($operator) {
             case Sql::BETWEEN:
-                return new Predicate\Between($identifier, $value, $extra);
+                return new Predicate\Between($identifier, $min = $value, $max = $extra);
             case Sql::NOT_BETWEEN:
-                return new Predicate\NotBetween($identifier, $value, $extra);
+                return new Predicate\NotBetween($identifier, $min = $value, $max = $extra);
             case Sql::IN:
                 return new Predicate\In($identifier, $value);
             case Sql::NOT_IN:
                 return new Predicate\NotIn($identifier, $value);
             case Sql::LIKE:
-                return new Predicate\Like($identifier, $value);
+                return new Predicate\Like($identifier, $value, $escape = $extra);
             case Sql::NOT_LIKE:
-                return new Predicate\NotLike($identifier, $value);
+                return new Predicate\NotLike($identifier, $value, $escape = $extra);
             case Sql::REGEXP:
-                return new Predicate\RegExp($identifier, $value, (bool)$extra);
+                return new Predicate\RegExp($identifier, $value, $cs = (bool)$extra);
             case Sql::REGEXP_CS:
                 return new Predicate\RegExp($identifier, $value, true);
             case Sql::NOT_REGEXP:
-                return new Predicate\NotRegExp($identifier, $value, (bool)$extra);
+                return new Predicate\NotRegExp($identifier, $value, $cs = (bool)$extra);
             case Sql::NOT_REGEXP_CS:
                 return new Predicate\NotRegExp($identifier, $value, true);
         }
