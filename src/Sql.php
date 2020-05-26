@@ -216,8 +216,8 @@ class Sql
     public const INTERSECT = 'INTERSECT';
 
     public const SETS_COMBINATIONS = [
-        self::UNION      => self::UNION,
-        self::INTERSECT  => self::INTERSECT,
+        self::UNION     => self::UNION,
+        self::INTERSECT => self::INTERSECT,
     ];
 
     public static function isValidJoin(string $join): bool
