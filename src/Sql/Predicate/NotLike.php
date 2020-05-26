@@ -17,9 +17,9 @@ class NotLike extends Like
     /**
      * @see Like::__construct()
      */
-    public function __construct($identifier, $value)
+    public function __construct($identifier, $value, string $escape = null)
     {
-        parent::__construct($identifier, $value);
+        parent::__construct($identifier, $value, $escape);
         $this->not = true;
     }
 }

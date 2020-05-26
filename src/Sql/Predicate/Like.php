@@ -23,21 +23,32 @@ use function sprintf;
  */
 class Like extends Predicate
 {
+    /** @var string|Literal */
     protected $identifier;
+
+    /** @var string|Literal */
     protected $value;
+
+    /** @var string|null */
+    protected $escape;
+
+    /** @var bool */
     protected $not = false;
 
     /**
      * @param string|Literal $identifier
      * @param string|Literal $values
+     * @param string|null $escape An optional custom escape character
      */
-    public function __construct($identifier, $value)
+    public function __construct($identifier, $value, string $escape = null)
     {
         self::assertValidIdentifier($identifier);
         self::assertValidValue($value);
+        self::assertValidEscapeCharacter($escape);
 
         $this->identifier = $identifier;
         $this->value = $value;
+        $this->escape = $escape;
     }
 
     protected static function assertValidValue($value)
@@ -47,6 +58,18 @@ class Like extends Predicate
                 "A LIKE value must be either a string or an Sql Literal expression instance, `%s` provided!",
                 is_object($value) ? get_class($value) : gettype($value)
             ));
+        }
+    }
+
+    protected static function assertValidEscapeCharacter(string $escape = null)
+    {
+        if (null === $escape) {
+            return;
+        }
+        if (strlen($escape) !== 1) {
+            throw new InvalidArgumentException(
+                "The ESCAPE character must be either NULL or a 1-char string, `{$escape}` provided!"
+            );
         }
     }
 
@@ -68,6 +91,8 @@ class Like extends Predicate
             ? $this->value->getSQL()
             : $this->createNamedParam($this->value);
 
-        return $this->sql = "{$identifier} {$operator} {$param}";
+        $escape = isset($escape) ? " ESCAPE {$escape}" : "";
+
+        return $this->sql = "{$identifier} {$operator} {$param}{$escape}";
     }
 }
