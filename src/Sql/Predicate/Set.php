@@ -56,9 +56,11 @@ class Set extends Predicate
     ];
 
     private const OPERATOR_ALIAS = [
+        'notEqual'   => Sql::NOT_EQUAL,
         'notBetween' => Sql::NOT_BETWEEN,
-        'notIn' => Sql::NOT_IN,
-        'notLike' => Sql::NOT_LIKE,
+        'notIn'      => Sql::NOT_IN,
+        'notLike'    => Sql::NOT_LIKE,
+        'notRegExp'  => Sql::NOT_REGEXP,
     ];
 
     /**
@@ -220,7 +222,6 @@ class Set extends Predicate
         $extra      = $specs[3] ?? null;
 
         $operator = self::OPERATOR_ALIAS[$operator] ?? strtoupper($operator);
-
         Sql::assertValidOperator($operator);
 
         if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
