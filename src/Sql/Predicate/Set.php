@@ -56,11 +56,13 @@ class Set extends Predicate
     ];
 
     private const OPERATOR_ALIAS = [
-        'notEqual'   => Sql::NOT_EQUAL,
-        'notBetween' => Sql::NOT_BETWEEN,
-        'notIn'      => Sql::NOT_IN,
-        'notLike'    => Sql::NOT_LIKE,
-        'notRegExp'  => Sql::NOT_REGEXP,
+        'notEqual'    => Sql::NOT_EQUAL,
+        'notBetween'  => Sql::NOT_BETWEEN,
+        'notIn'       => Sql::NOT_IN,
+        'notLike'     => Sql::NOT_LIKE,
+        'regExpCs'    => Sql::REGEXP_CS,
+        'notRegExp'   => Sql::NOT_REGEXP,
+        'notRegExpCs' => Sql::NOT_REGEXP_CS,
     ];
 
     /**
@@ -243,8 +245,12 @@ class Set extends Predicate
                 return new Predicate\NotLike($identifier, $value);
             case Sql::REGEXP:
                 return new Predicate\RegExp($identifier, $value, (bool)$extra);
+            case Sql::REGEXP_CS:
+                return new Predicate\RegExp($identifier, $value, true);
             case Sql::NOT_REGEXP:
                 return new Predicate\NotRegExp($identifier, $value, (bool)$extra);
+            case Sql::NOT_REGEXP_CS:
+                return new Predicate\NotRegExp($identifier, $value, true);
         }
 
         if (is_array($value)) {
