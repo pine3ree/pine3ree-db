@@ -34,22 +34,6 @@ abstract class ConditionalClause extends Clause
     }
 
     /**
-     * Add a predicate or a predicate-set to this clause conditions
-     *
-     * @see Predicate\Set::addPredicate()
-     *
-     * @param Predicate|string|array $predicate A Predicate|Predicate\Set instance
-     *      or a specs-array [identifier, operator, value] or [identifier => value]
-     * @throws InvalidArgumentException
-     * @return $this Provides fluent interface
-     */
-    public function addPredicate($predicate)
-    {
-        $this->conditions->addPredicate($predicate);
-        return $this;
-    }
-
-    /**
      * @see Predicate\Set::isEmpty()
      * @return bool
      */
@@ -81,6 +65,22 @@ abstract class ConditionalClause extends Clause
 
         $this->sql = "{$this->getName()} {$predicates_sql}";
         return $this->sql;
+    }
+
+    /**
+     * Add a predicate or a predicate-set to this clause conditions
+     *
+     * @see Predicate\Set::addPredicate()
+     *
+     * @param Predicate|string|array $predicate A Predicate|Predicate\Set instance
+     *      or a specs-array [identifier, operator, value] or [identifier => value]
+     * @throws InvalidArgumentException
+     * @return $this Provides fluent interface
+     */
+    public function addPredicate($predicate)
+    {
+        $this->conditions->addPredicate($predicate);
+        return $this;
     }
 
     public function literal(string $literal): self
