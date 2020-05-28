@@ -702,22 +702,20 @@ class Select extends Statement
     {
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
-            if (!Sql::isEmptySQL($union_sql)) {
-                $quantifier = $this->union_all ? " ALL" : "";
-                $sql = "UNION{$quantifier} {$union_sql}";
-                $this->importParams($this->union);
-                return $sql;
+            if (Sql::isEmptySQL($union_sql)) {
+                return '';
             }
-            return '';
+            $this->importParams($this->union);
+            return $this->union_all ? "UNION ALL {$union_sql}" : "UNION {$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
             $intersect_sql = $this->intersect->getSQL($driver);
-            if (!Sql::isEmptySQL($intersect_sql)) {
-                $sql = "INTERSECT {$intersect_sql}";
-                $this->importParams($this->intersect);
-                return $sql;
+            if (Sql::isEmptySQL($intersect_sql)) {
+                return '';
             }
+            $this->importParams($this->intersect);
+            return "INTERSECT {$intersect_sql}";
         }
 
         return '';
