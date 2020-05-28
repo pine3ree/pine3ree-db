@@ -22,8 +22,6 @@ use P3\Db\Sql\Statement;
 use PDO;
 use RuntimeException;
 
-use function array_map;
-use function explode;
 use function get_class;
 use function gettype;
 use function implode;
