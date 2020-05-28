@@ -123,7 +123,7 @@ class Set extends Predicate
         foreach ($predicates as $key => $predicate) {
             // nested predicate-set
             if ($predicate instanceof self) {
-                $this->addPredicate($nestedSet);
+                $this->addPredicate($predicate);
                 continue;
             }
 
@@ -244,11 +244,11 @@ class Set extends Predicate
             case Sql::NOT_LIKE:
                 return new Predicate\NotLike($identifier, $value, $escape = $extra);
             case Sql::REGEXP:
-                return new Predicate\RegExp($identifier, $value, $cs = (bool)$extra);
+                return new Predicate\RegExp($identifier, $value, false);
+            case Sql::NOT_REGEXP:
+                return new Predicate\NotRegExp($identifier, $value, false);
             case Sql::REGEXP_CS:
                 return new Predicate\RegExp($identifier, $value, true);
-            case Sql::NOT_REGEXP:
-                return new Predicate\NotRegExp($identifier, $value, $cs = (bool)$extra);
             case Sql::NOT_REGEXP_CS:
                 return new Predicate\NotRegExp($identifier, $value, true);
         }
