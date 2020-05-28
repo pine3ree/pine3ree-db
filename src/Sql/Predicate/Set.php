@@ -180,7 +180,7 @@ class Set extends Predicate
             throw new InvalidArgumentException(sprintf(
                 "Adding a predicate must be done using either as a string, a"
                 . " Predicate|Predicate\Set instance or an predicate specs-array such as "
-                . "[identifier, operator, value[, extra]] or [identifier => value],"
+                . "[identifier, operator, value[, extra]] or [identifier => value] or ['||' => [...],"
                 . " `%s` provided!",
                 is_object($predicate) ? get_class($predicate) : gettype($predicate)
             ));
@@ -214,7 +214,7 @@ class Set extends Predicate
         if (count($specs) < 3) {
             throw new InvalidArgumentException(
                 "A predicate specs-array must be provide in one of the following forms"
-                . " [identifier, operator, value, extra] or [identifier => value] or ['||' => [...]]!"
+                . " [identifier, operator, value[, extra]] or [identifier => value] or ['||' => [...]]!"
             );
         }
 
