@@ -127,27 +127,8 @@ class Set extends Predicate
                 continue;
             }
 
-            if (is_numeric($key)) {
+            if (is_numeric($key) || is_array($predicate)) {
                 $this->addPredicate($predicate);
-                continue;
-            }
-
-            // $key is an identifier and the array may be a predicate-building
-            // spec in the form [operator, value] that allows to set multiple
-            // conditions for a single identifier
-            if (is_array($predicate)) {
-                foreach ($predicate as $specs) {
-                    if (is_array($specs) && 2 === count($specs)) {
-                        $specs = array_values($specs);
-                        $this->addPredicate($specs = [$key, $specs[0], $specs[1]]);
-                        continue;
-                    }
-                    throw new InvalidArgumentException(sprintf(
-                        "Invalid predicate-specs for key/identifier `{$key}`, the"
-                        . " allowed form is [operator, value], `%s` provided!",
-                        '[' . array_map('gettype', $specs) . ']'
-                    ));
-                }
                 continue;
             }
 
