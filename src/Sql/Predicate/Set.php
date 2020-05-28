@@ -151,7 +151,7 @@ class Set extends Predicate
                 continue;
             }
 
-            // $key is an identifier and $predicate is a value for = operator
+            // $key is an identifier and $predicate is a value for the '=' operator
             if (! $predicate instanceof Predicate) {
                 $predicate = new Predicate\Comparison($key, '=', $predicate);
             }
