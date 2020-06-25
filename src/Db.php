@@ -46,7 +46,7 @@ class Db
     private $password;
 
     /** @var array */
-    private $options = [];
+    private $options;
 
     /** @var string */
     private $charset;
@@ -77,13 +77,11 @@ class Db
         string $password = null,
         array $options = null
     ) {
-        $this->dsn = $dsn;
+        $this->dsn      = $dsn;
         $this->username = $username;
         $this->password = $password;
-        if (!empty($options)) {
-            $this->options = $options;
-        }
-        $this->charset = $options['charset'] ?? self::DEFAULT_CHARSET;
+        $this->options  = $options ?? [];
+        $this->charset  = $options['charset'] ?? self::DEFAULT_CHARSET;
     }
 
     /**
