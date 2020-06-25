@@ -268,9 +268,12 @@ class Db
         }
         if (isset($limit)) {
             $select->limit($limit);
-            if (isset($offset)) {
-                $select->offset($offset);
+        }
+        if (isset($offset) && $offset > 0) {
+            if (!isset($limit)) {
+                $select->limit(PHP_INT_MAX);
             }
+            $select->offset($offset);
         }
 
         return $select->fetchAll();
