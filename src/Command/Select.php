@@ -32,7 +32,6 @@ class Select extends Command
     protected $indexBy;
 
     /**
-     *
      * @param Db $db
      * @param string|string[]|Literal|Literal[]|SqlSelect|SqlSelect[] $columns
      * @param string!SqlSelect|null $from The db-table name or a sub-select statement
@@ -87,9 +86,9 @@ class Select extends Command
      * @see SqlSelect::join()
      * @return $this
      */
-    public function join(string $table, string $alias, $specification): self
+    public function join(string $table, string $alias, $specification, string $type = Sql::JOIN_AUTO): self
     {
-        $this->statement->join($table, $alias, $specification);
+        $this->statement->join($table, $alias, $specification, $type);
         return $this;
     }
 
@@ -124,7 +123,7 @@ class Select extends Command
     }
 
     /**
-     * @see self::addJoin()
+     * @see SqlSelect::naturalJoin()
      */
     public function naturalJoin(string $table, string $alias, $specification = null): self
     {
@@ -133,7 +132,7 @@ class Select extends Command
     }
 
     /**
-     * @see self::addJoin()
+     * @see SqlSelect::naturalLeftJoin()
      */
     public function naturalLeftJoin(string $table, string $alias, $specification = null): self
     {
@@ -142,7 +141,7 @@ class Select extends Command
     }
 
     /**
-     * @see self::addJoin()
+     * @see SqlSelect::naturalRightJoin()
      */
     public function naturalRightJoin(string $table, string $alias, $specification = null): self
     {
@@ -151,7 +150,7 @@ class Select extends Command
     }
 
     /**
-     * @see self::addJoin()
+     * @see SqlSelect::crossJoin()
      */
     public function crossJoin(string $table, string $alias, $specification = null): self
     {
@@ -160,7 +159,7 @@ class Select extends Command
     }
 
     /**
-     * @see self::addJoin()
+     * @see SqlSelect::straightJoin()
      */
     public function straightJoin(string $table, string $alias, $specification = null): self
     {
