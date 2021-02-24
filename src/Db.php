@@ -26,6 +26,7 @@ use function func_num_args;
 use function is_array;
 use function is_bool;
 use function is_int;
+use function is_subclass_of;
 use function reset;
 
 /**
@@ -447,6 +448,11 @@ class Db
     public function beginTransaction(): bool
     {
         return $this->pdo()->beginTransaction();
+    }
+
+    public function inTransaction(): bool
+    {
+        return $this->pdo()->inTransaction();
     }
 
     public function commit(): bool
