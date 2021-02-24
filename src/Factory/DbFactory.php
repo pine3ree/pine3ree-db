@@ -17,6 +17,8 @@ use function filter_var;
 use function implode;
 use function is_int;
 
+use const FILTER_VALIDATE_BOOLEAN;
+
 /**
  * DbFactory builds a Db instance from configuration retrieved from the container
  */
@@ -46,7 +48,7 @@ class DbFactory
 
         if (empty($config)) {
             throw new InvalidArgumentException(
-                "Missind `PDO` configuration!"
+                "Missing `PDO` configuration!"
             );
         }
 
