@@ -84,7 +84,7 @@ abstract class Element
     }
 
     /**
-     * Import parameters and types from inner elements
+     * Import parameters and types from inner element
      *
      * @param self $element
      * @internal
