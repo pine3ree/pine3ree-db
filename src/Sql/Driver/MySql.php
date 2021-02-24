@@ -7,9 +7,11 @@
 
 namespace P3\Db\Sql\Driver;
 
-use PDO;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Select;
+use PDO;
+
+use const PHP_INT_MAX;
 
 /**
  * MySql sql-driver

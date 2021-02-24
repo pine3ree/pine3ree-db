@@ -10,6 +10,10 @@ namespace P3\Db\Sql;
 use InvalidArgumentException;
 use P3\Db\Sql\Element;
 
+use function current;
+use function is_numeric;
+use function is_string;
+use function key;
 use function trim;
 
 /**
