@@ -367,9 +367,9 @@ class Select extends Statement
     /**
      * @see self::addJoin()
      */
-    public function join(string $table, string $alias, $specification = null): self
+    public function join(string $table, string $alias, $specification = null, string $type = Sql::JOIN_AUTO): self
     {
-        return $this->addJoin(Sql::JOIN_AUTO, $table, $alias, $specification);
+        return $this->addJoin($type, $table, $alias, $specification);
     }
 
     /**
