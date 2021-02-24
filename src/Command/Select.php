@@ -164,7 +164,7 @@ class Select extends Command
      */
     public function straightJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->straightJoin($table, $alias, $specification);
+        $this->statement->straightJoin($table, $alias, $specification);
         return $this;
     }
 
