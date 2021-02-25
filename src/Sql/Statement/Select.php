@@ -666,7 +666,7 @@ class Select extends Statement
 
         if (isset($this->limit)) {
             $limit = $this->createNamedParam($this->limit, PDO::PARAM_INT);
-            $sql = "LIMIT {$limit}";
+            $sql = Sql::LIMIT . " {$limit}";
         }
         if (isset($this->offset) && $this->offset > 0) {
             if (!isset($sql)) {
