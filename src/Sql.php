@@ -243,6 +243,15 @@ class Sql
         self::INTERSECT => self::INTERSECT,
     ];
 
+    /**
+     * FUNCTIONS
+     */
+    public const ESCAPE = 'ESCAPE';
+    public const COALESCE = 'COALESCE';
+    public const MAX = 'MAX';
+    public const MIN = 'MIN';
+    public const AVG = 'AVG';
+
     public static function isValidJoin(string $join): bool
     {
         return isset(self::JOIN_TYPES[strtoupper($join)]);
