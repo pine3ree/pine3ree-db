@@ -315,13 +315,13 @@ class Insert extends Statement
         $columns = $this->getColumnsSQL($driver);
         $values  = $this->getValuesSQL($driver);
 
-        $column_list = empty($columns) ? "" : "{$columns} ";
-
         if (empty($values)) {
             throw new RuntimeException(
                 "Missing values definitions in INSERT SQL!"
             );
         }
+
+        $column_list = empty($columns) ? "" : "{$columns} ";
 
         if ($this->select instanceof Select) {
             return $this->sql = "{$insert} INTO {$table} {$column_list}{$values}";
