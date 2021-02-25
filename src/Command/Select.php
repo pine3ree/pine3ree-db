@@ -276,7 +276,7 @@ class Select extends Command implements ReaderInterface
         $fetch_argument = null,
         array $ctor_args = []
     ): array {
-        if (null === $stmt = $this->execute()) {
+        if (false === $stmt = $this->execute()) {
             return [];
         }
 
@@ -352,7 +352,7 @@ class Select extends Command implements ReaderInterface
         array $ctor_args = []
     ) {
         $this->statement->limit(1);
-        if (null === $stmt = $this->execute()) {
+        if (false === $stmt = $this->execute()) {
             return null;
         }
 
@@ -410,7 +410,7 @@ class Select extends Command implements ReaderInterface
     public function fetchScalar(string $identifier): ?string
     {
         $this->statement->limit(1);
-        if (null === $stmt = $this->execute()) {
+        if (false === $stmt = $this->execute()) {
             return null;
         }
 
@@ -429,7 +429,7 @@ class Select extends Command implements ReaderInterface
     public function fetchColumn(int $column_number = 0)
     {
         $this->statement->limit(1);
-        if (null === $stmt = $this->execute()) {
+        if (false === $stmt = $this->execute()) {
             return null;
         }
 
