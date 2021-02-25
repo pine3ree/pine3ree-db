@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Driver;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Select;
 use PDO;
@@ -34,16 +35,16 @@ class MySql extends Driver
 
         if (isset($limit)) {
             $limit = $select->createNamedParam($limit, PDO::PARAM_INT);
-            $sql = "LIMIT {$limit}";
+            $sql = Sql::LIMIT . " {$limit}";
         }
 
         $offset = (int)$offset;
         if ($offset > 0) {
             if (!isset($sql)) {
-                $sql = "LIMIT " . PHP_INT_MAX;
+                $sql = Sql::LIMIT . " " . PHP_INT_MAX;
             }
             $offset = $select->createNamedParam($offset, PDO::PARAM_INT);
-            $sql .= " OFFSET {$offset}";
+            $sql .= " " . Sql::OFFSET . " {$offset}";
         }
 
         return $sql ?? '';
