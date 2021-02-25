@@ -44,10 +44,12 @@ class Sql
     /**
      * DQL/DML keywords
      */
-    public const FROM   = 'FROM';
-    public const INTO   = 'INTO';
-    public const VALUES = 'VALUES';
-    public const SET    = 'SET';
+    public const ASTERISK = '*';
+    public const FROM     = 'FROM';
+    public const AS       = 'AS';
+    public const INTO     = 'INTO';
+    public const VALUES   = 'VALUES';
+    public const SET      = 'SET';
 
     /**
      * DDL statements
@@ -225,8 +227,6 @@ class Sql
     public const AND = 'AND';
     public const OR  = 'OR';
     public const XOR = 'XOR';
-
-    public const ASTERISK = '*';
 
     /**
      * Quantifiers
