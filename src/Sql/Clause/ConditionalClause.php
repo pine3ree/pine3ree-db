@@ -128,19 +128,19 @@ abstract class ConditionalClause extends Clause
         return $this;
     }
 
-    public function between($identifier, array $limits): self
+    public function between($identifier, $min_value, $max_value): self
     {
         $this->conditions->addPredicate(
-            new Predicate\Between($identifier, $limits)
+            new Predicate\Between($identifier, $min_value, $max_value)
         );
 
         return $this;
     }
 
-    public function notBetween($identifier, array $limits): self
+    public function notBetween($identifier, $min_value, $max_value): self
     {
         $this->conditions->addPredicate(
-            new Predicate\NotBetween($identifier, $limits)
+            new Predicate\NotBetween($identifier, $min_value, $max_value)
         );
 
         return $this;
