@@ -13,12 +13,18 @@ use P3\Db\Sql;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
+use function gettype;
 use function implode;
+use function is_bool;
 use function is_null;
+use function sprintf;
 
 /**
  * This class represents a sql comparison predicate for the following operators:
  * "=", "!=", "<>", "<", "<=", ">=", ">".
+ *
+ * It also intercepts equality/inequality with boolean/null values using IS/IS NOT
+ * operators with SQL values TERUE, FALSE, and NULL.
  */
 class Comparison extends Predicate
 {
@@ -66,21 +72,30 @@ class Comparison extends Predicate
             ? $this->identifier->getSQL()
             : $driver->quoteIdentifier($this->identifier);
 
-        $param = $this->value instanceof Literal
-            ? $this->value->getSQL()
-            : $this->createNamedParam($this->value);
-
         $operator = $this->operator;
+
+        // transform equality/inequality operators with null values into `IS NULL`,
+        //  `IS NOT NULL` expressions
         if (is_null($this->value)) {
             switch ($operator) {
                 case Sql::EQUAL:
-                    $operator = "IS";
+                    $operator = Sql::IS;
                     break;
                 case Sql::NOT_EQUAL:
                 case Sql::NOT_EQUAL_ANSI:
-                    $operator = "IS NOT";
+                    $operator = Sql::IS_NOT;
                     break;
+                default:
+                    throw new InvalidArgumentException(
+                        "Invalid operator `{$operator}` for null value, must be one of "
+                        . implode(', ', Sql::BOOLEAN_OPERATORS) . "!"
+                    );
             }
+            $param = Sql::NULL;
+        } else {
+            $param = $this->value instanceof Literal
+                ? $this->value->getSQL()
+                : $this->createNamedParam($this->value);
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";

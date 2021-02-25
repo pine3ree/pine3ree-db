@@ -8,6 +8,7 @@
 namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
@@ -85,7 +86,7 @@ class In extends Predicate
             ? $this->identifier->getSQL()
             : $driver->quoteIdentifier($this->identifier);
 
-        $operator = ($this->not ? "NOT " : "") . "IN";
+        $operator = $this->not ? Sql::NOT_IN : Sql::IN;
 
         if ($this->value_list instanceof Select) {
             $select_sql = $this->value_list->getSQL($driver);
@@ -106,13 +107,15 @@ class In extends Predicate
                 : $this->createNamedParam($value);
         }
 
-        $ivl_sql = empty($values) ? "(NULL)" : "(" . implode(", ", $values) . ")";
+        $ivl_sql = "(" . (empty($values) ? Sql::NULL : implode(", ", $values)) . ")";
 
         $null_sql = "";
         if ($has_null) {
-            $null_sql = $this->not
-                ? " AND {$identifier} IS NOT NULL"
-                : " OR {$identifier} IS NULL";
+            $null_sql = " " . (
+                $this->not
+                ? Sql::AND . " {$identifier} " . Sql::IS_NOT . " " . Sql::NULL
+                : Sql::OR . " {$identifier} " . Sql::IS . " " . Sql::NULL
+            );
         }
 
         return $this->sql = "{$identifier} {$operator} {$ivl_sql}{$null_sql}";
