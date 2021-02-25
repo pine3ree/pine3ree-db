@@ -15,8 +15,6 @@ use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
-use function array_map;
-use function array_values;
 use function count;
 use function current;
 use function get_class;
@@ -398,56 +396,56 @@ class Set extends Predicate
         );
     }
 
-    public function like($identifier, array $value): self
+    public function like($identifier, $value, string $escape = null): self
     {
         return $this->addPredicate(
-            new Predicate\Like($identifier, $value)
+            new Predicate\Like($identifier, $value, $escape)
         );
     }
 
-    public function notLike($identifier, array $value): self
+    public function notLike($identifier, $value, string $escape = null): self
     {
         return $this->addPredicate(
-            new Predicate\NotLike($identifier, $value)
+            new Predicate\NotLike($identifier, $value, $escape)
         );
     }
 
-    public function equal($identifier, array $value): self
+    public function equal($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::EQUAL, $value)
         );
     }
 
-    public function notEqual($identifier, array $value): self
+    public function notEqual($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::NOT_EQUAL, $value)
         );
     }
 
-    public function lessThan($identifier, array $value): self
+    public function lessThan($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::LESS_THAN, $value)
         );
     }
 
-    public function lessThanEqual($identifier, array $value): self
+    public function lessThanEqual($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::LESS_THAN_EQUAL, $value)
         );
     }
 
-    public function greaterThanEqual($identifier, array $value): self
+    public function greaterThanEqual($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::GREATER_THAN_EQUAL, $value)
         );
     }
 
-    public function greaterThan($identifier, array $value): self
+    public function greaterThan($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::GREATER_THAN, $value)
