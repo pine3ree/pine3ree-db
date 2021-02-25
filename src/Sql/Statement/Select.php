@@ -360,7 +360,7 @@ class Select extends Statement
             $from = trim("{$from} " . $driver->quoteAlias($this->alias));
         }
 
-        $this->sqls['from'] = $sql = "FROM {$from}";
+        $this->sqls['from'] = $sql = Sql::FROM . " {$from}";
         return $sql;
     }
 
@@ -544,7 +544,7 @@ class Select extends Statement
                 : $driver->quoteIdentifier($identifier);
         }
 
-        return "GROUP BY " . implode(", ", $groupBy);
+        return Sql::GROUP_BY . " " . implode(", ", $groupBy);
     }
 
     /**
@@ -628,7 +628,7 @@ class Select extends Statement
             $sql[] = $driver->quoteIdentifier($identifier) . " {$direction}";
         }
 
-        $this->sqls['order'] = $sql = "ORDER BY " . implode(", ", $sql);
+        $this->sqls['order'] = $sql = Sql::ORDER_BY . " " . implode(", ", $sql);
 
         return $sql;
     }
@@ -670,10 +670,10 @@ class Select extends Statement
         }
         if (isset($this->offset) && $this->offset > 0) {
             if (!isset($sql)) {
-                $sql = "LIMIT " . PHP_INT_MAX;
+                $sql = Sql::LIMIT . " " . PHP_INT_MAX;
             }
             $offset = $this->createNamedParam($this->offset, PDO::PARAM_INT);
-            $sql .= " OFFSET {$offset}";
+            $sql .= Sql::OFFSET . " {$offset}";
         }
 
         return $this->sqls['limit'] = $sql ?? '';
@@ -790,7 +790,7 @@ class Select extends Statement
 
     private function getBaseSQL(Driver $driver): string
     {
-        $select = "SELECT";
+        $select = Sql::SELECT;
         if ($this->quantifier) {
             $select .= " {$this->quantifier}";
         }

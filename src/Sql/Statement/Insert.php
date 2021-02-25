@@ -310,7 +310,7 @@ class Insert extends Statement
 
         $driver = $driver ?? Driver::ansi();
 
-        $insert  = $this->ignore ? "INSERT IGNORE" : "INSERT";
+        $insert  = $this->ignore ? Sql::INSERT_IGNORE : Sql::INSERT;
         $table   = $driver->quoteIdentifier($this->table);
         $columns = $this->getColumnsSQL($driver);
         $values  = $this->getValuesSQL($driver);
@@ -324,10 +324,10 @@ class Insert extends Statement
         $column_list = empty($columns) ? "" : "{$columns} ";
 
         if ($this->select instanceof Select) {
-            return $this->sql = "{$insert} INTO {$table} {$column_list}{$values}";
+            return $this->sql = "{$insert} " . Sql::INTO . " {$table} {$column_list}{$values}";
         }
 
-        return $this->sql = "{$insert} INTO {$table} {$column_list}VALUES {$values}";
+        return $this->sql = "{$insert} " . Sql::INTO . " {$table} {$column_list}" . Sql::VALUES . " {$values}";
     }
 
     private function getColumnsSQL(Driver $driver): string
