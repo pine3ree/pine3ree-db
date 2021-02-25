@@ -37,7 +37,7 @@ class Like extends Predicate
 
     /**
      * @param string|Literal $identifier
-     * @param string|Literal $values
+     * @param string|Literal $value
      * @param string|null $escape An optional custom escape character
      */
     public function __construct($identifier, $value, string $escape = null)
