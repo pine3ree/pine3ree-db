@@ -149,15 +149,51 @@ abstract class ConditionalClause extends Clause
         return $this;
     }
 
+    public function is($identifier, $value): self
+    {
+        $this->conditions->is($identifier, $value);
+        return $this;
+    }
+
+    public function isNot($identifier, $value): self
+    {
+        $this->conditions->isNot($identifier, $value);
+        return $this;
+    }
+
     public function isNull($identifier): self
     {
          $this->conditions->isNull($identifier);
-        return $this;
+         return $this;
     }
 
     public function isNotNull($identifier): self
     {
         $this->conditions->isNotNull($identifier);
+        return $this;
+    }
+
+    public function isTrue($identifier): self
+    {
+        $this->conditions->isTrue($identifier);
+        return $this;
+    }
+
+    public function isFalse($identifier): self
+    {
+        $this->conditions->isFalse($identifier);
+        return $this;
+    }
+
+    public function isUnknown($identifier): self
+    {
+        $this->conditions->isUnknown($identifier);
+        return $this;
+    }
+
+    public function isNotUnknown($identifier): self
+    {
+        $this->conditions->isNotUnknown($identifier);
         return $this;
     }
 
@@ -211,15 +247,11 @@ abstract class ConditionalClause extends Clause
 
     public function regExp($identifier, array $regexp, bool $case_sensitive = false): self
     {
-        return $this->conditions->addPredicate(
-            new Predicate\RegExp($identifier, $regexp, $case_sensitive)
-        );
+        return $this->conditions->regExp($identifier, $regexp, $case_sensitive);
     }
 
     public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): self
     {
-        return $this->conditions->addPredicate(
-            new Predicate\NotRegExp($identifier, $regexp, $case_sensitive)
-        );
+        return $this->conditions->notRegExp($identifier, $regexp, $case_sensitive);
     }
 }

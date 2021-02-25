@@ -481,7 +481,7 @@ class Select extends Statement
     }
 
     /**
-     * Add WHERE conditions
+     * Set WHERE conditions
      *
      * @param string|array|Predicate|Where $where
      * @return $this
@@ -548,7 +548,7 @@ class Select extends Statement
     }
 
     /**
-     * Add WHERE conditions
+     * Set HAVING conditions
      *
      * @param string|array|Predicate|Having $having
      * @return $this

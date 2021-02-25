@@ -162,7 +162,7 @@ class Update extends Statement
     }
 
     /**
-     * Add WHERE conditions
+     * Set WHERE conditions
      *
      * @param string|array|Predicate|Where $where
      * @return $this
