@@ -15,15 +15,15 @@ use PDOStatement;
 trait Reader
 {
     /**
-     * Prepare and execute the PDO-statement and return it or return null on failure
+     * Prepare, execute and return the PDO-statement or return false on failure
      *
-     * @return PDOStatement|null
+     * @return PDOStatement|false
      */
-    public function execute(): ?PDOStatement
+    public function execute()
     {
         $stmt = $this->prepare(true);
         if ($stmt === false || false === $stmt->execute()) {
-            return null;
+            return false;
         }
 
         return $stmt;

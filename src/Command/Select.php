@@ -9,7 +9,8 @@ namespace P3\Db\Command;
 
 use InvalidArgumentException;
 use P3\Db\Command;
-use P3\Db\Command\Traits\Reader;
+use P3\Db\Command\Reader as ReaderInterface;
+use P3\Db\Command\Traits\Reader as ReaderTrait;
 use P3\Db\Db;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select as SqlSelect;
@@ -24,9 +25,9 @@ use function is_array;
  *
  * @property-read SqlSelect $statement
  */
-class Select extends Command
+class Select extends Command implements ReaderInterface
 {
-    use Reader;
+    use ReaderTrait;
 
     /** @var string|null */
     protected $indexBy;

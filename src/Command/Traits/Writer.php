@@ -13,7 +13,7 @@ namespace P3\Db\Command\Traits;
 trait Writer
 {
     /**
-     * Execute the command returning either the number of affected rows or false on error
+     * Execute the writer-command returning either the number of affected rows or false on error
      *
      * @return int|false
      */

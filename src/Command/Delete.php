@@ -9,7 +9,8 @@ namespace P3\Db\Command;
 
 use P3\Db\Db;
 use P3\Db\Command;
-use P3\Db\Command\Traits\Writer;
+use P3\Db\Command\Traits\Writer as WriterTrait;
+use P3\Db\Command\Writer as WriterInterface;
 use P3\Db\Sql\Statement\Delete as SqlDelete;
 
 /**
@@ -17,9 +18,9 @@ use P3\Db\Sql\Statement\Delete as SqlDelete;
  *
  * @property-read SqlDelete $statement
  */
-class Delete extends Command
+class Delete extends Command implements WriterInterface
 {
-    use Writer;
+    use WriterTrait;
 
     public function __construct(Db $db, string $table = null)
     {
@@ -44,15 +45,5 @@ class Delete extends Command
     {
         $this->statement->where($where);
         return $this;
-    }
-
-    public function execute()
-    {
-        $stmt = $this->prepare(true);
-        if ($stmt === false || false === $stmt->execute()) {
-            return false;
-        }
-
-        return $stmt->rowCount();
     }
 }

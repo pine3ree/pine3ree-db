@@ -9,7 +9,8 @@ namespace P3\Db\Command;
 
 use P3\Db\Db;
 use P3\Db\Command;
-use P3\Db\Command\Traits\Writer;
+use P3\Db\Command\Traits\Writer as WriterTrait;
+use P3\Db\Command\Writer as WriterInterface;
 use P3\Db\Sql\Statement\Insert as SqlInsert;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 
@@ -18,9 +19,9 @@ use P3\Db\Sql\Statement\Select as SqlSelect;
  *
  * @property-read SqlInsert $statement
  */
-class Insert extends Command
+class Insert extends Command implements WriterInterface
 {
-    use Writer;
+    use WriterTrait;
 
     public function __construct(Db $db, string $table = null)
     {
