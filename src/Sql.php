@@ -30,6 +30,7 @@ class Sql
      */
     public const SELECT = 'SELECT';
     public const INSERT = 'INSERT';
+    public const INSERT_IGNORE = 'INSERT IGNORE';
     public const UPDATE = 'UPDATE';
     public const DELETE = 'DELETE';
 
