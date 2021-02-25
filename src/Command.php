@@ -64,11 +64,11 @@ abstract class Command
         return $this->statement->getSQL($this->db->getDriver());
     }
 
-    /**
-     * @return PDOStatement|null|false|int Returns a PDOStatement or null for
-     *      reader-commands, false or int for writer-commands
-     */
-    abstract public function execute();
+//    /**
+//     * @return PDOStatement|int|false Returns a PDOStatement or false for
+//     *      reader-commands, int or false for writer-commands
+//     */
+//    abstract public function execute();
 
     public function __get(string $name)
     {
