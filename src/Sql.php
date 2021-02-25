@@ -113,6 +113,15 @@ class Sql
         self::DESC => self::DESC,
     ];
 
+
+    /**
+     * SQL values
+     */
+    public const NULL    = 'NULL';
+    public const TRUE    = 'TRUE';
+    public const FALSE   = 'FALSE';
+    public const UNKNOWN = 'UNKNOWN';
+
     /**
      * Comparison operators...
      */
@@ -123,9 +132,7 @@ class Sql
     public const LESS_THAN_EQUAL    = '<=';
     public const GREATER_THAN_EQUAL = '>=';
     public const GREATER_THAN       = '>';
-    /**
-     * ...and their short aliases
-     */
+    //...and their short-name aliases
     public const EQ  = self::EQUAL;
     public const NEQ = self::NOT_EQUAL;
     public const NE  = self::NOT_EQUAL_ANSI;
@@ -134,15 +141,28 @@ class Sql
     public const GTE = self::GREATER_THAN_EQUAL;
     public const GT  = self::GREATER_THAN;
 
-    // valid comparison operators excluding boolean
+    // valid comparison operators excluding null/boolean
     public const COMPARISON_OPERATORS = [
-        self::EQ  => self::EQ,
-        self::NEQ => self::NEQ,
-        self::NE  => self::NE,
-        self::LT  => self::LT,
-        self::LTE => self::LTE,
-        self::GTE => self::GTE,
-        self::GT  => self::GT,
+        self::EQ     => self::EQUAL,
+        self::NEQ    => self::NOT_EQUAL,
+        self::NE     => self::NOT_EQUAL_ANSI,
+        self::LT     => self::LESS_THAN,
+        self::LTE    => self::LESS_THAN_EQUAL,
+        self::GTE    => self::GREATER_THAN_EQUAL,
+        self::GT     => self::GREATER_THAN,
+        self::GTE    => self::GREATER_THAN_EQUAL,
+    ];
+
+    /**
+     * null/boolean comparison operators
+     */
+    public const IS     = 'IS';
+    public const IS_NOT = 'IS NOT';
+
+    // valid null/bolean operators
+    public const BOOLEAN_OPERATORS = [
+        self::IS     => self::IS,
+        self::IS_NOT => self::IS_NOT,
     ];
 
     /**
@@ -167,13 +187,15 @@ class Sql
 
     // valid operators excluding boolean operators
     public const OPERATORS = [
-        self::EQ            => self::EQ,
-        self::NEQ           => self::NEQ,
-        self::NE            => self::NE,
-        self::LT            => self::LT,
-        self::LTE           => self::LTE,
-        self::GTE           => self::GTE,
-        self::GT            => self::GT,
+        self::EQ            => self::EQUAL,
+        self::NEQ           => self::NOT_EQUAL,
+        self::NE            => self::NOT_EQUAL_ANSI,
+        self::LT            => self::LESS_THAN,
+        self::LTE           => self::LESS_THAN_EQUAL,
+        self::GTE           => self::GREATER_THAN_EQUAL,
+        self::GT            => self::GREATER_THAN,
+        self::IS            => self::IS,
+        self::IS_NOT        => self::IS_NOT,
         self::BETWEEN       => self::BETWEEN,
         self::NOT_BETWEEN   => self::NOT_BETWEEN,
         self::EXISTS        => self::EXISTS,
@@ -189,10 +211,11 @@ class Sql
     ];
 
     /**
-     * Boolean operators
+     * Logical operators
      */
     public const AND = 'AND';
     public const OR  = 'OR';
+    public const XOR = 'XOR';
 
     public const ASTERISK = '*';
 
