@@ -26,7 +26,7 @@ use function trim;
 class Sql
 {
     /**
-     * DML statements
+     * DQL/DML statements
      */
     public const SELECT = 'SELECT';
     public const INSERT = 'INSERT';
@@ -39,6 +39,12 @@ class Sql
         self::UPDATE => self::UPDATE,
         self::DELETE => self::DELETE,
     ];
+
+    /**
+     * DQL/DML keywords
+     */
+    public const FROM = 'FROM';
+    public const INTO = 'INTO';
 
     /**
      * DDL statements
