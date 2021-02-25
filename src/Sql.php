@@ -44,8 +44,9 @@ class Sql
     /**
      * DQL/DML keywords
      */
-    public const FROM = 'FROM';
-    public const INTO = 'INTO';
+    public const FROM   = 'FROM';
+    public const INTO   = 'INTO';
+    public const VALUES = 'VALUES';
 
     /**
      * DDL statements
