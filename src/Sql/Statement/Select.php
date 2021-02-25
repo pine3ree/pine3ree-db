@@ -706,7 +706,7 @@ class Select extends Statement
                 return '';
             }
             $this->importParams($this->union);
-            return $this->union_all ? "UNION ALL {$union_sql}" : "UNION {$union_sql}";
+            return ($this->union_all ? Sql::UNION_ALL : Sql::UNION) . " {$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
@@ -715,7 +715,7 @@ class Select extends Statement
                 return '';
             }
             $this->importParams($this->intersect);
-            return "INTERSECT {$intersect_sql}";
+            return Sql::INTERSECT . " {$intersect_sql}";
         }
 
         return '';
