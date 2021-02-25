@@ -14,12 +14,5 @@ use P3\Db\Sql\Predicate\Between;
  */
 class NotBetween extends Between
 {
-    /**
-     * @see Between::__construct()
-     */
-    public function __construct($identifier, $min_value, $max_value)
-    {
-        parent::__construct($identifier, $min_value, $max_value);
-        $this->not = true;
-    }
+    protected static $not = true;
 }

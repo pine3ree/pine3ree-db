@@ -15,12 +15,5 @@ use P3\Db\Sql\Statement\Select;
  */
 class NotExists extends Exists
 {
-    /**
-     * @see Exists::__construct()
-     */
-    public function __construct(Select $select)
-    {
-        parent::__construct($select);
-        $this->not = true;
-    }
+    protected static $not = true;
 }

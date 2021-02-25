@@ -14,12 +14,5 @@ use P3\Db\Sql\Predicate\In;
  */
 class NotIn extends In
 {
-    /**
-     * @see In::__construct()
-     */
-    public function __construct($identifier, $value_list)
-    {
-        parent::__construct($identifier, $value_list);
-        $this->not = true;
-    }
+    protected static $not = true;
 }

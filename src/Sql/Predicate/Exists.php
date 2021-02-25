@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
@@ -20,7 +21,7 @@ class Exists extends Predicate
     protected $select;
 
     /** @var bool */
-    protected $not = false;
+    protected static $not = false;
 
     /**
      * @param Select $select
@@ -38,7 +39,7 @@ class Exists extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        $operator = ($this->not ? "NOT " : "") . "EXISTS";
+        $operator = static::$not ? Sql::NOT_EXISTS : Sql::EXISTS;
 
         $select_sql = $this->select->getSQL($driver);
         $this->importParams($this->select);

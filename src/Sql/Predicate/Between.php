@@ -8,6 +8,7 @@
 namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
@@ -19,10 +20,16 @@ use function count;
  */
 class Between extends Predicate
 {
+    /** @var string|Literal */
     protected $identifier;
+
+    /** @var mixed */
     protected $min_value;
+
+    /** @var mixed */
     protected $max_value;
-    protected $not = false;
+
+    protected static $not = false;
 
     /**
      * @param string|Literal $identifier
@@ -66,7 +73,7 @@ class Between extends Predicate
             ? $this->identifier->getSQL()
             : $driver->quoteIdentifier($this->identifier);
 
-        $operator = ($this->not ? "NOT " : "") . "BETWEEN";
+        $operator = static::$not ? Sql::NOT_BETWEEN : Sql::BETWEEN;
 
         $min = $this->min_value instanceof Literal
             ? $this->min_value->getSQL()

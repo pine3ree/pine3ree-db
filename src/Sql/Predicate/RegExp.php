@@ -7,16 +7,9 @@
 
 namespace P3\Db\Sql\Predicate;
 
-use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
-
-use function get_class;
-use function gettype;
-use function is_object;
-use function is_string;
-use function sprintf;
 
 /**
  * This class represents a sql RegExp ~ OR ~* condition
@@ -26,7 +19,7 @@ class RegExp extends Predicate
     protected $identifier;
     protected $regexp;
     protected $case_sensitive = false;
-    protected $not = false;
+    protected static $not = false;
 
     /**
      * @param string|Literal $identifier
@@ -55,7 +48,7 @@ class RegExp extends Predicate
             : $driver->quoteIdentifier($this->identifier);
 
         $operator = "~";
-        if ($this->not) {
+        if (static::$not) {
             $operator = "!{$operator}";
         }
         if ($this->case_sensitive) {

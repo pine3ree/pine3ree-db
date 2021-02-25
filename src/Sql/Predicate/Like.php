@@ -8,6 +8,7 @@
 namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
@@ -33,7 +34,7 @@ class Like extends Predicate
     protected $escape;
 
     /** @var bool */
-    protected $not = false;
+    protected static $not = false;
 
     /**
      * @param string|Literal $identifier
@@ -85,13 +86,13 @@ class Like extends Predicate
             ? $this->identifier->getSQL()
             : $driver->quoteIdentifier($this->identifier);
 
-        $operator = ($this->not ? "NOT " : "") . "LIKE";
+        $operator = static::$not ? Sql::NOT_LIKE : Sql::LIKE;
 
         $param = $this->value instanceof Literal
             ? $this->value->getSQL()
             : $this->createNamedParam($this->value);
 
-        $escape = isset($escape) ? " ESCAPE {$escape}" : "";
+        $escape = isset($escape) ? " " . Sql::ESCAPE . $escape : "";
 
         return $this->sql = "{$identifier} {$operator} {$param}{$escape}";
     }

@@ -15,12 +15,5 @@ use P3\Db\Sql\Predicate\Is;
  */
 class IsNot extends Is
 {
-    /**
-     * @see Is::__construct()
-     */
-    public function __construct($identifier, $value)
-    {
-        parent::__construct($identifier, $value);
-        $this->not = true;
-    }
+    protected static $not = true;
 }

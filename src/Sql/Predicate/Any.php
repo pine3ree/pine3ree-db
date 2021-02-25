@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Predicate\CompareTo;
 
 /**
@@ -15,5 +16,5 @@ use P3\Db\Sql\Predicate\CompareTo;
 class Any extends CompareTo
 {
     /** @var string */
-    protected static $quantifier = 'ANY';
+    protected static $quantifier = Sql::ANY;
 }

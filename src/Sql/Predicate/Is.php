@@ -33,7 +33,7 @@ class Is extends Predicate
     protected $value;
 
     /** @var bool */
-    protected $not = false;
+    protected static $not = false;
 
     /**
      * @param string|Literal $identifier
@@ -108,7 +108,7 @@ class Is extends Predicate
             $param = Sql::UNKNOWN;
         }
 
-        $operator = $this->not ? Sql::IS_NOT : Sql::IS;
+        $operator = static::$not ? Sql::IS_NOT : Sql::IS;
 
         return $this->sql = "{$identifier} {$operator} {$param}";
     }

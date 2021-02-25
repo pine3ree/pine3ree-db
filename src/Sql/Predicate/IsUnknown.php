@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Predicate\Is;
 
 /**

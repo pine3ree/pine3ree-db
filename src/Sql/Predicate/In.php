@@ -35,7 +35,7 @@ class In extends Predicate
     protected $has_null = false;
 
     /** @var bool */
-    protected $not = false;
+    protected static $not = false;
 
     /**
      * @param string|Literal $identifier
@@ -86,7 +86,7 @@ class In extends Predicate
             ? $this->identifier->getSQL()
             : $driver->quoteIdentifier($this->identifier);
 
-        $operator = $this->not ? Sql::NOT_IN : Sql::IN;
+        $operator = static::$not ? Sql::NOT_IN : Sql::IN;
 
         if ($this->value_list instanceof Select) {
             $select_sql = $this->value_list->getSQL($driver);
@@ -112,7 +112,7 @@ class In extends Predicate
         $null_sql = "";
         if ($has_null) {
             $null_sql = " " . (
-                $this->not
+                static::$not
                 ? Sql::AND . " {$identifier} " . Sql::IS_NOT . " " . Sql::NULL
                 : Sql::OR . " {$identifier} " . Sql::IS . " " . Sql::NULL
             );

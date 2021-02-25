@@ -14,12 +14,5 @@ use P3\Db\Sql\Predicate\RegExp;
  */
 class NotRegExp extends RegExp
 {
-    /**
-     * @see RegExp::__construct()
-     */
-    public function __construct($identifier, string $regexp, bool $case_sensitive = false)
-    {
-        parent::__construct($identifier, $regexp, $case_sensitive);
-        $this->not = true;
-    }
+    protected static $not = true;
 }

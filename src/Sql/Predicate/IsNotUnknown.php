@@ -14,12 +14,5 @@ use P3\Db\Sql\Predicate\IsUnknown;
  */
 class IsNotUnknown extends IsUnknown
 {
-    /**
-     * @see IsNull::__construct()
-     */
-    public function __construct($identifier)
-    {
-        parent::__construct($identifier);
-        $this->not = true;
-    }
+    protected static $not = true;
 }
