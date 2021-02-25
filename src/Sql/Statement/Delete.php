@@ -79,7 +79,7 @@ class Delete extends Statement
             );
         }
 
-        $this->sql = rtrim("DELETE FROM {$table} {$where_sql}");
+        $this->sql = Sql::DELETE . " " . Sql::FROM . rtrim(" {$table} {$where_sql}");
         return $this->sql;
     }
 
