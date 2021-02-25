@@ -10,15 +10,15 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Is;
 
 /**
- * This class represents a sql IS NULL predicate
+ * This class represents a sql IS UNKNOWN predicate
  */
-class IsNull extends Is
+class IsUnknown extends Is
 {
     /**
      * @param string|Literal $identifier
      */
     public function __construct($identifier)
     {
-        parent::__construct($identifier, null);
+        parent::__construct($identifier, Sql::UNKNOWN);
     }
 }

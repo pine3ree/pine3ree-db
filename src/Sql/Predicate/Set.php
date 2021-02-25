@@ -54,7 +54,15 @@ class Set extends Predicate
     ];
 
     private const OPERATOR_ALIAS = [
+        'eq'          => Sql::EQ,
         'notEqual'    => Sql::NOT_EQUAL,
+        'neq'         => Sql::NEQ,
+        'ne'          => Sql::NE,
+        'lt'          => Sql::LT,
+        'lte'         => Sql::LTE,
+        'gte'         => Sql::GTE,
+        'gt'          => Sql::GT,
+        'isNot'       => Sql::IS_NOT,
         'notBetween'  => Sql::NOT_BETWEEN,
         'notIn'       => Sql::NOT_IN,
         'notLike'     => Sql::NOT_LIKE,
@@ -207,6 +215,13 @@ class Set extends Predicate
 
         if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
             return new Predicate\Comparison($identifier, $operator, $value);
+        }
+
+        if (isset(Sql::BOOLEAN_OPERATORS[$operator])) {
+            if ($operator === SQL::IS) {
+                return new Predicate\Is($identifier, $value);
+            }
+            return new Predicate\IsNot($identifier, $value);
         }
 
         switch ($operator) {
@@ -382,6 +397,20 @@ class Set extends Predicate
         );
     }
 
+    public function is($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Is($identifier, $value)
+        );
+    }
+
+    public function isNot($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\IsNot($identifier, $value)
+        );
+    }
+
     public function isNull($identifier): self
     {
         return $this->addPredicate(
@@ -393,6 +422,34 @@ class Set extends Predicate
     {
         return $this->addPredicate(
             new Predicate\IsNotNull($identifier)
+        );
+    }
+
+    public function isTrue($identifier): self
+    {
+        return $this->addPredicate(
+            new Predicate\IsTrue($identifier)
+        );
+    }
+
+    public function isFalse($identifier): self
+    {
+        return $this->addPredicate(
+            new Predicate\IsFalse($identifier)
+        );
+    }
+
+    public function isUnknown($identifier): self
+    {
+        return $this->addPredicate(
+            new Predicate\IsUnknown($identifier)
+        );
+    }
+
+    public function isNotUnknown($identifier): self
+    {
+        return $this->addPredicate(
+            new Predicate\IsNotUnknown($identifier)
         );
     }
 
