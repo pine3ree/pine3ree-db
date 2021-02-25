@@ -47,6 +47,7 @@ class Sql
     public const FROM   = 'FROM';
     public const INTO   = 'INTO';
     public const VALUES = 'VALUES';
+    public const SET    = 'SET';
 
     /**
      * DDL statements
