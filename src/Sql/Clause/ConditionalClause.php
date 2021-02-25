@@ -85,190 +85,127 @@ abstract class ConditionalClause extends Clause
 
     public function literal(string $literal): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Literal($literal)
-        );
-
+        $this->conditions->literal($literal);
         return $this;
     }
 
     public function expression(string $expression, array $params = []): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Expression($expression, $params)
-        );
-
+        $this->conditions->expression($expression, $params);
         return $this;
     }
 
     public function all($identifier, string $operator, Select $select): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\All($identifier, $operator, $select)
-        );
-
+        $this->conditions->all($identifier, $operator, $select);
         return $this;
     }
 
     public function any($identifier, string $operator, Select $select): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Any($identifier, $operator, $select)
-        );
-
+        $this->conditions->any($identifier, $operator, $select);
         return $this;
     }
 
     public function some($identifier, string $operator, Select $select): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Some($identifier, $operator, $select)
-        );
-
+        $this->conditions->some($identifier, $operator, $select);
         return $this;
     }
 
     public function between($identifier, $min_value, $max_value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Between($identifier, $min_value, $max_value)
-        );
-
+        $this->conditions->between($identifier, $min_value, $max_value);
         return $this;
     }
 
     public function notBetween($identifier, $min_value, $max_value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\NotBetween($identifier, $min_value, $max_value)
-        );
-
+        $this->conditions->notBetween($identifier, $min_value, $max_value);
         return $this;
     }
 
     public function exists(Select $select): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Exists($select)
-        );
-
+        $this->conditions->exists($select);
         return $this;
     }
 
     public function notExists(Select $select): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\NotExists($select)
-        );
-
+        $this->conditions->notExists($select);
         return $this;
     }
 
     public function in($identifier, array $value_list): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\In($identifier, $value_list)
-        );
-
+        $this->conditions->in($identifier, $value_list);
         return $this;
     }
 
     public function notIn($identifier, array $value_list): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\NotIn($identifier, $value_list)
-        );
-
+        $this->conditions->notIn($identifier, $value_list);
         return $this;
     }
 
     public function isNull($identifier): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\IsNull($identifier)
-        );
-
+         $this->conditions->isNull($identifier);
         return $this;
     }
 
     public function isNotNull($identifier): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\IsNotNull($identifier)
-        );
-
+        $this->conditions->isNotNull($identifier);
         return $this;
     }
 
-    public function like($identifier, array $value): self
+    public function like($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Like($identifier, $value)
-        );
-
+        $this->conditions->like($identifier, $value);
         return $this;
     }
 
-    public function notLike($identifier, array $value): self
+    public function notLike($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\NotLike($identifier, $value)
-        );
-
+        $this->conditions->notLike($identifier, $value);
         return $this;
     }
 
-    public function equal($identifier, array $value): self
+    public function equal($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Comparison($identifier, Sql::EQUAL, $value)
-        );
-
+        $this->conditions->equal($identifier, Sql::EQUAL, $value);
         return $this;
     }
 
-    public function notEqual($identifier, array $value): self
+    public function notEqual($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Comparison($identifier, Sql::NOT_EQUAL, $value)
-        );
-
+        $this->conditions->notEqual($identifier, $value);
         return $this;
     }
 
-    public function lessThan($identifier, array $value): self
+    public function lessThan($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Comparison($identifier, Sql::LESS_THAN, $value)
-        );
-
+        $this->conditions->lessThan($identifier, $value);
         return $this;
     }
 
-    public function lessThanEqual($identifier, array $value): self
+    public function lessThanEqual($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Comparison($identifier, Sql::LESS_THAN_EQUAL, $value)
-        );
-
+        $this->conditions->lessThanEqual($identifier, $value);
         return $this;
     }
 
-    public function greaterThanEqual($identifier, array $value): self
+    public function greaterThanEqual($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Comparison($identifier, Sql::GREATER_THAN_EQUAL, $value)
-        );
-
+        $this->conditions->greaterThanEqual($identifier, $value);
         return $this;
     }
 
-    public function greaterThan($identifier, array $value): self
+    public function greaterThan($identifier, $value): self
     {
-        $this->conditions->addPredicate(
-            new Predicate\Comparison($identifier, Sql::GREATER_THAN, $value)
-        );
-
+        $this->conditions->greaterThan($identifier, $value);
         return $this;
     }
 
