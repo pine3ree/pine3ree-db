@@ -62,6 +62,7 @@ class Set extends Predicate
         'lte'         => Sql::LTE,
         'gte'         => Sql::GTE,
         'gt'          => Sql::GT,
+        'not'         => Sql::IS_NOT,
         'isNot'       => Sql::IS_NOT,
         'notBetween'  => Sql::NOT_BETWEEN,
         'notIn'       => Sql::NOT_IN,
