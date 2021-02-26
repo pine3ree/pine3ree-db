@@ -11,12 +11,16 @@ use P3\Db\Db;
 use P3\Db\Command;
 use P3\Db\Command\Traits\Writer as WriterTrait;
 use P3\Db\Command\Writer as WriterInterface;
+use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Statement\Delete as SqlDelete;
 
 /**
  * Class Delete
  *
  * @property-read SqlDelete $statement
+ * @property-read string|null $table The db table to delete from if already set
+ * @property-read string|null $from Alias of $table
+ * @property-read Where $where The Where clause, built on-first-access if null
  */
 class Delete extends Command implements WriterInterface
 {

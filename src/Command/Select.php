@@ -12,6 +12,9 @@ use P3\Db\Command;
 use P3\Db\Command\Reader as ReaderInterface;
 use P3\Db\Command\Traits\Reader as ReaderTrait;
 use P3\Db\Db;
+use P3\Db\Sql\Clause\Join;
+use P3\Db\Sql\Clause\Having;
+use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 use PDO;
@@ -24,6 +27,21 @@ use function is_array;
  * Class Select
  *
  * @property-read SqlSelect $statement
+ * @property-read string|null $table The db table to select from if already set
+ * @property-read string|Null $alias The table alias if any
+ * @property-read string|null $quantifier The SELECT quantifier if any
+ * @property-read string[] $columns The columns to be returned
+ * @property-read string|self|null $from The db table to select from or a sub-select if already set
+ * @property-read Where $where The Where clause, built on-first-access if null
+ * @property-read Join[] $joins An array of Join clauses if any
+ * @property-read array[] $groupBy An array of GROUP BY identifiers
+ * @property-read Having $having The Having clause, built on-first-access if null
+ * @property-read array<string, string>[] $orderBy An array of ORDER BY identifier to sort-direction pairs
+ * @property-read int|null $limit The Having clause if any
+ * @property-read int|null $offset The Having clause if any
+ * @property-read self|null $union The sql-select statement for the UNION clause, if any
+ * @property-read bool|null $union_all Is it a UNION ALL clause?
+ * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
  */
 class Select extends Command implements ReaderInterface
 {

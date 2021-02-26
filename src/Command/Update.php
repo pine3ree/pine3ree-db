@@ -11,12 +11,17 @@ use P3\Db\Db;
 use P3\Db\Command;
 use P3\Db\Command\Traits\Writer as WriterTrait;
 use P3\Db\Command\Writer as WriterInterface;
+use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Statement\Update as SqlUpdate;
 
 /**
  * Class Update
  *
  * @property-read SqlUpdate $statement
+ * @property-read string|null $table The db table to select from if already set
+ * @property-read string|null $quantifier The SELECT quantifier if any
+ * @property-read array $set The SET column/value pairs to be updated
+ * @property-read Where|null $where The Where clause, built on-first-access if null
  */
 class Update extends Command implements WriterInterface
 {
