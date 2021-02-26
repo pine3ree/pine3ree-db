@@ -15,7 +15,7 @@ use P3\Db\Sql\Predicate;
 /**
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
  *
- * @method $this methodName(type $paramName) Proxy to Predicate\Set::
+ * @property-read Predicate\Set $conditions Return the predicate-set of this clause
  */
 abstract class ConditionalClause extends Clause
 {
@@ -26,11 +26,11 @@ abstract class ConditionalClause extends Clause
 
     /**
      * @param null|Predicate[]|self|Predicate|Predicate\Set|array|string $predicates
-     * @param string $combined_by One of `AND`, `OR`, `&&`, `||`
+     * @param string $defaultLogicalOperator One of `AND`, `OR`,  or `&&`, `||` aliases
      */
-    public function __construct($predicates = null, string $combined_by = null)
+    public function __construct($predicates = null, string $defaultLogicalOperator = null)
     {
-        $this->conditions = new Predicate\Set($predicates, $combined_by);
+        $this->conditions = new Predicate\Set($predicates, $defaultLogicalOperator);
     }
 
     /**
@@ -77,181 +77,322 @@ abstract class ConditionalClause extends Clause
      * @throws InvalidArgumentException
      * @return $this Provides fluent interface
      */
-    public function addPredicate($predicate)
+    public function addPredicate($predicate): self
     {
         $this->conditions->addPredicate($predicate);
         return $this;
     }
 
-    public function literal(string $literal): self
+    /**
+     * @see Predicate\Set::literal()
+     */
+    public function literal(string $literal): Predicate\Set
     {
-        $this->conditions->literal($literal);
-        return $this;
+        return $this->conditions->literal($literal);
     }
 
-    public function expression(string $expression, array $params = []): self
+    /**
+     * @see Predicate\Set::expression()
+     */
+    public function expression(string $expression, array $params = []): Predicate\Set
     {
-        $this->conditions->expression($expression, $params);
-        return $this;
+        return $this->conditions->expression($expression, $params);
     }
 
-    public function all($identifier, string $operator, Select $select): self
+    /**
+     * @see Predicate\Set::all()
+     */
+    public function all($identifier, string $operator, Select $select): Predicate\Set
     {
-        $this->conditions->all($identifier, $operator, $select);
-        return $this;
+        return $this->conditions->all($identifier, $operator, $select);
     }
 
-    public function any($identifier, string $operator, Select $select): self
+    /**
+     * @see Predicate\Set::any()
+     */
+    public function any($identifier, string $operator, Select $select): Predicate\Set
     {
-        $this->conditions->any($identifier, $operator, $select);
-        return $this;
+        return $this->conditions->any($identifier, $operator, $select);
     }
 
-    public function some($identifier, string $operator, Select $select): self
+    /**
+     * @see Predicate\Set::some()
+     */
+    public function some($identifier, string $operator, Select $select): Predicate\Set
     {
-        $this->conditions->some($identifier, $operator, $select);
-        return $this;
+        return $this->conditions->some($identifier, $operator, $select);
     }
 
-    public function between($identifier, $min_value, $max_value): self
+    /**
+     * @see Predicate\Set::between()
+     */
+    public function between($identifier, $min_value, $max_value): Predicate\Set
     {
-        $this->conditions->between($identifier, $min_value, $max_value);
-        return $this;
+        return $this->conditions->between($identifier, $min_value, $max_value);
     }
 
-    public function notBetween($identifier, $min_value, $max_value): self
+    /**
+     * @see Predicate\Set::notBetween()
+     */
+    public function notBetween($identifier, $min_value, $max_value): Predicate\Set
     {
-        $this->conditions->notBetween($identifier, $min_value, $max_value);
-        return $this;
+        return $this->conditions->notBetween($identifier, $min_value, $max_value);
     }
 
-    public function exists(Select $select): self
+    /**
+     * @see Predicate\Set::exists()
+     */
+    public function exists(Select $select): Predicate\Set
     {
-        $this->conditions->exists($select);
-        return $this;
+        return $this->conditions->exists($select);
     }
 
-    public function notExists(Select $select): self
+    /**
+     * @see Predicate\Set::notExists()
+     */
+    public function notExists(Select $select): Predicate\Set
     {
-        $this->conditions->notExists($select);
-        return $this;
+        return $this->conditions->notExists($select);
     }
 
-    public function in($identifier, array $value_list): self
+    /**
+     * @see Predicate\Set::in()
+     */
+    public function in($identifier, array $value_list): Predicate\Set
     {
-        $this->conditions->in($identifier, $value_list);
-        return $this;
+        return $this->conditions->in($identifier, $value_list);
     }
 
-    public function notIn($identifier, array $value_list): self
+    /**
+     * @see Predicate\Set::notIn()
+     */
+    public function notIn($identifier, array $value_list): Predicate\Set
     {
-        $this->conditions->notIn($identifier, $value_list);
-        return $this;
+        return $this->conditions->notIn($identifier, $value_list);
     }
 
-    public function is($identifier, $value): self
+    /**
+     * @see Predicate\Set::is()
+     */
+    public function is($identifier, $value): Predicate\Set
     {
-        $this->conditions->is($identifier, $value);
-        return $this;
+        return $this->conditions->is($identifier, $value);
     }
 
-    public function isNot($identifier, $value): self
+    /**
+     * @see Predicate\Set::isNot()
+     */
+    public function isNot($identifier, $value): Predicate\Set
     {
-        $this->conditions->isNot($identifier, $value);
-        return $this;
+        return $this->conditions->isNot($identifier, $value);
     }
 
-    public function isNull($identifier): self
+    /**
+     * @see Predicate\Set::isNull()
+     */
+    public function isNull($identifier): Predicate\Set
     {
-         $this->conditions->isNull($identifier);
-         return $this;
+         return $this->conditions->isNull($identifier);
     }
 
-    public function isNotNull($identifier): self
+    /**
+     * @see Predicate\Set::isNotNull()
+     */
+    public function isNotNull($identifier): Predicate\Set
     {
-        $this->conditions->isNotNull($identifier);
-        return $this;
+        return $this->conditions->isNotNull($identifier);
     }
 
-    public function isTrue($identifier): self
+    /**
+     * @see Predicate\Set::isTrue()
+     */
+    public function isTrue($identifier): Predicate\Set
     {
-        $this->conditions->isTrue($identifier);
-        return $this;
+        return $this->conditions->isTrue($identifier);
     }
 
-    public function isFalse($identifier): self
+    /**
+     * @see Predicate\Set::isFalse()
+     */
+    public function isFalse($identifier): Predicate\Set
     {
-        $this->conditions->isFalse($identifier);
-        return $this;
+        return $this->conditions->isFalse($identifier);
     }
 
-    public function isUnknown($identifier): self
+    /**
+     * @see Predicate\Set::isUnknown()
+     */
+    public function isUnknown($identifier): Predicate\Set
     {
-        $this->conditions->isUnknown($identifier);
-        return $this;
+        return $this->conditions->isUnknown($identifier);
     }
 
-    public function isNotUnknown($identifier): self
+    /**
+     * @see Predicate\Set::isNotUnknown()
+     */
+    public function isNotUnknown($identifier): Predicate\Set
     {
-        $this->conditions->isNotUnknown($identifier);
-        return $this;
+        return $this->conditions->isNotUnknown($identifier);
     }
 
-    public function like($identifier, $value): self
+    /**
+     * @see Predicate\Set::like()
+     */
+    public function like($identifier, $value): Predicate\Set
     {
-        $this->conditions->like($identifier, $value);
-        return $this;
+        return $this->conditions->like($identifier, $value);
     }
 
-    public function notLike($identifier, $value): self
+    /**
+     * @see Predicate\Set::notLike()
+     */
+    public function notLike($identifier, $value): Predicate\Set
     {
-        $this->conditions->notLike($identifier, $value);
-        return $this;
+        return $this->conditions->notLike($identifier, $value);
     }
 
-    public function equal($identifier, $value): self
+    /**
+     * @see Predicate\Set::equal()
+     */
+    public function equal($identifier, $value): Predicate\Set
     {
-        $this->conditions->equal($identifier, Sql::EQUAL, $value);
-        return $this;
+        return $this->conditions->equal($identifier, $value);
     }
 
-    public function notEqual($identifier, $value): self
+    /**
+     * @see Predicate\Set::eq()
+     */
+    public function eq($identifier, $value): Predicate\Set
     {
-        $this->conditions->notEqual($identifier, $value);
-        return $this;
+        return $this->conditions->eq($identifier, $value);
     }
 
-    public function lessThan($identifier, $value): self
+    /**
+     * @see Predicate\Set::notEqual()
+     */
+    public function notEqual($identifier, $value): Predicate\Set
     {
-        $this->conditions->lessThan($identifier, $value);
-        return $this;
+        return $this->conditions->notEqual($identifier, $value);
     }
 
-    public function lessThanEqual($identifier, $value): self
+    /**
+     * @see Predicate\Set::neq()
+     */
+    public function neq($identifier, $value): Predicate\Set
     {
-        $this->conditions->lessThanEqual($identifier, $value);
-        return $this;
+        return $this->conditions->neq($identifier, $value);
     }
 
-    public function greaterThanEqual($identifier, $value): self
+    /**
+     * @see Predicate\Set::ne()
+     */
+    public function ne($identifier, $value): Predicate\Set
     {
-        $this->conditions->greaterThanEqual($identifier, $value);
-        return $this;
+        return $this->conditions->ne($identifier, $value);
     }
 
-    public function greaterThan($identifier, $value): self
+    /**
+     * @see Predicate\Set::lessThan()
+     */
+    public function lessThan($identifier, $value): Predicate\Set
     {
-        $this->conditions->greaterThan($identifier, $value);
-        return $this;
+        return $this->conditions->lessThan($identifier, $value);
     }
 
-    public function regExp($identifier, array $regexp, bool $case_sensitive = false): self
+    /**
+     * @see Predicate\Set::lt()
+     */
+    public function lt($identifier, $value): Predicate\Set
+    {
+        return $this->conditions->lt($identifier, $value);
+    }
+
+    /**
+     * @see Predicate\Set::lessThanEqual()
+     */
+    public function lessThanEqual($identifier, $value): Predicate\Set
+    {
+        return $this->conditions->lessThanEqual($identifier, $value);
+    }
+
+    /**
+     * @see Predicate\Set::lte()
+     */
+    public function lte($identifier, $value): Predicate\Set
+    {
+        return $this->conditions->lte($identifier, $value);
+    }
+
+    /**
+     * @see Predicate\Set::greaterThanEqual()
+     */
+    public function greaterThanEqual($identifier, $value): Predicate\Set
+    {
+        return $this->conditions->greaterThanEqual($identifier, $value);
+    }
+
+    /**
+     * @see Predicate\Set::gte()
+     */
+    public function gte($identifier, $value): Predicate\Set
+    {
+        return $this->conditions->gte($identifier, $value);
+    }
+
+    /**
+     * @see Predicate\Set::greaterThan()
+     */
+    public function greaterThan($identifier, $value): Predicate\Set
+    {
+        return $this->conditions->greaterThan($identifier, $value);
+    }
+
+    /**
+     * @see Predicate\Set::gt()
+     */
+    public function gt($identifier, $value): Predicate\Set
+    {
+        return $this->conditions->gt($identifier, $value);
+    }
+
+    /**
+     * @see Predicate\Set::regExp()
+     */
+    public function regExp($identifier, array $regexp, bool $case_sensitive = false): Predicate\Set
     {
         return $this->conditions->regExp($identifier, $regexp, $case_sensitive);
     }
 
-    public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): self
+    /**
+     * @see Predicate\Set::notRegExp()
+     */
+    public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): Predicate\Set
     {
         return $this->conditions->notRegExp($identifier, $regexp, $case_sensitive);
+    }
+
+    /**
+     * Open a nested predicate-set which will translate into a SQL group of
+     * conditions inside parenthesis
+     * 
+     * @see Predicate\Set::notRegExp()
+     *
+     * @return Predicate\Set
+     */
+    public function open(): Predicate\Set
+    {
+        return $this->conditions->open();
+    }
+
+    /**
+     * Provide a fluent interface for conditions using virtual properties
+     *
+     * @param string $name
+     */
+    public function __get(string $name)
+    {
+        if ('conditions' === $name) {
+            return $this->conditions;
+        };
     }
 }

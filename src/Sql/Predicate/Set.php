@@ -26,19 +26,31 @@ use function is_object;
 use function is_string;
 use function key;
 use function sprintf;
+use function strtolower;
 use function strtoupper;
 use function trim;
 
 /**
  * Predicate\Set represents a group of predicates combined either by AND or OR
- */
+ *
+ * @property-read self $and
+ * @property-read self $or
+ * @property-read self $open
+ * @property-read self $close
+*/
 class Set extends Predicate
 {
     /** @var Predicate[] */
     protected $predicates = [];
 
     /** @var string */
-    protected $combined_by;
+    protected $defaultLogicalOperator = Sql::AND;
+
+    /** @var string */
+    protected $nextLogicalOperator = Sql::AND;
+
+    /** @var self|null */
+    protected $parent;
 
     /**
      * Logical operator aliases for predicate-sets defined via arrays
@@ -46,9 +58,23 @@ class Set extends Predicate
     public const COMB_AND = '&&';
     public const COMB_OR  = '||';
 
+    /**
+     * Complete map of operators/aliases to real/valid logical operators
+     */
     protected const COMB = [
         Sql::AND => Sql::AND,
         Sql::OR  => Sql::OR,
+        self::COMB_AND => Sql::AND,
+        self::COMB_OR  => Sql::OR,
+    ];
+
+    /**
+     * Aliases ("||" for "OR" and "&&" for "AND") for nested-predicates array
+     * definitions mapped to the corresponding valid logical operators
+     *
+     * @see ConditionalClauseAwareTrait::setConditionalClause()
+     */
+    public const COMB_ID = [
         self::COMB_AND => Sql::AND,
         self::COMB_OR  => Sql::OR,
     ];
@@ -81,17 +107,6 @@ class Set extends Predicate
     ];
 
     /**
-     * Aliases ("||" for "OR" and "&&" for "AND") for nested-predicates array
-     * definitons
-     *
-     * @see ConditionalClauseAwareTrait::setConditionalClause()
-     */
-    public const COMB_ID = [
-        self::COMB_AND => self::COMB_AND,
-        self::COMB_OR  => self::COMB_OR,
-    ];
-
-    /**
      * Array format when building the set from an array:
      *
      *  <pre>
@@ -108,13 +123,13 @@ class Set extends Predicate
      *  ]
      * </pre>
      *
-     * @param null|Predicate[]|self|Predicate|array|string $predicates
-     * @param string $combined_by One of `AND`, `OR`, `&&`, `||`
+     * @param Predicate[]|self|Predicate|array|string|null $predicates
+     * @param string|null $defaultLogicalOperator One of `AND`, `OR`, or aliases `&&`, `||`
      */
-    public function __construct($predicates = null, string $combined_by = null)
+    public function __construct($predicates = null, string $defaultLogicalOperator = null)
     {
-        if (isset($combined_by)) {
-            $combined_by = self::COMB[strtoupper($combined_by)] ?? Sql::AND;
+        if (isset($defaultLogicalOperator)) {
+            $defaultLogicalOperator = self::COMB[strtoupper($defaultLogicalOperator)] ?? Sql::AND;
         }
 
         if (!isset($predicates)) {
@@ -122,12 +137,12 @@ class Set extends Predicate
         }
 
         if ($predicates instanceof self) {
-            $this->predicates  = $predicates->getPredicates();
-            $this->combined_by = $combined_by ?? $predicates->getCombinedBy();
+            $this->predicates = $predicates->getPredicates();
+            $this->defaultLogicalOperator = $defaultLogicalOperator ?? $predicates->getDefaultLogicalOperator();
             return;
         }
 
-        $this->combined_by = $combined_by ?? Sql::AND;
+        $this->defaultLogicalOperator = $defaultLogicalOperator ?? Sql::AND;
 
         if (!is_array($predicates)) {
             $this->addPredicate($predicates);
@@ -181,8 +196,11 @@ class Set extends Predicate
             ));
         }
 
-        $this->predicates[] = $predicate;
-        $this->sql = null; // remove rendered sql
+        $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
+        $this->predicates[] = [$logicalOperator, $predicate];
+        $this->nextLogicalOperator = null;
+
+        $this->sql = null; // remove rendered sql cache
 
         return $this;
     }
@@ -192,9 +210,9 @@ class Set extends Predicate
         if (count($specs) === 1) {
             $key = key($specs);
             if (!is_numeric($key)) {
-                $comb_by = self::COMB_ID[$key] ?? null;
-                if (isset($comb_by)) {
-                    return new self(current($specs), $comb_by);
+                $logicalOp = self::COMB_ID[$key] ?? null;
+                if (isset($logicalOp)) {
+                    return new self(current($specs), $logicalOp);
                 }
                 return new Predicate\Comparison($key, '=', current($specs));
             }
@@ -278,9 +296,9 @@ class Set extends Predicate
     /**
      * @return string Returns either "AND" or "OR"
      */
-    public function getCombinedBy(): string
+    public function getDefaultLogicalOperator(): string
     {
-        return $this->combined_by;
+        return $this->defaultLogicalOperator;
     }
 
     /**
@@ -309,10 +327,15 @@ class Set extends Predicate
         $driver = $driver ?? Driver::ansi();
 
         $sqls = [];
-        foreach ($this->predicates as $predicate) {
+        foreach ($this->predicates as $index => $p) {
+            $logicalOperator = $p[0];
+            $predicate = $p[1];
             $sql = $predicate->getSQL($driver);
             if (Sql::isEmptySQL($sql)) {
                 continue;
+            }
+            if ($index > 0) {
+                $sqls[] = $logicalOperator;
             }
             $sqls[] = $predicate instanceof self ? "({$sql})" : $sql;
             $this->importParams($predicate);
@@ -323,12 +346,10 @@ class Set extends Predicate
         }
 
         if (1 === count($sqls)) {
-            return $this->sql = $sqls[0];
+            return $this->sql = current($sqls);
         }
 
-        $AND_OR = self::COMB[$this->combined_by];
-
-        return $this->sql = trim(implode(" {$AND_OR} ", $sqls));
+        return $this->sql = trim(implode(' ', $sqls));
     }
 
     public function literal(string $literal): self
@@ -485,10 +506,31 @@ class Set extends Predicate
         );
     }
 
+    public function eq($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::EQ, $value)
+        );
+    }
+
     public function notEqual($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::NOT_EQUAL, $value)
+        );
+    }
+
+    public function neq($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::NEQ, $value)
+        );
+    }
+
+    public function ne($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::NE, $value)
         );
     }
 
@@ -499,10 +541,24 @@ class Set extends Predicate
         );
     }
 
+    public function lt($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::LT, $value)
+        );
+    }
+
     public function lessThanEqual($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::LESS_THAN_EQUAL, $value)
+        );
+    }
+
+    public function lte($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::LTE, $value)
         );
     }
 
@@ -513,10 +569,24 @@ class Set extends Predicate
         );
     }
 
+    public function gte($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::GTE, $value)
+        );
+    }
+
     public function greaterThan($identifier, $value): self
     {
         return $this->addPredicate(
             new Predicate\Comparison($identifier, Sql::GREATER_THAN, $value)
+        );
+    }
+
+    public function gt($identifier, $value): self
+    {
+        return $this->addPredicate(
+            new Predicate\Comparison($identifier, Sql::GT, $value)
         );
     }
 
@@ -532,5 +602,82 @@ class Set extends Predicate
         return $this->addPredicate(
             new Predicate\NotRegExp($identifier, $regexp, $case_sensitive)
         );
+    }
+
+    /**
+     * Set AND as the logical operator for next predicate
+     *
+     * @return $this fluent interface
+     */
+    public function and(): self
+    {
+        $this->nextLogicalOperator = Sql::AND;
+        return $this;
+    }
+
+    /**
+     * Set AND as the logical operator for next predicate
+     *
+     * @return $this fluent interface
+     */
+    public function or(): self
+    {
+        $this->nextLogicalOperator = Sql::OR;
+        return $this;
+    }
+
+    /**
+     * Add a nested predicate-set, creating the effect of a SQL opening parenthesis
+     *
+     * @return self Return the new nested predicate-set instance
+     */
+    public function open(): self
+    {
+        $nestedPredicateSet = new self();
+        $this->addPredicate($nestedPredicateSet);
+        $nestedPredicateSet->parent = $this;
+
+        return $nestedPredicateSet;
+    }
+
+    /**
+     * Close a previously opened  nested predicate-set, creating the effect of a
+     * SQL closing parenthesis
+     *
+     * @return $this fluent interface
+     * @throws RuntimeException
+     */
+    public function close(): self
+    {
+        if (null === $this->parent) {
+            throw new RuntimeException(
+                "Cannot close an unnested predicate-set!"
+            );
+        }
+
+        return $this->parent;
+    }
+
+    /**
+     * Provide a fluent interface for conditions using virtual properties
+     *
+     * @param string $name
+     */
+    public function __get(string $name)
+    {
+        if ('open' === $name) {
+            return $this->open();
+        };
+        if ('close' === $name) {
+            return $this->close();
+        };
+
+        $lcName = strtolower($name);
+        if ('and' === $lcName) {
+            return $this->and();
+        };
+        if ('or' === $lcName) {
+            return $this->or();
+        };
     }
 }
