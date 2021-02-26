@@ -108,10 +108,10 @@ class Set extends Predicate
      *  ]
      * </pre>
      *
-     * @param string $combined_by One of `AND`, `OR`, `&&`, `||`
      * @param null|Predicate[]|self|Predicate|array|string $predicates
+     * @param string $combined_by One of `AND`, `OR`, `&&`, `||`
      */
-    public function __construct(string $combined_by = null, $predicates = null)
+    public function __construct($predicates = null, string $combined_by = null)
     {
         if (isset($combined_by)) {
             $combined_by = self::COMB[strtoupper($combined_by)] ?? Sql::AND;
@@ -194,7 +194,7 @@ class Set extends Predicate
             if (!is_numeric($key)) {
                 $comb_by = self::COMB_ID[$key] ?? null;
                 if (isset($comb_by)) {
-                    return new self($comb_by, current($specs));
+                    return new self(current($specs), $comb_by);
                 }
                 return new Predicate\Comparison($key, '=', current($specs));
             }

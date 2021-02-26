@@ -44,9 +44,9 @@ trait ConditionalClauseAwareTrait
             && isset(Predicate\Set::COMB_ID[$comb_id = key($clause)])
             && is_array($conditions = current($clause))
         ) {
-            $clause = new $fqcn($comb_id, $conditions);
+            $clause = new $fqcn($conditions, $comb_id);
         } elseif (! $clause instanceof $fqcn) {
-            $clause = new $fqcn(Sql::AND, $clause);
+            $clause = new $fqcn($clause, Sql::AND);
         }
 
         $this->{$property} = $clause;

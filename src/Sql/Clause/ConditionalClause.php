@@ -25,12 +25,12 @@ abstract class ConditionalClause extends Clause
     protected $conditions;
 
     /**
-     * @param string $combined_by One of `AND`, `OR`, `&&`, `||`
      * @param null|Predicate[]|self|Predicate|Predicate\Set|array|string $predicates
+     * @param string $combined_by One of `AND`, `OR`, `&&`, `||`
      */
-    public function __construct(string $combined_by = null, $predicates = null)
+    public function __construct($predicates = null, string $combined_by = null)
     {
-        $this->conditions = new Predicate\Set($combined_by, $predicates);
+        $this->conditions = new Predicate\Set($predicates, $combined_by);
     }
 
     /**
