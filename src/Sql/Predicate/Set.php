@@ -48,10 +48,21 @@ class Set extends Predicate
     protected $parent;
 
     /**
-     * Logical operator aliases for predicate-sets defined via arrays
+     * Logical operator aliases/identifiers for predicate-sets defined via arrays
      */
     public const COMB_AND = '&&';
     public const COMB_OR  = '||';
+
+    /**
+     * Aliases/identifiers ("||" for "OR" and "&&" for "AND") for nested-predicates
+     * array specs mapped to the corresponding valid logical operators
+     *
+     * @see ConditionalClauseAwareTrait::setConditionalClause()
+     */
+    public const COMB_ID = [
+        self::COMB_AND => Sql::AND,
+        self::COMB_OR  => Sql::OR,
+    ];
 
     /**
      * Complete map of operators/aliases to real/valid logical operators
@@ -59,17 +70,6 @@ class Set extends Predicate
     protected const COMB = [
         Sql::AND => Sql::AND,
         Sql::OR  => Sql::OR,
-        self::COMB_AND => Sql::AND,
-        self::COMB_OR  => Sql::OR,
-    ];
-
-    /**
-     * Aliases ("||" for "OR" and "&&" for "AND") for nested-predicates array
-     * definitions mapped to the corresponding valid logical operators
-     *
-     * @see ConditionalClauseAwareTrait::setConditionalClause()
-     */
-    public const COMB_ID = [
         self::COMB_AND => Sql::AND,
         self::COMB_OR  => Sql::OR,
     ];
@@ -151,14 +151,16 @@ class Set extends Predicate
                 continue;
             }
 
-            if (is_numeric($key) || is_array($predicate)) {
+            if (is_numeric($key)) {
                 $this->addPredicate($predicate);
                 continue;
             }
 
             // $key is an identifier and $predicate is a value for the '=' operator
             if (! $predicate instanceof Predicate) {
-                $predicate = new Predicate\Comparison($key, '=', $predicate);
+                $predicate = is_array($predicate)
+                    ? new Predicate\In($key, $predicate)
+                    : new Predicate\Comparison($key, Sql::EQ, $predicate);
             }
 
             $this->addPredicate($predicate);
@@ -202,29 +204,45 @@ class Set extends Predicate
 
     protected function buildPredicateFromSpecs(array $specs): Predicate
     {
+        // CASE: [identifier => value]
+        // CASE: ['&&' => [...]]
+        // CASE: ['||' => [...]]
         if (count($specs) === 1) {
             $key = key($specs);
-            if (!is_numeric($key)) {
-                $logicalOp = self::COMB_ID[$key] ?? null;
-                if (isset($logicalOp)) {
-                    return new self(current($specs), $logicalOp);
-                }
-                return new Predicate\Comparison($key, '=', current($specs));
+            if (is_numeric($key)) {
+                throw new InvalidArgumentException(
+                    "A predicate single value specs-array must have a non-numeric"
+                    . " string key, `{$key}` provided"
+                );
             }
-            throw new InvalidArgumentException(sprintf(
-                "A predicate single value specs-array must have a non-numeric string key, `%s` provided",
-                $key
-            ));
+
+            $logicalOp = self::COMB_ID[$key] ?? null;
+            if (isset($logicalOp)) {
+                return new self($predicates = current($specs), $logicalOp);
+            }
+
+            $value = current($specs);
+
+            if (is_array($value)) {
+                return new Predicate\In($key, $value);
+            }
+
+            return new Predicate\Comparison($key, Sql::EQ, $value);
         }
 
         $count = count($specs);
 
         if (count($specs) < 3) {
             throw new InvalidArgumentException(
-                "A predicate specs-array must be provide in one of the following forms"
-                . " [identifier, operator, value[, extra]] or [identifier => value] or ['||' => [...]]!"
+                "A predicate specs-array must be provide in one of the following forms: "
+                . " [identifier, operator, value[, extra]]"
+                . " or [identifier => value]"
+                . " or ['&&' => [...]] or ['||' => [...]]!"
             );
         }
+
+        // CASE: [identifier, operator, value]
+        // CASE: [identifier, operator, value, extra]
 
         $identifier = $specs[0]; // identifier or Literal sql expression
         $operator   = $specs[1];
@@ -238,11 +256,22 @@ class Set extends Predicate
         Sql::assertValidOperator($operator);
 
         if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
+            if (is_array($value)) {
+                if ($operator === Sql::EQ) {
+                    return new Predicate\In($identifier, $value);
+                }
+                if ($operator === Sql::NEQ || $operator === Sql::NE) {
+                    return new Predicate\NotIn($identifier, $value);
+                }
+                throw new InvalidArgumentException(
+                    "Invalid comparison operator `{$operator}` for array in-value-list!"
+                );
+            }
             return new Predicate\Comparison($identifier, $operator, $value);
         }
 
         if (isset(Sql::BOOLEAN_OPERATORS[$operator])) {
-            if ($operator === SQL::IS) {
+            if ($operator === Sql::IS) {
                 return new Predicate\Is($identifier, $value);
             }
             return new Predicate\IsNot($identifier, $value);
