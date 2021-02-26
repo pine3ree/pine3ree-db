@@ -227,6 +227,7 @@ class Sql
     public const AND = 'AND';
     public const OR  = 'OR';
     public const XOR = 'XOR';
+    public const NOT = 'NOT';
 
     /**
      * Quantifiers
