@@ -16,7 +16,7 @@ use P3\Db\Sql\Statement\Select;
 use function implode;
 
 /**
- * This class represents a sql operator-ALL(SELECT...) condition
+ * This class represents a sql operator-ALL/ANY/SOME(SELECT...) condition
  */
 abstract class CompareTo extends Predicate
 {
