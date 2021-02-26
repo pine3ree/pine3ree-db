@@ -41,7 +41,7 @@ trait ConditionalClauseAwareTrait
         if (is_array($clause)
             // ["&&" => conditions] or ["||" => conditions]
             && count($clause) === 1
-            && (null !== $logicalOp = Predicate\Set::COMB_ID[key($clause)])
+            && (null !== $logicalOp = Predicate\Set::COMB_ID[key($clause)] ?? null)
             && is_array($conditions = current($clause))
         ) {
             $clause = new $fqcn($conditions, $logicalOp);
