@@ -31,12 +31,7 @@ use function strtoupper;
 use function trim;
 
 /**
- * Predicate\Set represents a group of predicates combined either by AND or OR
- *
- * @property-read self $and
- * @property-read self $or
- * @property-read self $open
- * @property-read self $close
+ * Predicate\Set represents a group of predicates combined by AND and/or OR
 */
 class Set extends Predicate
 {
@@ -656,28 +651,5 @@ class Set extends Predicate
         }
 
         return $this->parent;
-    }
-
-    /**
-     * Provide a fluent interface for conditions using virtual properties
-     *
-     * @param string $name
-     */
-    public function __get(string $name)
-    {
-        if ('open' === $name) {
-            return $this->open();
-        };
-        if ('close' === $name) {
-            return $this->close();
-        };
-
-        $lcName = strtolower($name);
-        if ('and' === $lcName) {
-            return $this->and();
-        };
-        if ('or' === $lcName) {
-            return $this->or();
-        };
     }
 }
