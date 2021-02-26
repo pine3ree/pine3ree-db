@@ -314,7 +314,7 @@ class Set extends Predicate
             if (Sql::isEmptySQL($sql)) {
                 continue;
             }
-            $sqls[] = $sql;
+            $sqls[] = $predicate instanceof self ? "({$sql})" : $sql;
             $this->importParams($predicate);
         }
 
@@ -328,7 +328,7 @@ class Set extends Predicate
 
         $AND_OR = self::COMB[$this->combined_by];
 
-        return $this->sql = "(" . trim(implode(" {$AND_OR} ", $sqls)) . ")";
+        return $this->sql = trim(implode(" {$AND_OR} ", $sqls));
     }
 
     public function literal(string $literal): self
