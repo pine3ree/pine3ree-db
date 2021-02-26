@@ -38,6 +38,8 @@ use function strpos;
 use function strtoupper;
 use function trim;
 
+use const PHP_INT_MAX;
+
 /**
  * This class represents a SELECT sql-statement expression
  *

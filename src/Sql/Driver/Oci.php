@@ -20,6 +20,8 @@ use function implode;
 use function strpos;
 use function substr;
 
+use const PHP_INT_MAX;
+
 /**
  * Oci sql-driver
  */
