@@ -17,7 +17,6 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Predicate\Set as PredicateSet;
 use P3\Db\Sql\Statement;
 use PDO;
 use RuntimeException;
@@ -444,7 +443,7 @@ class Select extends Statement
      * @param string $type The join type (LEFT, RIGHT, INNER, ...)
      * @param string $table The join table name
      * @param string $alias The join table alias
-     * @param On!Literal|PredicateSet|Predicate|array|string $specification
+     * @param On!Literal|Predicate\Set|Predicate|array|string $specification
      *      The join conditional usually an ON clause, but may be changed using Literal classes
      * @return $this
      */

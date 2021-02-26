@@ -11,7 +11,6 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Predicate\Set as PredicateSet;
 use RuntimeException;
 
 use function count;
@@ -29,7 +28,7 @@ trait ConditionalClauseAwareTrait
      *
      * @param string $property
      * @param string $fqcn A ConditionalClause descendant class
-     * @param ConditionalClause|PredicateSet|Predicate|array|string $clause
+     * @param ConditionalClause|Predicate\Set|Predicate|array|string $clause
      */
     private function setConditionalClause(string $property, $fqcn, $clause): self
     {
@@ -42,7 +41,7 @@ trait ConditionalClauseAwareTrait
         if (is_array($clause)
             // ["&&" => conditions] or ["||" => conditions]
             && count($clause) === 1
-            && isset(PredicateSet::COMB_ID[$comb_id = key($clause)])
+            && isset(Predicate\Set::COMB_ID[$comb_id = key($clause)])
             && is_array($conditions = current($clause))
         ) {
             $clause = new $fqcn($comb_id, $conditions);
