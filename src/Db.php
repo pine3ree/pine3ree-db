@@ -120,9 +120,8 @@ class Db
             ));
         }
 
-        $this->options  = $options ?? [];
         $this->charset = $options['charset'] ?? self::DEFAULT_CHARSET;
-
+        $this->options = $options ?? [];
         $this->updateOptions();
     }
 
@@ -247,6 +246,13 @@ class Db
     {
         if ($this->pdoIsInitialized) {
             return;
+        }
+
+        // set attributes if a PDO instance was passed in
+        if (empty($this->dsn)) {
+            foreach ($this->options as $attribute => $value) {
+                $this->pdo->setAttribute($attribute, $value);
+            }
         }
 
         switch ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
