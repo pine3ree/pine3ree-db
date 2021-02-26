@@ -7,6 +7,7 @@
 
 namespace P3\Db;
 
+use InvalidArgumentException;
 use P3\Db\Command\Delete;
 use P3\Db\Command\Insert;
 use P3\Db\Command\Select;
@@ -19,15 +20,20 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
+use RuntimeException;
 
 use function explode;
 use function func_get_args;
 use function func_num_args;
+use function get_class;
+use function gettype;
 use function is_array;
 use function is_bool;
 use function is_int;
+use function is_object;
 use function is_subclass_of;
 use function reset;
+use function sprintf;
 
 /**
  * Class Db
@@ -55,11 +61,19 @@ class Db
     /** @var string */
     private const DEFAULT_CHARSET = 'utf8';
 
+    /** @var string */
+    private $pdoClass = PDO::class;
+
     /** @var Driver the sql-driver */
     private $driver;
 
     /** @var Driver connection-less sql-driver */
     private $_driver;
+
+    /**
+     * @var bool Has the pdo instance been pdoIsInitialized?
+     */
+    private $pdoIsInitialized = false;
 
     /**
      * @const array<string, string> An pdo-driver-name to sql-driver-class map
@@ -72,17 +86,60 @@ class Db
         'sqlsrv' => Driver\SqlSrv::class,
     ];
 
+    /**
+     * @param string|PDO $dsnOrPdo
+     * @param string $username
+     * @param string $password
+     * @param array $options
+     */
     public function __construct(
-        string $dsn,
+        $dsnOrPdo,
         string $username = null,
         string $password = null,
-        array $options = null
+        array $options = null,
+        string $pdoClass = null
     ) {
-        $this->dsn      = $dsn;
-        $this->username = $username;
-        $this->password = $password;
+        if (is_string($dsnOrPdo)) {
+            $this->dsn      = $dsnOrPdo;
+            $this->username = $username;
+            $this->password = $password;
+            if (isset($pdoClass)) {
+                if (!is_subclass_of($pdoClass, PDO::class, true)) {
+                    throw new InvalidArgumentException(
+                        "The pdoClass argument is not a PDO subclass!"
+                    );
+                }
+                $this->pdoClass = $pdoClass;
+            }
+        } elseif ($dsnOrPdo instanceof PDO) {
+            $this->pdo = $dsnOrPdo;
+        } else {
+            throw InvalidArgumentException(sprintf(
+                '$dsnOrPdo must be either a dns string or a PDO instance, `%s` provided!',
+                is_object($dsnOrPdo) ? get_class($dsnOrPdo) : gettype($dsnOrPdo)
+            ));
+        }
+
         $this->options  = $options ?? [];
-        $this->charset  = $options['charset'] ?? self::DEFAULT_CHARSET;
+        $this->charset = $options['charset'] ?? self::DEFAULT_CHARSET;
+
+        $this->updateOptions();
+    }
+
+    public function __destruct()
+    {
+        $this->pdo = null;
+    }
+
+    private function updateOptions(): void
+    {
+        $driver_name = explode(':', $this->dsn)[0];
+        switch ($driver_name) {
+            // return lowercase column-names in result set for oci-driver
+            case 'oci':
+                $this->options[PDO::ATTR_CASE] = PDO::CASE_LOWER;
+                break;
+        }
     }
 
     /**
@@ -99,44 +156,100 @@ class Db
         return isset($this->pdo);
     }
 
-    private function connect()
+    private function connect(bool $force_reconnection = false): void
     {
-        if (!isset($this->pdo)) {
+        if ($force_reconnection || !isset($this->pdo)) {
+            $this->pdoIsInitialized = false;
             $this->pdo = $this->createPDO();
+            $this->initializePDO($this->pdo);
+            var_dump(__METHOD__);
         }
     }
 
-    private function reconnect()
+    private function disconnect(): void
     {
         $this->pdo = null;
-        $this->pdo = $this->createPDO();
     }
 
-    public function getPDO(): ?PDO
+
+    private function reconnect(): void
     {
-        return $this->pdo;
+        if (empty($this->dsn)) {
+            throw new RuntimeException(
+                "Cannot reconnect without a dsn!"
+            );
+        }
+
+        $this->disconnect();
+        $this->connect();
+    }
+
+    /**
+     * Get the active pdo instance, id any, optionally forcing its instantiation
+     *
+     * @param bool $instantiate Create a new PDO connection if not already connected
+     * @return PDO|null
+     */
+    public function getPDO(bool $instantiate = false): ?PDO
+    {
+        if (isset($this->pdo)) {
+            $this->pdoIsInitialized || $this->initializePDO($this->pdo);
+            return $this->pdo;
+        }
+
+        if ($instantiate) {
+            return $this->pdo();
+        }
+
+        return null;
     }
 
     private function pdo(): PDO
     {
-        return $this->pdo ?? $this->pdo = $this->createPDO();
+        if (isset($this->pdo)) {
+            $this->pdoIsInitialized || $this->initializePDO($this->pdo);
+            return $this->pdo;
+        }
+
+        $this->connect();
+
+        return $this->pdo;
     }
 
     private function createPDO(): PDO
     {
-        $pdo = new PDO(
+        if (empty($this->dsn)) {
+            throw new RuntimeException(
+                "A PDO instance was passed in the constructor: there is no DNS"
+                . " string available to create a new connection!"
+            );
+        }
+
+        $pdoClass = $this->pdoClass;
+
+        $pdo = new $pdoClass(
             $this->dsn,
             $this->username,
             $this->password,
             $this->options
         );
 
-        $driver_name = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-        switch ($driver_name) {
-            // return lowercase column-names in result set for oci-driver
-            case 'oci':
-                $pdo->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
-                break;
+        return $pdo;
+    }
+
+    /**
+     * Perform initialization commands when required based on the connecion driver
+     *
+     * @param PDO $pdo
+     * @return void
+     */
+    private function initializePDO(PDO $pdo): void
+    {
+        if ($this->pdoIsInitialized) {
+            return;
+        }
+
+        switch ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
             // set charset for pgsql: since charset is a developer written
             // configuration value there is no need for escaping
             case 'pgsql':
@@ -144,7 +257,7 @@ class Db
                 break;
         }
 
-        return $pdo;
+        $this->pdoIsInitialized = true;
     }
 
     /**
@@ -389,6 +502,12 @@ class Db
         return $stmt;
     }
 
+    /**
+     * Return the most appropriate pdo param-type constant for the given value
+     *
+     * @param mixed $value
+     * @return int
+     */
     private function getParamType($value): int
     {
         if (null === $value) {
