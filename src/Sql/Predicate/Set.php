@@ -55,14 +55,22 @@ class Set extends Predicate
 
     private const OPERATOR_ALIAS = [
         'eq'          => Sql::EQ,
+        'EQ'          => Sql::EQ,
         'notEqual'    => Sql::NOT_EQUAL,
         'neq'         => Sql::NEQ,
+        'NEQ'         => Sql::NEQ,
         'ne'          => Sql::NE,
+        'NE'          => Sql::NE,
         'lt'          => Sql::LT,
+        'LT'          => Sql::LT,
         'lte'         => Sql::LTE,
+        'LTE'         => Sql::LTE,
         'gte'         => Sql::GTE,
+        'GTE'         => Sql::GTE,
         'gt'          => Sql::GT,
+        'GT'          => Sql::GT,
         'not'         => Sql::IS_NOT,
+        'NOT'         => Sql::IS_NOT,
         'isNot'       => Sql::IS_NOT,
         'notBetween'  => Sql::NOT_BETWEEN,
         'notIn'       => Sql::NOT_IN,
@@ -210,7 +218,10 @@ class Set extends Predicate
         $value      = $specs[2];
         $extra      = $specs[3] ?? null;
 
-        $operator = self::OPERATOR_ALIAS[$operator] ?? strtoupper($operator);
+        $operator = self::OPERATOR_ALIAS[$operator]
+            ?? self::OPERATOR_ALIAS[strtoupper($operator)]
+            ?? strtoupper($operator)
+        ;
         Sql::assertValidOperator($operator);
 
         if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
