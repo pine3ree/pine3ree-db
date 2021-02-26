@@ -27,6 +27,10 @@ abstract class Command
      */
     protected $statement;
 
+    /**
+     * @param Db $db The database abstraction layer
+     * @param Statement $statement The sql-statement object
+     */
     public function __construct(Db $db, Statement $statement)
     {
         $this->db = $db;
