@@ -118,6 +118,11 @@ class In extends Predicate
             );
         }
 
-        return $this->sql = "{$identifier} {$operator} {$ivl_sql}{$null_sql}";
+        $sql = "{$identifier} {$operator} {$ivl_sql}{$null_sql}";
+        if ($has_null) {
+            $sql = "({$sql})";
+        }
+
+        return $this->sql = $sql;
     }
 }
