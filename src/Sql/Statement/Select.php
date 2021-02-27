@@ -665,7 +665,7 @@ class Select extends Statement
                 $sql = Sql::LIMIT . " " . PHP_INT_MAX;
             }
             $offset = $this->createNamedParam($this->offset, PDO::PARAM_INT);
-            $sql .= Sql::OFFSET . " {$offset}";
+            $sql .= " " . Sql::OFFSET . " {$offset}";
         }
 
         return $this->sqls['limit'] = $sql ?? '';
