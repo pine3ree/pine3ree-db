@@ -315,7 +315,7 @@ class Sql
                 return $predicate->isEmpty();
             }
             if ($predicate instanceof Predicate\Literal) {
-                return self::isEmptySQL($predicate->getSL());
+                return self::isEmptySQL($predicate->getSQL());
             }
         }
 
