@@ -14,6 +14,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
+use Throwable;
 
 use function count;
 use function current;
@@ -127,7 +128,10 @@ class Set extends Predicate
             $defaultLogicalOperator = self::COMB[strtoupper($defaultLogicalOperator)] ?? Sql::AND;
         }
 
-        if (!isset($predicates)) {
+        $this->defaultLogicalOperator = $defaultLogicalOperator ?? Sql::AND;
+
+        // quick test for empty value
+        if (Sql::isEmptyPredicate($predicates, true)) {
             return;
         }
 
@@ -137,26 +141,18 @@ class Set extends Predicate
             return;
         }
 
-        $this->defaultLogicalOperator = $defaultLogicalOperator ?? Sql::AND;
-
         if (!is_array($predicates)) {
             $this->addPredicate($predicates);
             return;
         }
 
         foreach ($predicates as $key => $predicate) {
-            // nested predicate-set
-            if ($predicate instanceof self) {
-                $this->addPredicate($predicate);
-                continue;
-            }
-
             if (is_numeric($key)) {
                 $this->addPredicate($predicate);
                 continue;
             }
 
-            // $key is an identifier and $predicate is a value for the '=' operator
+            // $key is an identifier and $predicate is a value for the "=" or "IN" operator
             if (! $predicate instanceof Predicate) {
                 $predicate = is_array($predicate)
                     ? new Predicate\In($key, $predicate)
@@ -177,20 +173,24 @@ class Set extends Predicate
      */
     public function addPredicate($predicate): self
     {
-        if (is_string($predicate)) {
-            $predicate = new Predicate\Literal($predicate);
-        } elseif (is_array($predicate)) {
-            $predicate = $this->buildPredicateFromSpecs($predicate);
+        if (Sql::isEmptyPredicate($predicate)) {
+            return $this; // throw?
         }
 
         if (! $predicate instanceof Predicate) {
-            throw new InvalidArgumentException(sprintf(
-                "Adding a predicate must be done using either as a string, a"
-                . " Predicate|Predicate\Set instance or an predicate specs-array such as "
-                . "[identifier, operator, value[, extra]] or [identifier => value] or ['||' => [...],"
-                . " `%s` provided!",
-                is_object($predicate) ? get_class($predicate) : gettype($predicate)
-            ));
+            $predicate = $this->buildPredicate($predicate, false, false);
+            if (! $predicate instanceof Predicate) {
+                throw new InvalidArgumentException(sprintf(
+                    "Adding a predicate must be done using either as a string, a"
+                    . " Predicate|Predicate\Set instance or an predicate specs-array such as:"
+                    . " [identifier, operator, value[, extra]]"
+                    . " or [identifier => value]"
+                    . " or ['&&', specs], ['||', specs]"
+                    . " or ['&&' => [...], ['||' => [...],"
+                    . " `%s` provided!",
+                    is_object($predicate) ? get_class($predicate) : gettype($predicate)
+                ));
+            }
         }
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
@@ -202,42 +202,108 @@ class Set extends Predicate
         return $this;
     }
 
-    protected function buildPredicateFromSpecs(array $specs): Predicate
+    protected function buildPredicate($predicate, bool $checkEmptyValue = false, bool $throw = true): ?Predicate
     {
-        // CASE: [identifier => value]
-        // CASE: ['&&' => [...]]
-        // CASE: ['||' => [...]]
-        if (count($specs) === 1) {
-            $key = key($specs);
-            if (is_numeric($key)) {
+        if ($checkEmptyValue && Sql::isEmptyPredicate($predicate)) {
+            if ($throw) {
                 throw new InvalidArgumentException(
-                    "A predicate single value specs-array must have a non-numeric"
-                    . " string key, `{$key}` provided"
+                    "Cannot build a predicate from an empty input value!"
                 );
             }
+            return null;
+        }
 
-            $logicalOp = self::COMB_ID[$key] ?? null;
-            if (isset($logicalOp)) {
-                return new self($predicates = current($specs), $logicalOp);
-            }
+        if (is_string($predicate)) {
+            return new Predicate\Literal($predicate);
+        }
 
-            $value = current($specs);
+        if (is_array($predicate)) {
+            return $this->buildPredicateFromSpecs($predicate);
+        }
 
-            if (is_array($value)) {
-                return new Predicate\In($key, $value);
-            }
+        if ($throw) {
+            throw new InvalidArgumentException(sprintf(
+                "Unable to create a predicate from given input value of type `%s`!",
+                is_object($predicate) ? get_class($predicate)  : gettype($predicate)
+            ));
+        }
 
-            return new Predicate\Comparison($key, Sql::EQ, $value);
+        return null;
+    }
+
+    protected function buildPredicateFromSpecs(array $specs): Predicate
+    {
+        if (empty($specs)) {
+            throw new InvalidArgumentException(
+                "Cannot build a predicate form an empty specs-array!"
+            );
         }
 
         $count = count($specs);
 
-        if (count($specs) < 3) {
+        // CASE: [identifier => value]
+        // CASE: ['&&' => [...]]
+        // CASE: ['||' => [...]]
+        if ($count === 1) {
+            $key = key($specs);
+            if (is_numeric($key)) {
+                throw new InvalidArgumentException(
+                    "A predicate single value specs-array must have a non-numeric"
+                    . " string key, `{$key}` provided!"
+                );
+            }
+
+            $value = current($specs);
+
+            $logicalOp = self::COMB_ID[$key] ?? null;
+            // CASES: ['&&' => [...]] and ['||' => [...]]
+            if (isset($logicalOp)) {
+                if (is_array($value)) {
+                    return new self($nestedPredicates = $value, $logicalOp);
+                }
+                throw new InvalidArgumentException(
+                    "A predicate single array-spec with `&&`, `||` as a key represents"
+                    . " a group of predicates with that key as the default combination,"
+                    . " therefore the value must be an array of nested predicates or specs!"
+                );
+            }
+
+            // CASE: [identifier => value] where value is interpreted as an in-value-list array
+            if (is_array($value)) {
+                return new Predicate\In($key, $value);
+            }
+
+            // CASE: [identifier => value] simple equality check comparison
+            return new Predicate\Comparison($key, Sql::EQ, $value);
+        }
+
+        // CASE: ['&&', predicateOrSpecs]
+        // CASE: ['||', predicateOrSpecs]
+        if ($count === 2) {
+            $comb_id = $specs[0];
+            $logicalOp = self::COMB_ID[$comb_id] ?? null;
+            if (empty($logicalOp)) {
+                throw new InvalidArgumentException(
+                    "Invalid combination ID for predicate specs array with 2 values!"
+                );
+            }
+            $predicate = $specs[1];
+            if (! $predicate instanceof Predicate) {
+                $predicate = $this->buildPredicate($predicate, true, true);
+            }
+
+            if ($predicate instanceof Predicate) {
+                $this->nextLogicalOperator = $logicalOp;
+                return $predicate;
+            }
+
             throw new InvalidArgumentException(
                 "A predicate specs-array must be provide in one of the following forms: "
                 . " [identifier, operator, value[, extra]]"
                 . " or [identifier => value]"
-                . " or ['&&' => [...]] or ['||' => [...]]!"
+                . " or ['&&', predicateOrSpecs] or ['||', predicateOrSpecs]"
+                . " or ['&&' => [...]] or ['||' => [...]]"
+                . "!"
             );
         }
 
@@ -251,8 +317,8 @@ class Set extends Predicate
 
         $operator = self::OPERATOR_ALIAS[$operator]
             ?? self::OPERATOR_ALIAS[strtoupper($operator)]
-            ?? strtoupper($operator)
-        ;
+            ?? strtoupper($operator);
+
         Sql::assertValidOperator($operator);
 
         if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
@@ -300,6 +366,7 @@ class Set extends Predicate
                 return new Predicate\NotRegExp($identifier, $value, true);
         }
 
+        // other not matched operators must use a scalar or literal value
         if (is_array($value)) {
              throw new InvalidArgumentException(
                 "Array value not supported for operator `{$operator}`!"
