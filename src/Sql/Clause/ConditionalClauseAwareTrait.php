@@ -32,12 +32,6 @@ trait ConditionalClauseAwareTrait
      */
     private function setConditionalClause(string $property, $fqcn, $clause): self
     {
-        if (isset($this->{$property})) {
-            throw new RuntimeException(
-                "Conditional clause of class `{$fqcn}` for property `{$property}` is already set!"
-            );
-        }
-
         if (is_array($clause)
             // ["&&" => conditions] or ["||" => conditions]
             && count($clause) === 1
