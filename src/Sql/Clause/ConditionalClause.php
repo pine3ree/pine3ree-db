@@ -372,9 +372,25 @@ abstract class ConditionalClause extends Clause
     }
 
     /**
+     * @see Predicate\Set::and()
+     */
+    public function and(): Predicate\Set
+    {
+        return $this->conditions->and();
+    }
+
+    /**
+     * @see Predicate\Set::and()
+     */
+    public function or(): Predicate\Set
+    {
+        return $this->conditions->and();
+    }
+
+    /**
      * Open a nested predicate-set which will translate into a SQL group of
      * conditions inside parenthesis
-     * 
+     *
      * @see Predicate\Set::notRegExp()
      *
      * @return Predicate\Set
