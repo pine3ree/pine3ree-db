@@ -43,4 +43,34 @@ class Ansi extends Driver
 
         return "'{$this->escape($value)}'";
     }
+
+    /**
+     * ANSI SQL does not support LIMIT/OFFSET, return a warnin string.
+     *
+     * @param Select $select
+     * @return string
+     */
+    public function getLimitSQL(Select $select): string
+    {
+        $limit  = $select->limit;
+        $offset = $select->offset;
+
+        if (!isset($limit) && (int)$offset === 0) {
+            return '';
+        }
+
+        if (isset($limit)) {
+            $sql = Sql::LIMIT . " {$limit}";
+        }
+
+        $offset = (int)$offset;
+        if ($offset > 0) {
+            if (!isset($sql)) {
+                $sql = Sql::LIMIT . " " . PHP_INT_MAX;
+            }
+            $sql .= " " . Sql::OFFSET . " {$offset}";
+        }
+
+        return $sql ?? "[UNSUPPORTED: $sql]";
+    }
 }
