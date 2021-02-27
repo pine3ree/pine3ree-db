@@ -11,7 +11,7 @@ use PDO;
 use P3\Db\Sql\Driver;
 
 /**
- * SqlSrv sql-driver
+ * SqlSrv sql-driver: WIP
  */
 class SqlSrv extends Driver
 {
