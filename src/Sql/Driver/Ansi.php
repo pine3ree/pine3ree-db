@@ -9,6 +9,7 @@ namespace P3\Db\Sql\Driver;
 
 use PDO;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Statement\Select;
 
 /**
  * The default ANSI SQL Driver
