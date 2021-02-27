@@ -161,7 +161,6 @@ class Sql
         self::LTE => self::LESS_THAN_EQUAL,
         self::GTE => self::GREATER_THAN_EQUAL,
         self::GT  => self::GREATER_THAN,
-        self::GTE => self::GREATER_THAN_EQUAL,
     ];
 
     /**
@@ -188,6 +187,18 @@ class Sql
     public const LIKE        = 'LIKE';
     public const NOT_LIKE    = 'NOT LIKE';
 
+    // valid conditional operators
+    public const CONDITIONAL_OPERATORS = [
+        self::BETWEEN     => self::BETWEEN,
+        self::NOT_BETWEEN => self::NOT_BETWEEN,
+        self::EXISTS      => self::EXISTS,
+        self::NOT_EXISTS  => self::NOT_EXISTS,
+        self::IN          => self::IN,
+        self::NOT_IN      => self::NOT_IN,
+        self::LIKE        => self::LIKE,
+        self::NOT_LIKE    => self::NOT_LIKE,
+    ];
+
     /**
      * REGEXP operators
      */
@@ -196,30 +207,20 @@ class Sql
     public const NOT_REGEXP     = '!~';
     public const NOT_REGEXP_CS  = '!~*';
 
-    // valid operators excluding boolean operators
-    public const OPERATORS = [
-        self::EQ            => self::EQUAL,
-        self::NEQ           => self::NOT_EQUAL,
-        self::NE            => self::NOT_EQUAL_ANSI,
-        self::LT            => self::LESS_THAN,
-        self::LTE           => self::LESS_THAN_EQUAL,
-        self::GTE           => self::GREATER_THAN_EQUAL,
-        self::GT            => self::GREATER_THAN,
-        self::IS            => self::IS,
-        self::IS_NOT        => self::IS_NOT,
-        self::BETWEEN       => self::BETWEEN,
-        self::NOT_BETWEEN   => self::NOT_BETWEEN,
-        self::EXISTS        => self::EXISTS,
-        self::NOT_EXISTS    => self::NOT_EXISTS,
-        self::IN            => self::IN,
-        self::NOT_IN        => self::NOT_IN,
-        self::LIKE          => self::LIKE,
-        self::NOT_LIKE      => self::NOT_LIKE,
-        self::REGEXP        => self::REGEXP,
+    // valid regexp operators
+    public const REGEXP_OPERATORS = [
+        self::REGEXP        => self::REGEXP_CS,
         self::REGEXP_CS     => self::REGEXP_CS,
         self::NOT_REGEXP    => self::NOT_REGEXP,
         self::NOT_REGEXP_CS => self::NOT_REGEXP_CS,
     ];
+
+    // valid operators excluding boolean operators
+    public const OPERATORS
+        = self::COMPARISON_OPERATORS
+        + self::BOOLEAN_OPERATORS
+        + self::CONDITIONAL_OPERATORS
+        + self::REGEXP_OPERATORS;
 
     /**
      * Logical operators
