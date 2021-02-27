@@ -654,7 +654,8 @@ class Select extends Statement
             return $this->sqls['limit'] = $driver->getLimitSQL($this);
         }
 
-        // default implementation for MySQL, PostgreSQL and Sqlite
+        // Default implementation working for MySQL, PostgreSQL and Sqlite
+        // PostgreSQL also supports OFFSET without LIMIT
         if (isset($this->limit)) {
             $limit = $this->createNamedParam($this->limit, PDO::PARAM_INT);
             $sql = Sql::LIMIT . " {$limit}";
