@@ -300,7 +300,7 @@ class Sql
         return !is_string($sql) || '' === trim($sql);
     }
 
-    public static function isEmptyPredicate($predicate, bool $checkEmptySet = false): bool
+    public static function isEmptyPredicate($predicate, bool $checkEmpty = false): bool
     {
         if ($predicate === null || $predicate === []) {
             return true;
@@ -310,8 +310,13 @@ class Sql
             return true;
         }
 
-        if ($checkEmptySet && $predicate instanceof Predicate\Set) {
-            return $predicate->isEmpty();
+        if ($checkEmpty) {
+            if ($predicate instanceof Predicate\Set) {
+                return $predicate->isEmpty();
+            }
+            if ($predicate instanceof Predicate\Literal) {
+                return self::isEmptySQL($predicate->getSL());
+            }
         }
 
         return false;
