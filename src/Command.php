@@ -29,9 +29,9 @@ abstract class Command
 
     /**
      * @param Db $db The database abstraction layer
-     * @param Statement $sqlStatement The sql-statement object
+     * @param SqlStatement $sqlStatement The sql-statement object
      */
-    public function __construct(Db $db, Statement $sqlStatement)
+    public function __construct(Db $db, SqlStatement $sqlStatement)
     {
         $this->db = $db;
         $this->sqlStatement = $sqlStatement;
@@ -58,7 +58,7 @@ abstract class Command
         return $this->sqlStatement->getParamsTypes($return_pdo_const_names);
     }
 
-    public function getStatement(): Statement
+    public function getStatement(): SqlStatement
     {
         return $this->sqlStatement;
     }

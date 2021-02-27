@@ -17,7 +17,7 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement;
+use P3\Db\Sql\Statement as SqlStatement;
 use PDO;
 use PDOStatement;
 use RuntimeException;
@@ -488,17 +488,17 @@ class Db
      * Prepare a SQL Statement and optionally bind its values returning the
      * prepared/binded PDOStatement
      *
-     * @param Statement $statement
+     * @param SqlStatement $sqlStatement
      * @param bool $bind_params Bind statement parameters values (via PDOStatement::bindValue())?
      * @return PDOStatement|false
      */
-    public function prepare(Statement $statement, bool $bind_params = false)
+    public function prepare(SqlStatement $sqlStatement, bool $bind_params = false)
     {
-        $stmt = $this->pdo()->prepare($statement->getSQL($this->getDriver()));
+        $stmt = $this->pdo()->prepare($sqlStatement->getSQL($this->getDriver()));
 
         if ($bind_params && $stmt instanceof PDOStatement) {
-            $types = $statement->getParamsTypes();
-            foreach ($statement->getParams() as $index => $value) {
+            $types = $sqlStatement->getParamsTypes();
+            foreach ($sqlStatement->getParams() as $index => $value) {
                 $stmt->bindValue(
                     $index, // string marker (:name) or the 1-indexed position
                     $value,
