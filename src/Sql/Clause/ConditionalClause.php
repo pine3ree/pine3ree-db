@@ -384,7 +384,7 @@ abstract class ConditionalClause extends Clause
      */
     public function or(): Predicate\Set
     {
-        return $this->conditions->and();
+        return $this->conditions->or();
     }
 
     /**
