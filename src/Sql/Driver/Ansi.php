@@ -73,6 +73,6 @@ class Ansi extends Driver
             $sql .= " " . Sql::OFFSET . " {$offset}";
         }
 
-        return $sql ?? "[UNSUPPORTED: $sql]";
+        return isset($sql) ? "[:UNSUPPORTED {$sql}]" : "";
     }
 }
