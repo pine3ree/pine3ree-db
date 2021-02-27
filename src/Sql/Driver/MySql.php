@@ -23,30 +23,4 @@ class MySql extends Driver
     {
         parent::__construct($pdo, '`', '`', "'");
     }
-
-    public function getLimitSQL(Select $select): string
-    {
-        $limit  = $select->limit;
-        $offset = $select->offset;
-
-        if (!isset($limit) && (int)$offset === 0) {
-            return '';
-        }
-
-        if (isset($limit)) {
-            $limit = $select->createNamedParam($limit, PDO::PARAM_INT);
-            $sql = Sql::LIMIT . " {$limit}";
-        }
-
-        $offset = (int)$offset;
-        if ($offset > 0) {
-            if (!isset($sql)) {
-                $sql = Sql::LIMIT . " " . PHP_INT_MAX;
-            }
-            $offset = $select->createNamedParam($offset, PDO::PARAM_INT);
-            $sql .= " " . Sql::OFFSET . " {$offset}";
-        }
-
-        return $sql ?? '';
-    }
 }
