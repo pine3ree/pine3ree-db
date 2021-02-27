@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use PDO;
 use ReflectionClass;
@@ -144,7 +145,7 @@ abstract class Driver
         $ql = $this->ql;
         $qr = $this->qr;
 
-        return $ql. ltrim(rtrim($alias, $qr), $ql) . $qr;
+        return $ql . ltrim(rtrim($alias, $qr), $ql) . $qr;
     }
 
     /**
@@ -157,7 +158,7 @@ abstract class Driver
     public function quoteValue($value): string
     {
         if (null === $value) {
-            return 'NULL';
+            return Sql::NULL;
         }
 
         if (isset($this->pdo)) {
