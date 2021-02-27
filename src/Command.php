@@ -58,7 +58,7 @@ abstract class Command
         return $this->sqlStatement->getParamsTypes($return_pdo_const_names);
     }
 
-    public function getStatement(): SqlStatement
+    public function getSqlStatement(): SqlStatement
     {
         return $this->sqlStatement;
     }
