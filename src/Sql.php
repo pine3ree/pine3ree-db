@@ -299,7 +299,7 @@ class Sql
         return !is_string($sql) || '' === trim($sql);
     }
 
-    public static function isEmptyPredicate($predicate): bool
+    public static function isEmptyPredicate($predicate, bool $checkEmptySet = false): bool
     {
         if ($predicate === null || $predicate === []) {
             return true;
@@ -307,6 +307,10 @@ class Sql
 
         if (is_string($predicate) && trim($predicate) === '') {
             return true;
+        }
+
+        if ($checkEmptySet && $predicate instanceof Predicate\Set) {
+            return $predicate->isEmpty();
         }
 
         return false;
