@@ -7,13 +7,11 @@
 
 namespace P3\Db\Sql\Statement;
 
-use InvalidArgumentException;
 use P3\Db\Sql;
-use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
+use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Traits\TableAwareTrait;
 use RuntimeException;
@@ -38,7 +36,7 @@ use function trim;
  */
 class Update extends Statement
 {
-    use ConditionalClauseAwareTrait;
+    use WhereAwareTrait;
     use TableAwareTrait;
 
     /**
@@ -159,23 +157,6 @@ class Update extends Statement
         }
 
         return Sql::UPDATE . " {$table} " . Sql::SET . implode(", ", $set);
-    }
-
-    /**
-     * Set WHERE conditions
-     *
-     * @param string|array|Predicate|Where $where
-     * @return $this
-     */
-    public function where($where): self
-    {
-        $this->setConditionalClause('where', Where::class, $where);
-        return $this;
-    }
-
-    private function getWhereSQL(Driver $driver): string
-    {
-        return $this->getConditionalClauseSQL('where', $driver);
     }
 
     public function __get(string $name)

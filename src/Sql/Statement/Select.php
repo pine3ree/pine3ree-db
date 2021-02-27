@@ -7,9 +7,10 @@
 
 namespace P3\Db\Sql\Statement;
 
+use Closure;
 use InvalidArgumentException;
 use P3\Db\Sql;
-use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
+use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Clause\Where;
@@ -60,7 +61,7 @@ use const PHP_INT_MAX;
  */
 class Select extends Statement
 {
-    use ConditionalClauseAwareTrait;
+    use WhereAwareTrait;
 
     /** @var string|null */
     protected $quantifier;
@@ -482,23 +483,6 @@ class Select extends Statement
     }
 
     /**
-     * Set WHERE conditions
-     *
-     * @param string|array|Predicate|Where $where
-     * @return $this
-     */
-    public function where($where): self
-    {
-        $this->setConditionalClause('where', Where::class, $where);
-        return $this;
-    }
-
-    private function getWhereSQL(Driver $driver): string
-    {
-        return $this->getConditionalClauseSQL('where', $driver);
-    }
-
-    /**
      * Add or set the GROUP BY clause elements
      *
      * @param string|string[]|Literal|Literal[] $groupBy
@@ -551,11 +535,16 @@ class Select extends Statement
     /**
      * Set HAVING conditions
      *
-     * @param string|array|Predicate|Having $having
+     * @param string|array|Predicate|Closure|Having $having
      * @return $this
      */
     public function having($having): self
     {
+        if ($having instanceof Closure) {
+            $having($this->having);
+            return $this;
+        }
+
         $this->setConditionalClause('having', Having::class, $having);
         return $this;
     }
