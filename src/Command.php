@@ -11,7 +11,7 @@ use P3\Db\Sql\Statement as SqlStatement;
 
 /**
  * A db-command sends a sql-statement to the composed database instance and
- * returns the result of the statement execution
+ * returns the result of its execution
  *
  * @property-read SqlStatement $sqlStatement
  */
