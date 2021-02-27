@@ -154,14 +154,14 @@ class Sql
 
     // valid comparison operators excluding null/boolean
     public const COMPARISON_OPERATORS = [
-        self::EQ     => self::EQUAL,
-        self::NEQ    => self::NOT_EQUAL,
-        self::NE     => self::NOT_EQUAL_ANSI,
-        self::LT     => self::LESS_THAN,
-        self::LTE    => self::LESS_THAN_EQUAL,
-        self::GTE    => self::GREATER_THAN_EQUAL,
-        self::GT     => self::GREATER_THAN,
-        self::GTE    => self::GREATER_THAN_EQUAL,
+        self::EQ  => self::EQUAL,
+        self::NEQ => self::NOT_EQUAL,
+        self::NE  => self::NOT_EQUAL_ANSI,
+        self::LT  => self::LESS_THAN,
+        self::LTE => self::LESS_THAN_EQUAL,
+        self::GTE => self::GREATER_THAN_EQUAL,
+        self::GT  => self::GREATER_THAN,
+        self::GTE => self::GREATER_THAN_EQUAL,
     ];
 
     /**
