@@ -10,6 +10,8 @@ namespace P3\Db\Sql\Driver;
 use PDO;
 use P3\Db\Sql\Driver;
 
+use function implode;
+
 /**
  * Postgre sql-driver
  */
@@ -18,5 +20,35 @@ class PgSql extends Driver
     public function __construct(PDO $pdo = null)
     {
         parent::__construct($pdo, '"', '"', "'");
+    }
+
+    /**
+     * PgSQL supports OFFSET without LIMIT
+     * 
+     * @param Select $select
+     * @return string
+     */
+    public function getLimitSQL(Select $select): string
+    {
+        $limit  = $select->limit;
+        $offset = $select->offset;
+
+        if (!isset($limit) && (int)$offset === 0) {
+            return '';
+        }
+
+        $sqls = [];
+        if (isset($limit)) {
+            $limit = $select->createNamedParam($limit, PDO::PARAM_INT);
+            $sqls[] = Sql::LIMIT . " {$limit}";
+        }
+
+        $offset = (int)$offset;
+        if ($offset > 0) {
+            $offset = $select->createNamedParam($offset, PDO::PARAM_INT);
+            $sqls[] = Sql::OFFSET . " {$offset}";
+        }
+
+        return empty($sqls) ? '' : implode(" ", $sqls);
     }
 }
