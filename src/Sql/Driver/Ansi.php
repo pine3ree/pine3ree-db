@@ -12,6 +12,8 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Select;
 
+use const PHP_INT_MAX;
+
 /**
  * The default ANSI SQL Driver
  */

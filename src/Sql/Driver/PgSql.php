@@ -8,7 +8,9 @@
 namespace P3\Db\Sql\Driver;
 
 use PDO;
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Statement\Select;
 
 use function implode;
 
@@ -24,7 +26,7 @@ class PgSql extends Driver
 
     /**
      * PgSQL supports OFFSET without LIMIT
-     * 
+     *
      * @param Select $select
      * @return string
      */
