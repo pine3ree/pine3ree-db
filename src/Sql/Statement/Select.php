@@ -645,19 +645,21 @@ class Select extends Statement
             return $this->sqls['limit'];
         }
 
-        // overridden by driver?
-        if (is_callable([$driver, 'getLimitSQL'])) {
-            return $this->sqls['limit'] = $driver->getLimitSQL($this);
-        }
-
         if (!isset($this->limit) && (int)$this->offset === 0) {
             return $this->sqls['limit'] = '';
         }
 
+        // computed by driver?
+        if (is_callable([$driver, 'getLimitSQL'])) {
+            return $this->sqls['limit'] = $driver->getLimitSQL($this);
+        }
+
+        // default implementation for MySQL, PostgreSQL and Sqlite
         if (isset($this->limit)) {
             $limit = $this->createNamedParam($this->limit, PDO::PARAM_INT);
             $sql = Sql::LIMIT . " {$limit}";
         }
+
         if (isset($this->offset) && $this->offset > 0) {
             if (!isset($sql)) {
                 $sql = Sql::LIMIT . " " . PHP_INT_MAX;
