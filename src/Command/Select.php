@@ -26,7 +26,7 @@ use function is_array;
 /**
  * Class Select
  *
- * @property-read SqlSelect $statement
+ * @property-read SqlSelect $sqlStatement
  * @property-read string|null $table The db table to select from if already set
  * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
@@ -67,7 +67,7 @@ class Select extends Command implements ReaderInterface
      */
     public function quantifier(string $quantifier): self
     {
-        $this->statement->quantifier($quantifier);
+        $this->sqlStatement->quantifier($quantifier);
         return $this;
     }
 
@@ -77,7 +77,7 @@ class Select extends Command implements ReaderInterface
      */
     public function distinct(): self
     {
-        $this->statement->distinct();
+        $this->sqlStatement->distinct();
         return $this;
     }
 
@@ -87,7 +87,7 @@ class Select extends Command implements ReaderInterface
      */
     public function columns($columns): self
     {
-        $this->statement->columns($columns);
+        $this->sqlStatement->columns($columns);
         return $this;
     }
 
@@ -97,7 +97,7 @@ class Select extends Command implements ReaderInterface
      */
     public function from($from, string $alias = null): self
     {
-        $this->statement->from($from, $alias);
+        $this->sqlStatement->from($from, $alias);
         return $this;
     }
 
@@ -107,7 +107,7 @@ class Select extends Command implements ReaderInterface
      */
     public function join(string $table, string $alias, $specification, string $type = Sql::JOIN_AUTO): self
     {
-        $this->statement->join($table, $alias, $specification, $type);
+        $this->sqlStatement->join($table, $alias, $specification, $type);
         return $this;
     }
 
@@ -117,7 +117,7 @@ class Select extends Command implements ReaderInterface
      */
     public function innerJoin(string $table, string $alias, $specification): self
     {
-        $this->statement->innerJoin($table, $alias, $specification);
+        $this->sqlStatement->innerJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -127,7 +127,7 @@ class Select extends Command implements ReaderInterface
      */
     public function leftJoin(string $table, string $alias, $specification): self
     {
-        $this->statement->leftJoin($table, $alias, $specification);
+        $this->sqlStatement->leftJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -137,7 +137,7 @@ class Select extends Command implements ReaderInterface
      */
     public function rightJoin(string $table, string $alias, $specification): self
     {
-        $this->statement->rightJoin($table, $alias, $specification);
+        $this->sqlStatement->rightJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -146,7 +146,7 @@ class Select extends Command implements ReaderInterface
      */
     public function naturalJoin(string $table, string $alias, $specification = null): self
     {
-        $this->statement->naturalJoin($table, $alias, $specification);
+        $this->sqlStatement->naturalJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -155,7 +155,7 @@ class Select extends Command implements ReaderInterface
      */
     public function naturalLeftJoin(string $table, string $alias, $specification = null): self
     {
-        $this->statement->naturalLeftJoin($table, $alias, $specification);
+        $this->sqlStatement->naturalLeftJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -164,7 +164,7 @@ class Select extends Command implements ReaderInterface
      */
     public function naturalRightJoin(string $table, string $alias, $specification = null): self
     {
-        $this->statement->naturalRightJoin($table, $alias, $specification);
+        $this->sqlStatement->naturalRightJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -173,7 +173,7 @@ class Select extends Command implements ReaderInterface
      */
     public function crossJoin(string $table, string $alias, $specification = null): self
     {
-        $this->statement->crossJoin($table, $alias, $specification);
+        $this->sqlStatement->crossJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -182,7 +182,7 @@ class Select extends Command implements ReaderInterface
      */
     public function straightJoin(string $table, string $alias, $specification = null): self
     {
-        $this->statement->straightJoin($table, $alias, $specification);
+        $this->sqlStatement->straightJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -192,7 +192,7 @@ class Select extends Command implements ReaderInterface
      */
     public function where($where): self
     {
-        $this->statement->where($where);
+        $this->sqlStatement->where($where);
         return $this;
     }
 
@@ -202,7 +202,7 @@ class Select extends Command implements ReaderInterface
      */
     public function groupBy($groupBy, bool $replace = false): self
     {
-        $this->statement->groupBy($groupBy, $replace);
+        $this->sqlStatement->groupBy($groupBy, $replace);
         return $this;
     }
 
@@ -212,7 +212,7 @@ class Select extends Command implements ReaderInterface
      */
     public function having($having): self
     {
-        $this->statement->having($having);
+        $this->sqlStatement->having($having);
         return $this;
     }
 
@@ -222,7 +222,7 @@ class Select extends Command implements ReaderInterface
      */
     public function orderBy($orderBy, $sortdir_or_replace = null): self
     {
-        $this->statement->orderBy($orderBy, $sortdir_or_replace);
+        $this->sqlStatement->orderBy($orderBy, $sortdir_or_replace);
         return $this;
     }
 
@@ -232,7 +232,7 @@ class Select extends Command implements ReaderInterface
      */
     public function limit(int $limit): self
     {
-        $this->statement->limit($limit);
+        $this->sqlStatement->limit($limit);
         return $this;
     }
 
@@ -242,7 +242,7 @@ class Select extends Command implements ReaderInterface
      */
     public function offset(int $offset): self
     {
-        $this->statement->offset($offset);
+        $this->sqlStatement->offset($offset);
         return $this;
     }
 
@@ -252,7 +252,7 @@ class Select extends Command implements ReaderInterface
      */
     public function union(SqlSelect $select, bool $all = false): self
     {
-        $this->statement->union($select, $all);
+        $this->sqlStatement->union($select, $all);
         return $this;
     }
 
@@ -262,7 +262,7 @@ class Select extends Command implements ReaderInterface
      */
     public function intersect(SqlSelect $select): self
     {
-        $this->statement->intersect($select);
+        $this->sqlStatement->intersect($select);
         return $this;
     }
 
@@ -369,7 +369,7 @@ class Select extends Command implements ReaderInterface
         $class_or_object = null,
         array $ctor_args = []
     ) {
-        $this->statement->limit(1);
+        $this->sqlStatement->limit(1);
         if (false === $stmt = $this->execute()) {
             return null;
         }
@@ -427,7 +427,7 @@ class Select extends Command implements ReaderInterface
      */
     public function fetchScalar(string $identifier): ?string
     {
-        $this->statement->limit(1);
+        $this->sqlStatement->limit(1);
         if (false === $stmt = $this->execute()) {
             return null;
         }
@@ -446,7 +446,7 @@ class Select extends Command implements ReaderInterface
      */
     public function fetchColumn(int $column_number = 0)
     {
-        $this->statement->limit(1);
+        $this->sqlStatement->limit(1);
         if (false === $stmt = $this->execute()) {
             return null;
         }

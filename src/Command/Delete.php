@@ -17,7 +17,7 @@ use P3\Db\Sql\Statement\Delete as SqlDelete;
 /**
  * Class Delete
  *
- * @property-read SqlDelete $statement
+ * @property-read SqlDelete $sqlStatement
  * @property-read string|null $table The db table to delete from if already set
  * @property-read string|null $from Alias of $table
  * @property-read Where $where The Where clause, built on-first-access if null
@@ -37,7 +37,7 @@ class Delete extends Command implements WriterInterface
      */
     public function from($table): self
     {
-        $this->statement->from($table);
+        $this->sqlStatement->from($table);
         return $this;
     }
 
@@ -47,7 +47,7 @@ class Delete extends Command implements WriterInterface
      */
     public function where($where): self
     {
-        $this->statement->where($where);
+        $this->sqlStatement->where($where);
         return $this;
     }
 }

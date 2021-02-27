@@ -7,13 +7,13 @@
 namespace P3\Db;
 
 use PDOStatement;
-use P3\Db\Sql\Statement as Statement;
+use P3\Db\Sql\Statement as SqlStatement;
 
 /**
  * A db-command sends a sql-statement to the composed database instance and
  * returns the result of the statement execution
  *
- * @property-read Statement $statement
+ * @property-read SqlStatement $sqlStatement
  */
 abstract class Command
 {
@@ -23,18 +23,18 @@ abstract class Command
     protected $db;
 
     /**
-     * @var Statement
+     * @var SqlStatement
      */
-    protected $statement;
+    protected $sqlStatement;
 
     /**
      * @param Db $db The database abstraction layer
-     * @param Statement $statement The sql-statement object
+     * @param Statement $sqlStatement The sql-statement object
      */
-    public function __construct(Db $db, Statement $statement)
+    public function __construct(Db $db, Statement $sqlStatement)
     {
         $this->db = $db;
-        $this->statement = $statement;
+        $this->sqlStatement = $sqlStatement;
     }
 
     /**
@@ -45,27 +45,27 @@ abstract class Command
      */
     protected function prepare(bool $bind_params = false)
     {
-        return $this->db->prepare($this->statement, $bind_params);
+        return $this->db->prepare($this->sqlStatement, $bind_params);
     }
 
     public function getParams(): array
     {
-        return $this->statement->getParams();
+        return $this->sqlStatement->getParams();
     }
 
     public function getParamsTypes(bool $return_pdo_const_names = false): array
     {
-        return $this->statement->getParamsTypes($return_pdo_const_names);
+        return $this->sqlStatement->getParamsTypes($return_pdo_const_names);
     }
 
     public function getStatement(): Statement
     {
-        return $this->statement;
+        return $this->sqlStatement;
     }
 
     public function getSQL(): string
     {
-        return $this->statement->getSQL($this->db->getDriver());
+        return $this->sqlStatement->getSQL($this->db->getDriver());
     }
 
 //    /**
@@ -76,15 +76,15 @@ abstract class Command
 
     public function __get(string $name)
     {
-        if ('statement' === $name) {
-            return $this->statement;
+        if ('sqlStatement' === $name) {
+            return $this->sqlStatement;
         }
 
-        return $this->statement->{$name} ?? null;
+        return $this->sqlStatement->{$name} ?? null;
     }
 
     public function __clone()
     {
-        $this->statement = clone $this->statement;
+        $this->sqlStatement = clone $this->sqlStatement;
     }
 }

@@ -17,7 +17,7 @@ use P3\Db\Sql\Statement\Select as SqlSelect;
 /**
  * Class Insert
  *
- * @property-read SqlInsert $statement
+ * @property-read SqlInsert $sqlStatement
  * @property-read string|null $table The db table to insert into if already set
  * @property-read bool $ignore Is it an INSERT IGNORE statement
  * @property-read string|null $into Alias of $table
@@ -41,7 +41,7 @@ class Insert extends Command implements WriterInterface
      */
     public function ignore(): self
     {
-        $this->statement->ignore($table);
+        $this->sqlStatement->ignore($table);
         return $this;
     }
 
@@ -51,7 +51,7 @@ class Insert extends Command implements WriterInterface
      */
     public function into($table): self
     {
-        $this->statement->into($table);
+        $this->sqlStatement->into($table);
         return $this;
     }
 
@@ -61,7 +61,7 @@ class Insert extends Command implements WriterInterface
      */
     public function columns(array $columns): self
     {
-        $this->statement->columns($columns);
+        $this->sqlStatement->columns($columns);
         return $this;
     }
 
@@ -71,7 +71,7 @@ class Insert extends Command implements WriterInterface
      */
     public function values(array $values, bool $reset = false)
     {
-        $this->statement->values($values, $reset);
+        $this->sqlStatement->values($values, $reset);
         return $this;
     }
 
@@ -81,7 +81,7 @@ class Insert extends Command implements WriterInterface
      */
     public function multipleValues(array $value, bool $reset = false)
     {
-        $this->statement->multipleValues($value, $reset);
+        $this->sqlStatement->multipleValues($value, $reset);
         return $this;
     }
 
@@ -91,7 +91,7 @@ class Insert extends Command implements WriterInterface
      */
     public function row(array $row)
     {
-        $this->statement->row($row);
+        $this->sqlStatement->row($row);
         return $this;
     }
 
@@ -101,7 +101,7 @@ class Insert extends Command implements WriterInterface
      */
     public function rows(array $rows)
     {
-        $this->statement->rows($rows);
+        $this->sqlStatement->rows($rows);
         return $this;
     }
 
@@ -111,7 +111,7 @@ class Insert extends Command implements WriterInterface
      */
     public function select(SqlSelect $select)
     {
-        $this->statement->select($select);
+        $this->sqlStatement->select($select);
         return $this;
     }
 }

@@ -17,7 +17,7 @@ use P3\Db\Sql\Statement\Update as SqlUpdate;
 /**
  * Class Update
  *
- * @property-read SqlUpdate $statement
+ * @property-read SqlUpdate $sqlStatement
  * @property-read string|null $table The db table to select from if already set
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read array $set The SET column/value pairs to be updated
@@ -38,7 +38,7 @@ class Update extends Command implements WriterInterface
      */
     public function table($table): self
     {
-        $this->statement->table($table);
+        $this->sqlStatement->table($table);
         return $this;
     }
 
@@ -48,7 +48,7 @@ class Update extends Command implements WriterInterface
      */
     public function set($column_or_row, $value = null): self
     {
-        $this->statement->set($column_or_row, $value);
+        $this->sqlStatement->set($column_or_row, $value);
         return $this;
     }
 
@@ -58,7 +58,7 @@ class Update extends Command implements WriterInterface
      */
     public function where($where): self
     {
-        $this->statement->where($where);
+        $this->sqlStatement->where($where);
         return $this;
     }
 }
