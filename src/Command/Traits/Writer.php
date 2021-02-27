@@ -15,9 +15,11 @@ trait Writer
     /**
      * Execute the writer-command returning either the number of affected rows or false on error
      *
+     * @implements P3\Db\Command\Writer::exec()
+     *
      * @return int|false
      */
-    public function execute()
+    public function exec()
     {
         $stmt = $this->prepare(true);
         if ($stmt === false || false === $stmt->execute()) {
@@ -25,5 +27,16 @@ trait Writer
         }
 
         return $stmt->rowCount();
+    }
+
+    /**
+     * @implements P3\Db\Command::execute()
+     * @see self::exec()
+     *
+     * @return int|false
+     */
+    public function execute()
+    {
+        return $this->exec();
     }
 }

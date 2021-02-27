@@ -17,5 +17,5 @@ interface Writer
      *
      * @return int|false
      */
-    public function execute();
+    public function exec();
 }

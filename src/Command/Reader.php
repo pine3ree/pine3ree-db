@@ -19,5 +19,5 @@ interface Reader
      *
      * @return PDOStatement|false
      */
-    public function execute();
+    public function query();
 }
