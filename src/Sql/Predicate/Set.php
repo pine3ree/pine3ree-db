@@ -108,14 +108,17 @@ class Set extends Predicate
      *  <pre>
      *  [
      *      'enabled' => true, // `enabled` = 1
-     *      ['id', 'IN', [1, 2, 3, null]], // `id` AND IN (1, 2, 3) OR `id` IS NULL
+     *      ['id', 'IN', [1, 2, 3, null]], // `id` AND IN ('1', '2', '3') OR `id` IS NULL
      *      new Predicate\Like('email', '%gmail.com'), // AND `email LIKE '%gmail.com'`
-     *      ['||' => [
+     *      ['||', ['id', '>', 1]], // OR `id` > 1
+     *      // add a nested group with OR as default logical operator
+     *      ['||' => [ // AND (
      *          ['status' => null], // `status` IS NULL
      *          ['status', 'IS', true], // OR `status` IS TRUE
-     *          ['status', 'BETWEEN', 2, 16], // OR `status` BETWEEN '2' AND '16'
+     *          ['status', 'BETWEEN', 2, 16], // OR `status` BETWEEN 2 AND 16
+     *          ['&&', "TRUE IS TRUE"], // AND TRUE IS TRUE
      *          new Predicate\Literal("created_at <= '2019-12-31'"), // OR `created_at` <= '2020-01-01'
-     *      ]].
+     *      ]], // )
      *  ]
      * </pre>
      *
