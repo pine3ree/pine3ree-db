@@ -9,21 +9,19 @@ namespace P3\Db\Sql;
 
 use P3\Db\Sql\Driver\Ansi;
 use PDO;
+use ReflectionClass;
 use Throwable;
 
 use function addcslashes;
-use function count;
-use function implode;
 use function is_bool;
 use function is_int;
-use function is_numeric;
 use function is_string;
 use function ltrim;
 use function rtrim;
 use function str_replace;
 use function strpos;
+use function strtolower;
 use function substr;
-use function trim;
 
 /**
  * A SQL Driver provides methods for quoting identifier, aliases, values and
@@ -33,6 +31,7 @@ use function trim;
  * @property-read string $ql The left quote char, if any
  * @property-read string $qr The right quote char, if any
  * @property-read string $qv The value quote char, if any
+ * @property-read string $name The driver short name
  */
 abstract class Driver
 {
@@ -40,6 +39,11 @@ abstract class Driver
      * @var PDO|null
      */
     protected $pdo;
+
+    /**
+     * @var string
+     */
+    protected $name;
 
     /**
      * @var string The left quote char for identifiers/aliases, default is ANSI '"'
@@ -83,6 +87,13 @@ abstract class Driver
         $this->qv = $qv;
 
         $this->qlr = "{$ql}{$qr}";
+    }
+
+    public function getName(): string
+    {
+        return $this->name ?? $this->name = strtolower(
+            (new ReflectionClass($this))->getShortName()
+        );
     }
 
     /**
@@ -222,6 +233,9 @@ abstract class Driver
         }
         if ($name === 'qv') {
             return $this->qv;
+        }
+        if ($name === 'name') {
+            return $this->name ?? $this->getName();
         }
     }
 }
