@@ -411,4 +411,10 @@ abstract class ConditionalClause extends Clause
             return $this->conditions;
         };
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->conditions = clone $this->conditions;
+    }
 }

@@ -94,4 +94,12 @@ class Delete extends Statement
             return $this->where ?? $this->where = new Where();
         }
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        if (isset($this->where)) {
+            $this->where = clone $this->where;
+        }
+    }
 }

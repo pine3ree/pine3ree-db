@@ -863,5 +863,16 @@ class Select extends Statement
             return $this->intersect;
         }
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        if (isset($this->where)) {
+            $this->where = clone $this->where;
+        }
+        if (isset($this->having)) {
+            $this->having = clone $this->having;
+        }
+    }
 }
 

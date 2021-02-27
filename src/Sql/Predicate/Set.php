@@ -751,4 +751,12 @@ class Set extends Predicate
 
         return $this->parent;
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        foreach ($this->predicates as $i => $predicate) {
+            $this->predicates[$i] = [$predicate[0], clone $predicate[1]];
+        }
+    }
 }

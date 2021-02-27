@@ -140,4 +140,12 @@ class Join extends Clause
             return null;
         }
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        if (isset($this->specification)) {
+            $this->specification = clone $this->specification;
+        }
+    }
 }

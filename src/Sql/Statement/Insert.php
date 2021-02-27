@@ -407,4 +407,12 @@ class Insert extends Statement
             return $this->select;
         }
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        if (isset($this->where)) {
+            $this->where = clone $this->where;
+        }
+    }
 }
