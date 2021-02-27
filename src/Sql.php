@@ -299,6 +299,19 @@ class Sql
         return !is_string($sql) || '' === trim($sql);
     }
 
+    public static function isEmptyPredicate($predicate): bool
+    {
+        if ($predicate === null || $predicate === []) {
+            return true;
+        }
+
+        if (is_string($predicate) && trim($predicate) === '') {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Create and return a new Select sql-statement
      *
