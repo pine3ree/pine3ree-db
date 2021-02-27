@@ -355,6 +355,7 @@ class Select extends Statement
         } elseif (!empty($this->from)) {
             $from = $driver->quoteIdentifier($this->from);
         } else {
+            // do not cache if from is not set
             return '';
         }
 
