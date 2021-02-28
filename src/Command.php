@@ -64,6 +64,11 @@ abstract class Command
         return $this->sqlStatement;
     }
 
+    public function createParam($value, int $type = null, string $name = null): string
+    {
+        return $this->sqlStatement->createParam($value, $type, $name);
+    }
+
     public function getSQL(): string
     {
         return $this->sqlStatement->getSQL($this->db->getDriver());
