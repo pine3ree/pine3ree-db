@@ -8,6 +8,7 @@
 namespace P3\Db\Sql;
 
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\ElementInterface;
 use PDO;
 use ReflectionClass;
 use RuntimeException;
@@ -24,7 +25,7 @@ use function strtolower;
  * This abstract class represents a generic SQL element and is the ancestor
  * of all the other sql-related classes.
  */
-abstract class Element
+abstract class Element implements ElementInterface
 {
     /**
      * @var string The rendered SQL statement string with optional parameter markers
