@@ -57,7 +57,7 @@ class RegExp extends Predicate
             $operator = "{$operator}*";
         }
 
-        $param = $this->createNamedParam($this->regexp);
+        $param = $this->createParam($this->regexp);
 
         return $this->sql = "{$identifier} {$operator} {$param}";
     }

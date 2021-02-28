@@ -92,7 +92,7 @@ class Like extends Predicate
 
         $param = $this->value instanceof Literal
             ? $this->value->getSQL()
-            : $this->createNamedParam($this->value);
+            : $this->createParam($this->value);
 
         $escape = isset($escape) ? " " . Sql::ESCAPE . $escape : "";
 

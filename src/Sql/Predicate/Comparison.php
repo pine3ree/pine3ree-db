@@ -97,7 +97,7 @@ class Comparison extends Predicate
         } else {
             $param = $this->value instanceof Literal
                 ? $this->value->getSQL()
-                : $this->createNamedParam($this->value);
+                : $this->createParam($this->value);
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";

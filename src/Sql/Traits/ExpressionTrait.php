@@ -74,7 +74,7 @@ trait ExpressionTrait
         // replace the `{name}`-placeholders with `:name`-markers
         $sql = $this->expression;
         foreach ($this->substitutions as $name => $value) {
-            $marker = $this->createNamedParam($value);
+            $marker = $this->createParam($value);
             $sql = str_replace("{{$name}}", $marker, $sql);
         }
 
