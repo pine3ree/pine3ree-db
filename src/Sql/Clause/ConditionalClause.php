@@ -79,6 +79,7 @@ abstract class ConditionalClause extends Clause
      */
     public function addPredicate($predicate): self
     {
+        $this->sql = null;
         $this->conditions->addPredicate($predicate);
         return $this;
     }
@@ -88,6 +89,7 @@ abstract class ConditionalClause extends Clause
      */
     public function literal(string $literal): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->literal($literal);
     }
 
@@ -96,6 +98,7 @@ abstract class ConditionalClause extends Clause
      */
     public function expression(string $expression, array $params = []): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->expression($expression, $params);
     }
 
@@ -104,6 +107,7 @@ abstract class ConditionalClause extends Clause
      */
     public function all($identifier, string $operator, Select $select): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->all($identifier, $operator, $select);
     }
 
@@ -112,6 +116,7 @@ abstract class ConditionalClause extends Clause
      */
     public function any($identifier, string $operator, Select $select): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->any($identifier, $operator, $select);
     }
 
@@ -120,6 +125,7 @@ abstract class ConditionalClause extends Clause
      */
     public function some($identifier, string $operator, Select $select): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->some($identifier, $operator, $select);
     }
 
@@ -128,6 +134,7 @@ abstract class ConditionalClause extends Clause
      */
     public function between($identifier, $min_value, $max_value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->between($identifier, $min_value, $max_value);
     }
 
@@ -136,6 +143,7 @@ abstract class ConditionalClause extends Clause
      */
     public function notBetween($identifier, $min_value, $max_value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->notBetween($identifier, $min_value, $max_value);
     }
 
@@ -144,6 +152,7 @@ abstract class ConditionalClause extends Clause
      */
     public function exists(Select $select): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->exists($select);
     }
 
@@ -152,6 +161,7 @@ abstract class ConditionalClause extends Clause
      */
     public function notExists(Select $select): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->notExists($select);
     }
 
@@ -160,6 +170,7 @@ abstract class ConditionalClause extends Clause
      */
     public function in($identifier, array $value_list): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->in($identifier, $value_list);
     }
 
@@ -168,6 +179,7 @@ abstract class ConditionalClause extends Clause
      */
     public function notIn($identifier, array $value_list): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->notIn($identifier, $value_list);
     }
 
@@ -176,6 +188,7 @@ abstract class ConditionalClause extends Clause
      */
     public function is($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->is($identifier, $value);
     }
 
@@ -184,6 +197,7 @@ abstract class ConditionalClause extends Clause
      */
     public function isNot($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->isNot($identifier, $value);
     }
 
@@ -192,7 +206,8 @@ abstract class ConditionalClause extends Clause
      */
     public function isNull($identifier): Predicate\Set
     {
-         return $this->conditions->isNull($identifier);
+        $this->sql = null;
+        return $this->conditions->isNull($identifier);
     }
 
     /**
@@ -200,6 +215,7 @@ abstract class ConditionalClause extends Clause
      */
     public function isNotNull($identifier): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->isNotNull($identifier);
     }
 
@@ -208,6 +224,7 @@ abstract class ConditionalClause extends Clause
      */
     public function isTrue($identifier): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->isTrue($identifier);
     }
 
@@ -216,6 +233,7 @@ abstract class ConditionalClause extends Clause
      */
     public function isFalse($identifier): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->isFalse($identifier);
     }
 
@@ -224,6 +242,7 @@ abstract class ConditionalClause extends Clause
      */
     public function isUnknown($identifier): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->isUnknown($identifier);
     }
 
@@ -232,6 +251,7 @@ abstract class ConditionalClause extends Clause
      */
     public function isNotUnknown($identifier): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->isNotUnknown($identifier);
     }
 
@@ -240,6 +260,7 @@ abstract class ConditionalClause extends Clause
      */
     public function like($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->like($identifier, $value);
     }
 
@@ -248,6 +269,7 @@ abstract class ConditionalClause extends Clause
      */
     public function notLike($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->notLike($identifier, $value);
     }
 
@@ -256,6 +278,7 @@ abstract class ConditionalClause extends Clause
      */
     public function equal($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->equal($identifier, $value);
     }
 
@@ -264,6 +287,7 @@ abstract class ConditionalClause extends Clause
      */
     public function eq($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->eq($identifier, $value);
     }
 
@@ -272,6 +296,7 @@ abstract class ConditionalClause extends Clause
      */
     public function notEqual($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->notEqual($identifier, $value);
     }
 
@@ -280,6 +305,7 @@ abstract class ConditionalClause extends Clause
      */
     public function neq($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->neq($identifier, $value);
     }
 
@@ -288,6 +314,7 @@ abstract class ConditionalClause extends Clause
      */
     public function ne($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->ne($identifier, $value);
     }
 
@@ -296,6 +323,7 @@ abstract class ConditionalClause extends Clause
      */
     public function lessThan($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->lessThan($identifier, $value);
     }
 
@@ -304,6 +332,7 @@ abstract class ConditionalClause extends Clause
      */
     public function lt($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->lt($identifier, $value);
     }
 
@@ -312,6 +341,7 @@ abstract class ConditionalClause extends Clause
      */
     public function lessThanEqual($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->lessThanEqual($identifier, $value);
     }
 
@@ -320,6 +350,7 @@ abstract class ConditionalClause extends Clause
      */
     public function lte($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->lte($identifier, $value);
     }
 
@@ -328,6 +359,7 @@ abstract class ConditionalClause extends Clause
      */
     public function greaterThanEqual($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->greaterThanEqual($identifier, $value);
     }
 
@@ -336,6 +368,7 @@ abstract class ConditionalClause extends Clause
      */
     public function gte($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->gte($identifier, $value);
     }
 
@@ -344,6 +377,7 @@ abstract class ConditionalClause extends Clause
      */
     public function greaterThan($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->greaterThan($identifier, $value);
     }
 
@@ -352,6 +386,7 @@ abstract class ConditionalClause extends Clause
      */
     public function gt($identifier, $value): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->gt($identifier, $value);
     }
 
@@ -360,6 +395,7 @@ abstract class ConditionalClause extends Clause
      */
     public function regExp($identifier, array $regexp, bool $case_sensitive = false): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->regExp($identifier, $regexp, $case_sensitive);
     }
 
@@ -368,6 +404,7 @@ abstract class ConditionalClause extends Clause
      */
     public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->notRegExp($identifier, $regexp, $case_sensitive);
     }
 
@@ -397,6 +434,7 @@ abstract class ConditionalClause extends Clause
      */
     public function open(): Predicate\Set
     {
+        $this->sql = null;
         return $this->conditions->open();
     }
 
