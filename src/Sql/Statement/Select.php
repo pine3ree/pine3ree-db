@@ -862,7 +862,7 @@ class Select extends Statement
         if ('joins' === $name) {
             if (!empty($this->joins)) {
                 $this->sql = null;
-                unset($this->sqls['joins']);
+                unset($this->sqls['join']);
             }
             return $this->joins;
         }
