@@ -38,6 +38,11 @@ class In extends Predicate
     protected static $not = false;
 
     /**
+     * @var int custom index counter
+     */
+    protected static $index = 0;
+
+    /**
      * @param string|Literal $identifier
      * @param array|Select $value_list
      */

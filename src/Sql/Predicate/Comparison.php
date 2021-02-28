@@ -30,10 +30,17 @@ class Comparison extends Predicate
 {
     /** @var string|Literal */
     protected $identifier;
+
     /** @var string */
     protected $operator;
+
     /** @var string|int|bool|Literal */
     protected $value;
+
+    /**
+     * @var int custom index counter
+     */
+    protected static $index = 0;
 
     /**
      * @param string|Literal $identifier

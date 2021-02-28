@@ -29,6 +29,11 @@ class RegExp extends Predicate
     protected static $not = false;
 
     /**
+     * @var int custom index counter
+     */
+    protected static $index = 0;
+
+    /**
      * @param string|Literal $identifier
      * @param string|Literal $regexp
      * @param bool $case_sensitive
