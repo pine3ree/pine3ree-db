@@ -9,6 +9,7 @@ namespace P3\Db\Sql;
 
 use P3\Db\Sql\Driver;
 use PDO;
+use ReflectionClass;
 use RuntimeException;
 
 use function is_bool;
@@ -39,6 +40,9 @@ abstract class Element
      */
     protected $params_types = [];
 
+    /** @var string */
+    protected $shortName;
+
     /**
      * The parameter index counter
      *
@@ -51,6 +55,17 @@ abstract class Element
      */
     protected const MAX_INDEX = 999999;
 
+    /**
+     * Get the class basename
+     * 
+     * @return string
+     */
+    protected function getShortName(): string
+    {
+        return $this->shortName ?? (
+            $this->shortName = (new ReflectionClass($this))->getShortName()
+        );
+    }
 
     public function getParams(): array
     {
@@ -126,27 +141,30 @@ abstract class Element
      * Create a SQL-string marker for the given value
      *
      * @param mixed $value The parameter value
-     * @param int $type The optional forced parameter type
+     * @param int|null $type The optional forced parameter type
+     * @param string|null $name The optional original parameter name
      *
      * @return string
      */
-    public function createParam($value, int $type = null): string
+    public function createParam($value, int $type = null, string $name = null): string
     {
-        //return $this->createNamedParam($value, $type);
-        return $this->createPositionalParam($value, $type);
+        return $this->createNamedParam($value, $type, $name);
+        //return $this->createPositionalParam($value, $type);
     }
 
     /**
      * Create a statement string marker for a given value
      *
      * @param mixed $value The parameter value
-     * @param int $type The optional forced parameter type
+     * @param int|null $type The optional forced parameter type
+     * @param string|null $name The optional original parameter name
      *
      * @return string
      */
-    public function createNamedParam($value, int $type = null): string
+    public function createNamedParam($value, int $type = null, string $name = null): string
     {
-        $marker = ":" . self::$index;
+        $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
+        $marker = ":{$name}" . self::$index;
         $this->addParam($marker, $value, $type);
         self::incrementIndex();
 
