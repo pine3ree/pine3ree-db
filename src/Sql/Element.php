@@ -61,16 +61,12 @@ abstract class Element implements ElementInterface
     private const MAX_INDEX = 999999;
 
     /**
-     * Get the class basename
+     * Build and return the parametrized SQL-string
      *
-     * @return string
+     * This method must call each inner element getSQL() method and then import
+     * its parameters
      */
-    protected function getShortName(): string
-    {
-        return $this->shortName ?? (
-            $this->shortName = (new ReflectionClass($this))->getShortName()
-        );
-    }
+    abstract public function getSQL(Driver $driver = null): string;
 
     public function getParams(): array
     {
@@ -133,14 +129,6 @@ abstract class Element implements ElementInterface
             $this->addParam($index, $value, $types[$index] ?? null);
         }
     }
-
-    /**
-     * Build and return the parametrized SQL-string
-     *
-     * This method must call each inner element getSQL() method and then import
-     * its parameters
-     */
-    abstract public function getSQL(Driver $driver = null): string;
 
     /**
      * Create a SQL-string marker for the given value
@@ -238,6 +226,18 @@ abstract class Element implements ElementInterface
         }
 
         return static::$index += 1;
+    }
+
+    /**
+     * Get the class basename
+     *
+     * @return string
+     */
+    protected function getShortName(): string
+    {
+        return $this->shortName ?? (
+            $this->shortName = (new ReflectionClass($this))->getShortName()
+        );
     }
 
     /**

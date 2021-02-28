@@ -16,6 +16,14 @@ use P3\Db\Sql\Driver;
 interface ElementInterface
 {
     /**
+     * Build and return the parametrized SQL-string
+     *
+     * This method must call each inner element getSQL() method and then import
+     * its parameters
+     */
+    public function getSQL(Driver $driver = null): string;
+
+    /**
      * Return the parameters created for this element or imported from inner
      * elements or an empty array if getSQL() has not been called after last
      * modification.
@@ -32,12 +40,4 @@ interface ElementInterface
      * @return array <int|string: int>
      */
     public function getParamsTypes(bool $return_pdo_const_names = false): array;
-
-    /**
-     * Build and return the parametrized SQL-string
-     *
-     * This method must call each inner element getSQL() method and then import
-     * its parameters
-     */
-    public function getSQL(Driver $driver = null): string;
 }
