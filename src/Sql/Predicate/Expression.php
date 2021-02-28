@@ -9,6 +9,7 @@ namespace P3\Db\Sql\Predicate;
 
 use InvalidArgumentException;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Predicate;
 
 use function str_replace;
 use function strpos;
