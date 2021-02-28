@@ -58,7 +58,7 @@ abstract class Element implements ElementInterface
     /**
      * @const int The maximun numeric index after which the param counter reset to 1
      */
-    protected const MAX_INDEX = 999999;
+    private const MAX_INDEX = 999999;
 
     /**
      * Get the class basename
@@ -233,11 +233,11 @@ abstract class Element implements ElementInterface
 
     private static function nextIndex(): int
     {
-        if (self::$index === self::MAX_INDEX) {
-            return self::$index = 1;
+        if (static::$index === self::MAX_INDEX) {
+            return static::$index = 1;
         }
 
-        return self::$index += 1;
+        return static::$index += 1;
     }
 
     /**
