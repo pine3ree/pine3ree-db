@@ -8,6 +8,7 @@
 namespace P3\Db;
 
 use PDOStatement;
+use P3\Db\CommandInterface;
 use P3\Db\Sql\Statement as SqlStatement;
 
 /**
@@ -16,7 +17,7 @@ use P3\Db\Sql\Statement as SqlStatement;
  *
  * @property-read SqlStatement $sqlStatement
  */
-abstract class Command
+abstract class Command implements CommandInterface
 {
     /**
      * @var Db
@@ -43,6 +44,11 @@ abstract class Command
         return $this->sqlStatement;
     }
 
+    public function getSQL(): string
+    {
+        return $this->sqlStatement->getSQL($this->db->getDriver());
+    }
+
     public function getParams(): array
     {
         return $this->sqlStatement->getParams();
@@ -52,17 +58,6 @@ abstract class Command
     {
         return $this->sqlStatement->getParamsTypes($return_pdo_const_names);
     }
-
-    public function getSQL(): string
-    {
-        return $this->sqlStatement->getSQL($this->db->getDriver());
-    }
-
-    /**
-     * @return PDOStatement|int|false Returns a PDOStatement or false for
-     *      reader-commands, int or false for writer-commands
-     */
-    abstract public function execute();
 
     /**
      * Prepare the sql-statement
