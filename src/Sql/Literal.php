@@ -7,13 +7,11 @@
 
 namespace P3\Db\Sql;
 
-use P3\Db\Sql\Element;
-use P3\Db\Sql\Traits\LiteralTrait;
+use P3\Db\Sql\Predicate\Literal as LiteralPredicate;
 
 /**
  * This class represents a literal SQL expression without parameters
  */
-class Literal extends Element
+class Literal extends LiteralPredicate
 {
-    use LiteralTrait;
 }

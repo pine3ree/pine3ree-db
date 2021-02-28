@@ -7,13 +7,11 @@
 
 namespace P3\Db\Sql;
 
-use P3\Db\Sql\Element;
-use P3\Db\Sql\Traits\ExpressionTrait;
+use P3\Db\Sql\Predicate\Expression as ExpressionPredicate;
 
 /**
  * This abstract class represents a generic SQL Expression with parameters
  */
-class Expression extends Element
+class Expression extends ExpressionPredicate
 {
-    use ExpressionTrait;
 }
