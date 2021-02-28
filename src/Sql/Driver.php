@@ -75,14 +75,20 @@ abstract class Driver implements DriverInterface
     protected const ESCAPE_CHARLIST = "\x00\n\r\\'\"\x1a";
 
     /**
-     * @param PDO $pdo the database connection, if any
+     * @param PDO|null $pdo the database connection, if any
      * @param string $ql left-quote char
      * @param string $qr right-quote char
      * @param string $qv quote char for values
      */
-    public function __construct(PDO $pdo = null, string $ql = '"', string $qr = '"', string $qv = "'")
-    {
-        $this->pdo = $pdo;
+    public function __construct(
+        ?PDO $pdo,
+        string $ql,
+        string $qr,
+        string $qv
+    ) {
+        if (isset($pdo)) {
+            $this->pdo = $pdo;
+        }
 
         $this->ql = $ql;
         $this->qr = $qr;
