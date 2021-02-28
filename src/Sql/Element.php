@@ -84,7 +84,10 @@ abstract class Element
     }
 
     /**
-     * Import parameters and types from inner element
+     * Import parameters and types from inner element.
+     *
+     * Since parameters and markers are created during sql rendering, we make
+     * sure that sql has been computed in the inner element.
      *
      * @param self $element
      * @internal
