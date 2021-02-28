@@ -364,4 +364,14 @@ class Sql
     {
         return new Delete($table);
     }
+
+    public static function expr(string $expression, array $substitutions = []): Sql\Expression
+    {
+        return new Sql\Expression($expression, $substitutions);
+    }
+
+    public static function literal(string $literal): Sql\Literal
+    {
+        return new Sql\Literal($literal);
+    }
 }
