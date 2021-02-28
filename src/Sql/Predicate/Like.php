@@ -12,6 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
+use PDO;
 
 use function get_class;
 use function gettype;
@@ -93,7 +94,7 @@ class Like extends Predicate
 
         $param = $this->pattern instanceof Literal
             ? $this->pattern->getSQL()
-            : $this->createParam($this->pattern);
+            : $this->createParam($this->pattern, PDO::PARAM_STR);
 
         $escape = !empty($escape) ? " " . Sql::ESCAPE . " " . $driver->quoteValue($escape) : "";
 
