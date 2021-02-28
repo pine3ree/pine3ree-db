@@ -12,6 +12,7 @@ use PDO;
 use ReflectionClass;
 use RuntimeException;
 
+use function count;
 use function is_bool;
 use function is_int;
 use function is_null;
@@ -48,7 +49,7 @@ abstract class Element
      *
      * @var int
      */
-    protected static $index = 1;
+    protected static $index = 0;
 
     /**
      * @const int The maximun numeric index after which the param counter reset to 1
@@ -57,7 +58,7 @@ abstract class Element
 
     /**
      * Get the class basename
-     * 
+     *
      * @return string
      */
     protected function getShortName(): string
@@ -124,8 +125,8 @@ abstract class Element
         }
 
         $types = $element->getParamsTypes();
-        foreach ($params as $key => $value) {
-            $this->addParam($key, $value, $types[$key] ?? null);
+        foreach ($params as $index => $value) {
+            $this->addParam($index, $value, $types[$index] ?? null);
         }
     }
 
@@ -149,7 +150,7 @@ abstract class Element
     public function createParam($value, int $type = null, string $name = null): string
     {
         return $this->createNamedParam($value, $type, $name);
-        //return $this->createPositionalParam($value, $type);
+        return $this->createPositionalParam($value, $type);
     }
 
     /**
@@ -164,9 +165,8 @@ abstract class Element
     public function createNamedParam($value, int $type = null, string $name = null): string
     {
         $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
-        $marker = ":{$name}" . self::$index;
+        $marker = ":{$name}" . self::nextIndex();
         $this->addParam($marker, $value, $type);
-        self::incrementIndex();
 
         return $marker;
     }
@@ -181,26 +181,24 @@ abstract class Element
      */
     public function createPositionalParam($value, int $type = null): string
     {
-        $this->addParam(self::$index, $value, $type);
-        self::incrementIndex();
-
+        $this->addParam(null, $value, $type);
         return '?';
     }
 
     /**
      * Add a parameter and its type to the internal list
      *
-     * @param int|string|null $key
+     * @param int|string|null $index
      * @param mixed $value
      * @param int $type
      */
-    protected function addParam($key, $value, int $type = null)
+    protected function addParam($index, $value, int $type = null)
     {
-        if (null === $key || is_int($key)) {
-            $key = count($this->params) + 1;
+        if (null === $index || is_int($index)) {
+            $index = count($this->params) + 1;
         }
 
-        $this->params[$key] = $value;
+        $this->params[$index] = $value;
 
         if (!isset($type)) {
             if (is_null($value)) {
@@ -215,7 +213,7 @@ abstract class Element
             }
         }
 
-        $this->params_types[$key] = $type;
+        $this->params_types[$index] = $type;
     }
 
     /**
@@ -226,9 +224,13 @@ abstract class Element
         $this->params = $this->params_types = [];
     }
 
-    private static function incrementIndex()
+    private static function nextIndex(): int
     {
-        self::$index = self::$index < self::MAX_INDEX ? (self::$index + 1) : 1;
+        if (self::$index === self::MAX_INDEX) {
+            return self::$index = 1;
+        }
+
+        return self::$index += 1;
     }
 
     /**
