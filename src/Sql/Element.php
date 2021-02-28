@@ -242,7 +242,7 @@ abstract class Element
     /**
      * Remove the cached SQL string
      */
-    public function clearSQL()
+    protected function clearSQL()
     {
         $this->sql = null;
     }
