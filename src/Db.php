@@ -288,7 +288,7 @@ class Db
             }
             $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
             // cache the pdo-aware driver instance
-            $this->driver = $this->createDriverFromName($driver_name);
+            $this->driver = $this->createDriverFromName($driver_name, $this->pdo);
             return $this->driver;
         }
 
@@ -302,14 +302,39 @@ class Db
         return $this->_driver;
     }
 
-    private function createDriverFromName(string $driver_name): Driver
+    /**
+     * @return DriverReturn the driver with pdo instance
+     */
+    protected function driver(): Driver
+    {
+        if (isset($this->driver)) {
+            return $this->driver;
+        }
+
+        // make sure the composed instant gets created if not already done
+        $pdo = $this->getPDO(true);
+
+        // do we have a cached pdo-less driver?
+        if (isset($this->_driver)) {
+            $this->_driver->setPDO($pdo);
+            return $this->driver = $this->_driver;
+        }
+
+        // create, cache and return the pdo-aware driver
+        $driver_name = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $this->driver = $this->createDriverFromName($driver_name, $pdo);
+
+        return $this->driver;
+    }
+
+    private function createDriverFromName(string $driver_name, PDO $pdo = null): Driver
     {
         $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? null;
         if (empty($driver_fqcn) || !is_subclass_of($driver_fqcn, Driver::class, true)) {
             return Driver::ansi();
         }
 
-        return new $driver_fqcn($this->pdo);
+        return new $driver_fqcn($pdo);
     }
 
     /**
@@ -494,7 +519,7 @@ class Db
      */
     public function prepare(SqlStatement $sqlStatement, bool $bind_params = false)
     {
-        $stmt = $this->pdo()->prepare($sqlStatement->getSQL($this->getDriver()));
+        $stmt = $this->pdo()->prepare($sqlStatement->getSQL($this->driver()));
 
         if ($bind_params && $stmt instanceof PDOStatement) {
             $types = $sqlStatement->getParamsTypes();
@@ -590,5 +615,37 @@ class Db
     public function rollBack(): bool
     {
         return $this->pdo()->rollBack();
+    }
+
+    /**
+     * @see Sql\Driver::escape()
+     */
+    public function quoteIdentifier(string $identifier): string
+    {
+        return $this->driver()->quoteIdentifier($identifier);
+    }
+
+    /**
+     * @see Sql\Driver::escape()
+     */
+    public function quoteAlias(string $alias): string
+    {
+        return $this->driver()->quoteAlias($alias);
+    }
+
+    /**
+     * @see Sql\Driver::escape()
+     */
+    public function quoteValue($value): string
+    {
+        return $this->driver()->quoteValue($value);
+    }
+
+    /**
+     * @see Sql\Driver::escape()
+     */
+    public function escape(string $value): string
+    {
+        return $this->pdo()->escape($value);
     }
 }
