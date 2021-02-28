@@ -407,7 +407,7 @@ class Set extends Predicate
             return new Predicate\Literal("{$identifier} {$operator} {$literal}");
         }
 
-        $marker = $this->createParam($value);
+        $marker = $this->createParam($value, null, 'expr');
         $params[] = [$marker => $value];
 
         return new Predicate\Expression("{$identifier} {$operator} {$marker}", $params);
