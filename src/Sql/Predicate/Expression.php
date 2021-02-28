@@ -75,7 +75,7 @@ class Expression extends Predicate
         // replace the `{name}`-placeholders with `:name`-markers
         $sql = $this->expression;
         foreach ($this->substitutions as $name => $value) {
-            $marker = $this->createParam($value);
+            $marker = $this->createParam($value, null, 'expr');
             $sql = str_replace("{{$name}}", $marker, $sql);
         }
 
