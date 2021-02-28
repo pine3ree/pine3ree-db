@@ -345,6 +345,12 @@ class Select extends Statement
 
     private function getFromSQL(Driver $driver): string
     {
+        if (empty($this->from)) {
+            throw new RuntimeException(
+                "The FROM clause table or sub-select has not been defined!"
+            );
+        }
+
         if (isset($this->sqls['from'])) {
             return $this->sqls['from'];
         }
@@ -352,11 +358,8 @@ class Select extends Statement
         if ($this->from instanceof self) {
             $from = "(" . $this->from->getSQL($driver) . ")";
             $this->importParams($this->from);
-        } elseif (!empty($this->from)) {
-            $from = $driver->quoteIdentifier($this->from);
         } else {
-            // do not cache if from is not set
-            return '';
+            $from = $driver->quoteIdentifier($this->from);
         }
 
         if (!empty($this->alias)) {
