@@ -38,17 +38,6 @@ abstract class Command
         $this->sqlStatement = $sqlStatement;
     }
 
-    /**
-     * Prepare the sql-statement
-     *
-     * @param bool $bind_params
-     * @return PDOStatement|false
-     */
-    protected function prepare(bool $bind_params = false)
-    {
-        return $this->db->prepare($this->sqlStatement, $bind_params);
-    }
-
     public function getParams(): array
     {
         return $this->sqlStatement->getParams();
@@ -74,6 +63,17 @@ abstract class Command
      *      reader-commands, int or false for writer-commands
      */
     abstract public function execute();
+
+    /**
+     * Prepare the sql-statement
+     *
+     * @param bool $bind_params
+     * @return PDOStatement|false
+     */
+    protected function prepare(bool $bind_params = false)
+    {
+        return $this->db->prepare($this->sqlStatement, $bind_params);
+    }
 
     public function __get(string $name)
     {
