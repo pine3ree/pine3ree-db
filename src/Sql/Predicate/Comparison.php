@@ -97,9 +97,36 @@ class Comparison extends Predicate
         } else {
             $param = $this->value instanceof Literal
                 ? $this->value->getSQL()
-                : $this->createParam($this->value);
+                : $this->createParam($this->value, null, $this->getParameterName($operator));
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";
+    }
+
+    private function getParameterName(string $operator): ?string
+    {
+        if ('=' === $operator) {
+            return 'eq';
+        }
+        if ('!=' === $operator) {
+            return 'neq';
+        }
+        if ('<>' === $operator) {
+            return 'ne';
+        }
+        if ('<' === $operator) {
+            return 'lt';
+        }
+        if ('=<' === $operator) {
+            return 'lte';
+        }
+        if ('>=' === $operator) {
+            return 'gte';
+        }
+        if ('>' === $operator) {
+            return 'gt';
+        }
+
+        return null;
     }
 }
