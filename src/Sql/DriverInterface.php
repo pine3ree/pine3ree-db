@@ -21,6 +21,11 @@ use PDO;
  */
 interface DriverInterface
 {
+    /**
+     * Get the driver name, usually matching the PDO driver name
+     *
+     * @return string
+     */
     public function getName(): string;
 
     /**
