@@ -425,7 +425,7 @@ class Db
      *
      * @param string|null $table
      * @param array<string, mixed> $row_or_rows A new table row/row-set
-     * @return Insert|bool|int
+     * @return Insert|bool
      */
     public function insert(string $table = null, array $row_or_rows = null)
     {
