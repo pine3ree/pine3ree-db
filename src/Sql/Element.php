@@ -96,6 +96,9 @@ abstract class Element
             return;
         }
 
+        // The operation fails if the inner element's sql string has not been
+        // rendered yet, because it's during rendering that parameters and their
+        // sql placeholders are created
         if (!isset($element->sql)) {
             throw new RuntimeException(
                 "Cannot import parameters from sql-element without a compiled SQL string!"
