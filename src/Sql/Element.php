@@ -111,7 +111,7 @@ abstract class Element
      * @param self $element
      * @internal
      */
-    public function importParams(self $element): void
+    protected function importParams(self $element): void
     {
         $params = $element->getParams();
         if (empty($params)) {
@@ -255,17 +255,19 @@ abstract class Element
     /**
      * Allow createParam to be called from inside a sql-driver
      *
-     * @param string $name
+     * @param string $methodName
      * @param array $args
      * @return mixed
      */
-    public function __call(string $name, $args)
+    public function __call(string $methodName, $args)
     {
-        if ('createParam' === $name) {
+        if ('createParam' === $methodName
+            || 'importParams' === $methodName
+        ) {
             list($unused, $caller) = debug_backtrace(false, 2);
             $callerClass = $caller['class'] ?? null;
             if (is_subclass_of($callerClass, Driver::class, true)) {
-                return $this->createParam(...$args);
+                return $this->{$methodName}(...$args);
             }
         };
 
