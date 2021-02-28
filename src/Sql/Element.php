@@ -146,6 +146,9 @@ abstract class Element
      * @param int|null $type The optional forced parameter type
      * @param string|null $name The optional original parameter name
      *
+     * @internal This is used internally by sql-elements or by the sql-drivers
+     *      when generating the sql-string
+     * 
      * @return string
      */
     public function createParam($value, int $type = null, string $name = null): string
