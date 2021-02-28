@@ -94,7 +94,7 @@ class Like extends Predicate
             ? $this->value->getSQL()
             : $this->createParam($this->value);
 
-        $escape = !empty($escape) ? " " . Sql::ESCAPE . " {$escape}" : "";
+        $escape = !empty($escape) ? " " . Sql::ESCAPE . " " . $driver->quoteValue($escape) : "";
 
         return $this->sql = "{$identifier} {$operator} {$param}{$escape}";
     }
