@@ -16,6 +16,7 @@ use function count;
 use function is_bool;
 use function is_int;
 use function is_null;
+use function strtolower;
 
 /**
  * This abstract class represents a generic SQL element and is the ancestor
