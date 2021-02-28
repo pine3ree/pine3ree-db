@@ -860,6 +860,10 @@ class Select extends Statement
             return $this->where ?? $this->where = new Where();
         }
         if ('joins' === $name) {
+            if (!empty($this->joins)) {
+                $this->sql = null;
+                unset($this->sqls['joins']);
+            }
             return $this->joins;
         }
         if ('having' === $name) {
