@@ -552,6 +552,7 @@ class Select extends Statement
     {
         if ($having instanceof Closure) {
             $having($this->having);
+            $this->sql = null;
             return $this;
         }
 

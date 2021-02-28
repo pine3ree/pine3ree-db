@@ -30,6 +30,7 @@ trait WhereAwareTrait
     {
         if ($where instanceof Closure) {
             $where($this->where);
+            $this->sql = null;
             return $this;
         }
 
