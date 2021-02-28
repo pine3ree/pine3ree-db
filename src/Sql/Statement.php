@@ -22,6 +22,11 @@ abstract class Statement extends Element
     protected $sqls = [];
 
     /**
+     * @var int custom index counter
+     */
+    protected static $index = 0;
+
+    /**
      * Remove any cached SQL string
      */
     public function clearSQL()
