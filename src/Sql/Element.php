@@ -253,7 +253,7 @@ abstract class Element
     }
 
     /**
-     * Allow createParam to be called from inside a sql-driver
+     * Allow createParam() and importParams() to be called from inside a sql-driver
      *
      * @param string $methodName
      * @param array $args
