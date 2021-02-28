@@ -58,6 +58,9 @@ abstract class ConditionalClause extends Clause
             return $this->sql;
         }
 
+        // No need to reset the parameters here, this is forwarded to the composed
+        // predicate-set
+
         $predicates_sql = $this->conditions->getSQL($driver ?? Driver::ansi());
         if (Sql::isEmptySQL($predicates_sql)) {
             return $this->sql = '';
