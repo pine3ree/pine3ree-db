@@ -854,12 +854,18 @@ class Select extends Statement
             return $this->from;
         }
         if ('where' === $name) {
+            if (isset($this->where)) {
+                $this->sql = null;
+            }
             return $this->where ?? $this->where = new Where();
         }
         if ('joins' === $name) {
             return $this->joins;
         }
         if ('having' === $name) {
+            if (isset($this->having)) {
+                $this->sql = null;
+            }
             return $this->having ?? $this->having = new Having();
         }
         if ('groupBy' === $name) {
@@ -875,12 +881,18 @@ class Select extends Statement
             return $this->offset;
         }
         if ('union' === $name) {
+            if (isset($this->union)) {
+                $this->sql = null;
+            }
             return $this->union;
         }
         if ('union_all' === $name) {
             return $this->union_all;
         }
         if ('intersect' === $name) {
+            if (isset($this->intersect)) {
+                $this->sql = null;
+            }
             return $this->intersect;
         }
     }
