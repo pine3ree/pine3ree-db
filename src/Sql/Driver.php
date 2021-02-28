@@ -9,6 +9,7 @@ namespace P3\Db\Sql;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
+use P3\Db\Sql\DriverInterface;
 use PDO;
 use ReflectionClass;
 use Throwable;
@@ -34,7 +35,7 @@ use function substr;
  * @property-read string $qv The value quote char, if any
  * @property-read string $name The driver short name
  */
-abstract class Driver
+abstract class Driver implements DriverInterface
 {
     /**
      * @var PDO|null
