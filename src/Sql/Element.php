@@ -177,6 +177,14 @@ abstract class Element
         $this->params_types[$key] = $type;
     }
 
+    /**
+     * Parameters and types must be reset before computing the element's SQL string
+     */
+    protected function resetParams()
+    {
+        $this->params = $this->params_types = [];
+    }
+
     private static function incrementIndex()
     {
         self::$index = self::$index < self::MAX_INDEX ? (self::$index + 1) : 1;

@@ -80,6 +80,8 @@ class Like extends Predicate
             return $this->sql;
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         $identifier = $this->identifier instanceof Literal

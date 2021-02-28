@@ -64,6 +64,8 @@ trait ExpressionTrait
             return $this->sql = $this->expression;
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         // reset any previous parameters

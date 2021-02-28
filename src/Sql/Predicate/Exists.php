@@ -37,6 +37,8 @@ class Exists extends Predicate
             return $this->sql;
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         $operator = static::$not ? Sql::NOT_EXISTS : Sql::EXISTS;

@@ -418,6 +418,8 @@ class Set extends Predicate
             return $this->sql = '';
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         $sqls = [];

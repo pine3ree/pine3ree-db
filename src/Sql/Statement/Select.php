@@ -759,6 +759,8 @@ class Select extends Statement
             return $this->sql;
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         $base_sql = $this->getBaseSQL($driver);

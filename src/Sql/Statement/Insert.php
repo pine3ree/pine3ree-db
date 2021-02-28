@@ -308,6 +308,8 @@ class Insert extends Statement
             );
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         $insert  = $this->ignore ? Sql::INSERT_IGNORE : Sql::INSERT;

@@ -76,6 +76,8 @@ class Join extends Clause
             return $this->sql;
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         $table = $driver->quoteIdentifier($this->table);

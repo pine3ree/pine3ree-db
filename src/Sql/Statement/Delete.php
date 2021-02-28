@@ -67,6 +67,8 @@ class Delete extends Statement
             );
         }
 
+        $this->resetParams();
+
         $driver = $driver ?? Driver::ansi();
 
         $table = $driver->quoteIdentifier($this->table);
