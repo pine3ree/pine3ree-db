@@ -114,6 +114,12 @@ abstract class Element
         }
     }
 
+    /**
+     * Build and return the parametrized SQL-string
+     *
+     * This method must call each inner element getSQL() method and then import
+     * its parameters
+     */
     abstract public function getSQL(Driver $driver = null): string;
 
     /**
