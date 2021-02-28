@@ -99,10 +99,19 @@ abstract class ConditionalClause extends Clause
     /**
      * @see Predicate\Set::expression()
      */
-    public function expression(string $expression, array $params = []): Predicate\Set
+    public function expression(string $expression, array $substitutions = []): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->expression($expression, $params);
+        return $this->conditions->expression($expression, $substitutions);
+    }
+
+    /**
+     * @see Predicate\Set::expr()
+     */
+    public function expr(string $expression, array $substitutions = []): Predicate\Set
+    {
+        $this->sql = null;
+        return $this->conditions->expression($expression, $substitutions);
     }
 
     /**

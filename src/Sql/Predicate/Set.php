@@ -481,11 +481,19 @@ class Set extends Predicate
         );
     }
 
-    public function expression(string $expression, array $params = []): self
+    public function expression(string $expression, array $substitutions = []): self
     {
         return $this->addPredicate(
-            new Predicate\Expression($expression, $params)
+            new Predicate\Expression($expression, $substitutions)
         );
+    }
+
+    /**
+     * @alias of self::expression()
+     */
+    public function expr(string $expression, array $substitutions = []): self
+    {
+        return $this->expression($expression, $substitutions);
     }
 
     public function all($identifier, string $operator, Select $select): self
