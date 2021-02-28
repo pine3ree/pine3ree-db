@@ -110,12 +110,25 @@ abstract class Element
 
         $types = $element->getParamsTypes();
         foreach ($params as $key => $value) {
-            $this->params[$key] = $value;
-            $this->params_types[$key] = $types[$key] ?? null;
+            $this->addParam($key, $value, $types[$key] ?? null);
         }
     }
 
     abstract public function getSQL(Driver $driver = null): string;
+
+    /**
+     * Create a SQL-string marker for the given value
+     *
+     * @param mixed $value The parameter value
+     * @param int $type The optional forced parameter type
+     *
+     * @return string
+     */
+    public function createParam($value, int $type = null): string
+    {
+        //return $this->createNamedParam($value, $type);
+        return $this->createPositionalParam($value, $type);
+    }
 
     /**
      * Create a statement string marker for a given value
@@ -128,7 +141,7 @@ abstract class Element
     public function createNamedParam($value, int $type = null): string
     {
         $marker = ":" . self::$index;
-        $this->setParam($marker, $value, $type);
+        $this->addParam($marker, $value, $type);
         self::incrementIndex();
 
         return $marker;
@@ -144,7 +157,7 @@ abstract class Element
      */
     public function createPositionalParam($value, int $type = null): string
     {
-        $this->setParam(self::$index, $value, $type);
+        $this->addParam(self::$index, $value, $type);
         self::incrementIndex();
 
         return '?';
@@ -153,12 +166,16 @@ abstract class Element
     /**
      * Add a parameter and its type to the internal list
      *
-     * @param int|string $key
+     * @param int|string|null $key
      * @param mixed $value
      * @param int $type
      */
-    protected function setParam($key, $value, int $type = null)
+    protected function addParam($key, $value, int $type = null)
     {
+        if (null === $key || is_int($key)) {
+            $key = count($this->params) + 1;
+        }
+
         $this->params[$key] = $value;
 
         if (!isset($type)) {
