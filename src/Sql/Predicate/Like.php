@@ -18,6 +18,7 @@ use function gettype;
 use function is_object;
 use function is_string;
 use function sprintf;
+use function strlen;
 
 /**
  * This class represents a sql LIKE condition
@@ -28,7 +29,7 @@ class Like extends Predicate
     protected $identifier;
 
     /** @var string|Literal */
-    protected $value;
+    protected $pattern;
 
     /** @var string|null */
     protected $escape;
@@ -38,26 +39,26 @@ class Like extends Predicate
 
     /**
      * @param string|Literal $identifier
-     * @param string|Literal $value
+     * @param string|Literal $pattern
      * @param string|null $escape An optional custom escape character
      */
-    public function __construct($identifier, $value, string $escape = null)
+    public function __construct($identifier, $pattern, string $escape = null)
     {
         self::assertValidIdentifier($identifier);
-        self::assertValidValue($value);
+        self::assertValidPattern($pattern);
         self::assertValidEscapeCharacter($escape);
 
         $this->identifier = $identifier;
-        $this->value = $value;
+        $this->pattern = $pattern;
         $this->escape = $escape;
     }
 
-    protected static function assertValidValue($value)
+    protected static function assertValidPattern($pattern)
     {
-        if (!is_string($value) && ! $value instanceof Literal) {
+        if (!is_string($pattern) && ! $pattern instanceof Literal) {
             throw new InvalidArgumentException(sprintf(
-                "A LIKE value must be either a string or an Sql Literal expression instance, `%s` provided!",
-                is_object($value) ? get_class($value) : gettype($value)
+                "A LIKE pattern must be either a string or an Sql Literal expression instance, `%s` provided!",
+                is_object($pattern) ? get_class($pattern) : gettype($pattern)
             ));
         }
     }
@@ -90,9 +91,9 @@ class Like extends Predicate
 
         $operator = static::$not ? Sql::NOT_LIKE : Sql::LIKE;
 
-        $param = $this->value instanceof Literal
-            ? $this->value->getSQL()
-            : $this->createParam($this->value);
+        $param = $this->pattern instanceof Literal
+            ? $this->pattern->getSQL()
+            : $this->createParam($this->pattern);
 
         $escape = !empty($escape) ? " " . Sql::ESCAPE . " " . $driver->quoteValue($escape) : "";
 
