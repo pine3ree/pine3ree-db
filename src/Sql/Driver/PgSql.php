@@ -41,13 +41,13 @@ class PgSql extends Driver
 
         $sqls = [];
         if (isset($limit)) {
-            $limit = $select->createParam($limit, PDO::PARAM_INT);
+            $limit = $select->createParam($limit, PDO::PARAM_INT, 'limit');
             $sqls[] = Sql::LIMIT . " {$limit}";
         }
 
         $offset = (int)$offset;
         if ($offset > 0) {
-            $offset = $select->createParam($offset, PDO::PARAM_INT);
+            $offset = $select->createParam($offset, PDO::PARAM_INT, 'offset');
             $sqls[] = Sql::OFFSET . " {$offset}";
         }
 
