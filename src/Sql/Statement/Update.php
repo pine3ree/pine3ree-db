@@ -154,7 +154,7 @@ class Update extends Statement
             $column = $driver->quoteIdentifier($column);
             $param  = $value instanceof Literal
                 ? $val->getSQL()
-                : $this->createParam($value);
+                : $this->createParam($value, null, 'set');
             $set[] = "{$column} = {$param}";
         }
 
