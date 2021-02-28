@@ -163,7 +163,7 @@ abstract class Element
      *
      * @return string
      */
-    public function createNamedParam($value, int $type = null, string $name = null): string
+    protected function createNamedParam($value, int $type = null, string $name = null): string
     {
         $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
         $marker = ":{$name}" . self::nextIndex();
@@ -180,7 +180,7 @@ abstract class Element
      *
      * @return string
      */
-    public function createPositionalParam($value, int $type = null): string
+    protected function createPositionalParam($value, int $type = null): string
     {
         $this->addParam(null, $value, $type);
         return '?';
