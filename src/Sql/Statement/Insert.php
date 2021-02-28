@@ -80,7 +80,7 @@ class Insert extends Statement
     }
 
     /**
-     * Define the INSERT columns, this will also cleare any defined values
+     * Define the INSERT columns, this will also clear any defined values
      *
      * @param array $columns
      * @return $this
