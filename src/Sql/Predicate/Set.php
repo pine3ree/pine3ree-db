@@ -26,7 +26,6 @@ use function is_object;
 use function is_string;
 use function key;
 use function sprintf;
-use function strtolower;
 use function strtoupper;
 use function trim;
 
