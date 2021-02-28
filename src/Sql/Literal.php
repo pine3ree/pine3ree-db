@@ -10,7 +10,8 @@ namespace P3\Db\Sql;
 use P3\Db\Sql\Predicate\Literal as LiteralPredicate;
 
 /**
- * This class represents a literal SQL expression without parameters
+ * This class represents a literal SQL expression without parameters and also a
+ * sql-literal-predicate
  */
 class Literal extends LiteralPredicate
 {
