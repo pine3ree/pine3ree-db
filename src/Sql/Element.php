@@ -12,10 +12,12 @@ use PDO;
 use ReflectionClass;
 use RuntimeException;
 
+use function debug_backtrace;
 use function count;
 use function is_bool;
 use function is_int;
 use function is_null;
+use function is_subclass_of;
 use function strtolower;
 
 /**
@@ -148,10 +150,10 @@ abstract class Element
      *
      * @internal This is used internally by sql-elements or by the sql-drivers
      *      when generating the sql-string
-     * 
+     *
      * @return string
      */
-    public function createParam($value, int $type = null, string $name = null): string
+    protected function createParam($value, int $type = null, string $name = null): string
     {
         return $this->createNamedParam($value, $type, $name);
         return $this->createPositionalParam($value, $type);
@@ -166,7 +168,7 @@ abstract class Element
      *
      * @return string
      */
-    protected function createNamedParam($value, int $type = null, string $name = null): string
+    private function createNamedParam($value, int $type = null, string $name = null): string
     {
         $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
         $marker = ":{$name}" . self::nextIndex();
@@ -183,7 +185,7 @@ abstract class Element
      *
      * @return string
      */
-    protected function createPositionalParam($value, int $type = null): string
+    private function createPositionalParam($value, int $type = null): string
     {
         $this->addParam(null, $value, $type);
         return '?';
@@ -248,5 +250,28 @@ abstract class Element
     public function __clone()
     {
         $this->clearSQL();
+    }
+
+    /**
+     * Allow createParam to be called from inside a sql-driver
+     *
+     * @param string $name
+     * @param array $args
+     * @return mixed
+     */
+    public function __call(string $name, $args)
+    {
+        if ('createParam' === $name) {
+            list($unused, $caller) = debug_backtrace(false, 2);
+            $callerClass = $caller['class'] ?? null;
+            if (is_subclass_of($callerClass, Driver::class, true)) {
+                return $this->createParam(...$args);
+            }
+        };
+
+        $class = static::class;
+        throw new RuntimeException(
+            "Call to undefined or internal method {$class}::{$name}())!"
+        );
     }
 }
