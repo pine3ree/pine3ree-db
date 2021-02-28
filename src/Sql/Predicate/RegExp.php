@@ -75,7 +75,7 @@ class RegExp extends Predicate
             $operator = "{$operator}*";
         }
 
-        $param = $this->createParam($this->regexp, PDO::PARAM_STR);
+        $param = $this->createParam($this->regexp, PDO::PARAM_STR, 'regex');
 
         return $this->sql = "{$identifier} {$operator} {$param}";
     }
