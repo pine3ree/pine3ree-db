@@ -273,9 +273,7 @@ class Select extends Statement
             $sqls[] = $column_sql;
         }
 
-        $sql = trim(implode(", ", $sqls));
-        $this->sqls['columns'] = $sql;
-
+        $this->sqls['columns'] = $sql = trim(implode(", ", $sqls));
         return $sql;
     }
 
@@ -517,6 +515,9 @@ class Select extends Statement
 
         $this->groupBy[] = $groupBy;
 
+        $this->sql = null;
+        unset($this->sqls['group']);
+
         return $this;
     }
 
@@ -526,6 +527,10 @@ class Select extends Statement
             return '';
         }
 
+        if (isset($this->sqls['group'])) {
+            return $this->sqls['group'];
+        }
+
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
             $groupBy[$key] = $identifier instanceof Literal
@@ -533,7 +538,8 @@ class Select extends Statement
                 : $driver->quoteIdentifier($identifier);
         }
 
-        return Sql::GROUP_BY . " " . implode(", ", $groupBy);
+        $this->sqls['group'] = $sql = Sql::GROUP_BY . " " . implode(", ", $groupBy);
+        return $sql;
     }
 
     /**
@@ -603,6 +609,9 @@ class Select extends Statement
 
         $this->orderBy[$orderBy] = $sortdir;
 
+        $this->sql = null;
+        unset($this->sqls['order']);
+
         return $this;
     }
 
@@ -616,20 +625,21 @@ class Select extends Statement
             return $this->sqls['order'];
         }
 
-        $sql = [];
+        $sqls = [];
         foreach ($this->orderBy as $identifier => $direction) {
             // do not quote identifier or alias, do it programmatically
-            $sql[] = $driver->quoteIdentifier($identifier) . " {$direction}";
+            $sqls[] = $driver->quoteIdentifier($identifier) . " {$direction}";
         }
 
-        $this->sqls['order'] = $sql = Sql::ORDER_BY . " " . implode(", ", $sql);
-
+        $this->sqls['order'] = $sql = Sql::ORDER_BY . " " . implode(", ", $sqls);
         return $sql;
     }
 
     public function limit(int $limit): self
     {
         $this->limit = max(0, $limit);
+
+        $this->sql = null;
         unset($this->sqls['limit']);
 
         return $this;
@@ -638,6 +648,8 @@ class Select extends Statement
     public function offset(int $offset): self
     {
         $this->offset = max(0, $offset);
+
+        $this->sql = null;
         unset($this->sqls['limit']);
 
         return $this;
@@ -680,7 +692,7 @@ class Select extends Statement
     {
         if (isset($this->intersect)) {
             throw new RuntimeException(
-                "Canno add a UNION clause when an INTERSECT clause is already set!"
+                "Cannot add a UNION clause when an INTERSECT clause is already set!"
             );
         }
 
@@ -691,6 +703,28 @@ class Select extends Statement
 
         $this->union = $select;
         $this->union_all = $all;
+
+        $this->sql = null;
+
+        return $this;
+    }
+
+    public function intersect(self $select): self
+    {
+        if (isset($this->union)) {
+            throw new RuntimeException(
+                "Cannot add an INTERSECT clause when a UNION clause is already set!"
+            );
+        }
+
+        if (!empty($select->orderBy)) {
+            $select = clone $select;
+            $select->orderBy = [];
+        }
+
+        $this->intersect = $select;
+
+        $this->sql = null;
 
         return $this;
     }
@@ -716,24 +750,6 @@ class Select extends Statement
         }
 
         return '';
-    }
-
-    public function intersect(self $select): self
-    {
-        if (isset($this->union)) {
-            throw new RuntimeException(
-                "Canno add an INTERSECT clause when a UNION clause is already set!"
-            );
-        }
-
-        if (!empty($select->orderBy)) {
-            $select = clone $select;
-            $select->orderBy = [];
-        }
-
-        $this->intersect = $select;
-
-        return $this;
     }
 
     public function getSQL(Driver $driver = null): string
