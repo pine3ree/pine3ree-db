@@ -329,6 +329,13 @@ class Select extends Statement
         }
 
         $this->from = $from;
+
+        if ($from instanceof self && empty($alias)) {
+            throw new InvalidArgumentException(
+                "A FROM clause with a seb-select requires an alias!"
+            );
+        }
+
         if (!empty($alias)) {
             if (false !== strpos($alias, '.')) {
                 throw new InvalidArgumentException(
