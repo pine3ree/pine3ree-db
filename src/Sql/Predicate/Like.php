@@ -99,7 +99,7 @@ class Like extends Predicate
 
         $param = $this->pattern instanceof Literal
             ? $this->pattern->getSQL()
-            : $this->createParam($this->pattern, PDO::PARAM_STR);
+            : $this->createParam($this->pattern, PDO::PARAM_STR, 'like');
 
         $escape = !empty($escape) ? " " . Sql::ESCAPE . " " . $driver->quoteValue($escape) : "";
 
