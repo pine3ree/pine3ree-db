@@ -59,11 +59,6 @@ abstract class Command
         return $this->sqlStatement->getParamsTypes($return_pdo_const_names);
     }
 
-    public function createParam($value, int $type = null, string $name = null): string
-    {
-        return $this->sqlStatement->createParam($value, $type, $name);
-    }
-
     public function getSqlStatement(): SqlStatement
     {
         return $this->sqlStatement;
