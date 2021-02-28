@@ -38,6 +38,11 @@ abstract class Command
         $this->sqlStatement = $sqlStatement;
     }
 
+    public function getSqlStatement(): SqlStatement
+    {
+        return $this->sqlStatement;
+    }
+
     public function getParams(): array
     {
         return $this->sqlStatement->getParams();
@@ -46,11 +51,6 @@ abstract class Command
     public function getParamsTypes(bool $return_pdo_const_names = false): array
     {
         return $this->sqlStatement->getParamsTypes($return_pdo_const_names);
-    }
-
-    public function getSqlStatement(): SqlStatement
-    {
-        return $this->sqlStatement;
     }
 
     public function getSQL(): string
