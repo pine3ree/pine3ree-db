@@ -8,6 +8,7 @@
 namespace P3\Db\Sql;
 
 use InvalidArgumentException;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Literal;
 
@@ -25,12 +26,47 @@ use function sprintf;
  */
 abstract class Predicate extends Element
 {
+    /**
+     * Quote the left part of a predicate based on its type
+     *
+     * @param string|Alias|Literal $identifier
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    protected function quoteIdentifier($identifier, Driver $driver = null): string
+    {
+        // the identifier is considered a db table column, quote accordingly
+        if (is_string($identifier)) {
+            return $driver->quoteIdentifier($this->identifier);
+        }
+
+        // The indentifier is specified to be a SQL-alias, quote accordingly
+        if ($identifier instanceof Alias) {
+            $driver->quoteAlias($this->identifier->getSQL($driver));
+        }
+
+        // the identifier is generic SQL-literal, so no quoting
+        if ($identifier instanceof Literal) {
+            return $this->identifier->getSQL();
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "Invalid predicate identifier type, must be either a string, a"
+            . " SQL-alias or a SQL-literal, '%s' provided in class `%s`!",
+            is_object($identifier) ? get_class($identifier) : gettype($identifier),
+            static::class
+        ));
+    }
+
     protected static function assertValidIdentifier($identifier)
     {
-        if (!is_string($identifier) && ! $identifier instanceof Literal) {
+        if (!is_string($identifier)
+            && ! $identifier instanceof Alias
+            && ! $identifier instanceof Literal
+        ) {
             throw new InvalidArgumentException(sprintf(
-                "A predicate identifier must be either a string or an SQL Literal,"
-                . " '%s' provided in class `%s`!!",
+                "A predicate identifier must be either a string, a SQL-alias or a SQL-literal,"
+                . " '%s' provided in class `%s`!",
                 is_object($identifier) ? get_class($identifier) : gettype($identifier),
                 static::class
             ));
