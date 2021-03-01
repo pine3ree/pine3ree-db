@@ -475,7 +475,7 @@ class Db
      *
      * @param string|null $table The db-table to delete from
      * @param string|array|Predicate|Where $where
-     * @return Delete|bool|int
+     * @return Delete|false|int
      */
     public function delete(string $table = null, $where = null)
     {
