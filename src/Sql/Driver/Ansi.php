@@ -29,22 +29,8 @@ class Ansi extends Driver
         // do not use PDO for ANSI-SQL;
     }
 
-    public function quoteValue($value): string
+    public function quoteStringValue(string $value): string
     {
-        if (null === $value) {
-            return 'NULL';
-        }
-        if (is_int($value)) {
-            return (string)$value;
-        }
-        if (is_bool($value)) {
-            return (string)(int)$value;
-        }
-
-        if (!is_string($value)) {
-            $value = (string)$value;
-        }
-
         return "'{$this->escape($value)}'";
     }
 

@@ -216,6 +216,11 @@ abstract class Driver implements DriverInterface
             $value = (string)$value;
         }
 
+        return $this->quoteStringValue($value);
+    }
+
+    protected function quoteStringValue(string $value)
+    {
         if (!isset($this->pdo)) {
             throw new RuntimeException(
                 "Unable to quote a string value: missng PDO instance!"
@@ -240,7 +245,7 @@ abstract class Driver implements DriverInterface
      * Potentially dangerous: always prefer parameter binding
      *
      * @param string $value
-     * @deprecated Use parameter binding
+     * @deprecated Only used as a fallback in the ANSI pdo-less driver
      */
     protected function escape(string $value): string
     {
