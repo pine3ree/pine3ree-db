@@ -311,11 +311,14 @@ class Sql
             return true;
         }
 
-        if ($checkEmptySet && $predicate instanceof Predicate\Set) {
-            return $predicate->isEmpty();
+        if ($predicate instanceof Predicate) {
+            if ($checkEmptySet && $predicate instanceof Predicate\Set) {
+                return $predicate->isEmpty();
+            }
+            return true;
         }
 
-        if (!is_array($predicate) && ! $predicate instanceof Predicate) {
+        if (!is_array($predicate)) {
             return true;
         }
 
