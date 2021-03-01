@@ -620,12 +620,4 @@ class Db
     {
         return ($this->driver ?? $this->getDriver(false))->quoteValue($value);
     }
-
-    /**
-     * @see Sql\Driver::escape()
-     */
-    public function escape(string $value): string
-    {
-        return ($this->driver ?? $this->getDriver(false))->escape($value);
-    }
 }
