@@ -56,7 +56,9 @@ abstract class Element implements ElementInterface
     protected static $index = 0;
 
     /**
-     * @const int The maximum numeric index after which the param counter reset to 1
+     * The maximum numeric index after which the named-param counter reset to 1
+     *
+     * @const int
      */
     private const MAX_INDEX = 99999;
 
@@ -144,7 +146,7 @@ abstract class Element implements ElementInterface
      */
     protected function createParam($value, int $type = null, string $name = null): string
     {
-        return $this->createNamedParam($value, $type, $name);
+        //return $this->createNamedParam($value, $type, $name);
         return $this->createPositionalParam($value, $type);
     }
 
