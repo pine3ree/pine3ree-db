@@ -56,9 +56,9 @@ abstract class Element implements ElementInterface
     protected static $index = 0;
 
     /**
-     * @const int The maximun numeric index after which the param counter reset to 1
+     * @const int The maximum numeric index after which the param counter reset to 1
      */
-    private const MAX_INDEX = 999999;
+    private const MAX_INDEX = 99999;
 
     /**
      * Build and return the parametrized SQL-string
