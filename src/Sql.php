@@ -307,8 +307,8 @@ class Sql
             return true;
         }
 
-        if (is_string($predicate) && trim($predicate) === '') {
-            return true;
+        if (is_string($predicate)) {
+            return trim($predicate) === '';
         }
 
         if ($predicate instanceof Predicate) {
