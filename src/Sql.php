@@ -303,14 +303,17 @@ class Sql
 
     public static function isEmptyPredicate($predicate, bool $checkEmptySet = false): bool
     {
+        // empty values
         if ($predicate === null || $predicate === []) {
             return true;
         }
 
+        // strings
         if (is_string($predicate)) {
             return trim($predicate) === '';
         }
 
+        // predicates
         if ($predicate instanceof Predicate) {
             if ($checkEmptySet && $predicate instanceof Predicate\Set) {
                 return $predicate->isEmpty();
@@ -318,11 +321,8 @@ class Sql
             return false;
         }
 
-        if (!is_array($predicate)) {
-            return true;
-        }
-
-        return false;
+        // last valid type: not-empty array
+        return !is_array($predicate);
     }
 
     /**
