@@ -273,22 +273,25 @@ class Db
      *
      * @return Driver
      */
-    public function getDriver(): Driver
+    public function getDriver(bool $withPdo = false): Driver
     {
         if (isset($this->driver)) {
             return $this->driver;
         }
 
-        if (isset($this->pdo)) {
-            // hydrate and reuse the pdo-less instance, if any, with the active
+        $pdo = $withPdo ? $this->pdo() : $this->pdo;
+
+        if (isset($pdo)) {
+            // inject and reuse the pdo-less instance, if any, with the active
             // pdo connection
             if (isset($this->_driver)) {
-                $this->_driver->setPDO($this->pdo);
+                $this->_driver->setPDO($pdo);
                 return $this->driver = $this->_driver;
             }
-            $driver_name = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-            // cache the pdo-aware driver instance
-            $this->driver = $this->createDriverFromName($driver_name, $this->pdo);
+
+            // create and cache the pdo-aware driver instance
+            $driver_name = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+            $this->driver = $this->createDriverFromName($driver_name, $pdo);
             return $this->driver;
         }
 
@@ -300,31 +303,6 @@ class Db
         // cache the pdo-less driver instance
         $this->_driver = $this->createDriverFromName($driver_name);
         return $this->_driver;
-    }
-
-    /**
-     * @return DriverReturn the driver with pdo instance
-     */
-    protected function driver(): Driver
-    {
-        if (isset($this->driver)) {
-            return $this->driver;
-        }
-
-        // make sure the composed instant gets created if not already done
-        $pdo = $this->getPDO(true);
-
-        // do we have a cached pdo-less driver?
-        if (isset($this->_driver)) {
-            $this->_driver->setPDO($pdo);
-            return $this->driver = $this->_driver;
-        }
-
-        // create, cache and return the pdo-aware driver
-        $driver_name = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-        $this->driver = $this->createDriverFromName($driver_name, $pdo);
-
-        return $this->driver;
     }
 
     private function createDriverFromName(string $driver_name, PDO $pdo = null): Driver
@@ -622,7 +600,7 @@ class Db
      */
     public function quoteIdentifier(string $identifier): string
     {
-        return $this->driver()->quoteIdentifier($identifier);
+        return ($this->driver ?? $this->getDriver(true))->quoteIdentifier($identifier);
     }
 
     /**
@@ -630,7 +608,7 @@ class Db
      */
     public function quoteAlias(string $alias): string
     {
-        return $this->driver()->quoteAlias($alias);
+        return ($this->driver ?? $this->getDriver(true))->quoteAlias($alias);
     }
 
     /**
@@ -638,7 +616,7 @@ class Db
      */
     public function quoteValue($value): string
     {
-        return $this->driver()->quoteValue($value);
+        return ($this->driver ?? $this->getDriver(true))->quoteValue($value);
     }
 
     /**
@@ -646,6 +624,6 @@ class Db
      */
     public function escape(string $value): string
     {
-        return $this->pdo()->escape($value);
+        return ($this->driver ?? $this->getDriver(true))->escape($value);
     }
 }
