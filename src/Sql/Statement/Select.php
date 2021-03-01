@@ -921,4 +921,3 @@ class Select extends Statement
         }
     }
 }
-

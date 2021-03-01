@@ -197,7 +197,10 @@ class DbFactory
             $dsn[] = "LoginTimeout={$login_timeout}";
         }
 
-        $mars = $config['multiple_active_result_sets'] ?? $config['multipleactiveresultsets'] ?? $config['mars'] ?? null;
+        $mars = $config['multiple_active_result_sets']
+            ?? $config['multipleactiveresultsets']
+            ?? $config['mars']
+            ?? null;
         if (!empty($mars)) {
             $dsn[] = "MultipleActiveResultSets={$mars}";
         }

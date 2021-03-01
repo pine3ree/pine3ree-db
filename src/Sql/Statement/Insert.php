@@ -296,7 +296,7 @@ class Insert extends Statement
             return $this->sql;
         }
 
-       if (empty($this->table)) {
+        if (empty($this->table)) {
             throw new RuntimeException(
                 "The INSERT table has not been defined!"
             );

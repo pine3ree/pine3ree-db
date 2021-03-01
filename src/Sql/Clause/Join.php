@@ -97,7 +97,7 @@ class Join extends Clause
         } elseif ($this->specification instanceof On) {
             $specification = $this->getConditionalClauseSQL('specification', $driver);
             if (!Sql::isEmptySQL($specification)) {
-               $this->importParams($this->specification);
+                $this->importParams($this->specification);
             }
         }
 

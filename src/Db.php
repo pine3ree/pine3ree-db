@@ -66,10 +66,10 @@ class Db
     /** @var string */
     private $pdoClass = PDO::class;
 
-    /** @var Driver the sql-driver */
+    /** @var Driver A connection-aware sql-driver instance*/
     private $driver;
 
-    /** @var Driver connection-less sql-driver */
+    /** @var Driver A connection-less sql-driver instance*/
     private $_driver;
 
     /**

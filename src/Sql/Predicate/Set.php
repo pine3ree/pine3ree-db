@@ -397,7 +397,7 @@ class Set extends Predicate
 
         // other not matched operators must use a scalar or literal value
         if (is_array($value)) {
-             throw new InvalidArgumentException(
+            throw new InvalidArgumentException(
                 "Array value not supported for operator `{$operator}`!"
             );
         }
