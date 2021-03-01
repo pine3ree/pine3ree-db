@@ -9,6 +9,7 @@
     <!-- inherit rules from: -->
     <rule ref="PSR12">
         <exclude name="PSR12.ControlStructures.ControlStructureSpacing"/>
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
     </rule>
     <rule ref="PSR2.ControlStructures.ControlStructureSpacing"/>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
