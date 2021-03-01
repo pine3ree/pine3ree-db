@@ -391,4 +391,15 @@ class Sql
     {
         return self::expression($expression, $substitutions);
     }
+
+    /**
+     * Create a sql-alias
+     *
+     * @param string $alias
+     * @return Sql\Alias
+     */
+    public static function alias(string $alias): Sql\Alias
+    {
+        return new Sql\Alias($alias);
+    }
 }
