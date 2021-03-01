@@ -9,6 +9,7 @@ namespace P3\Db\Sql;
 
 use InvalidArgumentException;
 use P3\Db\Sql\Alias;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Literal;
 
@@ -30,10 +31,11 @@ abstract class Predicate extends Element
      * Quote the left part of a predicate based on its type
      *
      * @param string|Alias|Literal $identifier
+     * @param Driver $driver A SQL-driver
      * @return string
      * @throws InvalidArgumentException
      */
-    protected function quoteIdentifier($identifier, Driver $driver = null): string
+    protected function quoteIdentifier($identifier, Driver $driver): string
     {
         // the identifier is considered a db table column, quote accordingly
         if (is_string($identifier)) {
