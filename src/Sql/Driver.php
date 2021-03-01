@@ -7,12 +7,13 @@
 
 namespace P3\Db\Sql;
 
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\DriverInterface;
 use PDO;
 use ReflectionClass;
-use Throwable;
+use RuntimeException;
 
 use function addcslashes;
 use function is_bool;
@@ -20,10 +21,15 @@ use function is_int;
 use function is_string;
 use function ltrim;
 use function rtrim;
+use function setlocale;
+use function sprintf;
 use function str_replace;
+use function strlen;
 use function strpos;
 use function strtolower;
 use function substr;
+
+use const LC_NUMERIC;
 
 /**
  * A SQL Driver provides methods for quoting identifier, aliases, values and
@@ -90,6 +96,10 @@ abstract class Driver implements DriverInterface
             $this->pdo = $pdo;
         }
 
+        self::assertValidQuotingChar($ql, 'left');
+        self::assertValidQuotingChar($qr, 'right');
+        self::assertValidQuotingChar($qv, 'value');
+
         $this->ql = $ql;
         $this->qr = $qr;
         $this->qv = $qv;
@@ -97,11 +107,26 @@ abstract class Driver implements DriverInterface
         $this->qlr = "{$ql}{$qr}";
     }
 
+    protected static function assertValidQuotingChar(string &$qc, string $type)
+    {
+        $qc = trim($qc);
+        if ('' === $qc || strlen($qc) !== 1 || '\\' === $qc) {
+            throw new InvalidArgumentException(
+                "invalid {$type}-quoting char `{$qc}` provided!"
+            );
+        }
+    }
+
     public function getName(): string
     {
         return $this->name ?? $this->name = strtolower(
             (new ReflectionClass($this))->getShortName()
         );
+    }
+
+    public function setPDO(PDO $pdo)
+    {
+        $this->pdo = $pdo;
     }
 
     /**
@@ -156,11 +181,13 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Quote a value, when appliable, for SQL expression
+     * Quote a value, when needed, to be used in a SQL expression
      *
      * Potentially dangerous: always prefer parameter binding
      *
-     * @param mixed $value The target identifier (column or alias)
+     * @param mixed $value
+     * @return string
+     * @throws RuntimeException
      */
     public function quoteValue($value): string
     {
@@ -168,61 +195,60 @@ abstract class Driver implements DriverInterface
             return Sql::NULL;
         }
 
-        if (isset($this->pdo)) {
-            try {
-                if (is_int($value)) {
-                    $parameter_type = PDO::PARAM_INT;
-                } elseif (is_bool($value)) {
-                    $parameter_type = PDO::PARAM_INT;
-                    $value = (int)$value;
-                } else {
-                    $parameter_type = PDO::PARAM_STR;
-                    if (!is_string($value)) {
-                        $value = (string)$value;
-                    }
-                }
-                $quoted_value = $this->pdo->quote($value, $parameter_type);
-                if ($quoted_value !== false) {
-                    return $quoted_value;
-                }
-            } catch (Throwable $ex) {
-                // do nothing, falback to the following code
-            }
-        }
-
         if (is_int($value)) {
             return (string)$value;
         }
+
         if (is_bool($value)) {
             return (string)(int)$value;
+        }
+
+        if (is_float($value)) {
+            // make sure we use the dot '.' as decimal separator
+            $lc_numeric = setlocale(LC_NUMERIC, 0);
+            setlocale(LC_NUMERIC, 'C');
+            $str_value = (string)$value;
+            setlocale(LC_NUMERIC, $lc_numeric);
+            return $str_value;
         }
 
         if (!is_string($value)) {
             $value = (string)$value;
         }
 
-        return "{$this->qv}{$this->escape($value)}{$this->qv}";
+        if (!isset($this->pdo)) {
+            throw new RuntimeException(
+                "Unable to quote a string value: missng PDO instance!"
+            );
+        }
+
+        $quoted_value = $this->pdo->quote($value, PDO::PARAM_STR);
+
+        if ($quoted_value === false) {
+            throw new RuntimeException(sprintf(
+                "Quoting non supported by pdo-driver `%s`!",
+                $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME)
+            ));
+        }
+
+        return $quoted_value;
     }
 
     /**
-     * Escape a string for SQL expression
+     * Escape a string without quoting for usage as a SQL value
      *
      * Potentially dangerous: always prefer parameter binding
      *
      * @param string $value
+     * @deprecated Use parameter binding
      */
-    public function escape(string $value): string
+    protected function escape(string $value): string
     {
         return addcslashes($value, static::ESCAPE_CHARLIST);
     }
 
-    public function setPDO(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-    }
-
     /**
-     * Return the basic ANSI driver
+     * Return the basic ANSI driver shared instance
      *
      * @return self
      */
