@@ -17,7 +17,7 @@
         "source": "https://github.com/pine3ree/p3-db"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": false
     },
     "require": {
         "php": "^7.1",
