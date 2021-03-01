@@ -60,22 +60,27 @@ class Is extends Predicate
         }
 
         if (is_string($value)) {
-            $value = strtoupper($value);
+            $ucvalue = strtoupper($value);
         }
 
         // accepts the string TRUE => convert to bool true
-        if ($value === 'TRUE') {
+        if ($ucvalue === 'TRUE') {
             return true;
         }
 
         // accepts the string FALSE => convert to bool false
-        if ($value === 'FALSE') {
+        if ($ucvalue === 'FALSE') {
             return false;
         }
 
         // accepts the string NULL => convert to null
-        if ($value === 'NULL') {
+        if ($ucvalue === 'NULL') {
             return null;
+        }
+
+        // accepts the string UNKNOWN => convert to null
+        if ($ucvalue === Sql::UNKNOWN) {
+            return Sql::UNKNOWN;
         }
 
         throw new InvalidArgumentException(sprintf(
