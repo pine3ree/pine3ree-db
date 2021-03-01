@@ -162,7 +162,7 @@ abstract class Element implements ElementInterface
     private function createNamedParam($value, int $type = null, string $name = null): string
     {
         $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
-        $marker = ":{$name}" . self::getNextIndex();
+        $marker = ":{$name}{$this->getNextIndex()}";
         $this->addParam($marker, $value, $type);
 
         return $marker;
@@ -221,7 +221,7 @@ abstract class Element implements ElementInterface
         $this->params = $this->params_types = [];
     }
 
-    private static function getNextIndex(): int
+    private function getNextIndex(): int
     {
         if (static::$index === self::MAX_INDEX) {
             return static::$index = 1;
