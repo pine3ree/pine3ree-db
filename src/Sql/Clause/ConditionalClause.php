@@ -453,7 +453,7 @@ abstract class ConditionalClause extends Clause
     }
 
     /**
-     * Provide a fluent interface for conditions using virtual properties
+     * Provide access to private properties
      *
      * @param string $name
      */
