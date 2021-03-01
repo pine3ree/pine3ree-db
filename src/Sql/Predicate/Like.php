@@ -91,7 +91,7 @@ class Like extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        $identifier = $this->quoteIdentifier($identifier, $driver);
+        $identifier = $this->quoteIdentifier($this->identifier, $driver);
 
         $operator = static::$not ? Sql::NOT_LIKE : Sql::LIKE;
 
