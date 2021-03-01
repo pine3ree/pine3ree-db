@@ -322,7 +322,7 @@ class Sql
         }
 
         // last valid type: not-empty array
-        return is_array($predicate);
+        return !is_array($predicate);
     }
 
     /**
