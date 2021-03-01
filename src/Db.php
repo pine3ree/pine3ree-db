@@ -626,6 +626,6 @@ class Db
      */
     public function escape(string $value): string
     {
-        return ($this->driver ?? $this->getDriver(true))->escape($value);
+        return ($this->driver ?? $this->getDriver(false))->escape($value);
     }
 }
