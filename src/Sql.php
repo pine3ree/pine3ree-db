@@ -15,6 +15,7 @@ use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Update;
 
 use function gettype;
+use function is_array;
 use function is_string;
 use function sprintf;
 use function strtoupper;
@@ -312,6 +313,10 @@ class Sql
 
         if ($checkEmptySet && $predicate instanceof Predicate\Set) {
             return $predicate->isEmpty();
+        }
+
+        if (!is_array($predicate) && ! $predicate instanceof Predicate) {
+            return true;
         }
 
         return false;
