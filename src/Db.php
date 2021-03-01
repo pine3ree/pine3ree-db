@@ -497,7 +497,9 @@ class Db
      */
     public function prepare(SqlStatement $sqlStatement, bool $bind_params = false)
     {
-        $stmt = $this->pdo()->prepare($sqlStatement->getSQL($this->driver()));
+        $stmt = $this->pdo()->prepare($sqlStatement->getSQL(
+            $this->driver ?? $this->getDriver(true)
+        ));
 
         if ($bind_params && $stmt instanceof PDOStatement) {
             $types = $sqlStatement->getParamsTypes();
