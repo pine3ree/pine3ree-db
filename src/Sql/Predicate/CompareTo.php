@@ -67,9 +67,7 @@ abstract class CompareTo extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        $identifier = $this->identifier instanceof Literal
-            ? $this->identifier->getSQL()
-            : $driver->quoteIdentifier($this->identifier);
+        $identifier = $this->quoteIdentifier($identifier, $driver);
 
         $select_sql = $this->select->getSQL($driver);
         $this->importParams($this->select);

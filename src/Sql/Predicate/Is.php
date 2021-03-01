@@ -99,9 +99,7 @@ class Is extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        $identifier = $this->identifier instanceof Literal
-            ? $this->identifier->getSQL($driver)
-            : $driver->quoteIdentifier($this->identifier);
+        $identifier = $this->quoteIdentifier($identifier, $driver);
 
         if ($this->value === null) {
             $param = Sql::NULL;

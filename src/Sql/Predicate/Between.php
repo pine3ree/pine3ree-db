@@ -74,9 +74,7 @@ class Between extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        $identifier = $this->identifier instanceof Literal
-            ? $this->identifier->getSQL()
-            : $driver->quoteIdentifier($this->identifier);
+        $identifier = $this->quoteIdentifier($identifier, $driver);
 
         $operator = static::$not ? Sql::NOT_BETWEEN : Sql::BETWEEN;
 
