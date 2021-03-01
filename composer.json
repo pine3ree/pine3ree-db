@@ -1,14 +1,16 @@
 {
     "name": "pine3ree/p3-db",
-    "description": "A tiny PDO wrapper for lazy instantiation and query profiling",
+    "description": "A tiny PDO abstraction layer wrapper",
     "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
         "database",
+        "db",
         "pdo",
         "php",
         "pine3ree",
-        "p3"
+        "p3",
+        "p3-db"
     ],
     "homepage": "https://github.com/pine3ree/p3-db",
     "support": {
