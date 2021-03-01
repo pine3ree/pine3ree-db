@@ -28,6 +28,8 @@ interface DriverInterface
      */
     public function getName(): string;
 
+    public function setPDO(PDO $pdo);
+
     /**
      * Quote a yet unquoted identifier that represents a table column
      *
@@ -45,22 +47,11 @@ interface DriverInterface
     public function quoteAlias(string $alias): string;
 
     /**
-     * Quote a value, when appliable, for SQL expression
+     * Quote a value, when needed, for usage in SQL expression
      *
      * Potentially dangerous: always prefer parameter binding
      *
      * @param mixed $value The target identifier (column or alias)
      */
     public function quoteValue($value): string;
-
-    /**
-     * Escape a string for SQL expression
-     *
-     * Potentially dangerous: always prefer parameter binding
-     *
-     * @param string $value
-     */
-    public function escape(string $value): string;
-
-    public function setPDO(PDO $pdo);
 }
