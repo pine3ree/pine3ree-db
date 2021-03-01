@@ -539,9 +539,9 @@ class Db
     /**
      * Proxy to PDO::query()
      *
-     * @see \PDO::query()
+     * @see PDO::query()
      * @param string $sql The sql-statement
-     * @return \PDOStatement|false Execute the statement and returns either a
+     * @return PDOStatement|false Execute the statement and returns either a
      *      PDO prepared statement or false on failure
      */
     public function query(string $sql)
@@ -552,7 +552,7 @@ class Db
     /**
      * Proxy to PDO::exec()
      *
-     * @see \PDO::exec()
+     * @see PDO::exec()
      * @param string $sql The DML/DDL/DCL statement sql-string
      * @return int|false Execute the statement and returns either the number of
      *      affected rows or false on failure
@@ -566,15 +566,15 @@ class Db
      * Return the last-inserted value
      *
      * @param string $name The sequence name, if any
-     * @return string
+     * @return string|null
      */
-    public function lastInsertId(string $name = null): string
+    public function lastInsertId(string $name = null): ?string
     {
         if (isset($this->pdo)) {
             return $this->pdo->lastInsertId($name);
         }
 
-        return '';
+        return null;
     }
 
     public function beginTransaction(): bool
@@ -602,7 +602,7 @@ class Db
      */
     public function quoteIdentifier(string $identifier): string
     {
-        return ($this->driver ?? $this->getDriver(true))->quoteIdentifier($identifier);
+        return ($this->driver ?? $this->getDriver(false))->quoteIdentifier($identifier);
     }
 
     /**
@@ -610,7 +610,7 @@ class Db
      */
     public function quoteAlias(string $alias): string
     {
-        return ($this->driver ?? $this->getDriver(true))->quoteAlias($alias);
+        return ($this->driver ?? $this->getDriver(false))->quoteAlias($alias);
     }
 
     /**
@@ -618,7 +618,7 @@ class Db
      */
     public function quoteValue($value): string
     {
-        return ($this->driver ?? $this->getDriver(true))->quoteValue($value);
+        return ($this->driver ?? $this->getDriver(false))->quoteValue($value);
     }
 
     /**
