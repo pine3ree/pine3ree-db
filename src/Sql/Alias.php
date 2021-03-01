@@ -29,7 +29,7 @@ class Alias extends Element
             );
         }
 
-        if (!preg_match('/^(?:[a-zA-Z\]|\_)[a-zA-Z0-9\_\.]*$/', $sql)) {
+        if (!preg_match('/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/', $sql)) {
             throw new InvalidArgumentException(
                 "A SQL-alias can only start with ascii letter or underscore and"
                 . " contain only alphanumeric, underscore and dot characters, `{$sql}` provided!"
