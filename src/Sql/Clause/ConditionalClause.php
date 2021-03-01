@@ -442,12 +442,14 @@ abstract class ConditionalClause extends Clause
      *
      * @see Predicate\Set::notRegExp()
      *
+     * @param string $defaultLogicalOperator The default logical operator for the nested set
+     *
      * @return Predicate\Set
      */
-    public function open(): Predicate\Set
+    public function open(string $defaultLogicalOperator = Sql::AND): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->open();
+        return $this->conditions->open($defaultLogicalOperator);
     }
 
     /**

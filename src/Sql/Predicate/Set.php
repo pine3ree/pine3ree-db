@@ -759,11 +759,15 @@ class Set extends Predicate
     /**
      * Add a nested predicate-set, creating the effect of a SQL opening parenthesis
      *
+     * @param string $defaultLogicalOperator The default logical operator for the nested set
+     *
      * @return self Return the new nested predicate-set instance
      */
-    public function open(): self
+    public function open(string $defaultLogicalOperator = Sql::AND): self
     {
-        $nestedPredicateSet = new self();
+        $defaultLogicalOperator = self::COMB[strtoupper($defaultLogicalOperator)] ?? Sql::AND;
+
+        $nestedPredicateSet = new self([], $defaultLogicalOperator);
         $this->addPredicate($nestedPredicateSet);
         $nestedPredicateSet->parent = $this;
 
