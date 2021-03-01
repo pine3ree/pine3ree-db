@@ -338,7 +338,7 @@ class Sql
      * @param string|null $table
      * @return Insert
      */
-    public function insert(string $table = null): Insert
+    public static function insert(string $table = null): Insert
     {
         return new Insert($table);
     }
