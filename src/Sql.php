@@ -315,7 +315,7 @@ class Sql
             if ($checkEmptySet && $predicate instanceof Predicate\Set) {
                 return $predicate->isEmpty();
             }
-            return true;
+            return false;
         }
 
         if (!is_array($predicate)) {
