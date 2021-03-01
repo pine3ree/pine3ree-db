@@ -79,9 +79,9 @@ class Is extends Predicate
         }
 
         throw new InvalidArgumentException(sprintf(
-            "The boolean operator `{$operator}` comparison value must be one of"
-            . " `null`, `true`, `false` or the strings 'NUUL', 'TRUE', 'FALSE', 'UNKNOWN', "
-            . "`%s` provided!",
+            "The IS-value, must be one of:"
+            . " `null`, `true`, `false` or the ci-strings 'NULL', 'TRUE', 'FALSE', 'UNKNOWN',"
+            . " `%s` provided!",
             is_string($value) ? $value : gettype($value)
         ));
     }
