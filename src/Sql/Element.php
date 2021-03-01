@@ -60,7 +60,7 @@ abstract class Element implements ElementInterface
      *
      * @const int
      */
-    private const MAX_INDEX = 99999;
+    private const MAX_INDEX = 999999;
 
     /**
      * Build and return the parametrized SQL-string
