@@ -9,6 +9,7 @@ namespace P3\Db;
 
 use InvalidArgumentException;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Delete;
 use P3\Db\Sql\Statement\Insert;
 use P3\Db\Sql\Statement\Select;
