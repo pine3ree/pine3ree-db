@@ -33,7 +33,8 @@
     },
     "autoload": {
         "psr-4": {
-            "P3\\DB\\": "src/"
+            "P3\\Db\\": "src/",
+            "P3\\DbTest\\": "test/"
         }
     },
     "scripts": {
