@@ -44,7 +44,7 @@ abstract class Predicate extends Element
 
         // The indentifier is specified to be a SQL-alias, quote accordingly
         if ($identifier instanceof Alias) {
-            $driver->quoteAlias($this->identifier->getSQL($driver));
+            return $driver->quoteAlias($this->identifier->getSQL($driver));
         }
 
         // the identifier is generic SQL-literal, so no quoting
