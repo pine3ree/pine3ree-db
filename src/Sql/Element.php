@@ -146,8 +146,8 @@ abstract class Element implements ElementInterface
      */
     protected function createParam($value, int $type = null, string $name = null): string
     {
-        //return $this->createNamedParam($value, $type, $name);
-        return $this->createPositionalParam($value, $type);
+        return $this->createNamedParam($value, $type, $name);
+        //return $this->createPositionalParam($value, $type);
     }
 
     /**
@@ -162,7 +162,7 @@ abstract class Element implements ElementInterface
     private function createNamedParam($value, int $type = null, string $name = null): string
     {
         $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
-        $marker = ":{$name}" . self::nextIndex();
+        $marker = ":{$name}" . self::getNextIndex();
         $this->addParam($marker, $value, $type);
 
         return $marker;
@@ -221,7 +221,7 @@ abstract class Element implements ElementInterface
         $this->params = $this->params_types = [];
     }
 
-    private static function nextIndex(): int
+    private static function getNextIndex(): int
     {
         if (static::$index === self::MAX_INDEX) {
             return static::$index = 1;
