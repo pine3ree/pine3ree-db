@@ -46,7 +46,7 @@ abstract class Command implements CommandInterface
 
     public function getSQL(): string
     {
-        return $this->sqlStatement->getSQL($this->db->getDriver());
+        return $this->sqlStatement->getSQL($this->db->getDriver(true));
     }
 
     public function getParams(): array
