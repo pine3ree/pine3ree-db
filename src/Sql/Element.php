@@ -266,6 +266,21 @@ abstract class Element implements ElementInterface
     }
 
     /**
+     * Create a SQL representation (either actual string or marker) for a given value
+     *
+     * @param mixed $value
+     * @param int|null $param_type Optional PDO::PARAM_* constant
+     * @param string|null $name Optional parameter name seed for pdo marker generation
+     * @return string
+     */
+    protected function getValueSQL($value, int $param_type = null, string $name = null): string
+    {
+        return $value instanceof Literal
+            ? $value->getSQL()
+            : $this->createParam($value, $param_type, $name);
+    }
+
+    /**
      * Quote a generic identifier (column|alias|literal) used in predicates, group-by,
      * order-by clauses according to its type
      *
@@ -317,6 +332,23 @@ abstract class Element implements ElementInterface
             . " or a SQL-literal,"
             . " '%s' provided in class `%s`!",
             is_object($identifier) ? get_class($identifier) : gettype($identifier),
+            static::class
+        ));
+    }
+
+    protected static function assertValidValue($value, string $type = '')
+    {
+        if (is_scalar($value) || null === $value || $value instanceof Literal) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "A {$type}value must be either"
+            . " a scalar,"
+            . " null"
+            . " or a Sql Literal expression instance,"
+            . " `%s` provided in class``%s!",
+            is_object($value) ? get_class($value) : gettype($value),
             static::class
         ));
     }

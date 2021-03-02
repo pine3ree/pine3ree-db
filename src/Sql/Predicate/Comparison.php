@@ -13,8 +13,12 @@ use P3\Db\Sql;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
+use function get_class;
+use function gettype;
 use function implode;
 use function is_null;
+use function is_object;
+use function sprintf;
 
 /**
  * This class represents a sql comparison predicate for the following operators:
@@ -48,6 +52,7 @@ class Comparison extends Predicate
     {
         self::assertValidIdentifier($identifier);
         self::assertValidOperator($operator);
+        self::assertValidComparisonValue($value);
 
         $this->identifier = $identifier;
         $this->operator = $operator;
@@ -62,6 +67,30 @@ class Comparison extends Predicate
                 . implode(', ', Sql::COMPARISON_OPERATORS) . "!"
             );
         }
+    }
+
+    protected static function assertValidComparisonValue($value, string $type = '')
+    {
+        if (is_scalar($value)
+            || null === $value
+            || $value instanceof Literal
+            || $value instanceof Identifier
+            || $value instanceof Alias
+        ) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "A {$type}predicate value must be either"
+            . " a scalar, "
+            . " null,"
+            . " a SQL-literal,"
+            . " a SQL-alias or"
+            . " a SQL-identifier,"
+            . " `%s` provided in class``%s!",
+            is_object($value) ? get_class($value) : gettype($value),
+            static::class
+        ));
     }
 
     public function getSQL(Driver $driver = null): string
@@ -96,8 +125,13 @@ class Comparison extends Predicate
                     );
             }
             $param = Sql::NULL;
+        } elseif ($this->value instanceof Literal
+            || $this->value instanceof Identifier
+            || $this->value instanceof Alias
+        ) {
+            $param = $this->value->getSQL($driver);
         } else {
-            $param = $this->getValueSQL($this->value, null, $this->getParameterName($operator));
+            $param = $this->createParam($this->value, null, $this->getParameterName($operator));
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";
