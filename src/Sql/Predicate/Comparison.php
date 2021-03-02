@@ -13,11 +13,8 @@ use P3\Db\Sql;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
-use function gettype;
 use function implode;
-use function is_bool;
 use function is_null;
-use function sprintf;
 
 /**
  * This class represents a sql comparison predicate for the following operators:
@@ -122,7 +119,7 @@ class Comparison extends Predicate
         if ('<' === $operator) {
             return 'lt';
         }
-        if ('=<' === $operator) {
+        if ('<=' === $operator) {
             return 'lte';
         }
         if ('>=' === $operator) {
