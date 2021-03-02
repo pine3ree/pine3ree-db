@@ -10,6 +10,8 @@ namespace P3\Db\Sql\Predicate;
 use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
@@ -69,7 +71,7 @@ class Comparison extends Predicate
         }
     }
 
-    protected static function assertValidComparisonValue($value, string $type = '')
+    protected static function assertValidComparisonValue($value)
     {
         if (is_scalar($value)
             || null === $value
@@ -81,8 +83,8 @@ class Comparison extends Predicate
         }
 
         throw new InvalidArgumentException(sprintf(
-            "A {$type}predicate value must be either"
-            . " a scalar, "
+            "A comparison-predicate value must be either"
+            . " a scalar,"
             . " null,"
             . " a SQL-literal,"
             . " a SQL-alias or"
