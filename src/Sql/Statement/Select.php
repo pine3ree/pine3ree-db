@@ -162,62 +162,45 @@ class Select extends Statement
         }
 
         // was a single column provided?
-        if (is_string($columns)) {
-            $columns = [$columns => $columns];
-        } elseif ($columns instanceof Literal
-            || $columns instanceof Expression
-            || $columns instanceof self
-        ) {
+        if (!is_array($columns)) {
             $columns = [$columns];
         }
 
-        self::assertValidColumns($columns);
-
         // trim column names
         foreach ($columns as $key => $column) {
-            if (is_string($column)) {
-                $columns[$key] = trim($column);
-            }
+            $this->column($column, is_numeric($key) ? null : $key);
         }
-
-        $this->columns = $columns;
-
-        $this->sql = null;
-        unset($this->sqls['columns']);
 
         return $this;
     }
 
-    private static function assertValidColumns($columns)
+    public function column($column, string $alias = null)
     {
-        if (!is_array($columns)) {
-            throw new InvalidArgumentException(sprintf(
-                "The SELECT columns argument must be either the ASTERISK string,"
-                . " a column name or an array of column names / literal expressions,"
-                . " expressions or sub-selects, '%s' provided!",
-                gettype($columns)
-            ));
+        self::assertValidColumn($column, $alias);
+
+        $this->columns[$alias ?? $column] = $column;
+
+        $this->sql = null;
+        unset($this->sqls['columns']);
+    }
+
+    private static function assertValidColumn(&$column, $key = null)
+    {
+        if (is_string($column) && '' !== $column = trim($column)) {
+            return;
+        } elseif ($column instanceof Literal
+            || $column instanceof Expression
+            || $column instanceof self
+        ) {
+             return;
         }
 
-        foreach ($columns as $key => $column) {
-            if (is_string($column) && '' !== trim($column)) {
-                continue;
-            }
-            if ($column instanceof self) {
-                 continue;
-            }
-            if ($column instanceof Literal && !Sql::isEmptySQL($column->getSQL())) {
-                continue;
-            }
-            if ($column instanceof Expression && !Sql::isEmptySQL($column->getSQL())) {
-                continue;
-            }
-            throw new InvalidArgumentException(sprintf(
-                "A table column must be a non empty string, a non empty Expression or Literal "
-                . "expression or a Select statement, `%s provided` for index/column-alias `{$key}`!",
-                is_object($column) ? get_class($column) : gettype($column)
-            ));
-        }
+        throw new InvalidArgumentException(sprintf(
+            "A table column must be a non empty string, a non empty Expression or Literal "
+            . "expression or a Select statement, `%s`%s!",
+            is_object($column) ? get_class($column) : gettype($column),
+            isset($key) ? " provided for index/column-alias `{$key}`" : ""
+        ));
     }
 
     private function getColumnsSQL(Driver $driver): string
@@ -234,7 +217,7 @@ class Select extends Statement
         $add_tb_prefix = !empty($this->joins) && !empty($this->table);
 
         if (empty($this->columns)) {
-            $this->columns = ['*' => '*'];
+            $this->columns = [Sql::ASTERISK =>  Sql::ASTERISK];
         }
 
         $sqls = [];
@@ -244,7 +227,7 @@ class Select extends Statement
                 if (empty($prefix) && $add_tb_prefix) {
                     $prefix = $driver->quoteIdentifier($this->table);
                 }
-                $sqls[] = $prefix ? "{$prefix}.*" : "*";
+                $sqls[] = $prefix ? ("{$prefix}." . Sql::ASTERISK) : Sql::ASTERISK;
                 continue; // no-alias
             }
 
