@@ -512,13 +512,7 @@ class Select extends Statement
             return $this;
         }
 
-        if (!is_string($groupBy) && ! $identifier instanceof Literal) {
-            throw new InvalidArgumentException(sprintf(
-                "The `\$groupBy` argument must be either a string or Literal or an "
-                . "array of string identifiers or Literals, `%s` provided",
-                gettype($groupBy)
-            ));
-        }
+        self::assertValidIdentifier($identifier, ' select group-by ');
 
         $this->groupBy[] = $groupBy;
 
@@ -540,9 +534,7 @@ class Select extends Statement
 
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
-            $groupBy[$key] = $identifier instanceof Literal
-                ? $identifier->getSQL()
-                : $driver->quoteIdentifier($identifier);
+            $groupBy[$key] = $this->quoteGenericIdentifier($identifier, $driver);
         }
 
         $this->sqls['group'] = $sql = Sql::GROUP_BY . " " . implode(", ", $groupBy);
@@ -599,13 +591,7 @@ class Select extends Statement
             return $this;
         }
 
-        if (!is_string($orderBy)) {
-            throw new InvalidArgumentException(sprintf(
-                "The ORDER BY argument must be either an array of identifier"
-                . " optionally mapped to sort-direction or a string identifier, `%s` provided!",
-                gettype($orderBy)
-            ));
-        }
+        self::assertValidIdentifier($identifier, ' select order-by ');
 
         if (is_string($sortdir_or_replace)) {
             $sortdir = strtoupper($sortdir_or_replace) === Sql::DESC
@@ -635,8 +621,9 @@ class Select extends Statement
 
         $sqls = [];
         foreach ($this->orderBy as $identifier => $direction) {
-            // do not quote identifier or alias, do it programmatically
-            $sqls[] = $driver->quoteIdentifier($identifier) . " {$direction}";
+            // do not quote identifier or alias when defining the order-by clause,
+            // do it programmatically
+            $sqls[] = $this->quoteGenericIdentifier($identifier, $driver) . " {$direction}";
         }
 
         $this->sqls['order'] = $sql = Sql::ORDER_BY . " " . implode(", ", $sqls);
