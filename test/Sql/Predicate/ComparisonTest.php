@@ -118,84 +118,70 @@ class ComparisonTest extends TestCase
         self::assertEquals('"tb"."column" IS NOT NULL', $predicate->getSQL());
     }
 
-    public function testEqualWithScalarValues()
+    /**
+     * @dataProvider provideScalarValues
+     */
+    public function testEqualWithScalarValue($value)
     {
-        foreach ([
-            42,
-            false,
-            true,
-            'A',
-        ] as $value) {
-            $predicate = new Predicate\Comparison("tb.column", '=', $value);
-            self::assertRegExp('/^\"tb\"\.\"column\" = \:eq[1-9][0-9]*$/', $predicate->getSQL());
-        }
+        $predicate = new Predicate\Comparison("tb.column", '=', $value);
+        self::assertRegExp('/^\"tb\"\.\"column\" = \:eq[1-9][0-9]*$/', $predicate->getSQL());
     }
 
-    public function testNotEqualWithScalarValues()
+    /**
+     * @dataProvider provideScalarValues
+     */
+    public function testNotEqualWithScalarValue($value)
     {
-        foreach ([
-            42,
-            false,
-            true,
-            'A',
-        ] as $value) {
-            $predicate = new Predicate\Comparison("tb.column", '!=', $value);
-            self::assertRegExp('/^\"tb\"\.\"column\" \!= \:neq[1-9][0-9]*$/', $predicate->getSQL());
+        $predicate = new Predicate\Comparison("tb.column", '!=', $value);
+        self::assertRegExp('/^\"tb\"\.\"column\" \!= \:neq[1-9][0-9]*$/', $predicate->getSQL());
 
-            $predicate = new Predicate\Comparison("tb.column", '<>', $value);
-            self::assertRegExp('/^\"tb\"\.\"column\" <> \:ne[1-9][0-9]*$/', $predicate->getSQL());
-        }
+        $predicate = new Predicate\Comparison("tb.column", '<>', $value);
+        self::assertRegExp('/^\"tb\"\.\"column\" <> \:ne[1-9][0-9]*$/', $predicate->getSQL());
     }
 
-    public function testLessThanWithScalarValues()
+    /**
+     * @dataProvider provideScalarValues
+     */
+    public function testLessThanWithScalarValue($value)
     {
-        foreach ([
-            42,
-            false,
-            true,
-            'A',
-        ] as $value) {
-            $predicate = new Predicate\Comparison("tb.column", '<', $value);
-            self::assertRegExp('/^\"tb\"\.\"column\" < \:lt[1-9][0-9]*$/', $predicate->getSQL());
-        }
+        $predicate = new Predicate\Comparison("tb.column", '<', $value);
+        self::assertRegExp('/^\"tb\"\.\"column\" < \:lt[1-9][0-9]*$/', $predicate->getSQL());
     }
 
-    public function testLessThanEqualWithScalarValues()
+    /**
+     * @dataProvider provideScalarValues
+     */
+    public function testLessThanEqualWithScalarValue($value)
     {
-        foreach ([
-            42,
-            false,
-            true,
-            'A',
-        ] as $value) {
-            $predicate = new Predicate\Comparison("tb.column", '<=', $value);
-            self::assertRegExp('/^\"tb\"\.\"column\" <= \:lte[1-9][0-9]*$/', $predicate->getSQL());
-        }
+        $predicate = new Predicate\Comparison("tb.column", '<=', $value);
+        self::assertRegExp('/^\"tb\"\.\"column\" <= \:lte[1-9][0-9]*$/', $predicate->getSQL());
     }
 
-    public function testGreaterThanEqualWithScalarValues()
+    /**
+     * @dataProvider provideScalarValues
+     */
+    public function testGreaterThanEqualWithScalarValue($value)
     {
-        foreach ([
-            42,
-            false,
-            true,
-            'A',
-        ] as $value) {
-            $predicate = new Predicate\Comparison("tb.column", '>=', $value);
-            self::assertRegExp('/^\"tb\"\.\"column\" >= \:gte[1-9][0-9]*$/', $predicate->getSQL());
-        }
+        $predicate = new Predicate\Comparison("tb.column", '>=', $value);
+        self::assertRegExp('/^\"tb\"\.\"column\" >= \:gte[1-9][0-9]*$/', $predicate->getSQL());
     }
 
-    public function testGreaterThanWithScalarValues()
+    /**
+     * @dataProvider provideScalarValues
+     */
+    public function testGreaterThanWithScalarValue($value)
     {
-        foreach ([
-            42,
-            false,
-            true,
-            'A',
-        ] as $value) {
-            $predicate = new Predicate\Comparison("tb.column", '>', $value);
-            self::assertRegExp('/^\"tb\"\.\"column\" > \:gt[1-9][0-9]*$/', $predicate->getSQL());
-        }
+        $predicate = new Predicate\Comparison("tb.column", '>', $value);
+        self::assertRegExp('/^\"tb\"\.\"column\" > \:gt[1-9][0-9]*$/', $predicate->getSQL());
+    }
+
+    public function provideScalarValues(): array
+    {
+        return[
+            [42],
+            [false],
+            [true],
+            ['A'],
+        ];
     }
 }
