@@ -16,13 +16,13 @@ use P3\Db\Sql\Element;
  */
 abstract class Predicate extends Element
 {
-    protected static function assertValidIdentifier($identifier)
+    protected static function assertValidIdentifier($identifier, string $type = '')
     {
-        parent::assertValidIdentifier($identifier, 'predicate ');
+        parent::assertValidIdentifier($identifier, $type ?: 'predicate ');
     }
 
-    protected static function assertValidValue($value)
+    protected static function assertValidValue($value, string $type = '')
     {
-        parent::assertValidValue($value, 'predicate ');
+        parent::assertValidValue($value, $type ?: 'predicate ');
     }
 }
