@@ -403,8 +403,7 @@ class Set extends Predicate
         }
 
         if ($value instanceof Literal) {
-            $literal = $value->getSQL();
-            return new Predicate\Literal("{$identifier} {$operator} {$literal}");
+            return new Predicate\Literal("{$identifier} {$operator} {$value->getSQL()}");
         }
 
         $marker = $this->createParam($value, null, 'expr');
