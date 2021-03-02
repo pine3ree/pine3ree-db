@@ -10,6 +10,7 @@ namespace P3\Db\Sql\Predicate;
 use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
