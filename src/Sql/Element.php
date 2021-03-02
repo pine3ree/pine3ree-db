@@ -7,7 +7,10 @@
 
 namespace P3\Db\Sql;
 
+use InvalidArgumentException;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\ElementInterface;
 use PDO;
 use ReflectionClass;
@@ -15,11 +18,18 @@ use RuntimeException;
 
 use function debug_backtrace;
 use function count;
+use function get_class;
+use function gettype;
 use function is_bool;
 use function is_int;
 use function is_null;
+use function is_object;
+use function is_scalar;
+use function is_string;
 use function is_subclass_of;
+use function sprintf;
 use function strtolower;
+
 
 /**
  * This abstract class represents a generic SQL element and is the ancestor
@@ -69,6 +79,19 @@ abstract class Element implements ElementInterface
      * its parameters
      */
     abstract public function getSQL(Driver $driver = null): string;
+
+    /**
+     * Remove the cached SQL string
+     */
+    protected function clearSQL()
+    {
+        $this->sql = null;
+    }
+
+    public function __clone()
+    {
+        $this->clearSQL();
+    }
 
     public function getParams(): array
     {
@@ -258,16 +281,68 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * Remove the cached SQL string
+     * Quote a generic identifier (column|alias|literal) used in predicates, group-by,
+     * order-by clauses according to its type
+     *
+     * @param string|Alias|Literal $identifier
+     * @param Driver $driver A SQL-driver
+     * @return string
+     * @throws InvalidArgumentException
      */
-    protected function clearSQL()
+    protected function quoteGenericIdentifier($identifier, Driver $driver): string
     {
-        $this->sql = null;
+        // the identifier is considered a db table column, quote accordingly
+        if (is_string($identifier)) {
+            return $driver->quoteIdentifier($this->identifier);
+        }
+
+        // The indentifier is specified to be a SQL-alias, quote accordingly
+        if ($identifier instanceof Alias) {
+            return $driver->quoteAlias($identifier->getSQL());
+        }
+
+        // the identifier is generic SQL-literal, so no quoting
+        if ($identifier instanceof Literal) {
+            return $identifier->getSQL();
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "Invalid identifier type, must be either a string, a"
+            . " SQL-alias or a SQL-literal, '%s' provided in class `%s`!",
+            is_object($identifier) ? get_class($identifier) : gettype($identifier),
+            static::class
+        ));
     }
 
-    public function __clone()
+    protected static function assertValidIdentifier($identifier, string $type = '')
     {
-        $this->clearSQL();
+        if (is_string($identifier)
+            || $identifier instanceof Alias
+            || $identifier instanceof Literal
+        ) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "A {$type}identifier must be either a string, a SQL-alias or a SQL-literal,"
+            . " '%s' provided in class `%s`!",
+            is_object($identifier) ? get_class($identifier) : gettype($identifier),
+            static::class
+        ));
+    }
+
+    protected static function assertValidValue($value, string $type = '')
+    {
+        if (is_scalar($value) || null === $value || $value instanceof Literal) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "A {$type}value must be either a scalar, null or an Sql Literal"
+            . " expression instance, `%s` provided in class``%s!",
+            is_object($value) ? get_class($value) : gettype($value),
+            static::class
+        ));
     }
 
     /**
