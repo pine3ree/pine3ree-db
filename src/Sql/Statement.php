@@ -7,8 +7,14 @@
 
 namespace P3\Db\Sql;
 
+use InvalidArgumentException;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Literal;
+
+use function get_class;
+use function gettype;
+use function is_object;
+use function sprintf;
 
 /**
  * A sql-statement object's goal is to abstract a sql statement collecting parts
