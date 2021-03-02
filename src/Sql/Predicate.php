@@ -8,7 +8,10 @@
 namespace P3\Db\Sql;
 
 use InvalidArgumentException;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Element;
+use P3\Db\Sql\Driver;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 
 use function get_class;
@@ -31,27 +34,47 @@ abstract class Predicate extends Element
      * @param string|null $name Optional parameter name seed for pdo marker generation
      * @return string
      */
-    protected function getValueSQL($value, int $param_type = null, string $name = null): string
-    {
-        return $value instanceof Literal
-            ? $value->getSQL()
-            : $this->createParam($value, $param_type, $name);
+    protected function getValueSQL(
+        $value,
+        int $param_type = null,
+        string $name = null,
+        Driver $driver = null
+    ): string {
+        if ($value instanceof Literal) {
+            return $value->getSQL();
+        }
+
+        if ($value instanceof Identifier || $value instanceof Alias) {
+            return $value->getSQL($driver);
+        }
+
+        return $this->createParam($value, $param_type, $name);
     }
 
     protected static function assertValidIdentifier($identifier, string $type = '')
     {
-        parent::assertValidIdentifier($identifier, $type ?: 'predicate ');
+        parent::assertValidIdentifier($identifier, "{$type}predicate ");
     }
 
     protected static function assertValidValue($value, string $type = '')
     {
-        if (is_scalar($value) || null === $value || $value instanceof Literal) {
+        if (is_scalar($value)
+            || null === $value
+            || $value instanceof Literal
+            || $value instanceof Identifier
+            || $value instanceof Alias
+        ) {
             return;
         }
 
         throw new InvalidArgumentException(sprintf(
-            "A {$type}predicate value must be either a scalar, null or a Sql Literal"
-            . " expression instance, `%s` provided in class``%s!",
+            "A {$type}predicate value must be either"
+            . " a scalar, "
+            . " null,"
+            . " a SQL-literal,"
+            . " a SQL-alias or"
+            . " a SQL-identifier,"
+            . " `%s` provided in class``%s!",
             is_object($value) ? get_class($value) : gettype($value),
             static::class
         ));
