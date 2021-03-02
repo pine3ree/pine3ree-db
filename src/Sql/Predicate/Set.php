@@ -386,9 +386,9 @@ class Set extends Predicate
             case Sql::NOT_LIKE:
                 return new Predicate\NotLike($identifier, $value, $escape = $extra);
             case Sql::REGEXP:
-                return new Predicate\RegExp($identifier, $value, false);
+                return new Predicate\RegExp($identifier, $value, $cs = (bool)$extra);
             case Sql::NOT_REGEXP:
-                return new Predicate\NotRegExp($identifier, $value, false);
+                return new Predicate\NotRegExp($identifier, $value, $cs = (bool)$extra);
             case Sql::REGEXP_CS:
                 return new Predicate\RegExp($identifier, $value, true);
             case Sql::NOT_REGEXP_CS:
