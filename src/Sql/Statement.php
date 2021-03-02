@@ -42,6 +42,23 @@ abstract class Statement extends Element
             : $this->createParam($value, $param_type, $name);
     }
 
+    protected static function assertValidValue($value, string $type = '')
+    {
+        if (is_scalar($value) || null === $value || $value instanceof Literal) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "A {$type}statement value must be either"
+            . " a scalar,"
+            . " null"
+            . " or a Sql Literal expression instance,"
+            . " `%s` provided in class``%s!",
+            is_object($value) ? get_class($value) : gettype($value),
+            static::class
+        ));
+    }
+
     /**
      * Remove any cached SQL string
      */

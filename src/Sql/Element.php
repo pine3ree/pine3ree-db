@@ -321,20 +321,6 @@ abstract class Element implements ElementInterface
         ));
     }
 
-    protected static function assertValidValue($value, string $type = '')
-    {
-        if (is_scalar($value) || null === $value || $value instanceof Literal) {
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf(
-            "A {$type}value must be either a scalar, null or a Sql Literal"
-            . " expression instance, `%s` provided in class``%s!",
-            is_object($value) ? get_class($value) : gettype($value),
-            static::class
-        ));
-    }
-
     /**
      * Allow createParam() and importParams() to be called from inside a sql-driver
      *

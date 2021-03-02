@@ -37,8 +37,18 @@ abstract class Predicate extends Element
         parent::assertValidIdentifier($identifier, $type ?: 'predicate ');
     }
 
+
     protected static function assertValidValue($value, string $type = '')
     {
-        parent::assertValidValue($value, $type ?: 'predicate ');
+        if (is_scalar($value) || null === $value || $value instanceof Literal) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "A {$type}predicate value must be either a scalar, null or a Sql Literal"
+            . " expression instance, `%s` provided in class``%s!",
+            is_object($value) ? get_class($value) : gettype($value),
+            static::class
+        ));
     }
 }
