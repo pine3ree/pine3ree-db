@@ -288,7 +288,7 @@ abstract class Element implements ElementInterface
      * @return string
      * @throws InvalidArgumentException
      */
-    protected function quoteGenericIdentifier($identifier, Driver $driver): string
+    protected static function quoteGenericIdentifier($identifier, Driver $driver): string
     {
         // the identifier is considered a db table column, quote accordingly
         if (is_string($identifier)) {

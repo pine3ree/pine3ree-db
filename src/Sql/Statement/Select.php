@@ -550,7 +550,7 @@ class Select extends Statement
 
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
-            $groupBy[$key] = $this->quoteGenericIdentifier($identifier, $driver);
+            $groupBy[$key] = self::quoteGenericIdentifier($identifier, $driver);
         }
 
         $this->sqls['group'] = $sql = Sql::GROUP_BY . " " . implode(", ", $groupBy);
@@ -639,7 +639,7 @@ class Select extends Statement
         foreach ($this->orderBy as $identifier => $direction) {
             // do not quote identifier or alias when defining the order-by clause,
             // do it programmatically
-            $sqls[] = $this->quoteGenericIdentifier($identifier, $driver) . " {$direction}";
+            $sqls[] = self::quoteGenericIdentifier($identifier, $driver) . " {$direction}";
         }
 
         $this->sqls['order'] = $sql = Sql::ORDER_BY . " " . implode(", ", $sqls);
