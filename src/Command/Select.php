@@ -91,6 +91,42 @@ class Select extends Command implements ReaderInterface
         return $this;
     }
 
+    public function column($column, string $alias = null): self
+    {
+        $this->sqlStatement->column($column, $alias);
+        return $this;
+    }
+
+    public function sum($identifier, string $alias = null): self
+    {
+        $this->sqlStatement->sum($identifier, $alias);
+        return $this;
+    }
+
+    public function min(string $identifier, string $alias = null): self
+    {
+        $this->sqlStatement->min($identifier, $alias);
+        return $this;
+    }
+
+    public function max(string $identifier, string $alias = null): self
+    {
+        $this->sqlStatement->max($identifier, $alias);
+        return $this;
+    }
+
+    public function avg(string $identifier, string $alias = null): self
+    {
+        $this->sqlStatement->avg($identifier, $alias);
+        return $this;
+    }
+
+    public function aggregate(string $sqlAggregateFunc, string $identifier, string $alias = null): self
+    {
+        $this->sqlStatement->aggregate($sqlAggregateFunc, $identifier, $alias);
+        return $this;
+    }
+
     /**
      * @see SqlSelect::from()
      * @return $this
