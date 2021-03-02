@@ -374,7 +374,7 @@ class Insert extends Statement
     {
         $sqls = [];
         foreach ($values as $value) {
-            $sqls[] = $this->createSqlForValue($value, null, 'val');
+            $sqls[] = $this->getValueSQL($value, null, 'val');
         }
 
         return "(" . implode(", ", $sqls) . ")";

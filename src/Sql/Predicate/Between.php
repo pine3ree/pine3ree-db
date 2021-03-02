@@ -76,8 +76,8 @@ class Between extends Predicate
 
         $identifier = $this->quoteGenericIdentifier($this->identifier, $driver);
         $operator = static::$not ? Sql::NOT_BETWEEN : Sql::BETWEEN;
-        $min = $this->createSqlForValue($this->min_value, null, 'min');
-        $max = $this->createSqlForValue($this->max_value, null, 'max');
+        $min = $this->getValueSQL($this->min_value, null, 'min');
+        $max = $this->getValueSQL($this->max_value, null, 'max');
 
         return $this->sql = "{$identifier} {$operator} {$min} AND {$max}";
     }

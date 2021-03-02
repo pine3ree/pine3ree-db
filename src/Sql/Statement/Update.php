@@ -152,7 +152,7 @@ class Update extends Statement
         $set = [];
         foreach ($this->set as $column => $value) {
             $column = $driver->quoteIdentifier($column);
-            $param  = $this->createSqlForValue($value, null, 'set');
+            $param  = $this->getValueSQL($value, null, 'set');
             $set[]  = "{$column} = {$param}";
         }
 

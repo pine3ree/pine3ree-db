@@ -273,7 +273,7 @@ abstract class Element implements ElementInterface
      * @param string|null $name Optional parameter name seed for pdo marker generation
      * @return string
      */
-    protected function createSqlForValue($value, int $param_type = null, string $name = null): string
+    protected function getValueSQL($value, int $param_type = null, string $name = null): string
     {
         return $value instanceof Literal
             ? $value->getSQL()
