@@ -117,15 +117,6 @@ class Set extends Predicate
         'notLike'  => Sql::NOT_LIKE,
         'NOTLIKE'  => Sql::NOT_LIKE,
         'NOT_LIKE' => Sql::NOT_LIKE,
-        'regExpCs'  => Sql::REGEXP_CS,
-        'REGEXPCS'  => Sql::REGEXP_CS,
-        'REGEXP_CS' => Sql::REGEXP_CS,
-        'notRegExp'  => Sql::NOT_REGEXP,
-        'NOTREGEXP'  => Sql::NOT_REGEXP,
-        'NOT_REGEXP' => Sql::NOT_REGEXP,
-        'notRegExpCs'   => Sql::NOT_REGEXP_CS,
-        'NOTREGEXPCS'   => Sql::NOT_REGEXP_CS,
-        'NOT_REGEXP_CS' => Sql::NOT_REGEXP_CS,
     ];
 
     /**
@@ -385,14 +376,6 @@ class Set extends Predicate
                 return new Predicate\Like($identifier, $value, $escape = $extra);
             case Sql::NOT_LIKE:
                 return new Predicate\NotLike($identifier, $value, $escape = $extra);
-            case Sql::REGEXP:
-                return new Predicate\RegExp($identifier, $value, $cs = (bool)$extra);
-            case Sql::NOT_REGEXP:
-                return new Predicate\NotRegExp($identifier, $value, $cs = (bool)$extra);
-            case Sql::REGEXP_CS:
-                return new Predicate\RegExp($identifier, $value, true);
-            case Sql::NOT_REGEXP_CS:
-                return new Predicate\NotRegExp($identifier, $value, true);
         }
 
         // other not matched operators must use a scalar or literal value
