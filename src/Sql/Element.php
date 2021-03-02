@@ -30,7 +30,6 @@ use function is_subclass_of;
 use function sprintf;
 use function strtolower;
 
-
 /**
  * This abstract class represents a generic SQL element and is the ancestor
  * of all the other sql-related classes.
