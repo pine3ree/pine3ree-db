@@ -45,7 +45,14 @@ class Is extends Predicate
         self::assertValidIdentifier($identifier);
 
         $this->identifier = $identifier;
-        $this->value = self::validateAndNormalizeValue($value);
+
+        if (is_bool($value) || is_null($value) || $value === Sql::UNKNOWN) {
+            $this->value = $value;
+        } elseif (is_string($value)) {
+            $this->value = self::validateAndNormalizeStringValue($value);
+        } else {
+            self::throwInvalidArgumentException($value);
+        }
     }
 
     /**
@@ -53,15 +60,9 @@ class Is extends Predicate
      * @return bool|null|string
      * @throws InvalidArgumentException
      */
-    private static function validateAndNormalizeValue($value)
+    private static function validateAndNormalizeStringValue(string $value)
     {
-        if (is_bool($value) || is_null($value) || $value === Sql::UNKNOWN) {
-            return $value;
-        }
-
-        if (is_string($value)) {
-            $ucvalue = strtoupper($value);
-        }
+        $ucvalue = strtoupper($value);
 
         // accepts the string TRUE => convert to bool true
         if ($ucvalue === 'TRUE') {
@@ -83,11 +84,16 @@ class Is extends Predicate
             return Sql::UNKNOWN;
         }
 
+        self::throwInvalidArgumentException($value);
+    }
+
+    protected static function throwInvalidArgumentException($value)
+    {
         throw new InvalidArgumentException(sprintf(
             "The IS-value, must be one of:"
             . " `null`, `true`, `false` or the ci-strings 'NULL', 'TRUE', 'FALSE', 'UNKNOWN',"
-            . " `%s` provided!",
-            is_string($value) ? $value : gettype($value)
+            . " %s provided!",
+            is_string($value) ? "`{$value}`" : "`" . gettype($value) . "` type"
         ));
     }
 
