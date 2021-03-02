@@ -108,9 +108,7 @@ class In extends Predicate
                 $has_null = true;
                 continue;
             }
-            $values[] = $value instanceof Literal
-                ? $value->getSQL($driver)
-                : $this->createParam($value, null, 'in');
+            $values[] = $this->createSqlForValue($value, null, 'in');
         }
 
         $ivl_sql = "(" . (empty($values) ? Sql::NULL : implode(", ", $values)) . ")";

@@ -64,11 +64,11 @@ abstract class Predicate extends Element
      * Create a SQL representation (either actual string or marker) for a given value
      *
      * @param mixed $value
-     * @param int $param_type One of the PDO::PARAM_* constant
-     * @param string $name The parameter name seed for pdo marker generation
+     * @param int|null $param_type Optional PDO::PARAM_* constant
+     * @param string|null $name Optional parameter name seed for pdo marker generation
      * @return string
      */
-    protected function createSqlParamForValue($value, int $param_type = null, string $name = null): string
+    protected function createSqlForValue($value, int $param_type = null, string $name = null): string
     {
         return $value instanceof Literal
             ? $value->getSQL()

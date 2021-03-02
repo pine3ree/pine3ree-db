@@ -97,9 +97,7 @@ class Comparison extends Predicate
             }
             $param = Sql::NULL;
         } else {
-            $param = $this->value instanceof Literal
-                ? $this->value->getSQL()
-                : $this->createParam($this->value, null, $this->getParameterName($operator));
+            $min = $this->createSqlForValue($this->value, null, $this->getParameterName($operator));
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";
