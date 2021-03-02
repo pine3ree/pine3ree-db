@@ -25,6 +25,8 @@ class Identifier extends Element
     /** @var string */
     private $identifier;
 
+    protected const VALID_PATTERN = '/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/';
+
     public function __construct(string $identifier)
     {
         $identifier = trim($identifier);
@@ -35,7 +37,7 @@ class Identifier extends Element
             );
         }
 
-        if (!preg_match('/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/', $identifier)) {
+        if (!preg_match(self::VALID_PATTERN, $identifier)) {
             throw new InvalidArgumentException(
                 "A SQL-identifier can only start with ascii letter or underscore and"
                 . " contain only alphanumeric, underscore and dot characters, `{$identifier}` provided!"

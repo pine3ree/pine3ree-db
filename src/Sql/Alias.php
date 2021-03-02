@@ -25,6 +25,8 @@ class Alias extends Element
     /** @var string */
     private $alias;
 
+    protected const VALID_PATTERN = '/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/';
+
     public function __construct(string $alias)
     {
         $alias = trim($alias);
@@ -35,7 +37,7 @@ class Alias extends Element
             );
         }
 
-        if (!preg_match('/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/', $alias)) {
+        if (!preg_match(self::VALID_PATTERN, $alias)) {
             throw new InvalidArgumentException(
                 "A SQL-alias can only start with ascii letter or underscore and"
                 . " contain only alphanumeric, underscore and dot characters, `{$alias}` provided!"
