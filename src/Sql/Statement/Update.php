@@ -11,9 +11,8 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement;
-use P3\Db\Sql\Statement\Traits\TableAwareTrait;
+use P3\Db\Sql\TableAwareTrait;
 use RuntimeException;
 
 use function get_class;

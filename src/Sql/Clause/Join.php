@@ -14,7 +14,7 @@ use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Literal;
-use P3\Db\Sql\Statement\Traits\TableAwareTrait;
+use P3\Db\Sql\TableAwareTrait;
 
 use function trim;
 
