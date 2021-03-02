@@ -9,13 +9,11 @@ namespace P3\Db\Sql;
 
 use P3\Db\Sql\Element;
 
-use function ltrim;
 use function preg_replace;
-use function strrchr;
 use function strtoupper;
 
 /**
- * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
+ * This class abstracts SQL clauses such as WHERE, HAVING, ON, JOIN
  *
  * @property-read string $name The Clause Name
  */
@@ -47,8 +45,7 @@ abstract class Clause extends Element
             return $this->__name;
         }
 
-        $class_basename = ltrim(strrchr(static::class, '\\'), '\\');
-        $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $class_basename);
+        $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $this->getShortName());
         $this->__name = strtoupper($name);
 
         return $this->__name;
