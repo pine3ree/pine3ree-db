@@ -152,10 +152,8 @@ class Update extends Statement
         $set = [];
         foreach ($this->set as $column => $value) {
             $column = $driver->quoteIdentifier($column);
-            $param  = $value instanceof Literal
-                ? $val->getSQL()
-                : $this->createParam($value, null, 'set');
-            $set[] = "{$column} = {$param}";
+            $param  = $this->createSqlForValue($value, null, 'set');
+            $set[]  = "{$column} = {$param}";
         }
 
         return Sql::UPDATE . " {$table} " . Sql::SET . implode(", ", $set);

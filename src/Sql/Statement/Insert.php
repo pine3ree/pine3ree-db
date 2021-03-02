@@ -380,9 +380,7 @@ class Insert extends Statement
     {
         $sqls = [];
         foreach ($values as $value) {
-            $sqls[] = $value instanceof Literal
-                ? $value->getSQL($driver)
-                : $this->createParam($value, null, 'val');
+            $sqls[] = $this->createSqlForValue($value, null, 'val');
         }
 
         return "(" . implode(", ", $sqls) . ")";
