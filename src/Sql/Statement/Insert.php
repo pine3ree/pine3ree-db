@@ -181,13 +181,7 @@ class Insert extends Statement
         }
 
         foreach ($values as $i => $value) {
-            if (!is_scalar($value) && null !== $value && ! $value instanceof Literal) {
-                throw new InvalidArgumentException(sprintf(
-                    "A column value must be either a scalar, null or a Literal,"
-                    . " `%s` provided for index {$i}",
-                    is_object($value) ? get_class($value) : gettype($value)
-                ));
-            }
+            self::assertValidValue($value, ' sql-insert ');
         }
     }
 
