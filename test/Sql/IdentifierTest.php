@@ -10,10 +10,10 @@ namespace P3\DbTest\Sql\Driver;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use P3\Db\Sql\Alias;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Driver;
 
-class AliasTest extends TestCase
+class IdentifierTest extends TestCase
 {
     public function setUp(): void
     {
@@ -24,37 +24,37 @@ class AliasTest extends TestCase
     }
 
     /**
-     * @dataProvider provideInvalidAliases
+     * @dataProvider provideInvalidIdentifiers
      */
-    public function testAliasConstructorRisesExceptionWIthInnvalidAliases($alias)
+    public function testIdentifierConstructorRisesExceptionWIthInnvalidIdentifiers($alias)
     {
         $this->expectException(InvalidArgumentException::class);
-        $aliasObj = new Alias($alias);
+        $aliasObj = new Identifier($alias);
     }
 
     /**
-     * @dataProvider provideAliases
+     * @dataProvider provideIdentifiers
      */
-    public function testAlias(string $alias, string $expected)
+    public function testIdentifier(string $alias, string $expected)
     {
-        self::assertEquals($expected, (new Alias($alias))->getSQL(Driver::ansi()));
+        self::assertEquals($expected, (new Identifier($alias))->getSQL(Driver::ansi()));
     }
 
-    public function provideAliases(): array
+    public function provideIdentifiers(): array
     {
         return [
             ['t0', '"t0"'],
             ['_t', '"_t"'],
-            ['some.alias', '"some.alias"'],
+            ['tb.column', '"tb"."column"'],
         ];
     }
 
-    public function provideInvalidAliases(): array
+    public function provideInvalidIdentifiers(): array
     {
         return [
             ['"t0"'],
             ['4t'],
-            ['"some.alias"'],
+            ['"some.column"'],
         ];
     }
 }
