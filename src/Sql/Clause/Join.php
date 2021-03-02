@@ -93,7 +93,7 @@ class Join extends Clause
         }
 
         if ($this->specification instanceof Literal) {
-            $specification = $this->on->getSQL();
+            $specification = $this->specification->getSQL();
         } elseif ($this->specification instanceof On) {
             $specification = $this->getConditionalClauseSQL('specification', $driver);
             if (!Sql::isEmptySQL($specification)) {
