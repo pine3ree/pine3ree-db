@@ -35,7 +35,7 @@ abstract class Predicate extends Element
      * @return string
      * @throws InvalidArgumentException
      */
-    protected function quoteIdentifier($identifier, Driver $driver): string
+    protected function quoteGenericIdentifier($identifier, Driver $driver): string
     {
         // the identifier is considered a db table column, quote accordingly
         if (is_string($identifier)) {
