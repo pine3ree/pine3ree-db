@@ -10,47 +10,49 @@ namespace P3\Db\Sql;
 use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
+use RuntimeException;
 
 use function trim;
 use function preg_match;
 
 /**
  * This class represents a sql alias
+ *
+ * @property-read string $alias The original unquoted alias
  */
 class Alias extends Element
 {
+    /** @var string */
+    private $alias;
+
     public function __construct(string $alias)
     {
-        $sql = trim($alias);
+        $alias = trim($alias);
 
-        if ('' === $sql) {
+        if ('' === $alias) {
             throw new InvalidArgumentException(
                 "A SQL-alias cannot be empty!"
             );
         }
 
-        if (!preg_match('/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/', $sql)) {
+        if (!preg_match('/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/', $alias)) {
             throw new InvalidArgumentException(
                 "A SQL-alias can only start with ascii letter or underscore and"
-                . " contain only alphanumeric, underscore and dot characters, `{$sql}` provided!"
+                . " contain only alphanumeric, underscore and dot characters, `{$alias}` provided!"
             );
         }
 
-        $this->sql = $sql;
+        $this->alias = $alias;
     }
 
+    /**
+     * Return a properly quoted alias
+     *
+     * @param Driver $driver
+     * @return string
+     */
     public function getSQL(Driver $driver = null): string
     {
-        return $this->sql;
-    }
-
-    public function clearSQL()
-    {
-        // no-op
-    }
-
-    public function __clone()
-    {
-        // no-op
+        return ($driver ?? Driver::ansi())->quoteAlias($this->alias);
     }
 }
