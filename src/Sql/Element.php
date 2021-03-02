@@ -292,7 +292,7 @@ abstract class Element implements ElementInterface
     {
         // the identifier is considered a db table column, quote accordingly
         if (is_string($identifier)) {
-            return $driver->quoteIdentifier($this->identifier);
+            return $driver->quoteIdentifier($identifier);
         }
 
         // The indentifier is specified to be a SQL-alias, quote accordingly
