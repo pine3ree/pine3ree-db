@@ -541,7 +541,7 @@ class Select extends Statement
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
             $groupBy[$key] = $identifier instanceof Literal
-                ? $identifier->getSQL($driver)
+                ? $identifier->getSQL()
                 : $driver->quoteIdentifier($identifier);
         }
 
