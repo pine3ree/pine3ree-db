@@ -10,6 +10,7 @@ namespace P3\Db\Sql;
 use InvalidArgumentException;
 use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\ElementInterface;
 use PDO;
@@ -295,9 +296,9 @@ abstract class Element implements ElementInterface
             return $driver->quoteIdentifier($identifier);
         }
 
-        // The indentifier is specified to be a SQL-alias, quote accordingly
-        if ($identifier instanceof Alias) {
-            return $driver->quoteAlias($identifier->getSQL());
+        // The indentifier is a SQL-identifier or a SQL-alias, return quoted expressions
+        if ($identifier instanceof Identifier || $identifier instanceof Alias) {
+            return $identifier->getSQL($driver);
         }
 
         // the identifier is generic SQL-literal, so no quoting
@@ -316,6 +317,7 @@ abstract class Element implements ElementInterface
     protected static function assertValidIdentifier($identifier, string $type = '')
     {
         if (is_string($identifier)
+            || $identifier instanceof Identifier
             || $identifier instanceof Alias
             || $identifier instanceof Literal
         ) {
@@ -323,7 +325,11 @@ abstract class Element implements ElementInterface
         }
 
         throw new InvalidArgumentException(sprintf(
-            "A {$type}identifier must be either a string, a SQL-alias or a SQL-literal,"
+            "A {$type}identifier must be either"
+            . " a string,"
+            . " a SQL-identifier,"
+            . " a SQL-alias,"
+            . " or a SQL-literal,"
             . " '%s' provided in class `%s`!",
             is_object($identifier) ? get_class($identifier) : gettype($identifier),
             static::class
