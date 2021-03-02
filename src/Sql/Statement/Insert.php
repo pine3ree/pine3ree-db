@@ -181,7 +181,7 @@ class Insert extends Statement
         }
 
         foreach ($values as $i => $value) {
-            self::assertValidValue($value, ' sql-insert ');
+            self::assertValidValue($value, 'sql-insert ');
         }
     }
 
