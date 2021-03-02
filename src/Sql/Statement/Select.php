@@ -178,7 +178,13 @@ class Select extends Statement
     {
         self::assertValidColumn($column, $alias);
 
-        $this->columns[$alias ?? $column] = $column;
+        $key = $alias ?? (is_string($column) ? $column : null);
+
+        if (isset($key)) {
+            $this->columns[$key] = $column;
+        } else {
+            $this->columns[] = $column;
+        }
 
         $this->sql = null;
         unset($this->sqls['columns']);
@@ -495,7 +501,7 @@ class Select extends Statement
             return $this;
         }
 
-        self::assertValidIdentifier($identifier, ' select group-by ');
+        self::assertValidIdentifier($groupBy, ' select group-by ');
 
         $this->groupBy[] = $groupBy;
 
@@ -574,7 +580,7 @@ class Select extends Statement
             return $this;
         }
 
-        self::assertValidIdentifier($identifier, ' select order-by ');
+        self::assertValidIdentifier($orderBy, ' select order-by ');
 
         if (is_string($sortdir_or_replace)) {
             $sortdir = strtoupper($sortdir_or_replace) === Sql::DESC
