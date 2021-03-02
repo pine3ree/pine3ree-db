@@ -201,28 +201,11 @@ class Sql
         self::NOT_LIKE    => self::NOT_LIKE,
     ];
 
-    /**
-     * REGEXP operators
-     */
-    public const REGEXP         = '~';
-    public const REGEXP_CS      = '~*';
-    public const NOT_REGEXP     = '!~';
-    public const NOT_REGEXP_CS  = '!~*';
-
-    // valid regexp operators
-    public const REGEXP_OPERATORS = [
-        self::REGEXP        => self::REGEXP_CS,
-        self::REGEXP_CS     => self::REGEXP_CS,
-        self::NOT_REGEXP    => self::NOT_REGEXP,
-        self::NOT_REGEXP_CS => self::NOT_REGEXP_CS,
-    ];
-
     // valid operators excluding boolean operators
     public const OPERATORS
         = self::COMPARISON_OPERATORS
         + self::BOOLEAN_OPERATORS
-        + self::CONDITIONAL_OPERATORS
-        + self::REGEXP_OPERATORS;
+        + self::CONDITIONAL_OPERATORS;
 
     /**
      * Logical operators
