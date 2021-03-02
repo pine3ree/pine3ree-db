@@ -174,7 +174,7 @@ class Select extends Statement
         return $this;
     }
 
-    public function column($column, string $alias = null)
+    public function column($column, string $alias = null): self
     {
         self::assertValidColumn($column, $alias);
 
@@ -188,6 +188,8 @@ class Select extends Statement
 
         $this->sql = null;
         unset($this->sqls['columns']);
+
+        return $this;
     }
 
     private static function assertValidColumn(&$column, $key = null)
@@ -207,6 +209,31 @@ class Select extends Statement
             is_object($column) ? get_class($column) : gettype($column),
             isset($key) ? " provided for index/column-alias `{$key}`" : ""
         ));
+    }
+
+    public function sum($identifier, string $alias = null): self
+    {
+        return $this->aggregate(Sql::SUM, $identifier, $alias);
+    }
+
+    public function min(string $identifier, string $alias = null): self
+    {
+        return $this->aggregate(Sql::MIN, $identifier, $alias);
+    }
+
+    public function max(string $identifier, string $alias = null): self
+    {
+        return $this->aggregate(Sql::MAX, $identifier, $alias);
+    }
+
+    public function avg(string $identifier, string $alias = null): self
+    {
+        return $this->aggregate(Sql::AVG, $identifier, $alias);
+    }
+
+    public function aggregate(string $sqlAggregateFunc, string $identifier, string $alias = null): self
+    {
+        return $this->column(new Literal("{$sqlAggregateFunc}({$identifier})"), $alias);
     }
 
     private function getColumnsSQL(Driver $driver): string
