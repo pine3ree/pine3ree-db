@@ -395,6 +395,17 @@ class Sql
     }
 
     /**
+     * Create a sql-identifier
+     *
+     * @param string $identifier
+     * @return Sql\Identifier
+     */
+    public static function identifier(string $identifier): Sql\Identifier
+    {
+        return new Sql\Identifier($identifier);
+    }
+
+    /**
      * Create a sql-alias
      *
      * @param string $alias
