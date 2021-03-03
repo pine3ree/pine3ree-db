@@ -677,7 +677,8 @@ class Select extends Statement
 
     public function offset(int $offset): self
     {
-        $this->offset = max(0, $offset);
+        $offset = max(0, $offset);
+        $this->offset = $offset > 0 ? $offset : null;
 
         $this->sql = null;
         unset($this->sqls['limit']);
