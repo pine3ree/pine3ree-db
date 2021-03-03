@@ -156,7 +156,11 @@ class SelectTest extends TestCase
             ['p.unit_price', 'unitPrice', "`p`.`unit_price` AS `unitPrice`"],
             ['`p`.`unit_price`', 'unitPrice', "`p`.`unit_price` AS `unitPrice`"],
             [new Literal("SUM(unit_price)"), 'totalPrice', "SUM(unit_price) AS `totalPrice`"],
-            [new Expression("SUM(unit_price) + {tax}", ['tax' => 5.00]), 'totalPrice', "SUM(unit_price) + :expr2 AS `totalPrice`"],
+            [
+                new Expression("SUM(unit_price) + {tax}", ['tax' => 5.00]),
+                'totalPrice',
+                "SUM(unit_price) + :expr2 AS `totalPrice`",
+            ],
         ];
     }
 
