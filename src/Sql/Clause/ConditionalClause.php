@@ -24,6 +24,8 @@ abstract class ConditionalClause extends Clause
      */
     protected $conditions;
 
+    protected static $useParenthesis = false;
+
     /**
      * @param null|Predicate[]|self|Predicate|Predicate\Set|array|string $predicates
      * @param string $defaultLogicalOperator One of `AND`, `OR`,  or `&&`, `||` aliases
@@ -64,6 +66,10 @@ abstract class ConditionalClause extends Clause
         $predicates_sql = $this->conditions->getSQL($driver ?? Driver::ansi());
         if (Sql::isEmptySQL($predicates_sql)) {
             return $this->sql = '';
+        }
+
+        if (static::$useParenthesis) {
+            $predicates_sql = "({$predicates_sql})";
         }
 
         $this->sql = "{$this->getName()} {$predicates_sql}";
