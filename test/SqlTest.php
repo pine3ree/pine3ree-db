@@ -9,6 +9,7 @@
 namespace P3\DbTest;
 
 //use PDO;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Sql;
 use P3\Db\Sql\Expression;
@@ -86,5 +87,123 @@ class SqlTest extends TestCase
             [new Sql\Predicate\Set("enabled IS TRUE"), true, false],
             [new Sql\Predicate\Set(["enabled IS FALSE"]), true, false],
         ];
+    }
+
+    /**
+     * @dataProvider provideInvalidJoinTypes
+     */
+    public function testInvalidJoinAssertion(string $join)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Sql::assertValidJoin($join);
+    }
+
+    public function provideInvalidJoinTypes(): array
+    {
+        return[
+            ['A'],
+            ['B'],
+            ['INNER OUTER'],
+            ['EXTREME'],
+            ['GLUE'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideSupportedOperators
+     */
+    public function testSupportedOperatorsCheck(string $operator)
+    {
+        self::assertTrue(Sql::isSupportedOperator($operator));
+    }
+
+    public function provideSupportedOperators(): array
+    {
+        $values = [];
+        foreach (Sql::OPERATORS as $operator) {
+            $values[] = [$operator];
+        }
+
+        return $values;
+    }
+
+    /**
+     * @dataProvider provideUnsupportedOperatorStrings
+     */
+    public function testUnsupportedOperatorsCheck(string $operator)
+    {
+        self::assertFalse(Sql::isSupportedOperator($operator));
+    }
+
+    public function provideUnsupportedOperatorStrings(): array
+    {
+        return [['^'], ['"'], ['~'], [';'], ['HELLO']];
+    }
+
+    /**
+     * @dataProvider provideUnsupportedOperatorsValues
+     */
+    public function testUnsupportedOperatorsAssertion($operator)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Sql::assertValidOperator($operator);
+    }
+
+    /**
+     * @dataProvider provideSupportedOperators
+     */
+    public function testSupportedOperatorsAssertion(string $operator)
+    {
+        $ex = null;
+
+        try {
+            Sql::assertValidOperator($operator);
+        } catch (Exception $ex) {
+            self::fail("Unsupported operator provided: `{$operator}`!");
+        }
+
+        self::assertNull($ex);
+    }
+
+    public function provideUnsupportedOperatorsValues(): array
+    {
+        return [['^'], ['"'], ['~'], [';'], ['HELLO'], [1.23], [42], [[]], [new \stdClass()]];
+    }
+
+    public function testCreateAlias()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $alias = Sql::alias("?");
+
+        $alias = Sql::alias('totPrice');
+        self::assertEquals('"totPrice"', $alias->getSQL());
+    }
+
+    public function testCreateIdentifier()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $identifier = Sql::identifier("?");
+
+        $identifier = Sql::identifier('t.id');
+        self::assertEquals('"t"."id"', $identifier->getSQL());
+    }
+
+    public function testCreateLiteral()
+    {
+        $literal = Sql::literal("(TRUE IS NOT FALSE)");
+        self::assertEquals('(TRUE IS NOT FALSE)', $literal->getSQL());
+    }
+
+    public function testCreateExpression()
+    {
+        $expression = Sql::expression("SUM(price) >= {minPrice}", [
+            'minPrice' => 123.45,
+        ]);
+        self::assertStringStartsWith('SUM(price) >= :expr', $expression->getSQL());
+
+        $expr = Sql::expr("SUM(price) <= {maxPrice}", [
+            'maxPrice' => 543.21,
+        ]);
+        self::assertStringStartsWith('SUM(price) <= :expr', $expr->getSQL());
     }
 }
