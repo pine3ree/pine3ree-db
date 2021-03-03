@@ -94,9 +94,11 @@ class DbFactory
                 return $this->buildDSNforSqlSrv($dbname, $config);
         }
 
+        // @codeCoverageIgnoreStart
         throw new RuntimeException(
             "Unable to build a DSN for driver `{$driver}`!"
         );
+        // @codeCoverageIgnoreEnd
     }
 
     private function buildDSNforMySql(string $dbname, array $config): string
