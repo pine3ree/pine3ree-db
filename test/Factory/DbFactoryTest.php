@@ -270,7 +270,7 @@ class DbFactoryTest extends TestCase
         $this->container->get('config')
             ->willReturn(
                 [
-                    'db' => self::PDO_CONFIG,
+                    'pdo' => self::PDO_CONFIG,
                 ]
             );
 
