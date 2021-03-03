@@ -32,7 +32,7 @@ trait TableAwareTrait
     {
         if (isset($this->table)) {
             throw new RuntimeException(
-                "Cannot change db-table name for this query, table already set to `{$this->table}`!"
+                "Cannot change the element's table, it was already already set to `{$this->table}`!"
             );
         }
 
