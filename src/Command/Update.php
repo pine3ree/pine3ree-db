@@ -36,7 +36,7 @@ class Update extends Command implements WriterInterface
      * @see SqlUpdate::table()
      * @return $this
      */
-    public function table($table): self
+    public function table(string $table): self
     {
         $this->sqlStatement->table($table);
         return $this;

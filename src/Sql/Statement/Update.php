@@ -59,10 +59,10 @@ class Update extends Statement
     /**
      * Set the db table to update
      *
-     * @param string|array $table
+     * @param string $table
      * @return $this
      */
-    public function table($table): self
+    public function table(string $table): self
     {
         $this->setTable($table);
         return $this;
@@ -144,9 +144,6 @@ class Update extends Statement
         }
 
         $table = $driver->quoteIdentifier($this->table);
-        if (!empty($this->alias) && $alias = $driver->quoteAlias($this->alias)) {
-            $table .= " {$alias}";
-        }
 
         $set = [];
         foreach ($this->set as $column => $value) {
