@@ -414,11 +414,29 @@ class Select extends Statement
     }
 
     /**
+     * Add a join clause instance to this statement
+     *
+     * @param Join The join clause
+     * @return $this
+     */
+    public function addJoin(Join $join): self
+    {
+        $this->joins[] = $join;
+
+        $this->sql = null;
+        unset($this->sqls['join']);
+
+        return $this;
+    }
+
+    /**
      * @see self::addJoin()
      */
     public function join(string $table, string $alias, $specification = null, string $type = Sql::JOIN_AUTO): self
     {
-        return $this->addJoin($type, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join($type, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -426,7 +444,9 @@ class Select extends Statement
      */
     public function innerJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_INNER, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join(Sql::JOIN_INNER, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -434,7 +454,9 @@ class Select extends Statement
      */
     public function leftJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_LEFT, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join(Sql::JOIN_LEFT, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -442,7 +464,9 @@ class Select extends Statement
      */
     public function rightJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_RIGHT, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join(Sql::JOIN_RIGHT, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -450,7 +474,9 @@ class Select extends Statement
      */
     public function naturalJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_NATURAL, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join(Sql::JOIN_NATURAL, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -458,7 +484,9 @@ class Select extends Statement
      */
     public function naturalLeftJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_NATURAL_LEFT, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join(Sql::JOIN_NATURAL_LEFT, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -466,7 +494,9 @@ class Select extends Statement
      */
     public function naturalRightJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_NATURAL_RIGHT, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join(Sql::JOIN_NATURAL_RIGHT, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -474,7 +504,9 @@ class Select extends Statement
      */
     public function crossJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_CROSS, $table, $alias, $specification);
+        return $this->addJoin(
+            new Join(Sql::JOIN_CROSS, $table, $alias, $specification)
+        );
     }
 
     /**
@@ -482,27 +514,9 @@ class Select extends Statement
      */
     public function straightJoin(string $table, string $alias, $specification = null): self
     {
-        return $this->addJoin(Sql::JOIN_STRAIGHT, $table, $alias, $specification);
-    }
-
-    /**
-     * Add a join specification to this statement
-     *
-     * @param string $type The join type (LEFT, RIGHT, INNER, ...)
-     * @param string $table The join table name
-     * @param string $alias The join table alias
-     * @param On!Literal|Predicate\Set|Predicate|array|string $specification
-     *      The join conditional usually an ON clause, but may be changed using Literal classes
-     * @return $this
-     */
-    private function addJoin(string $type, string $table, string $alias, $specification = null): self
-    {
-        $this->joins[] = new Join($type, $table, $alias, $specification);
-
-        $this->sql = null;
-        unset($this->sqls['join']);
-
-        return $this;
+        return $this->addJoin(
+            new Join(Sql::JOIN_STRAIGHT, $table, $alias, $specification)
+        );
     }
 
     private function getJoinSQL(Driver $driver): string

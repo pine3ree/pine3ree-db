@@ -138,6 +138,16 @@ class Select extends Command implements ReaderInterface
     }
 
     /**
+     * @see SqlSelect::addJoin()
+     * @return $this
+     */
+    public function addJoin(Join $join): self
+    {
+        $this->sqlStatement->addJoin($join);
+        return $this;
+    }
+
+    /**
      * @see SqlSelect::join()
      * @return $this
      */
