@@ -10,6 +10,8 @@ namespace P3\Db\Sql;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function trim;
+
 /**
  * Trait for statements that always operate on a target database table
  */
@@ -34,7 +36,8 @@ trait TableAwareTrait
             );
         }
 
-        if (empty($table)) {
+        $table = trim($table);
+        if ('' === $table) {
             throw new InvalidArgumentException(
                 "The db-table name argument cannot be empty!"
             );
