@@ -11,6 +11,7 @@ namespace P3\DbTest\Sql\Statement;
 use InvalidArgumentException;
 //use PDO;
 use PHPUnit\Framework\TestCase;
+use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Alias;
@@ -343,5 +344,54 @@ class SelectTest extends TestCase
             [new Identifier("some.column"), null, "`some`.`column` ASC"],
             [new Literal("(unit_price * quantity)"), null, "(unit_price * quantity) ASC"],
         ];
+    }
+
+    public function testJoinClause()
+    {
+        // using string a specification => will generate a ON clause
+        $select = (new Select(['*', "c.*"]))->from('order', 'o');
+        $select->leftJoin('customer', 'c', "c.id = o.customer_id");
+        self::assertEquals(
+            "SELECT `o`.*, `c`.* FROM `order` `o` LEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
+            $select->getSQL($this->driver)
+        );
+
+        // using literal-predicate a specification
+        $select = (new Select())->from('user', 'u');
+        $select->leftJoin('customer', 'c', new Sql\Predicate\Literal("USING (customer_id)"));
+        self::assertEquals(
+            "SELECT `u`.* FROM `user` `u` LEFT JOIN `customer` `c` USING (customer_id)",
+            $select->getSQL($this->driver)
+        );
+
+        // multiple join
+        $select = (new Select(['*', "o.*", 'c.*']))->from('order_product', 'op');
+        $select->leftJoin('order', 'o', "op.order_id = o.id");
+        $select->leftJoin('customer', 'c', "c.id = o.customer_id");
+        self::assertEquals(
+            "SELECT `op`.*, `o`.*, `c`.* FROM `order_product` `op`"
+            . " LEFT JOIN `order` `o` ON (`op`.order_id = `o`.id)"
+            . " LEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
+            $select->getSQL($this->driver)
+        );
+    }
+
+    public function testAddJoinInstance()
+    {
+        $select = (new Select(['*', "o.*", 'c.*']))->from('order_product', 'op');
+
+        $join = new Join(Sql::JOIN_INNER, 'order', 'o');
+        $join->on->equal(new Identifier("op.order_id"), new Identifier("o.id"));
+        $select->addJoin($join);
+
+        $join = new Join(Sql::JOIN_INNER, 'customer', 'c');
+        $join->on->equal(new Identifier("c.id"), new Identifier("o.customer_id"));
+        $select->addJoin($join);
+        self::assertEquals(
+            "SELECT `op`.*, `o`.*, `c`.* FROM `order_product` `op`"
+            . " INNER JOIN `order` `o` ON (`op`.`order_id` = `o`.`id`)"
+            . " INNER JOIN `customer` `c` ON (`c`.`id` = `o`.`customer_id`)",
+            $select->getSQL($this->driver)
+        );
     }
 }
