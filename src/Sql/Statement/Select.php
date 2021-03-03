@@ -10,12 +10,15 @@ namespace P3\Db\Sql\Statement;
 use Closure;
 use InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Element;
 use P3\Db\Sql\Expression;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
@@ -547,7 +550,7 @@ class Select extends Statement
             return $this;
         }
 
-        self::assertValidIdentifier($groupBy, ' select group-by ');
+        self::assertValidIdentifier($groupBy, 'select group-by ');
 
         $this->groupBy[] = $groupBy;
 
@@ -626,7 +629,7 @@ class Select extends Statement
             return $this;
         }
 
-        self::assertValidIdentifier($orderBy, ' select order-by ');
+        self::assertValidIdentifier($orderBy, 'select order-by ');
 
         if (is_string($sortdir_or_replace)) {
             $sortdir = strtoupper($sortdir_or_replace) === Sql::DESC
@@ -634,6 +637,17 @@ class Select extends Statement
                 : Sql::ASC;
         } else {
             $sortdir = Sql::ASC;
+        }
+
+        // we need to transform sql-element information as a string
+        if ($orderBy instanceof Element) {
+            if ($orderBy instanceof Alias) {
+                $orderBy = Alias::class . "::{$orderBy->alias}";
+            } elseif ($orderBy instanceof Identifier) {
+                $orderBy = Identifier::class . "::{$orderBy->identifier}";
+            } elseif ($orderBy instanceof Literal) {
+                $orderBy = Literal::class . "::{$orderBy->literal}";
+            }
         }
 
         $this->orderBy[$orderBy] = $sortdir;
@@ -656,8 +670,13 @@ class Select extends Statement
 
         $sqls = [];
         foreach ($this->orderBy as $identifier => $direction) {
-            // do not quote identifier or alias when defining the order-by clause,
-            // do it programmatically
+            // rebuild the original identifier if it was a sql-element
+            $parts = explode('::', $identifier);
+            if (isset($parts[1])) {
+                $fqcn = $parts[0];
+                $expr = $parts[1];
+                $identifier = new $fqcn($expr);
+            }
             $sqls[] = self::quoteGenericIdentifier($identifier, $driver) . " {$direction}";
         }
 
