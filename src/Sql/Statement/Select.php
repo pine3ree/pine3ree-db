@@ -846,11 +846,11 @@ class Select extends Statement
 
         $search = $replace = [];
         foreach ($tb_aliases as $tb_alias) {
-            $search[] = " {$tb_alias}.";
-            $replace[] = " {$driver->quoteAlias($tb_alias)}.";
+            $search[] = "/(^|\(|\s){$tb_alias}\./";
+            $replace[] = '\1' . "{$driver->quoteAlias($tb_alias)}.";
         }
 
-        return str_replace($search, $replace, $sql);
+        return preg_replace($search, $replace, $sql);
     }
 
     private function getBaseSQL(Driver $driver): string
