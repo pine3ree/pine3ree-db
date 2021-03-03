@@ -353,19 +353,14 @@ class Select extends Statement
         return $this;
     }
 
-    private static function assertValidFrom(&$from, string &$alias = null)
+    private static function assertValidFrom($from, string &$alias = null)
     {
         if (is_string($alias)) {
             $alias = trim($alias);
         }
 
         if (is_string($from)) {
-            $from = trim($from);
-            if ('' === $from) {
-                throw new InvalidArgumentException(
-                    "The db-table name `from` argument cannot be empty!"
-                );
-            }
+            // OK, let TableAwareTrait assert its validity
             return;
         }
 
