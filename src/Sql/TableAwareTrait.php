@@ -39,7 +39,7 @@ trait TableAwareTrait
         $table = trim($table);
         if ('' === $table) {
             throw new InvalidArgumentException(
-                "The db-table name argument cannot be empty!"
+                "A database table name cannot be an empty string!"
             );
         }
 
