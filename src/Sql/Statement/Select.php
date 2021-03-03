@@ -19,6 +19,7 @@ use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
+use P3\Db\Sql\TableAwareTrait;
 use PDO;
 use RuntimeException;
 
@@ -61,6 +62,7 @@ use const PHP_INT_MAX;
  */
 class Select extends Statement
 {
+    use TableAwareTrait;
     use WhereAwareTrait;
 
     /** @var string|null */
@@ -108,7 +110,7 @@ class Select extends Statement
     /**
      * @param string[]|string|Literal[]|Literal|self|self[] $columns One or
      *      many column names, Literal expressions or sub-select statements
-     * @param string|self $from A db-table name or a sub-select statement
+     * @param string|self|null $from A db-table name or a sub-select statement
      * @param string|null $alias
      */
     public function __construct($columns = null, $from = null, string $alias = null)
@@ -326,50 +328,64 @@ class Select extends Statement
      */
     public function from($from, string $alias = null): self
     {
-        if (isset($this->from)) {
+        if (isset($this->from) || isset($this->table)) {
             throw new RuntimeException(sprintf(
                 "Cannot change the `from` for this Select, from is already set to %s!",
-                $this->from instanceof self ? "a sub-select" : "table `$this->from`"
+                $this->from instanceof self ? "a sub-select" : "table `{$this->table}`"
             ));
         }
 
-        if (is_string($from)) {
-            if (empty($from)) {
-                throw new InvalidArgumentException(
-                    "The db-table name `from` argument cannot be empty!"
-                );
-            }
-        } elseif (! $from instanceof self) {
-            throw new InvalidArgumentException(sprintf(
-                "The FROM clause argument can be either a table name or a"
-                . " sub-select statement, `%` provided!",
-                is_object($from) ? get_class($from) : gettype($from)
-            ));
-        }
+        self::assertValidFrom($from, $alias);
 
-        $this->from = $from;
-
-        if ($from instanceof self && empty($alias)) {
-            throw new InvalidArgumentException(
-                "A FROM clause with a seb-select requires an alias!"
-            );
+        if ($from instanceof self) {
+            $this->from = $from;
+        } else {
+            $this->setTable($from);
         }
 
         if (!empty($alias)) {
-            if (false !== strpos($alias, '.')) {
-                throw new InvalidArgumentException(
-                    "The FROM clause table alias cannot contain a dot!"
-                );
-            }
             $this->alias = $alias;
         }
 
         return $this;
     }
 
+    private static function assertValidFrom(&$from, string &$alias = null)
+    {
+        if (is_string($alias)) {
+            $alias = trim($alias);
+        }
+
+        if (is_string($from)) {
+            $from = trim($from);
+            if ('' === $from) {
+                throw new InvalidArgumentException(
+                    "The db-table name `from` argument cannot be empty!"
+                );
+            }
+            return;
+        }
+
+        if (! $from instanceof self) {
+            throw new InvalidArgumentException(sprintf(
+                "The FROM clause argument can be either"
+                . " a table name or"
+                . " a sub-select statement,"
+                . " `%` provided!",
+                is_object($from) ? get_class($from) : gettype($from)
+            ));
+        }
+
+        if (empty($alias)) {
+            throw new InvalidArgumentException(
+                "A FROM clause with a seb-select requires an alias!"
+            );
+        }
+    }
+
     private function getFromSQL(Driver $driver): string
     {
-        if (empty($this->from)) {
+        if (empty($this->from) && empty($this->table)) {
             throw new RuntimeException(
                 "The FROM clause table or sub-select has not been defined!"
             );
@@ -383,7 +399,7 @@ class Select extends Statement
             $from = "(" . $this->from->getSQL($driver) . ")";
             $this->importParams($this->from);
         } else {
-            $from = $driver->quoteIdentifier($this->from);
+            $from = $driver->quoteIdentifier($this->table);
         }
 
         if (!empty($this->alias)) {
@@ -854,7 +870,7 @@ class Select extends Statement
     public function __get(string $name)
     {
         if ('table' === $name) {
-            return is_string($this->from) ? $this->from : null;
+            return $this->table;
         }
         if ('alias' === $name) {
             return $this->alias;
@@ -866,7 +882,7 @@ class Select extends Statement
             return $this->columns;
         }
         if ('from' === $name) {
-            return $this->from;
+            return $this->from ?? $this->table;
         }
         if ('where' === $name) {
             if (isset($this->where)) {
