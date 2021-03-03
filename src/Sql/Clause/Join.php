@@ -57,7 +57,7 @@ class Join extends Clause
 
         $this->type = $type;
         $this->setTable($table);
-        if (isset($alias)) {
+        if (isset($alias) && '' !== ($alias = trim($alias))) {
             $this->alias = $alias;
         }
 
