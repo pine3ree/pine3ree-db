@@ -57,4 +57,15 @@ class Alias extends Element
     {
         return ($driver ?? Driver::ansi())->quoteAlias($this->alias);
     }
+
+    public function __get(string $name)
+    {
+        if ('alias' === $name) {
+            return $this->alias;
+        };
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
+    }
 }

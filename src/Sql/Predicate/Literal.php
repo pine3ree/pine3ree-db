@@ -15,23 +15,29 @@ use function trim;
 
 /**
  * This class represents a sql literal-expression predicate
+ *
+ * @property-read string $literal The original unquoted literal
  */
 class Literal extends Predicate
 {
+    /** @var string */
+    private $literal;
+
     public function __construct(string $literal)
     {
-        $sql = trim($literal);
-        if ('' === $sql) {
+        $literal = trim($literal);
+        if ('' === $literal) {
             throw new InvalidArgumentException(
                 "A SQL-literal expression cannot be empty!"
             );
         }
-        $this->sql = $sql;
+
+        $this->literal = $literal;
     }
 
     public function getSQL(Driver $driver = null): string
     {
-        return $this->sql;
+        return $this->literal;
     }
 
     public function clearSQL()
@@ -42,5 +48,16 @@ class Literal extends Predicate
     public function __clone()
     {
         // no-op
+    }
+
+    public function __get(string $name)
+    {
+        if ('literal' === $name) {
+            return $this->literal;
+        };
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 }
