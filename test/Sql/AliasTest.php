@@ -27,7 +27,7 @@ class AliasTest extends TestCase
     /**
      * @dataProvider provideInvalidAliases
      */
-    public function testAliasConstructorRaisesExceptionWIthInnvalidAliases($alias)
+    public function testAliasConstructorWithInvalidAliasRaisesException($alias)
     {
         $this->expectException(InvalidArgumentException::class);
         $aliasObj = new Alias($alias);
