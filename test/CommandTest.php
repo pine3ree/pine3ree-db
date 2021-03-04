@@ -88,35 +88,35 @@ class CommandTest extends TestCase
     {
         $command = clone $this->command;
         $sqlStatement = $command->sqlStatement;
-        self::assertEquals($sqlStatement, $command->getSqlStatement());
+        self::assertSame($sqlStatement, $command->getSqlStatement());
     }
 
     public function testGetSqlIsForwardedToSqlStatement()
     {
         $command = clone $this->command;
         $sqlStatement = $command->sqlStatement;
-        self::assertEquals($sqlStatement->getSQL(), $command->getSQL());
+        self::assertSame($sqlStatement->getSQL(), $command->getSQL());
     }
 
     public function testGetParamsIsForwardedToSqlStatement()
     {
         $command = clone $this->command;
         $sqlStatement = $command->sqlStatement;
-        self::assertEquals($sqlStatement->getParams(), $command->getParams());
+        self::assertSame($sqlStatement->getParams(), $command->getParams());
     }
 
     public function testGetParamsTypesIsForwardedToSqlStatement()
     {
         $command = clone $this->command;
         $sqlStatement = $command->sqlStatement;
-        self::assertEquals($sqlStatement->getParamsTypes(), $command->getParamsTypes());
+        self::assertSame($sqlStatement->getParamsTypes(), $command->getParamsTypes());
     }
 
     public function testGetParamsTypesWithTrueArgIsForwardedToSqlStatement()
     {
         $command = clone $this->command;
         $sqlStatement = $command->sqlStatement;
-        self::assertEquals($sqlStatement->getParamsTypes(true), $command->getParamsTypes(true));
+        self::assertSame($sqlStatement->getParamsTypes(true), $command->getParamsTypes(true));
     }
 
     public function testExecute()

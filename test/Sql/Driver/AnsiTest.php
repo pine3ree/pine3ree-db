@@ -31,7 +31,7 @@ class AnsiTest extends TestCase
      */
     public function testQuoteIdentifier(string $identifier, ?string $expected)
     {
-        self::assertEquals($expected, $this->driver->quoteIdentifier($identifier));
+        self::assertSame($expected, $this->driver->quoteIdentifier($identifier));
     }
 
     public function provideIdentifiers(): array
@@ -50,7 +50,7 @@ class AnsiTest extends TestCase
      */
     public function testQuoteAlias(string $alias, string $expected)
     {
-        self::assertEquals($expected, $this->driver->quoteAlias($alias));
+        self::assertSame($expected, $this->driver->quoteAlias($alias));
     }
 
     public function provideAliases(): array
@@ -67,7 +67,7 @@ class AnsiTest extends TestCase
      */
     public function testQuoteValue($value, string $expected)
     {
-        self::assertEquals($expected, $this->driver->quoteValue($value));
+        self::assertSame($expected, $this->driver->quoteValue($value));
     }
 
     public function provideTestValues(): array

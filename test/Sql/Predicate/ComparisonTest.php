@@ -58,22 +58,22 @@ class ComparisonTest extends TestCase
     {
         $literal = "CONCAT('A', 'B')";
         $predicate = new Predicate\Comparison('tb.column', '=', new Sql\Literal($literal));
-        self::assertEquals('"tb"."column" = ' . $literal, $predicate->getSQL());
+        self::assertSame('"tb"."column" = ' . $literal, $predicate->getSQL());
     }
 
     public function testThatIdentifierValuesAreSupportedAndProperlyQuoted()
     {
         $predicate = new Predicate\Comparison('t0.column', '=', new Sql\Identifier("t1.column"));
-        self::assertEquals('"t0"."column" = "t1"."column"', $predicate->getSQL());
+        self::assertSame('"t0"."column" = "t1"."column"', $predicate->getSQL());
 
         $predicate = new Predicate\Comparison('t0.column1', '=', new Sql\Identifier("column2"));
-        self::assertEquals('"t0"."column1" = "column2"', $predicate->getSQL());
+        self::assertSame('"t0"."column1" = "column2"', $predicate->getSQL());
     }
 
     public function testThatAliasValuesAreSupportedAndProperlyQuoted()
     {
         $predicate = new Predicate\Comparison('tb.column', '=', new Sql\Alias("some.alias"));
-        self::assertEquals('"tb"."column" = "some.alias"', $predicate->getSQL());
+        self::assertSame('"tb"."column" = "some.alias"', $predicate->getSQL());
     }
 
     public function testThatStringIdentifiersAreQuotedAsIdentifiers()
@@ -109,13 +109,13 @@ class ComparisonTest extends TestCase
     public function testNullValue()
     {
         $predicate = new Predicate\Comparison('tb.column', '=', null);
-        self::assertEquals('"tb"."column" IS NULL', $predicate->getSQL());
+        self::assertSame('"tb"."column" IS NULL', $predicate->getSQL());
 
         $predicate = new Predicate\Comparison('tb.column', '!=', null);
-        self::assertEquals('"tb"."column" IS NOT NULL', $predicate->getSQL());
+        self::assertSame('"tb"."column" IS NOT NULL', $predicate->getSQL());
 
         $predicate = new Predicate\Comparison('tb.column', '<>', null);
-        self::assertEquals('"tb"."column" IS NOT NULL', $predicate->getSQL());
+        self::assertSame('"tb"."column" IS NOT NULL', $predicate->getSQL());
     }
 
     /**

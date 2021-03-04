@@ -37,7 +37,7 @@ class AliasTest extends TestCase
      */
     public function testAlias(string $alias, string $expected)
     {
-        self::assertEquals($expected, (new Alias($alias))->getSQL(Driver::ansi()));
+        self::assertSame($expected, (new Alias($alias))->getSQL(Driver::ansi()));
     }
 
     public function provideAliases(): array

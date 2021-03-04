@@ -47,7 +47,7 @@ class SelectTest extends TestCase
         $select->columns($columns);
         $select->from('customer');
 
-        self::assertEquals("SELECT {$expected_columns_sql} FROM `customer`", $select->getSQL($this->driver));
+        self::assertSame("SELECT {$expected_columns_sql} FROM `customer`", $select->getSQL($this->driver));
     }
 
     public function provideColumns(): array
@@ -98,7 +98,7 @@ class SelectTest extends TestCase
         $select->columns([]);
         $select->from('customer', 'c');
 
-        self::assertEquals("SELECT `c`.* FROM `customer` `c`", $select->getSQL($this->driver));
+        self::assertSame("SELECT `c`.* FROM `customer` `c`", $select->getSQL($this->driver));
 
         $select = new Select();
         $select->columns([
@@ -107,7 +107,7 @@ class SelectTest extends TestCase
         ]);
         $select->from('customer', 'c');
 
-        self::assertEquals("SELECT `c`.`id`, `c`.`name` FROM `customer` `c`", $select->getSQL($this->driver));
+        self::assertSame("SELECT `c`.`id`, `c`.`name` FROM `customer` `c`", $select->getSQL($this->driver));
     }
 
     /**
@@ -118,7 +118,7 @@ class SelectTest extends TestCase
         $select = new Select(null, 'product');
         $select->column($column, $alias);
 
-        self::assertEquals("SELECT {$column_sql} FROM `product`", $select->getSQL($this->driver));
+        self::assertSame("SELECT {$column_sql} FROM `product`", $select->getSQL($this->driver));
     }
 
     public function provideColumn(): array
@@ -163,7 +163,7 @@ class SelectTest extends TestCase
         $select->columns([]);
 
         $this->expectException(RuntimeException::class);
-        self::assertEquals("SELECT *", $select->getSQL($this->driver));
+        self::assertSame("SELECT *", $select->getSQL($this->driver));
     }
 
     public function testInvalidFromRisesException()
@@ -187,17 +187,17 @@ class SelectTest extends TestCase
     public function testSelectFromTable()
     {
         ($select = new Select())->from('product', null);
-        self::assertEquals("SELECT * FROM `product`", $select->getSQL($this->driver));
+        self::assertSame("SELECT * FROM `product`", $select->getSQL($this->driver));
 
         ($select = new Select())->from('product', 'p');
-        self::assertEquals("SELECT `p`.* FROM `product` `p`", $select->getSQL($this->driver));
+        self::assertSame("SELECT `p`.* FROM `product` `p`", $select->getSQL($this->driver));
     }
 
     public function testSelectFromSubselect()
     {
         ($subSelect = new Select())->from('cart');
         ($select = new Select())->from($subSelect, 'c');
-        self::assertEquals("SELECT `c`.* FROM (SELECT * FROM `cart`) `c`", $select->getSQL($this->driver));
+        self::assertSame("SELECT `c`.* FROM (SELECT * FROM `cart`) `c`", $select->getSQL($this->driver));
 
         ($subSelect = new Select())->from('cart_product', 'cp')->where->gt('cp.price', 0);
         ($select = new Select())->from($subSelect, 'p');
@@ -210,43 +210,43 @@ class SelectTest extends TestCase
     public function testSelectWithLimit()
     {
         ($select = new Select())->from('user')->limit(10);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` LIMIT :limit1",
             $select->getSQL($this->driver)
         );
-        self::assertEquals(10, $select->getParams()[':limit1'] ?? null);
+        self::assertSame(10, $select->getParams()[':limit1'] ?? null);
     }
 
     public function testSelectWithNegativeLimit()
     {
         ($select = new Select())->from('user')->limit(-1);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` LIMIT :limit2",
             $select->getSQL($this->driver)
         );
-        self::assertEquals(0, $select->getParams()[':limit2'] ?? null);
+        self::assertSame(0, $select->getParams()[':limit2'] ?? null);
     }
 
     public function testSelectWithOffset()
     {
         ($select = new Select())->from('user')->offset(100);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` LIMIT " . PHP_INT_MAX . " OFFSET :offset3",
             $select->getSQL($this->driver)
         );
-        self::assertEquals(100, $select->getParams()[':offset3'] ?? null);
+        self::assertSame(100, $select->getParams()[':offset3'] ?? null);
     }
 
     public function testSelectZeroOrNegativeOffsetIsDiscarded()
     {
         ($select = new Select())->from('user')->offset(0);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user`",
             $select->getSQL($this->driver)
         );
 
         ($select = new Select())->from('user')->offset(-1);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user`",
             $select->getSQL($this->driver)
         );
@@ -255,23 +255,23 @@ class SelectTest extends TestCase
     public function testSelectWithLimitAndOffset()
     {
         ($select = new Select())->from('user')->limit(10)->offset(100);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` LIMIT :limit4 OFFSET :offset5",
             $select->getSQL($this->driver)
         );
-        self::assertEquals(10, $select->getParams()[':limit4'] ?? null);
-        self::assertEquals(100, $select->getParams()[':offset5'] ?? null);
+        self::assertSame(10, $select->getParams()[':limit4'] ?? null);
+        self::assertSame(100, $select->getParams()[':offset5'] ?? null);
     }
 
     public function testAnsiDriverDoesNotSupportLimitAndOffset()
     {
         ($select = new Select())->from('user')->limit(10)->offset(100);
-        self::assertEquals(
+        self::assertSame(
             'SELECT * FROM "user" [LIMIT 10 OFFSET 100]',
             $select->getSQL(Driver::ansi())
         );
-        self::assertEquals(null, $select->getParams()[':limit4'] ?? null);
-        self::assertEquals(null, $select->getParams()[':offset5'] ?? null);
+        self::assertSame(null, $select->getParams()[':limit4'] ?? null);
+        self::assertSame(null, $select->getParams()[':offset5'] ?? null);
     }
 
     /**
@@ -282,14 +282,14 @@ class SelectTest extends TestCase
         $select = (new Select())->sum("unit_price*quantity", "productTotal")->from('cart_product');
 
         $select->groupBy($groupBy);
-        self::assertEquals(
+        self::assertSame(
             "SELECT SUM(unit_price*quantity) AS `productTotal` FROM `cart_product` GROUP BY {$expectedSQL}",
             $select->getSQL($this->driver)
         );
 
         // test replace
         $select->groupBy(['tax_id'], true);
-        self::assertEquals(
+        self::assertSame(
             "SELECT SUM(unit_price*quantity) AS `productTotal` FROM `cart_product` GROUP BY `tax_id`",
             $select->getSQL($this->driver)
         );
@@ -318,14 +318,14 @@ class SelectTest extends TestCase
         $select = (new Select())->from('product');
 
         $select->orderBy($orderBy, $sortDirOrReplace);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `product` ORDER BY {$expectedSQL}",
             $select->getSQL($this->driver)
         );
 
         // test replace
         $select->orderBy(['unit_price' => 'DESC'], true);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `product` ORDER BY `unit_price` DESC",
             $select->getSQL($this->driver)
         );
@@ -351,7 +351,7 @@ class SelectTest extends TestCase
         // using string a specification => will generate a ON clause
         $select = (new Select(['*', "c.*"]))->from('order', 'o');
         $select->leftJoin('customer', 'c', "c.id = o.customer_id");
-        self::assertEquals(
+        self::assertSame(
             "SELECT `o`.*, `c`.* FROM `order` `o` LEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
             $select->getSQL($this->driver)
         );
@@ -359,7 +359,7 @@ class SelectTest extends TestCase
         // using literal-predicate a specification
         $select = (new Select())->from('user', 'u');
         $select->leftJoin('customer', 'c', new Sql\Predicate\Literal("USING (customer_id)"));
-        self::assertEquals(
+        self::assertSame(
             "SELECT `u`.* FROM `user` `u` LEFT JOIN `customer` `c` USING (customer_id)",
             $select->getSQL($this->driver)
         );
@@ -368,7 +368,7 @@ class SelectTest extends TestCase
         $select = (new Select(['*', "o.*", 'c.*']))->from('order_product', 'op');
         $select->leftJoin('order', 'o', "op.order_id = o.id");
         $select->leftJoin('customer', 'c', "c.id = o.customer_id");
-        self::assertEquals(
+        self::assertSame(
             "SELECT `op`.*, `o`.*, `c`.* FROM `order_product` `op`"
             . " LEFT JOIN `order` `o` ON (`op`.order_id = `o`.id)"
             . " LEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
@@ -387,7 +387,7 @@ class SelectTest extends TestCase
         $join = new Join(Sql::JOIN_INNER, 'customer', 'c');
         $join->on->equal(new Identifier("c.id"), new Identifier("o.customer_id"));
         $select->addJoin($join);
-        self::assertEquals(
+        self::assertSame(
             "SELECT `op`.*, `o`.*, `c`.* FROM `order_product` `op`"
             . " INNER JOIN `order` `o` ON (`op`.`order_id` = `o`.`id`)"
             . " INNER JOIN `customer` `c` ON (`c`.`id` = `o`.`customer_id`)",

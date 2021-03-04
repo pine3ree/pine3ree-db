@@ -198,14 +198,14 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user', 'u');
 
-        self::assertEquals("SELECT `u`.* FROM `user` `u`", $select->getSql());
+        self::assertSame("SELECT `u`.* FROM `user` `u`", $select->getSql());
 
-        self::assertEquals(
+        self::assertSame(
             $select->getSqlStatement()->getSQL($db->getDriver()),
             $select->getSql()
         );
 
-        self::assertEquals(
+        self::assertSame(
             $select->getSqlStatement()->getSQL($db->getDriver()),
             $select->getSql()
         );
@@ -215,21 +215,21 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->quantifier(Sql::DISTINCT)->from('user', 'u');
-        self::assertEquals("SELECT DISTINCT `u`.* FROM `user` `u`", $select->getSql());
+        self::assertSame("SELECT DISTINCT `u`.* FROM `user` `u`", $select->getSql());
     }
 
     public function testDistinct()
     {
         $select = $this->createSelectCommand($db);
         $select->distinct()->from('user', 'u');
-        self::assertEquals("SELECT DISTINCT `u`.* FROM `user` `u`", $select->getSql());
+        self::assertSame("SELECT DISTINCT `u`.* FROM `user` `u`", $select->getSql());
     }
 
     public function testColumns()
     {
         $select = $this->createSelectCommand($db);
         $select->columns(['id', 'email'])->from('user', 'u');
-        self::assertEquals("SELECT `u`.`id`, `u`.`email` FROM `user` `u`", $select->getSql());
+        self::assertSame("SELECT `u`.`id`, `u`.`email` FROM `user` `u`", $select->getSql());
     }
 
     public function testColumn()
@@ -241,7 +241,7 @@ class SelectTest extends TestCase
             ->column('logged_at', 'lastAccess')
             ->from('user', 'u');
 
-        self::assertEquals(
+        self::assertSame(
             "SELECT"
             . " `u`.`id`,"
             . " `u`.`email`,"
@@ -255,35 +255,35 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->sum('price')->from('product');
-        self::assertEquals(
+        self::assertSame(
             "SELECT SUM(price) FROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->min('price')->from('product');
-        self::assertEquals(
+        self::assertSame(
             "SELECT MIN(price) FROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->max('price')->from('product');
-        self::assertEquals(
+        self::assertSame(
             "SELECT MAX(price) FROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->avg('price')->from('product');
-        self::assertEquals(
+        self::assertSame(
             "SELECT AVG(price) FROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->aggregate('SOMEFUNCTION', 'price')->from('product');
-        self::assertEquals(
+        self::assertSame(
             "SELECT SOMEFUNCTION(price) FROM `product`",
             $select->getSql()
         );
@@ -300,13 +300,13 @@ class SelectTest extends TestCase
         $select->from('user', 'u');
         $select->{$joinMethod}('session', 's', "s.user_id = u.id");
 
-        self::assertEquals(
+        self::assertSame(
             "SELECT `u`.* FROM `user` `u`"
             . " {$joinSQL} `session` `s` ON (`s`.user_id = `u`.id)",
             $select->getSql()
         );
 
-        self::assertEquals(
+        self::assertSame(
             $select->sqlStatement->getSQL($db->getDriver()),
             $select->getSql()
         );
@@ -321,12 +321,12 @@ class SelectTest extends TestCase
         $join = new Sql\Clause\Join(Sql::JOIN_INNER, 'session', 's', "s.user_id = u.id");
         $select->addJoin($join);
 
-        self::assertEquals(
+        self::assertSame(
             "SELECT `u`.* FROM `user` `u`"
             . " INNER JOIN `session` `s` ON (`s`.user_id = `u`.id)",
             $select->getSql()
         );
-        self::assertEquals(
+        self::assertSame(
             $select->sqlStatement->getSQL($db->getDriver()),
             $select->getSql()
         );
@@ -360,7 +360,7 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user');
         $select->where("id > 42");
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` WHERE id > 42",
             $select->getSql()
         );
@@ -379,7 +379,7 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user');
         $select->having("(id*10) <= 42");
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` HAVING (id*10) <= 42",
             $select->getSql()
         );
@@ -389,13 +389,13 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->from('user')->groupBy('type_id');
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` GROUP BY `type_id`",
             $select->getSql()
         );
 
         $select->groupBy('category_id', true);
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` GROUP BY `category_id`",
             $select->getSql()
         );
@@ -405,14 +405,14 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->from('user')->orderBy('id');
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` ORDER BY `id` ASC",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->from('user')->orderBy('id', 'DESC');
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` ORDER BY `id` DESC",
             $select->getSql()
         );
@@ -447,7 +447,7 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->union($union)->from('user');
 
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` UNION (SELECT * FROM `session`)",
             $select->getSql()
         );
@@ -460,7 +460,7 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->intersect($intersect)->from('user');
 
-        self::assertEquals(
+        self::assertSame(
             "SELECT * FROM `user` INTERSECT (SELECT * FROM `session`)",
             $select->getSql()
         );
@@ -474,7 +474,7 @@ class SelectTest extends TestCase
         $indexByProp = new \ReflectionProperty(Select::class, 'indexBy');
         $indexByProp->setAccessible(true);
 
-        self::assertEquals('email', $indexByProp->getValue($select));
+        self::assertSame('email', $indexByProp->getValue($select));
     }
 
     public function testFetchAll()
@@ -490,20 +490,20 @@ class SelectTest extends TestCase
 
         $this->pdoStatement->fetchAll(PDO::FETCH_ASSOC)->willReturn($assocRows);
         $this->pdoStatement->fetchAll()->willReturn($assocRows);
-        self::assertEquals($assocRows, $select->fetchAll());
-        self::assertEquals($assocRows, $select->fetchAll(PDO::FETCH_ASSOC));
+        self::assertSame($assocRows, $select->fetchAll());
+        self::assertSame($assocRows, $select->fetchAll(PDO::FETCH_ASSOC));
 
         $this->pdoStatement->fetchAll(PDO::FETCH_NUM)->willReturn($numRows);
-        self::assertEquals($numRows, $select->fetchAll(PDO::FETCH_NUM));
+        self::assertSame($numRows, $select->fetchAll(PDO::FETCH_NUM));
 
         $this->pdoStatement->fetchAll(PDO::FETCH_BOTH)->willReturn($bothRows);
-        self::assertEquals($bothRows, $select->fetchAll(PDO::FETCH_BOTH));
+        self::assertSame($bothRows, $select->fetchAll(PDO::FETCH_BOTH));
 
         $this->pdoStatement->fetchAll(PDO::FETCH_OBJ)->willReturn($objRows);
-        self::assertEquals($objRows, $select->fetchAll(PDO::FETCH_OBJ));
+        self::assertSame($objRows, $select->fetchAll(PDO::FETCH_OBJ));
 
         $this->pdoStatement->fetchAll(PDO::FETCH_CLASS)->willReturn($classRows);
-        self::assertEquals($classRows, $select->fetchAll(PDO::FETCH_CLASS));
+        self::assertSame($classRows, $select->fetchAll(PDO::FETCH_CLASS));
     }
 
     public function testFetchAllOnPdoStatementExecutionFailureReturnsEmptyArray()
@@ -513,7 +513,7 @@ class SelectTest extends TestCase
 
         $this->pdoStatement->execute()->willReturn(false);
 
-        self::assertEquals([], $select->fetchAll());
+        self::assertSame([], $select->fetchAll());
     }
 
     public function testFetchAllOnEmptyPdoStatementFetchAllReturnsNoRows()
@@ -525,7 +525,7 @@ class SelectTest extends TestCase
         $this->pdoStatement->fetchAll(PDO::FETCH_ASSOC)->willReturn([]);
         $this->pdoStatement->fetchAll(PDO::FETCH_OBJ)->willReturn([]);
 
-        self::assertEquals([], $select->fetchAll());
+        self::assertSame([], $select->fetchAll());
     }
 
     public function testFetchAllIndexedByEmail()
@@ -545,17 +545,17 @@ class SelectTest extends TestCase
 
         $this->pdoStatement->fetchAll()->willReturn($bothRows);
         $this->pdoStatement->fetchAll(PDO::FETCH_ASSOC)->willReturn($assocRows);
-        self::assertEquals($assocRowsByEmail, $select->fetchAll());
-        self::assertEquals($assocRowsByEmail, $select->fetchAll(PDO::FETCH_ASSOC));
+        self::assertSame($assocRowsByEmail, $select->fetchAll());
+        self::assertSame($assocRowsByEmail, $select->fetchAll(PDO::FETCH_ASSOC));
 
         $this->pdoStatement->fetchAll(PDO::FETCH_BOTH)->willReturn($bothRows);
-        self::assertEquals($bothRowsByEmail, $select->fetchAll(PDO::FETCH_BOTH));
+        self::assertSame($bothRowsByEmail, $select->fetchAll(PDO::FETCH_BOTH));
 
         $this->pdoStatement->fetchAll(PDO::FETCH_OBJ)->willReturn($objRows);
-        self::assertEquals($objRowsByEmail, $select->fetchAll(PDO::FETCH_OBJ));
+        self::assertSame($objRowsByEmail, $select->fetchAll(PDO::FETCH_OBJ));
 
         $this->pdoStatement->fetchAll(PDO::FETCH_CLASS)->willReturn($classRows);
-        self::assertEquals($classRowsByEmail, $select->fetchAll(PDO::FETCH_CLASS));
+        self::assertSame($classRowsByEmail, $select->fetchAll(PDO::FETCH_CLASS));
     }
 
     /**
@@ -622,7 +622,7 @@ class SelectTest extends TestCase
            ? $select->fetchOne($fetchMode, $fetchClassOrObject)
            : $select->fetchOne();
 
-        self::assertEquals($row, $actual);
+        self::assertSame($row, $actual);
     }
 
     public function provideFetchOneModes()
@@ -676,8 +676,8 @@ class SelectTest extends TestCase
         $row = $this->buildResultRow(1, PDO::FETCH_ASSOC);
         $this->pdoStatement->fetch(PDO::FETCH_ASSOC)->willReturn($row);
 
-        self::assertEquals('username1', $select->fetchScalar('username'));
-        self::assertEquals('email1@example.com', $select->fetchScalar('email'));
+        self::assertSame('username1', $select->fetchScalar('username'));
+        self::assertSame('email1@example.com', $select->fetchScalar('email'));
         self::assertNull($select->fetchScalar('nonexistent'));
 
         $this->pdoStatement->execute()->willReturn(false);
@@ -696,9 +696,9 @@ class SelectTest extends TestCase
         $this->pdoStatement->fetchColumn(2)->willReturn($row[2]);
         $this->pdoStatement->fetchColumn(3)->willReturn($row[3] ?? null);
 
-        self::assertEquals('1', $select->fetchColumn(0));
-        self::assertEquals('username1', $select->fetchColumn(1));
-        self::assertEquals('email1@example.com', $select->fetchColumn(2));
+        self::assertSame(1, $select->fetchColumn(0));
+        self::assertSame('username1', $select->fetchColumn(1));
+        self::assertSame('email1@example.com', $select->fetchColumn(2));
         self::assertNull($select->fetchColumn(3));
 
         $this->pdoStatement->execute()->willReturn(false);

@@ -52,7 +52,7 @@ class SqlTest extends TestCase
      */
     public function testIsEmptySQL($sql, bool $expected)
     {
-        self::assertEquals($expected, Sql::isEmptySQL($sql));
+        self::assertSame($expected, Sql::isEmptySQL($sql));
     }
 
     public function provideSqls(): array
@@ -70,7 +70,7 @@ class SqlTest extends TestCase
      */
     public function testIsEmptyPredicate($predicate, bool $checkEmptySet, bool $expected)
     {
-        self::assertEquals($expected, Sql::isEmptyPredicate($predicate, $checkEmptySet));
+        self::assertSame($expected, Sql::isEmptyPredicate($predicate, $checkEmptySet));
     }
 
     public function providePredicates(): array
@@ -176,7 +176,7 @@ class SqlTest extends TestCase
         $alias = Sql::alias("?");
 
         $alias = Sql::alias('totPrice');
-        self::assertEquals('"totPrice"', $alias->getSQL());
+        self::assertSame('"totPrice"', $alias->getSQL());
     }
 
     public function testCreateIdentifier()
@@ -185,13 +185,13 @@ class SqlTest extends TestCase
         $identifier = Sql::identifier("?");
 
         $identifier = Sql::identifier('t.id');
-        self::assertEquals('"t"."id"', $identifier->getSQL());
+        self::assertSame('"t"."id"', $identifier->getSQL());
     }
 
     public function testCreateLiteral()
     {
         $literal = Sql::literal("(TRUE IS NOT FALSE)");
-        self::assertEquals('(TRUE IS NOT FALSE)', $literal->getSQL());
+        self::assertSame('(TRUE IS NOT FALSE)', $literal->getSQL());
     }
 
     public function testCreateExpression()
