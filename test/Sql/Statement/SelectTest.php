@@ -210,31 +210,37 @@ class SelectTest extends TestCase
     public function testSelectWithLimit()
     {
         ($select = new Select())->from('user')->limit(10);
-        self::assertSame(
-            "SELECT * FROM `user` LIMIT :limit1",
+        self::assertStringStartsWith(
+            "SELECT * FROM `user` LIMIT :limit",
             $select->getSQL($this->driver)
         );
-        self::assertSame(10, $select->getParams()[':limit1'] ?? null);
+
+        $params = $select->getParams();
+        self::assertSame(10, current($params) ?? null);
     }
 
     public function testSelectWithNegativeLimit()
     {
         ($select = new Select())->from('user')->limit(-1);
-        self::assertSame(
-            "SELECT * FROM `user` LIMIT :limit2",
+        self::assertStringStartsWith(
+            "SELECT * FROM `user` LIMIT :limit",
             $select->getSQL($this->driver)
         );
-        self::assertSame(0, $select->getParams()[':limit2'] ?? null);
+
+        $params = $select->getParams();
+        self::assertSame(0, current($params) ?? null);
     }
 
     public function testSelectWithOffset()
     {
         ($select = new Select())->from('user')->offset(100);
-        self::assertSame(
-            "SELECT * FROM `user` LIMIT " . PHP_INT_MAX . " OFFSET :offset3",
+        self::assertStringStartsWith(
+            "SELECT * FROM `user` LIMIT " . PHP_INT_MAX . " OFFSET :offset",
             $select->getSQL($this->driver)
         );
-        self::assertSame(100, $select->getParams()[':offset3'] ?? null);
+
+        $params = $select->getParams();
+        self::assertSame(100, current($params) ?? null);
     }
 
     public function testSelectZeroOrNegativeOffsetIsDiscarded()
@@ -255,12 +261,16 @@ class SelectTest extends TestCase
     public function testSelectWithLimitAndOffset()
     {
         ($select = new Select())->from('user')->limit(10)->offset(100);
-        self::assertSame(
-            "SELECT * FROM `user` LIMIT :limit4 OFFSET :offset5",
+
+        self::assertStringStartsWith(
+            "SELECT * FROM `user` LIMIT :limit",
             $select->getSQL($this->driver)
         );
-        self::assertSame(10, $select->getParams()[':limit4'] ?? null);
-        self::assertSame(100, $select->getParams()[':offset5'] ?? null);
+        self::assertNotFalse(strpos($select->getSQL($this->driver), " OFFSET :offset"));
+
+        $params = $select->getParams();
+        self::assertSame(10, current($params) ?? null);
+        self::assertSame(100, next($params) ?? null);
     }
 
     public function testAnsiDriverDoesNotSupportLimitAndOffset()
@@ -270,8 +280,8 @@ class SelectTest extends TestCase
             'SELECT * FROM "user" [LIMIT 10 OFFSET 100]',
             $select->getSQL(Driver::ansi())
         );
-        self::assertSame(null, $select->getParams()[':limit4'] ?? null);
-        self::assertSame(null, $select->getParams()[':offset5'] ?? null);
+
+        self::assertEmpty($select->getParams());
     }
 
     /**
