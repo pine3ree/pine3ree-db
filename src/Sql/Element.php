@@ -374,7 +374,7 @@ abstract class Element implements ElementInterface
 
         $class = static::class;
         throw new RuntimeException(
-            "Call to undefined or internal method {$class}::{$name}())!"
+            "Call to undefined or internal method {$class}::{$methodName}())!"
         );
     }
 }
