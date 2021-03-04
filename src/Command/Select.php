@@ -382,7 +382,6 @@ class Select extends Command implements ReaderInterface
             case PDO::FETCH_CLASS:
             case PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE:
             case PDO::FETCH_OBJ:
-            case PDO::FETCH_LAZY:
                 foreach ($rows as $i => $obj) {
                     $index = $obj->{$indexBy} ?? null;
                     if (!isset($index)) {
