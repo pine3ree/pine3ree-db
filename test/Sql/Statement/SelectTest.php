@@ -166,7 +166,7 @@ class SelectTest extends TestCase
         ];
     }
 
-    public function testSelectWithoutFromRisesExceptionOnGetSQL()
+    public function testSelectWithoutFromRaisesExceptionOnGetSQL()
     {
         $select = new Select();
         $select->columns([]);
@@ -175,25 +175,25 @@ class SelectTest extends TestCase
         self::assertSame("SELECT *", $select->getSQL($this->driver));
     }
 
-    public function testEmptyFromRisesException()
+    public function testEmptyFromRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from('', null);
     }
 
-    public function testInvalidTypeFromRisesException()
+    public function testInvalidTypeFromRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from(new stdClass(), null);
     }
 
-    public function testFromSubselectWithoutAliasRisesException()
+    public function testFromSubselectWithoutAliasRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from(new Select([], 'subtable'), null);
     }
 
-    public function testFromSubselectWithEmptyAliasRisesException()
+    public function testFromSubselectWithEmptyAliasRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from(new Select([], 'subtable', ''), null);

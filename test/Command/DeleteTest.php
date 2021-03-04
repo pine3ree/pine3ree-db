@@ -74,14 +74,14 @@ class DeleteTest extends TestCase
         self::assertInstanceOf(Statement\Delete::class, $delete->getSqlStatement());
     }
 
-    public function testGetSqlRisesExceptionWithoutFromClause()
+    public function testGetSqlRaisesExceptionWithoutFromClause()
     {
         $delete = $this->createDeleteCommand();
         $this->expectException(RuntimeException::class);
         $delete->getSql();
     }
 
-    public function testGetSqlRisesExceptionWithoutWhereClause()
+    public function testGetSqlRaisesExceptionWithoutWhereClause()
     {
         $delete = $this->createDeleteCommand();
         $delete->from('user');

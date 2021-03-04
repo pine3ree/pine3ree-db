@@ -108,7 +108,7 @@ class DbFactoryTest extends TestCase
         self::assertInstanceOf(Db::class, $db);
     }
 
-    public function testThatMissingConfigRisesException()
+    public function testThatMissingConfigRaisesException()
     {
         $dbConfig = self::DB_CONFIG;
         unset($dbConfig['driver']);
@@ -123,7 +123,7 @@ class DbFactoryTest extends TestCase
         $db = ($this->factory)($this->container->reveal());
     }
 
-    public function testThatMissingDriverConfigKeyRisesException()
+    public function testThatMissingDriverConfigKeyRaisesException()
     {
         $dbConfig = self::DB_CONFIG;
         unset($dbConfig['driver']);
@@ -139,7 +139,7 @@ class DbFactoryTest extends TestCase
         $db = ($this->factory)($this->container->reveal());
     }
 
-    public function testThatUnsupportedDriverConfigKeyRisesException()
+    public function testThatUnsupportedDriverConfigKeyRaisesException()
     {
         $dbConfig = self::DB_CONFIG;
         $dbConfig['driver'] = 'myfancydbdriver';
@@ -155,7 +155,7 @@ class DbFactoryTest extends TestCase
         $db = ($this->factory)($this->container->reveal());
     }
 
-    public function testThatMissingDatabaseConfigKeyRisesException()
+    public function testThatMissingDatabaseConfigKeyRaisesException()
     {
         $dbConfig = self::DB_CONFIG;
         unset($dbConfig['database'], $dbConfig['dbname']);

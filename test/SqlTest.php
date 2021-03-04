@@ -170,7 +170,7 @@ class SqlTest extends TestCase
         return [['^'], ['"'], ['~'], [';'], ['HELLO'], [1.23], [42], [[]], [new \stdClass()]];
     }
 
-    public function testCreateInvalidAliasRisesException()
+    public function testCreateInvalidAliasRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         $alias = Sql::alias("?");
@@ -182,7 +182,7 @@ class SqlTest extends TestCase
         self::assertSame('"totPrice"', $alias->getSQL());
     }
 
-    public function testCreateInvalidIdentifierRisesException()
+    public function testCreateInvalidIdentifierRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         $identifier = Sql::identifier("?");

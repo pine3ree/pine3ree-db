@@ -26,7 +26,7 @@ class IdentifierTest extends TestCase
     /**
      * @dataProvider provideInvalidIdentifiers
      */
-    public function testIdentifierConstructorRisesExceptionWIthInnvalidIdentifiers($alias)
+    public function testIdentifierConstructorRaisesExceptionWIthInnvalidIdentifiers($alias)
     {
         $this->expectException(InvalidArgumentException::class);
         $aliasObj = new Identifier($alias);

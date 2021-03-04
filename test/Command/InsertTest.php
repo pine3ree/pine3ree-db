@@ -85,14 +85,14 @@ class InsertTest extends TestCase
         self::assertInstanceOf(Statement\Insert::class, $insert->getSqlStatement());
     }
 
-    public function testGetSqlRisesExceptionWithoutIntoClause()
+    public function testGetSqlRaisesExceptionWithoutIntoClause()
     {
         $insert = $this->createInsertCommand();
         $this->expectException(RuntimeException::class);
         $insert->getSql();
     }
 
-    public function testGetSqlRisesExceptionWithoutValues()
+    public function testGetSqlRaisesExceptionWithoutValues()
     {
         $insert = $this->createInsertCommand();
         $insert->into('user');

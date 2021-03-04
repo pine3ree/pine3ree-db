@@ -26,7 +26,7 @@ class AliasTest extends TestCase
     /**
      * @dataProvider provideInvalidAliases
      */
-    public function testAliasConstructorRisesExceptionWIthInnvalidAliases($alias)
+    public function testAliasConstructorRaisesExceptionWIthInnvalidAliases($alias)
     {
         $this->expectException(InvalidArgumentException::class);
         $aliasObj = new Alias($alias);
@@ -49,12 +49,31 @@ class AliasTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider provideInvalidAliases
+     */
+    public function testInvalidAliasRaisesException(string $alias)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $alias = new Alias($alias);
+    }
+
     public function provideInvalidAliases(): array
     {
         return [
+            [''],
             ['"t0"'],
             ['4t'],
             ['"some.alias"'],
         ];
+    }
+
+    /**
+     * @dataProvider provideInvalidAliases
+     */
+    public function testGetNonExistentPropertyRaisesException(string $alias)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $alias = new Alias($alias);
     }
 }

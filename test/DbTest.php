@@ -85,7 +85,7 @@ EOIS
         unset($this->pdo);
     }
 
-    public function testInvalidPdoClassRisesException()
+    public function testInvalidPdoClassRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         $db = new Db(
@@ -259,7 +259,7 @@ EOIS
         self::assertTrue($db->isConnected());
     }
 
-    public function testthatCreatePdoInstanceWithEmptyDsnRisesException()
+    public function testthatCreatePdoInstanceWithEmptyDsnRaisesException()
     {
         $pdo = $this->prophesize(PDO::class);
         $db = new Db($pdo->reveal());

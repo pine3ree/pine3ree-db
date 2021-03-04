@@ -88,7 +88,7 @@ class SqliteTest extends TestCase
         self::assertSame($expected, $this->driver->quoteValue($value));
     }
 
-    public function testQuoteStringValueWithoutConnectionRisesException()
+    public function testQuoteStringValueWithoutConnectionRaisesException()
     {
         $this->expectException(RuntimeException::class);
         $this->driver->quoteValue("Quote me!");

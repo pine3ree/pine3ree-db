@@ -25,7 +25,7 @@ class ComparisonTest extends TestCase
     {
     }
 
-    public function testContructorWithUnsupportedValueRisesException()
+    public function testContructorWithUnsupportedValueRaisesException()
     {
         foreach ([
             new stdClass(),
@@ -36,7 +36,7 @@ class ComparisonTest extends TestCase
         }
     }
 
-    public function testContructorWithUnsupportedOperatorRisesException()
+    public function testContructorWithUnsupportedOperatorRaisesException()
     {
         foreach (['+', '?', '1', 'N-O-T', 'I-s', '*'] as $operator) {
             $this->expectException(InvalidArgumentException::class);
@@ -44,7 +44,7 @@ class ComparisonTest extends TestCase
         }
     }
 
-    public function testGetSqlUsingNotSupportedOperatorWithNullValueRisesException()
+    public function testGetSqlUsingNotSupportedOperatorWithNullValueRaisesException()
     {
         foreach (['!=', '<>', '<', '<=', '>=', '>'] as $operator) {
             $predicate = new Predicate\Comparison('tb.column', $operator, null);

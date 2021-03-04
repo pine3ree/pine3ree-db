@@ -72,7 +72,7 @@ class UpdateTest extends TestCase
         self::assertInstanceOf(Statement\Update::class, $update->getSqlStatement());
     }
 
-    public function testGetSqlRisesExceptionWithoutSetClause()
+    public function testGetSqlRaisesExceptionWithoutSetClause()
     {
         $update = $this->createUpdateCommand($db);
         $update->table('user', 'u');
@@ -81,7 +81,7 @@ class UpdateTest extends TestCase
         $update->getSql();
     }
 
-    public function testGetSqlRisesExceptionWithoutWhereClause()
+    public function testGetSqlRaisesExceptionWithoutWhereClause()
     {
         $update = $this->createUpdateCommand($db);
         $update->table('user')->set(['enabled' => true]);
@@ -90,7 +90,7 @@ class UpdateTest extends TestCase
         $update->getSql();
     }
 
-    public function testGetSqlRisesExceptionWithEmptyWhereClause()
+    public function testGetSqlRaisesExceptionWithEmptyWhereClause()
     {
         $update = $this->createUpdateCommand($db);
         $update->table('user')->set(['enabled' => true])->where("");
