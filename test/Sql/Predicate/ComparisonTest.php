@@ -8,13 +8,12 @@
 
 namespace P3\DbTest\Sql\Predicate;
 
+use ArrayObject;
 use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Alias;
-use P3\Db\Sql\Predicate\Literal;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ComparisonTest extends TestCase
 {
@@ -29,8 +28,8 @@ class ComparisonTest extends TestCase
     public function testContructorWithUnsupportedValueRisesException()
     {
         foreach ([
-            new \stdClass(),
-            new \ArrayObject()
+            new stdClass(),
+            new ArrayObject()
         ] as $value) {
             $this->expectException(InvalidArgumentException::class);
             $predicate = new Predicate\Comparison('tb.column', '=', $value);
