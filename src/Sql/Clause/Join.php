@@ -111,7 +111,7 @@ class Join extends Clause
             return $this->__name;
         }
 
-        $this->__name = empty($this->type) ? Sql::JOIN : $this->type;
+        $this->__name = empty($this->type) ? Sql::JOIN : "{$this->type} " . Sql::JOIN;
         return $this->__name;
     }
 
