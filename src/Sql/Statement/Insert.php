@@ -230,9 +230,7 @@ class Insert extends Statement
 
         if (empty($this->columns)) {
             $this->columns(array_keys($row));
-        }
-
-        if ($this->columns !== array_keys($row)) {
+        } elseif ($this->columns !== array_keys($row)) {
             throw new RuntimeException(sprintf(
                 "The INSERT row keys %s do not match the previously defined insert columns %s!",
                 json_encode(array_keys($row)),
