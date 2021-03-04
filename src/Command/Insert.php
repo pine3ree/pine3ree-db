@@ -41,7 +41,7 @@ class Insert extends Command implements WriterInterface
      */
     public function ignore(): self
     {
-        $this->sqlStatement->ignore($table);
+        $this->sqlStatement->ignore();
         return $this;
     }
 
