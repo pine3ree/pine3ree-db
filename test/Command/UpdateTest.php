@@ -8,28 +8,14 @@
 
 namespace P3\DbTest\Command;
 
-//use PDO;
-use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use PDO;
-use PDOStatement;
-use P3\Db\Command;
-use P3\Db\Command\Update;
 use P3\Db\Db;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Statement;
+use P3\Db\Sql\Driver\MySql;
+use P3\Db\Sql\Statement\Update;
+use Prophecy\Prophecy\ObjectProphecy;
+use SebastianBergmann\CodeCoverage\TestCase;
 
 class UpdateTest extends TestCase
 {
-    /** @var ObjectProphecy|Db */
-    private $db;
-
-    /** @var ObjectProphecy|Driver\Mysql */
-    private $driver;
-
     /** @var ObjectProphecy|PDO */
     private $pdo;
 
@@ -62,8 +48,8 @@ class UpdateTest extends TestCase
     {
         $db = $this->prophesize(Db::class);
 
-        $db->getDriver(true)->willReturn(new Driver\MySql($this->pdo->reveal()));
-        $db->getDriver(false)->willReturn($shallowDriver = new Driver\MySql());
+        $db->getDriver(true)->willReturn(new MySql($this->pdo->reveal()));
+        $db->getDriver(false)->willReturn($shallowDriver = new MySql());
         $db->getDriver()->willReturn($shallowDriver);
 
         $update = new Update($db->reveal());
@@ -79,7 +65,7 @@ class UpdateTest extends TestCase
     public function testGetSqlStatement()
     {
         $update = $this->createUpdateCommand($db);
-        self::assertInstanceOf(Statement\Update::class, $update->getSqlStatement());
+        self::assertInstanceOf(Update::class, $update->getSqlStatement());
     }
 
     public function testGetSqlRisesExceptionWithoutSetClause()
@@ -87,7 +73,7 @@ class UpdateTest extends TestCase
         $update = $this->createUpdateCommand($db);
         $update->table('user', 'u');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $update->getSql();
     }
 
@@ -96,7 +82,7 @@ class UpdateTest extends TestCase
         $update = $this->createUpdateCommand($db);
         $update->table('user')->set(['enabled' => true]);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $update->getSql();
     }
 
@@ -105,7 +91,7 @@ class UpdateTest extends TestCase
         $update = $this->createUpdateCommand($db);
         $update->table('user')->set(['enabled' => true])->where("");
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $update->getSql();
     }
 
