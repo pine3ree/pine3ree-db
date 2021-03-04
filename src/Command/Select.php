@@ -12,6 +12,7 @@ use P3\Db\Command;
 use P3\Db\Command\Reader as ReaderInterface;
 use P3\Db\Command\Traits\Reader as ReaderTrait;
 use P3\Db\Db;
+use P3\Db\Sql;
 use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\Where;
