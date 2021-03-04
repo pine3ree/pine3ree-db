@@ -10,13 +10,14 @@ namespace P3\Db\Sql\Predicate;
 use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
+use RuntimeException;
 
 use function trim;
 
 /**
  * This class represents a sql literal-expression predicate
  *
- * @property-read string $literal The original unquoted literal
+ * @property-read string $literal The literal string itself
  */
 class Literal extends Predicate
 {
