@@ -139,22 +139,6 @@ class DbFactoryTest extends TestCase
         $db = ($this->factory)($this->container->reveal());
     }
 
-//    public function testThatUnsupportedDriverConfigKeyRisesException()
-//    {
-//        $dbConfig = self::DB_CONFIG;
-//        unset($dbConfig['driver']);
-//
-//        $this->container->get('config')
-//            ->willReturn(
-//                [
-//                    'db' => $dbConfig,
-//                ]
-//            );
-//
-//        $this->expectException(InvalidArgumentException::class);
-//        $db = ($this->factory)($this->container->reveal());
-//    }
-
     public function testThatUnsupportedDriverConfigKeyRisesException()
     {
         $dbConfig = self::DB_CONFIG;
