@@ -116,7 +116,7 @@ class Db
         } elseif ($dsnOrPdo instanceof PDO) {
             $this->pdo = $dsnOrPdo;
         } else {
-            throw InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 '$dsnOrPdo must be either a dns string or a PDO instance, `%s` provided!',
                 is_object($dsnOrPdo) ? get_class($dsnOrPdo) : gettype($dsnOrPdo)
             ));
