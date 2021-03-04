@@ -8,11 +8,15 @@
 
 namespace P3\DbTest\Command;
 
+use P3\Db\Command\Update;
 use P3\Db\Db;
-use P3\Db\Sql\Driver\MySql;
-use P3\Db\Sql\Statement\Update;
+use P3\Db\Sql\Driver;
+use P3\Db\Sql\Statement;
+use PDO;
+use PDOStatement;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use SebastianBergmann\CodeCoverage\TestCase;
+use RuntimeException;
 
 class UpdateTest extends TestCase
 {
@@ -48,8 +52,8 @@ class UpdateTest extends TestCase
     {
         $db = $this->prophesize(Db::class);
 
-        $db->getDriver(true)->willReturn(new MySql($this->pdo->reveal()));
-        $db->getDriver(false)->willReturn($shallowDriver = new MySql());
+        $db->getDriver(true)->willReturn(new Driver\MySql($this->pdo->reveal()));
+        $db->getDriver(false)->willReturn($shallowDriver = new Driver\MySql());
         $db->getDriver()->willReturn($shallowDriver);
 
         $update = new Update($db->reveal());
@@ -65,7 +69,7 @@ class UpdateTest extends TestCase
     public function testGetSqlStatement()
     {
         $update = $this->createUpdateCommand($db);
-        self::assertInstanceOf(Update::class, $update->getSqlStatement());
+        self::assertInstanceOf(Statement\Update::class, $update->getSqlStatement());
     }
 
     public function testGetSqlRisesExceptionWithoutSetClause()
