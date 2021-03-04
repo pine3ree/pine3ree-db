@@ -396,9 +396,11 @@ class Select extends Command implements ReaderInterface
                 return $indexed;
         }
 
+        // @codeCoverageIgnoreStart
         throw new InvalidArgumentException(
             "Invalid fetch_mode combination pipe `{$fetch_mode}` for indexed-rowset!"
         );
+            // @codeCoverageIgnoreEnd
     }
 
     /**
