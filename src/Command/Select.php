@@ -463,7 +463,7 @@ class Select extends Command implements ReaderInterface
                 return is_object($obj) ? $obj : null;
         }
 
-        throw InvalidArgumentException(
+        throw new InvalidArgumentException(
             "Invalid fetch_mode combination pipe `{$fetch_mode}`!"
         );
     }
