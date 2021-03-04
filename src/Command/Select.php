@@ -439,7 +439,7 @@ class Select extends Command implements ReaderInterface
             case PDO::FETCH_CLASS:
             case PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE:
                 if (!is_string($class_or_object)) {
-                    throw InvalidArgumentException(sprintf(
+                    throw new InvalidArgumentException(sprintf(
                         "\$class_or_object MUST be an FQCN string when fetch_mode"
                         . " = `PDO::FETCH_CLASS`, `%s` provided!",
                         gettype($class_or_object)
@@ -452,7 +452,7 @@ class Select extends Command implements ReaderInterface
 
             case PDO::FETCH_INTO:
                 if (!is_object($class_or_object)) {
-                    throw InvalidArgumentException(sprintf(
+                    throw new InvalidArgumentException(sprintf(
                         "\$class_or_object MUST be an object when fetch_mode"
                         . " = `PDO::FETCH_INTO`, `%s` provided!",
                         gettype($class_or_object)
@@ -463,7 +463,7 @@ class Select extends Command implements ReaderInterface
                 return is_object($obj) ? $obj : null;
         }
 
-        throw InvalidArgumentException(
+        throw new InvalidArgumentException(
             "Invalid fetch_mode combination pipe `{$fetch_mode}`!"
         );
     }
