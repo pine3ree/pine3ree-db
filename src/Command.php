@@ -9,6 +9,7 @@ namespace P3\Db;
 
 use PDOStatement;
 use P3\Db\CommandInterface;
+use P3\Db\Sql;
 use P3\Db\Sql\Statement as SqlStatement;
 
 /**
