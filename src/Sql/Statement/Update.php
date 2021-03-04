@@ -152,7 +152,7 @@ class Update extends Statement
             $set[]  = "{$column} = {$param}";
         }
 
-        return Sql::UPDATE . " {$table} " . Sql::SET . implode(", ", $set);
+        return Sql::UPDATE . " {$table} " . Sql::SET . " " .implode(", ", $set);
     }
 
     public function __get(string $name)
