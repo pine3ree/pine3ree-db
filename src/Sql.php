@@ -97,7 +97,7 @@ class Sql
     public const JOIN_CROSS         = 'CROSS';
     public const JOIN_LEFT          = 'LEFT';
     public const JOIN_RIGHT         = 'RIGHT';
-    public const JOIN_STRAIGHT      = 'STRAIGHT JOIN';
+    public const JOIN_STRAIGHT      = 'STRAIGHT';
     public const JOIN_NATURAL       = 'NATURAL';
     public const JOIN_NATURAL_LEFT  = 'NATURAL LEFT';
     public const JOIN_NATURAL_RIGHT = 'NATURAL RIGHT';
