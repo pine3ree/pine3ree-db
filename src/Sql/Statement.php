@@ -34,7 +34,7 @@ abstract class Statement extends Element
     /**
      * Remove any cached SQL string
      */
-    public function clearSQL()
+    protected function clearSQL()
     {
         parent::clearSQL();
         $this->sqls = [];

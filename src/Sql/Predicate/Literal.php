@@ -41,7 +41,7 @@ class Literal extends Predicate
         return $this->literal;
     }
 
-    public function clearSQL()
+    protected function clearSQL()
     {
         // no-op
     }
