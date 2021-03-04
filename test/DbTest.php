@@ -8,18 +8,15 @@
 
 namespace P3\DbTest;
 
-use InvalidArgumentException;
-use P3\Db\Command;
+use P3\Db\Command\Delete;
+use P3\Db\Command\Insert;
+use P3\Db\Command\Select;
+use P3\Db\Command\Update;
 use P3\Db\Db;
 use P3\Db\Sql;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Statement;
-use PDO;
-use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
-use ReflectionProperty;
-use RuntimeException;
-use stdClass;
+use P3\Db\Sql\Driver\Sqlite;
+use SebastianBergmann\CodeCoverage\Driver\Driver;
+use SebastianBergmann\CodeCoverage\TestCase;
 
 class DbTest extends TestCase
 {
@@ -271,7 +268,7 @@ EOIS
     public function testSelectCall()
     {
         $db = new Db(self::DSN);
-        self::assertInstanceOf(Command\Select::class, $db->select());
+        self::assertInstanceOf(Select::class, $db->select());
     }
 
     public function testFetchOneBy()
@@ -359,8 +356,8 @@ EOIS
 
     public function testInsert()
     {
-        self::assertInstanceOf(Command\Insert::class, $this->db->insert());
-        self::assertInstanceOf(Command\Insert::class, $this->db->insert('product'));
+        self::assertInstanceOf(Insert::class, $this->db->insert());
+        self::assertInstanceOf(Insert::class, $this->db->insert('product'));
 
         $affected = $this->db->insert('product', []);
         self::assertSame(0, $affected);
@@ -407,8 +404,8 @@ EOIS
 
     public function testUpdate()
     {
-        self::assertInstanceOf(Command\Update::class, $this->db->update());
-        self::assertInstanceOf(Command\Update::class, $this->db->update('product'));
+        self::assertInstanceOf(Update::class, $this->db->update());
+        self::assertInstanceOf(Update::class, $this->db->update('product'));
 
         $affected = $this->db->update('product', ['price' => 99.99], "id > 99");
         self::assertSame(0, $affected);
@@ -425,8 +422,8 @@ EOIS
 
     public function testDelete()
     {
-        self::assertInstanceOf(Command\Delete::class, $this->db->delete());
-        self::assertInstanceOf(Command\Delete::class, $this->db->delete('product'));
+        self::assertInstanceOf(Delete::class, $this->db->delete());
+        self::assertInstanceOf(Delete::class, $this->db->delete('product'));
 
         $affected = $this->db->delete('product', "id > 99");
         self::assertSame(0, $affected);
@@ -539,7 +536,7 @@ EOIS
             self::assertSame($db->quoteIdentifier($column), $sqlDriver->quoteIdentifier($column));
             self::assertSame($db->quoteAlias($alias), $sqlDriver->quoteAlias($alias));
 
-            if ($sqlDriver instanceof Driver\Sqlite) {
+            if ($sqlDriver instanceof Sqlite) {
                 $pdo = $db->getPDO(true);
                 self::assertSame($pdo->quote($value), $db->quoteValue($value));
                 self::assertSame($pdo->quote($value), $sqlDriver->quoteValue($value));
