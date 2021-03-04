@@ -9,9 +9,9 @@
 namespace P3\DbTest\Factory;
 
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use P3\Db\Db;
 use P3\Db\Factory\DbFactory;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 class DbFactoryTest extends TestCase
