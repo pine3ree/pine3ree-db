@@ -8,15 +8,21 @@
 
 namespace P3\DbTest;
 
+use InvalidArgumentException;
 use P3\Db\Command\Delete;
 use P3\Db\Command\Insert;
 use P3\Db\Command\Select;
 use P3\Db\Command\Update;
 use P3\Db\Db;
 use P3\Db\Sql;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Sqlite;
-use SebastianBergmann\CodeCoverage\Driver\Driver;
-use SebastianBergmann\CodeCoverage\TestCase;
+use PDO;
+use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use ReflectionProperty;
+use RuntimeException;
+use stdClass;
 
 class DbTest extends TestCase
 {
