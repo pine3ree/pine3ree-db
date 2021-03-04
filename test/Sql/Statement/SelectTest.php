@@ -9,19 +9,17 @@
 namespace P3\DbTest\Sql\Statement;
 
 use InvalidArgumentException;
-//use PDO;
-use PHPUnit\Framework\TestCase;
-use P3\Db\Sql\Clause\Join;
-use P3\Db\Sql\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Alias;
+use P3\Db\Sql\Clause\Join;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
-
-use function getenv;
+use stdClass;
 
 class SelectTest extends TestCase
 {
@@ -137,24 +135,35 @@ class SelectTest extends TestCase
         ];
     }
 
-    public function textExceptionsOnInvalidColumnTypes()
+    /**
+     * @dataProvider provideInvalidTypeColumn
+     */
+    public function textThatExceptionIsThrownOnInvalidTypeColumns($column)
     {
         $select = new Select(null, 'user');
 
         $this->expectException(InvalidArgumentException::class);
-        $select->columns([new \stdClass()]);
-        $this->expectException(InvalidArgumentException::class);
-        $select->column(new \stdClass());
+        $select->columns([$column]);
+    }
+
+    /**
+     * @dataProvider provideInvalidTypeColumn
+     */
+    public function textThatExceptionIsThrownOnInvalidTypeColumn($column)
+    {
+        $select = new Select(null, 'user');
 
         $this->expectException(InvalidArgumentException::class);
-        $select->columns([null]);
-        $this->expectException(InvalidArgumentException::class);
-        $select->column(null);
+        $select->column($column);
+    }
 
-        $this->expectException(InvalidArgumentException::class);
-        $select->columns([0]);
-        $this->expectException(InvalidArgumentException::class);
-        $select->column(0);
+    public function provideInvalidTypeColumn(): array
+    {
+        return [
+            [new stdClass()],
+            [null],
+            [0],
+        ];
     }
 
     public function testSelectWithoutFromRisesExceptionOnGetSQL()
@@ -166,20 +175,26 @@ class SelectTest extends TestCase
         self::assertSame("SELECT *", $select->getSQL($this->driver));
     }
 
-    public function testInvalidFromRisesException()
+    public function testEmptyFromRisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from('', null);
+    }
 
+    public function testInvalidTypeFromRisesException()
+    {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from(new stdClass(), null);
     }
 
-    public function testFromSubselectWithEmptyAliasRisesException()
+    public function testFromSubselectWithoutAliasRisesException()
     {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from(new Select([], 'subtable'), null);
+    }
 
+    public function testFromSubselectWithEmptyAliasRisesException()
+    {
         $this->expectException(InvalidArgumentException::class);
         (new Select())->from(new Select([], 'subtable', ''), null);
     }
