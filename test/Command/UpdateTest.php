@@ -107,4 +107,32 @@ class UpdateTest extends TestCase
         self::assertStringStartsWith("UPDATE `user` SET `enabled` = :set", $update->getSql());
         self::assertStringEndsWith(" WHERE id = 42", $update->getSql());
     }
+
+    public function testExecSuccessReturnsInt()
+    {
+        $update = $this->createUpdateCommand($db);
+        $update->table('user');
+
+        $this->pdoStatement->rowCount()->willReturn(1);
+        $result = $update->set(['username' => 'popeye'])->exec();
+        self::assertSame(1, $result);
+
+        $this->pdoStatement->rowCount()->willReturn(0);
+        $result = $update->set(['username' => 'INVALID'])->exec();
+        self::assertSame(0, $result);
+    }
+
+    public function testExecFailureReturnsFalse()
+    {
+        $update = $this->createUpdateCommand($db);
+        $update->table('user');
+
+        $this->pdoStatement->rowCount()->willReturn(false);
+        $result = $update->set(['username' => 'INVALID'])->exec();
+        self::assertSame(false, $result);
+
+        $this->pdoStatement->execute()->willReturn(false);
+        $result = $update->set(['username' => 'INVALID'])->exec();
+        self::assertSame(false, $result);
+    }
 }
