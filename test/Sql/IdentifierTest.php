@@ -9,9 +9,10 @@
 namespace P3\DbTest\Sql\Driver;
 
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Driver;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class IdentifierTest extends TestCase
 {
@@ -26,35 +27,56 @@ class IdentifierTest extends TestCase
     /**
      * @dataProvider provideInvalidIdentifiers
      */
-    public function testIdentifierConstructorRaisesExceptionWIthInnvalidIdentifiers($alias)
+    public function testIdentifierConstructorRaisesExceptionWIthInnvalidIdentifieres($identifier)
     {
         $this->expectException(InvalidArgumentException::class);
-        $aliasObj = new Identifier($alias);
+        $identifierObj = new Identifier($identifier);
     }
 
     /**
      * @dataProvider provideIdentifiers
      */
-    public function testIdentifier(string $alias, string $expected)
+    public function testIdentifier(string $identifier, string $expected)
     {
-        self::assertSame($expected, (new Identifier($alias))->getSQL(Driver::ansi()));
+        self::assertSame($expected, (new Identifier($identifier))->getSQL(Driver::ansi()));
     }
 
     public function provideIdentifiers(): array
     {
         return [
-            ['t0', '"t0"'],
-            ['_t', '"_t"'],
-            ['tb.column', '"tb"."column"'],
+            ['cart', '"cart"'],
+            ['_cart_to_product', '"_cart_to_product"'],
+            ['product.price', '"product"."price"'],
         ];
+    }
+
+    /**
+     * @dataProvider provideInvalidIdentifiers
+     */
+    public function testInvalidIdentifierRaisesException(string $identifier)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $identifierObj = new Identifier($identifier);
     }
 
     public function provideInvalidIdentifiers(): array
     {
         return [
-            ['"t0"'],
-            ['4t'],
-            ['"some.column"'],
+            [''],
+            ['"cart"'],
+            ['`cart`'],
+            ['"product.id"'],
         ];
+    }
+
+    public function testMagicGetter()
+    {
+        $identifierArg = 't0.id';
+        $identifierObj = new Identifier($identifierArg);
+
+        self::assertSame($identifierArg, $identifierObj->identifier);
+
+        $this->expectException(RuntimeException::class);
+        $identifierObj->nonexistentProperty;
     }
 }

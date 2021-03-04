@@ -9,9 +9,10 @@
 namespace P3\DbTest\Sql\Driver;
 
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class AliasTest extends TestCase
 {
@@ -55,7 +56,7 @@ class AliasTest extends TestCase
     public function testInvalidAliasRaisesException(string $alias)
     {
         $this->expectException(InvalidArgumentException::class);
-        $alias = new Alias($alias);
+        $aliasObj = new Alias($alias);
     }
 
     public function provideInvalidAliases(): array
@@ -68,12 +69,14 @@ class AliasTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideInvalidAliases
-     */
-    public function testGetNonExistentPropertyRaisesException(string $alias)
+    public function testMagicGetter()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $alias = new Alias($alias);
+        $aliasArg = 't';
+        $aliasObj = new Alias($aliasArg);
+
+        self::assertSame($aliasArg, $aliasObj->alias);
+
+        $this->expectException(RuntimeException::class);
+        $aliasObj->nonexistentProperty;
     }
 }
