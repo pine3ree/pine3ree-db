@@ -23,19 +23,18 @@ use stdClass;
 
 class DbTest extends TestCase
 {
-    /** @var Command */
-    private $command;
-
-    /** @var Driver\Mysql */
-    private $driver;
-
-    /** @var Statement\Select */
-    private $sqlStatement;
-
-    /** @var Db */
+    /**
+     * The Db instance used to interact with sqlite memory database
+     *
+     * @var Db
+     */
     private $db;
 
-    /** @var PDO */
+    /**
+     * The PDO instance used to interact with sqlite memory database
+     *
+     * @var PDO
+     */
     private $pdo;
 
     /** @var string */
