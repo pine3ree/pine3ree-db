@@ -32,7 +32,7 @@ class Expression extends Predicate
     /**
      * @var array
      */
-    private $substitutions;
+    private $substitutions = [];
 
     /**
      * @param string $expression The SQL expression with optional {name}-placeholders
