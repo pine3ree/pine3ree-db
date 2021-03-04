@@ -243,24 +243,24 @@ class Db
      * @param PDO $pdo
      * @return void
      */
-    private function initializePDO(PDO $pdo): void
+    private function initializePDO(): void
     {
-        if ($this->pdoIsInitialized) {
+        if ($this->pdoIsInitialized || !isset($this->pdo)) {
             return;
         }
 
         // set attributes if a PDO instance was passed in
         if (empty($this->dsn)) {
             foreach ($this->options as $attribute => $value) {
-                $pdo->setAttribute($attribute, $value);
+                $this->pdo->setAttribute($attribute, $value);
             }
         }
 
-        switch ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
+        switch ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
             // set charset for pgsql: since charset is a developer written
             // configuration value there is no need for escaping
             case 'pgsql':
-                $pdo->exec("SET NAMES '{$this->charset}'");
+                $this->pdo->exec("SET NAMES '{$this->charset}'");
                 break;
         }
 
