@@ -8,19 +8,17 @@
 
 namespace P3\DbTest\Command;
 
-//use PDO;
-use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use PDO;
-use PDOStatement;
-use P3\Db\Command;
 use P3\Db\Command\Select;
 use P3\Db\Db;
-use P3\Db\Sql\Driver;
 use P3\Db\Sql;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Literal;
+use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement;
+use PDO;
+use PDOStatement;
+use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
+use RuntimeException;
+use stdClass;
 
 class SelectTest extends TestCase
 {
@@ -125,7 +123,7 @@ class SelectTest extends TestCase
             || PDO::FETCH_CLASS === $fetchMode
             || PDO::FETCH_LAZY === $fetchMode
         ) {
-            $obj = new \stdClass();
+            $obj = new stdClass();
             $obj->id = $id;
             $obj->username = "username{$id}";
             $obj->email = "email{$id}@example.com";
@@ -471,7 +469,7 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user')->indexBy('email');
 
-        $indexByProp = new \ReflectionProperty(Select::class, 'indexBy');
+        $indexByProp = new ReflectionProperty(Select::class, 'indexBy');
         $indexByProp->setAccessible(true);
 
         self::assertSame('email', $indexByProp->getValue($select));
@@ -569,7 +567,7 @@ class SelectTest extends TestCase
         $rows = $this->buildResultRows($fetchMode ?? PDO::FETCH_ASSOC);
         $this->pdoStatement->fetchAll()->willReturn($rows);
         $this->pdoStatement->fetchAll($fetchMode ?? PDO::FETCH_ASSOC)->willReturn($rows);
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         if (!is_int($fetchMode)) {
             $select->fetchAll();
@@ -631,11 +629,11 @@ class SelectTest extends TestCase
           [null, null],
           [PDO::FETCH_ASSOC, null],
           [PDO::FETCH_BOTH, null],
-          [PDO::FETCH_OBJ, \stdClass::class],
-          [PDO::FETCH_CLASS, \stdClass::class],
-          [PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, \stdClass::class],
-          [PDO::FETCH_LAZY, \stdClass::class],
-          [PDO::FETCH_INTO, new \stdClass()],
+          [PDO::FETCH_OBJ, stdClass::class],
+          [PDO::FETCH_CLASS, stdClass::class],
+          [PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, stdClass::class],
+          [PDO::FETCH_LAZY, stdClass::class],
+          [PDO::FETCH_INTO, new stdClass()],
         ];
     }
 
@@ -659,7 +657,7 @@ class SelectTest extends TestCase
         return[
             [PDO::FETCH_CLASS, 1],
             [PDO::FETCH_CLASS, null],
-            [PDO::FETCH_CLASS, new \stdClass()],
+            [PDO::FETCH_CLASS, new stdClass()],
             [PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, null],
             [PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 1],
             [PDO::FETCH_INTO, null],
