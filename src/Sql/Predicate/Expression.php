@@ -10,6 +10,7 @@ namespace P3\Db\Sql\Predicate;
 use InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
+use RuntimeException;
 
 use function str_replace;
 use function strpos;
@@ -17,6 +18,9 @@ use function trim;
 
 /**
  * This class represents a sql expression predicate with parameter markers
+ *
+ * @property-read string $expression The expression string itself
+ * @property-read string $substitutions The placeholder substitutions
  */
 class Expression extends Predicate
 {
@@ -83,5 +87,20 @@ class Expression extends Predicate
         }
 
         return $this->sql = $sql;
+    }
+
+    public function __get(string $name)
+    {
+        if ('expression' === $name) {
+            return $this->expression;
+        };
+
+        if ('substitutions' === $name) {
+            return $this->substitutions;
+        };
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 }
