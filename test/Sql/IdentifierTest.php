@@ -6,7 +6,7 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql\Driver;
+namespace P3\DbTest\Sql;
 
 use InvalidArgumentException;
 use P3\Db\Sql\Identifier;
