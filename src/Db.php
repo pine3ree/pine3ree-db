@@ -163,7 +163,6 @@ class Db
             $this->pdoIsInitialized = false;
             $this->pdo = $this->createPDO();
             $this->initializePDO($this->pdo);
-            var_dump(__METHOD__);
         }
     }
 
