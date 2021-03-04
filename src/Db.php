@@ -252,7 +252,7 @@ class Db
         // set attributes if a PDO instance was passed in
         if (empty($this->dsn)) {
             foreach ($this->options as $attribute => $value) {
-                $this->pdo->setAttribute($attribute, $value);
+                $pdo->setAttribute($attribute, $value);
             }
         }
 
