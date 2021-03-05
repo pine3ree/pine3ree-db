@@ -324,7 +324,7 @@ class Set extends Predicate
             }
 
             throw new InvalidArgumentException(
-                "A predicate specs-array must be provide in one of the following forms: "
+                "A predicate specs-array must be provided in one of the following forms: "
                 . " [identifier, operator, value[, extra]]"
                 . " or [identifier => value]"
                 . " or ['&&', predicateOrSpecs] or ['||', predicateOrSpecs]"
