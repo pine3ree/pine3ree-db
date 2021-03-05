@@ -139,7 +139,7 @@ class Comparison extends Predicate
         return $this->sql = "{$identifier} {$operator} {$param}";
     }
 
-    private function getParameterName(string $operator): ?string
+    private function getParameterName(string $operator): string
     {
         if ('=' === $operator) {
             return 'eq';
@@ -163,6 +163,8 @@ class Comparison extends Predicate
             return 'gt';
         }
 
-        return null;
+        // @codeCoverageIgnoreStart
+        return 'comp';
+        // @codeCoverageIgnoreEnd
     }
 }
