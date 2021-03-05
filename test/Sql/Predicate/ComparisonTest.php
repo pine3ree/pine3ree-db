@@ -153,7 +153,7 @@ class ComparisonTest extends TestCase
     public function testEqualWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '=', $value);
-        self::assertRegExp('/^\"tb\"\.\"column\" = \:eq[1-9][0-9]*$/', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" = :eq%d', $predicate->getSQL());
     }
 
     /**
@@ -162,10 +162,10 @@ class ComparisonTest extends TestCase
     public function testNotEqualWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '!=', $value);
-        self::assertRegExp('/^\"tb\"\.\"column\" \!= \:neq[1-9][0-9]*$/', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" != :neq%d', $predicate->getSQL());
 
         $predicate = new Comparison("tb.column", '<>', $value);
-        self::assertRegExp('/^\"tb\"\.\"column\" <> \:ne[1-9][0-9]*$/', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" <> :ne%d', $predicate->getSQL());
     }
 
     /**
