@@ -45,87 +45,113 @@ class SqlTest extends TestCase
         self::assertInstanceOf(Expression::class, Sql::expr("C != D"));
         self::assertInstanceOf(Literal::class, Sql::literal("E = E"));
     }
-
-    /**
-     * @dataProvider provideSqls
-     */
-    public function testIsEmptySQL($sql, bool $expected)
-    {
-        self::assertSame($expected, Sql::isEmptySQL($sql));
-    }
-
-    public function provideSqls(): array
-    {
-        return [
-            [null, true],
-            ['', true],
-            [42, true],
-            [new \stdClass(), true],
-        ];
-    }
-
-    /**
-     * @dataProvider providePredicates
-     */
-    public function testIsEmptyPredicate($predicate, bool $checkEmptySet, bool $expected)
-    {
-        self::assertSame($expected, Sql::isEmptyPredicate($predicate, $checkEmptySet));
-    }
-
-    public function providePredicates(): array
-    {
-        return [
-            [null, false, true],
-            ['', false, true],
-            [42, false, true],
-            [new \stdClass(), false, true],
-            [new Sql\Predicate\IsFalse('enabled'), false, false],
-            [new Sql\Predicate\Between('id', 1, 42), false, false],
-            [new Sql\Predicate\Set(), false, false],
-            [new Sql\Predicate\Set(), true, true],
-            [new Sql\Predicate\Set("enabled IS TRUE"), true, false],
-            [new Sql\Predicate\Set(["enabled IS FALSE"]), true, false],
-        ];
-    }
-
-    /**
-     * @dataProvider provideInvalidPredicates
-     */
-    public function testAssertValidPredicate($predicate)
-    {
-        $this->expectException(InvalidArgumentException::class);
-        Sql::assertValidPredicate($predicate);
-    }
-
-    public function provideInvalidPredicates(): array
-    {
-        return [
-            [null],
-            [42],
-            [false],
-            [true],
-            [new \stdClass()],
-        ];
-    }
+//
+//    /**
+//     * @dataProvider provideSqls
+//     */
+//    public function testIsEmptySQL($sql, bool $expected)
+//    {
+//        self::assertSame($expected, Sql::isEmptySQL($sql));
+//    }
+//
+//    public function provideSqls(): array
+//    {
+//        return [
+//            [null, true],
+//            ['', true],
+//            [42, true],
+//            [new \stdClass(), true],
+//        ];
+//    }
+//
+//    /**
+//     * @dataProvider providePredicates
+//     */
+//    public function testIsEmptyPredicate($predicate, bool $checkEmptySet, bool $expected)
+//    {
+//        self::assertSame($expected, Sql::isEmptyPredicate($predicate, $checkEmptySet));
+//    }
+//
+//    public function providePredicates(): array
+//    {
+//        return [
+//            [null, false, true],
+//            ['', false, true],
+//            [42, false, true],
+//            [new \stdClass(), false, true],
+//            [new Sql\Predicate\IsFalse('enabled'), false, false],
+//            [new Sql\Predicate\Between('id', 1, 42), false, false],
+//            [new Sql\Predicate\Set(), false, false],
+//            [new Sql\Predicate\Set(), true, true],
+//            [new Sql\Predicate\Set("enabled IS TRUE"), true, false],
+//            [new Sql\Predicate\Set(["enabled IS FALSE"]), true, false],
+//        ];
+//    }
+//
+//    /**
+//     * @dataProvider provideInvalidPredicates
+//     */
+//    public function testAssertValidPredicate($predicate)
+//    {
+//        $this->expectException(InvalidArgumentException::class);
+//        Sql::assertValidPredicate($predicate);
+//    }
+//
+//    public function provideInvalidPredicates(): array
+//    {
+//        return [
+//            [null],
+//            [42],
+//            [false],
+//            [true],
+//            [new \stdClass()],
+//        ];
+//    }
+//
+//    /**
+//     * @dataProvider provideInvalidJoinTypes
+//     */
+//    public function testInvalidJoinAssertion(string $join)
+//    {
+//        $this->expectException(InvalidArgumentException::class);
+//        Sql::assertValidJoin($join);
+//    }
 
     /**
      * @dataProvider provideInvalidJoinTypes
      */
-    public function testInvalidJoinAssertion(string $join)
+    public function testIsValidJoinWithInvalidJoinType(string $join)
     {
-        $this->expectException(InvalidArgumentException::class);
-        Sql::assertValidJoin($join);
+        self::assertFalse(Sql::isValidJoin($join));
     }
 
     public function provideInvalidJoinTypes(): array
     {
-        return[
+        return [
             ['A'],
             ['B'],
             ['INNER OUTER'],
             ['EXTREME'],
             ['GLUE'],
         ];
+    }
+
+    /**
+     * @dataProvider provideValidJoinTypes
+     */
+    public function testIsValidJoinWithValidJoinType(string $join)
+    {
+        self::assertTrue(Sql::isValidJoin($join));
+    }
+
+    public function provideValidJoinTypes(): array
+    {
+        $types = [];
+        foreach (Sql::JOIN_TYPES as $type) {
+            $types[] = [$type];
+        }
+
+        return $types;
     }
 
     /**
@@ -157,36 +183,6 @@ class SqlTest extends TestCase
     public function provideUnsupportedOperatorStrings(): array
     {
         return [['^'], ['"'], ['~'], [';'], ['HELLO']];
-    }
-
-    /**
-     * @dataProvider provideUnsupportedOperatorsValues
-     */
-    public function testUnsupportedOperatorsAssertion($operator)
-    {
-        $this->expectException(InvalidArgumentException::class);
-        Sql::assertValidOperator($operator);
-    }
-
-    /**
-     * @dataProvider provideSupportedOperators
-     */
-    public function testSupportedOperatorsAssertion(string $operator)
-    {
-        $ex = null;
-
-        try {
-            Sql::assertValidOperator($operator);
-        } catch (Exception $ex) {
-            self::fail("Unsupported operator provided: `{$operator}`!");
-        }
-
-        self::assertNull($ex);
-    }
-
-    public function provideUnsupportedOperatorsValues(): array
-    {
-        return [['^'], ['"'], ['~'], [';'], ['HELLO'], [1.23], [42], [[]], [new \stdClass()]];
     }
 
     public function testCreateInvalidAliasRaisesException()
