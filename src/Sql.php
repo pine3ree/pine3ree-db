@@ -282,11 +282,25 @@ class Sql
         }
     }
 
+    /**
+     * Check that the given SQL is a non-emty string
+     *
+     * @param type $sql
+     * @return bool
+     */
     public static function isEmptySQL($sql): bool
     {
         return !is_string($sql) || '' === trim($sql);
     }
 
+    /**
+     * Will return true if the given predicate is not a valid type for building
+     * a Predicate
+     *
+     * @param mixed $predicate
+     * @param bool $checkEmptySet
+     * @return bool
+     */
     public static function isEmptyPredicate($predicate, bool $checkEmptySet = false): bool
     {
         // empty values
@@ -309,6 +323,23 @@ class Sql
 
         // last valid type: not-empty array
         return !is_array($predicate);
+    }
+
+    public function assertValidPredicate($predicate)
+    {
+        if (is_string($predicate)
+            || is_array($predicate)
+            || $predicate instanceof Predicate
+        ) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "Invalid or unsupported predicate,"
+            . " must be a string, a predicate or a predicate-specs array,"
+            . " '%s' provided!",
+            is_string($predicate) ? $predicate : gettype($predicate)
+        ));
     }
 
     /**
