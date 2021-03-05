@@ -247,6 +247,11 @@ class Sql
     public const MAX = 'MAX';
     public const AVG = 'AVG';
 
+    public static function isValidJoin(string $join): bool
+    {
+        return isset(self::JOIN_TYPES[strtoupper($join)]);
+    }
+
     public static function isSupportedOperator(string $operator): bool
     {
         return isset(self::OPERATORS[strtoupper($operator)]);
