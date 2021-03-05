@@ -121,7 +121,9 @@ class Set extends Predicate
         'notIn'  => Sql::NOT_IN,
         'NOTIN'  => Sql::NOT_IN,
         'NOT_IN' => Sql::NOT_IN,
+        '~'        => Sql::LIKE,
         'notLike'  => Sql::NOT_LIKE,
+        '!~'       => Sql::NOT_LIKE,
         'NOTLIKE'  => Sql::NOT_LIKE,
         'NOT_LIKE' => Sql::NOT_LIKE,
     ];
