@@ -8,11 +8,16 @@
 
 namespace P3\DbTest\Sql;
 
+use ArrayObject;
 use InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 use function array_keys;
 use function array_values;
@@ -63,6 +68,60 @@ class PredicateTest extends TestCase
                 return $this->sql = implode(" ", $sqls);
             }
         };
+    }
+
+    /**
+     * @dataProvider provideInvalidIdentifiers
+     */
+    public function testInvalidIdentifierRaisesException($identifier)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->createInstance($identifier, '=', 42);
+    }
+
+    public function provideInvalidIdentifiers(): array
+    {
+        return [
+            [new stdClass()],
+            [new ArrayObject()],
+            [''],
+            [null],
+            [1.23],
+        ];
+    }
+
+    public function provideValidIdentifiers(): array
+    {
+        return [
+            ['cart', '"cart"'],
+            ['_cart_to_product', '"_cart_to_product"'],
+            ['product.price', '"product"."price"'],
+        ];
+    }
+
+    public function testThatStringIdentifiersAreQuotedAsIdentifiers()
+    {
+        $predicate = $this->createInstance('tb.id', '=', 42);
+        self::assertStringMatchesFormat('"tb"."id" = :value%d', $predicate->getSQL());
+    }
+
+    public function testThatLiteralIdentifiersAreSupportedAndNotQuoted()
+    {
+        $literal = 'tb.column';
+        $predicate = $this->createInstance(new Literal($literal), '=', 42);
+        self::assertStringMatchesFormat("{$literal} = :value%d", $predicate->getSQL());
+    }
+
+    public function testThatSqlIdentifiersAreSupportedAndQuotedProperly()
+    {
+        $predicate = $this->createInstance(new Identifier('tb.column'), '=', 42);
+        self::assertStringMatchesFormat('"tb"."column" = :value%d', $predicate->getSQL());
+    }
+
+    public function testThatAliasIdentifiersAreSupportedAndQuotedProperly()
+    {
+        $predicate = $this->createInstance(new Alias('my.alias'), '=', 42);
+        self::assertStringMatchesFormat('"my.alias" = :value%d', $predicate->getSQL());
     }
 
     /**

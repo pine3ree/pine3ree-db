@@ -105,36 +105,6 @@ class ComparisonTest extends TestCase
         self::assertSame('"tb"."column" = "some.alias"', $predicate->getSQL());
     }
 
-    public function testThatStringIdentifiersAreQuotedAsIdentifiers()
-    {
-        $predicate = new Comparison('tb.id', '=', 42);
-        self::assertStringStartsWith('"tb"."id" = :', $predicate->getSQL());
-    }
-
-    public function testThatLiteralIdentifiersAreSupportedAndNotQuoted()
-    {
-        $literal = "tb.column";
-        $identifier = new Sql\Literal($literal);
-        $predicate = new Comparison($identifier, '=', 42);
-        self::assertStringStartsWith($literal . ' = :', $predicate->getSQL());
-    }
-
-    public function testThatSqlIdentifiersAreSupportedAndQuotedProperly()
-    {
-        $identifier = "tb.column";
-        $identifier = new Sql\Identifier($identifier);
-        $predicate = new Comparison($identifier, '=', 42);
-        self::assertStringStartsWith('"tb"."column" = :', $predicate->getSQL());
-    }
-
-    public function testThatAliasIdentifiersAreSupportedAndQuotedProperly()
-    {
-        $alias = "some.coolALias";
-        $alias = new Sql\Alias($alias);
-        $predicate = new Comparison($alias, '=', 42);
-        self::assertStringStartsWith('"some.coolALias" = :', $predicate->getSQL());
-    }
-
     public function testNullValue()
     {
         $predicate = new Comparison('tb.column', '=', null);

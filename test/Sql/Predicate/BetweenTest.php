@@ -25,26 +25,6 @@ class BetweenTest extends TestCase
     }
 
     /**
-     * @dataProvider provideInvalidIdentifiers
-     */
-    public function testContructorWithInvalidIdentifierRaisesException($identifier)
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $predicate = new Predicate\Between($identifier, 24, 42);
-    }
-
-    public function provideInvalidIdentifiers(): array
-    {
-        return [
-            [new stdClass()],
-            [new ArrayObject()],
-            [''],
-            [null],
-            [1.23],
-        ];
-    }
-
-    /**
      * @dataProvider provideInvalidLimit
      */
     public function testContructorWithInvalidLowerLimitRaisesException($min)
