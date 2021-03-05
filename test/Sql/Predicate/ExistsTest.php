@@ -10,6 +10,7 @@ namespace P3\DbTest\Sql\Predicate;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Predicate\Exists;
+use P3\Db\Sql\Predicate\NotExists;
 use PHPUnit\Framework\TestCase;
 
 class ExistsTest extends TestCase
@@ -30,5 +31,13 @@ class ExistsTest extends TestCase
         self::assertSame('EXISTS (SELECT * FROM "product")', $sql = $predicate->getSQL());
         // test cached sql
         self::assertSame($sql, $predicate->getSQL());
+    }
+
+    public function testNotExistsSql()
+    {
+        $select = Sql::select('*', 'product');
+        $predicate = new NotExists($select);
+
+        self::assertSame('NOT EXISTS (SELECT * FROM "product")', $predicate->getSQL());
     }
 }
