@@ -197,6 +197,8 @@ class Set extends Predicate
      */
     public function addPredicate($predicate): self
     {
+        Sql::assertValidPredicate($predicate);
+
         if (Sql::isEmptyPredicate($predicate)) {
             return $this; // throw?
         }
