@@ -847,6 +847,16 @@ class Set extends Predicate
         return $this->parent;
     }
 
+    /**
+     * Return the parent set if nested
+     * 
+     * @return self
+     */
+    public function getParent(): self
+    {
+        return $this->parent;
+    }
+
     public function __clone()
     {
         parent::__clone();
