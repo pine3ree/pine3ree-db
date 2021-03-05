@@ -26,7 +26,7 @@ trait InvokableMethodTrait
                 'The object argument must be a php object!'
             );
         }
-        $method = new ReflectionMethod(get_class($obj), $methodName);
+        $method = new ReflectionMethod(get_class($object), $methodName);
         $method->setAccessible(true);
 
         return $method->invokeArgs($object, $args);
