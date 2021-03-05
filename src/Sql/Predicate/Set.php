@@ -394,21 +394,12 @@ class Set extends Predicate
                 return new Predicate\NotLike($identifier, $value, $escape = $extra);
         }
 
-        // other not matched operators must use a scalar or literal value
-        if (is_array($value)) {
-            throw new InvalidArgumentException(
-                "Array value not supported for operator `{$operator}`!"
-            );
-        }
-
-        if ($value instanceof Literal) {
-            return new Predicate\Literal("{$identifier} {$operator} {$value->getSQL()}");
-        }
-
-        $marker = $this->createParam($value, null, 'expr');
-        $params[] = [$marker => $value];
-
-        return new Predicate\Expression("{$identifier} {$operator} {$marker}", $params);
+        // not matched operator: should be unreacheable
+        // @codeCoverageIgnoreStart
+        throw new InvalidArgumentException(
+            "Unsupported operator `{$operator}`!"
+        );
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -849,7 +840,7 @@ class Set extends Predicate
 
     /**
      * Return the parent set if nested
-     * 
+     *
      * @return self
      */
     public function getParent(): self
