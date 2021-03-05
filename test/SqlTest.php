@@ -8,7 +8,6 @@
 
 namespace P3\DbTest;
 
-//use PDO;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Sql;
@@ -86,6 +85,26 @@ class SqlTest extends TestCase
             [new Sql\Predicate\Set(), true, true],
             [new Sql\Predicate\Set("enabled IS TRUE"), true, false],
             [new Sql\Predicate\Set(["enabled IS FALSE"]), true, false],
+        ];
+    }
+
+    /**
+     * @dataProvider provideInvalidPredicates
+     */
+    public function testAssertValidPredicate($predicate)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Sql::assertValidPredicate($predicate);
+    }
+
+    public function provideInvalidPredicates(): array
+    {
+        return [
+            [null],
+            [42],
+            [false],
+            [true],
+            [new \stdClass()],
         ];
     }
 
