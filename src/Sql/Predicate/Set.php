@@ -801,7 +801,7 @@ class Set extends Predicate
         };
 
         if ('nextLogicalOperator' === $name) {
-            return $this->defaultLogicalOperator;
+            return $this->nextLogicalOperator;
         };
 
         if ('defaultLogicalOperator' === $name) {
