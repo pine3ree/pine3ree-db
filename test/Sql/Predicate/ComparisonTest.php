@@ -183,4 +183,12 @@ class ComparisonTest extends TestCase
             ['A'],
         ];
     }
+
+    public function testGetCachedSqlCall()
+    {
+        $predicate = new Predicate\Comparison('tb.column', '<>', null);
+        $sql = $predicate->getSQL();
+        self::assertSame($sql, $predicate->getSQL());
+    }
+
 }
