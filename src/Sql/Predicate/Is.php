@@ -85,7 +85,9 @@ class Is extends Predicate
         }
 
         self::throwInvalidArgumentException($value);
+        // @codeCoverageIgnoreStart
     }
+    // @codeCoverageIgnoreEnd
 
     protected static function throwInvalidArgumentException($value)
     {
