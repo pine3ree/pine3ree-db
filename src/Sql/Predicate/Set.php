@@ -31,6 +31,9 @@ use function trim;
 
 /**
  * Predicate\Set represents a group of predicates combined by AND and/or OR
+ *
+ * @property-read string $nextLogicalOperator The next logical operator
+ * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
 */
 class Set extends Predicate
 {
@@ -780,5 +783,20 @@ class Set extends Predicate
         foreach ($this->predicates as $i => $predicate) {
             $this->predicates[$i] = [$predicate[0], clone $predicate[1]];
         }
+    }
+
+    public function __get(string $name)
+    {
+        if ('nextLogicalOperator' === $name) {
+            return $this->nextLogicalOperator;
+        };
+
+        if ('predicates' === $name) {
+            return $this->predicates;
+        };
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 }
