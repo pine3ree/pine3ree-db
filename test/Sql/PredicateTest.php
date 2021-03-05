@@ -40,6 +40,8 @@ class PredicateTest extends TestCase
             protected $operator;
             protected $value;
 
+            protected static $index;
+            
             public function __construct($identifier, string $operator, $value)
             {
                 self::assertValidIdentifier($identifier);
