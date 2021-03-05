@@ -32,7 +32,7 @@ trait DiscloseTrait
         return $method->invokeArgs($object, $args);
     }
 
-    private function getProperty($object, string $propertyName)
+    private function getPropertyValue($object, string $propertyName)
     {
         if (!is_object($object)) {
             throw new InvalidArgumentException(
