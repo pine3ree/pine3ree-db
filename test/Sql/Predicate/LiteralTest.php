@@ -16,6 +16,8 @@ use RuntimeException;
 
 class LiteralTest extends TestCase
 {
+    use \P3\DbTest\InvokableMethodTrait;
+
     public function setUp(): void
     {
     }
@@ -83,7 +85,7 @@ class LiteralTest extends TestCase
         $literalObj = new Literal($literalArg);
 
         $literalObj = clone $literalObj;
-        //$literalObj->clearSQL();
+        $this->invokeMethod($literalObj, 'clearSQL');
 
         self::assertSame($literalArg, $literalObj->literal);
     }
