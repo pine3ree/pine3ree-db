@@ -35,7 +35,7 @@ class Between extends Predicate
     protected static $index = 0;
 
     /**
-     * @param string|Literal $identifier
+     * @param string|identifier|Alias|Literal $identifier
      * @param mixed $min_value
      * @param mixed $max_value
      */
