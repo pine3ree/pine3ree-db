@@ -44,7 +44,7 @@ class Like extends Predicate
     protected static $index = 0;
 
     /**
-     * @param string|Literal $identifier
+     * @param string|identifier|Alias|Literal $identifier
      * @param string|Literal $pattern
      * @param string|null $escape An optional custom escape character
      */
