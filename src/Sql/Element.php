@@ -136,11 +136,6 @@ abstract class Element implements ElementInterface
      */
     protected function importParams(self $element): void
     {
-        $params = $element->getParams();
-        if (empty($params)) {
-            return;
-        }
-
         // The operation fails if the inner element's sql string has not been
         // rendered yet, because it's during rendering that parameters and their
         // sql placeholders are created
@@ -148,6 +143,11 @@ abstract class Element implements ElementInterface
             throw new RuntimeException(
                 "Cannot import parameters from sql-element without a compiled SQL string!"
             );
+        }
+
+        $params = $element->getParams();
+        if (empty($params)) {
+            return;
         }
 
         $types = $element->getParamsTypes();
