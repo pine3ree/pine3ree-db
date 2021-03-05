@@ -47,7 +47,7 @@ class Literal extends Predicate
      * Do not clear literals sql cache.
      * There is no compilation involved must sql must be always set
      */
-    public function clearSQL()
+    protected function clearSQL()
     {
         // no-op
     }
