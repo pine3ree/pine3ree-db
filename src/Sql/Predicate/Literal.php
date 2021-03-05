@@ -41,11 +41,6 @@ class Literal extends Predicate
         return $this->literal;
     }
 
-    protected function clearSQL()
-    {
-        // no-op
-    }
-
     public function __clone()
     {
         // no-op
