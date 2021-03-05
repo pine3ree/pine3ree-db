@@ -14,6 +14,8 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
+use RuntimeException;
+use Throwable;
 
 use function count;
 use function current;
@@ -35,6 +37,7 @@ use function trim;
  * @property-read string $defaultLogicalOperator
  * @property-read string|null $nextLogicalOperator The next logical operator
  * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
+ * @property-read self|null $parent The parent predicate-set if this set is a nested-set
 */
 class Set extends Predicate
 {
@@ -199,7 +202,8 @@ class Set extends Predicate
     {
         self::assertValidPredicate($predicate);
 
-        if (self::isEmptyPredicate($predicate)) {
+        // allow adding empty nested-set (@see self::open())
+        if (self::isEmptyPredicate($predicate, false)) {
             return $this; // throw?
         }
 
@@ -239,12 +243,18 @@ class Set extends Predicate
             return null;
         }
 
-        if (is_string($predicate)) {
-            return new Predicate\Literal($predicate);
-        }
-
-        if (is_array($predicate)) {
-            return $this->buildPredicateFromSpecs($predicate);
+        try {
+            if (is_string($predicate)) {
+                return new Predicate\Literal($predicate);
+            }
+            if (is_array($predicate)) {
+                return $this->buildPredicateFromSpecs($predicate);
+            }
+        } catch (Throwable $ex) {
+            if ($throw) {
+                throw $ex;
+            }
+            return null;
         }
 
         if ($throw) {
@@ -315,7 +325,7 @@ class Set extends Predicate
             }
             $predicate = $specs[1];
             if (! $predicate instanceof Predicate) {
-                $predicate = $this->buildPredicate($predicate, true, true);
+                $predicate = $this->buildPredicate($predicate, true, false);
             }
 
             if ($predicate instanceof Predicate) {
@@ -857,6 +867,10 @@ class Set extends Predicate
 
         if ('defaultLogicalOperator' === $name) {
             return $this->defaultLogicalOperator;
+        };
+
+        if ('parent' === $name) {
+            return $this->parent;
         };
 
         throw new RuntimeException(
