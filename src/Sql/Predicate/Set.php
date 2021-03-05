@@ -408,6 +408,14 @@ class Set extends Predicate
     }
 
     /**
+     * @return string Returns either "AND" or "OR"
+     */
+    public function getNextLogicalOperator(): string
+    {
+        return $this->nextLogicalOperator;
+    }
+
+    /**
      * @return Predicate[]
      */
     public function getPredicates(): array
