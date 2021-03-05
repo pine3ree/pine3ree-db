@@ -16,7 +16,7 @@ use RuntimeException;
 
 class LiteralTest extends TestCase
 {
-    use \P3\DbTest\InvokableMethodTrait;
+    use \P3\DbTest\DiscloseTrait;
 
     public function setUp(): void
     {

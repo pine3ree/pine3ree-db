@@ -8,11 +8,16 @@
 
 namespace P3\DbTest\Sql\Driver;
 
-use PHPUnit\Framework\TestCase;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Driver\Ansi;
+use P3\DbTest\DiscloseTrait;
+use PDO;
+use PHPUnit\Framework\TestCase;
 
 class AnsiTest extends TestCase
 {
+    use DiscloseTrait;
+
     /** @var Driver\Ansi */
     private $driver;
 
@@ -62,6 +67,7 @@ class AnsiTest extends TestCase
             ['"some.other.alias"', '"some.other.alias"'],
         ];
     }
+
     /**
      * @dataProvider provideTestValues
      */
@@ -84,5 +90,20 @@ class AnsiTest extends TestCase
             ["ab\nc", "'ab\\nc'"],
             ["ab\"c", "'ab\\\"c'"],
         ];
+    }
+
+    /**
+     * @dataProvider provideTestValues
+     */
+    public function testSetPdoIsNoOp()
+    {
+        $pdo = $this->prophesize(PDO::class);
+
+        $this->driver->setPDO($pdo->reveal());
+
+        $pdoProp = new \ReflectionProperty(Ansi::class, 'pdo');
+        $pdoProp->setAccessible(true);
+
+        self::assertNull($pdoProp->getValue($this->driver));
     }
 }

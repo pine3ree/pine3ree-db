@@ -10,14 +10,14 @@ namespace P3\DbTest\Sql;
 
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
-use P3\DbTest\InvokableMethodTrait;
+use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 class ElementTest extends TestCase
 {
-    use InvokableMethodTrait;
+    use DiscloseTrait;
 
     public function setUp(): void
     {

@@ -17,7 +17,7 @@ use function is_object;
 /**
  * Provide method for invoking a private/protected object's method
  */
-trait InvokableMethodTrait
+trait DiscloseTrait
 {
     private function invokeMethod($object, string $methodName, ...$args)
     {
@@ -30,5 +30,18 @@ trait InvokableMethodTrait
         $method->setAccessible(true);
 
         return $method->invokeArgs($object, $args);
+    }
+
+    private function getProperty($object, string $propertyName)
+    {
+        if (!is_object($object)) {
+            throw new InvalidArgumentException(
+                'The object argument must be a php object!'
+            );
+        }
+        $propertyName = new \ReflectionProperty(get_class($object), $propertyName);
+        $propertyName->setAccessible(true);
+
+        return $propertyName->getValue($object);
     }
 }
