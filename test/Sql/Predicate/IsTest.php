@@ -8,10 +8,12 @@
 
 namespace P3\DbTest\Sql\Predicate;
 
+use ArrayObject;
 use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Predicate;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class IsTest extends TestCase
 {
@@ -23,10 +25,30 @@ class IsTest extends TestCase
     {
     }
 
+    /**
+     * @dataProvider provideUnsupportedCtorValues
+     */
+    public function testContructorWithUnsupportedValueRaisesException($value)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $predicate = new Predicate\Is('id', $value);
+    }
+
+    public function provideUnsupportedCtorValues(): array
+    {
+        return [
+            [new stdClass()],
+            [new ArrayObject()],
+            ['F-A-L-S-E'],
+        ];
+    }
+
     public function testIsNull()
     {
         $predicate = new Predicate\Is('id', null);
-        self::assertSame('"id" IS NULL', $predicate->getSQL());
+        self::assertSame('"id" IS NULL', $sql = $predicate->getSQL());
+        // test cached sql
+        self::assertSame($sql, $predicate->getSQL());
     }
 
     public function testIsNullWithString()
