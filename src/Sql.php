@@ -325,7 +325,7 @@ class Sql
         return !is_array($predicate);
     }
 
-    public function assertValidPredicate($predicate)
+    public static function assertValidPredicate($predicate)
     {
         if (is_string($predicate)
             || is_array($predicate)
