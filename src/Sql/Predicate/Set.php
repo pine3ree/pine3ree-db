@@ -766,20 +766,6 @@ class Set extends Predicate
         );
     }
 
-    public function regExp($identifier, array $regexp, bool $case_sensitive = false): self
-    {
-        return $this->addPredicate(
-            new Predicate\RegExp($identifier, $regexp, $case_sensitive)
-        );
-    }
-
-    public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): self
-    {
-        return $this->addPredicate(
-            new Predicate\NotRegExp($identifier, $regexp, $case_sensitive)
-        );
-    }
-
     /**
      * Set AND as the logical operator for next predicate
      *
