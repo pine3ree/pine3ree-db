@@ -63,6 +63,7 @@ class IdentifierTest extends TestCase
     {
         return [
             [''],
+            ['12cart'],
             ['"cart"'],
             ['`cart`'],
             ['"product.id"'],
