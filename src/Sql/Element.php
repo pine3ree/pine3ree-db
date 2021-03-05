@@ -314,9 +314,28 @@ abstract class Element implements ElementInterface
         ));
     }
 
-    protected static function assertValidIdentifier($identifier, string $type = '')
+    /**
+     * Check that the provided identifier is valid (a non empty string, a sql-literal,
+     * a sql-identifier or a sql-alias)
+     *
+     * @param mixed $identifier
+     * @param string $type
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    protected static function assertValidIdentifier(&$identifier, string $type = '')
     {
-        if (is_string($identifier)
+        if (is_string($identifier)) {
+            $identifier = trim($identifier);
+            if ('' === $identifier) {
+                throw new InvalidArgumentException(
+                    "A string identifier cannot be empty!"
+                );
+            }
+            return;
+        }
+
+        if (false
             || $identifier instanceof Identifier
             || $identifier instanceof Alias
             || $identifier instanceof Literal

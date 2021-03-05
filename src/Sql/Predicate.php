@@ -16,7 +16,7 @@ use P3\Db\Sql\Element;
  */
 abstract class Predicate extends Element
 {
-    protected static function assertValidIdentifier($identifier, string $type = '')
+    protected static function assertValidIdentifier(&$identifier, string $type = '')
     {
         parent::assertValidIdentifier($identifier, "{$type}predicate ");
     }
