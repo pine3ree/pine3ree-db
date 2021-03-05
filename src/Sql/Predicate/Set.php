@@ -33,7 +33,7 @@ use function trim;
  * Predicate\Set represents a group of predicates combined by AND and/or OR
  *
  * @property-read string $defaultLogicalOperator
- * @property-read string $nextLogicalOperator The next logical operator
+ * @property-read string|null $nextLogicalOperator The next logical operator
  * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
 */
 class Set extends Predicate
@@ -44,8 +44,8 @@ class Set extends Predicate
     /** @var string */
     protected $defaultLogicalOperator = Sql::AND;
 
-    /** @var string */
-    protected $nextLogicalOperator = Sql::AND;
+    /** @var string|null */
+    protected $nextLogicalOperator;
 
     /** @var self|null */
     protected $parent;
@@ -408,9 +408,9 @@ class Set extends Predicate
     }
 
     /**
-     * @return string Returns either "AND" or "OR"
+     * @return string Returns either null or "AND" or "OR"
      */
-    public function getNextLogicalOperator(): string
+    public function getNextLogicalOperator(): ?string
     {
         return $this->nextLogicalOperator;
     }
