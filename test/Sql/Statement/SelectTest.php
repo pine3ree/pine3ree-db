@@ -45,7 +45,10 @@ class SelectTest extends TestCase
         $select->columns($columns);
         $select->from('customer');
 
-        self::assertSame("SELECT {$expected_columns_sql} FROM `customer`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat(
+            "SELECT {$expected_columns_sql} FROM `customer`",
+            $select->getSQL($this->driver)
+        );
     }
 
     public function provideColumns(): array
@@ -61,7 +64,7 @@ class SelectTest extends TestCase
             ],
             [
                 new Expression("CONCAT('ABC', {str})", ['str' => 'DEF']),
-                "CONCAT('ABC', :expr1)",
+                "CONCAT('ABC', :expr%d)",
             ],
             [
                 [
@@ -116,7 +119,7 @@ class SelectTest extends TestCase
         $select = new Select(null, 'product');
         $select->column($column, $alias);
 
-        self::assertSame("SELECT {$column_sql} FROM `product`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat("SELECT {$column_sql} FROM `product`", $select->getSQL($this->driver));
     }
 
     public function provideColumn(): array
@@ -130,7 +133,7 @@ class SelectTest extends TestCase
             [
                 new Expression("SUM(unit_price) + {tax}", ['tax' => 5.00]),
                 'totalPrice',
-                "SUM(unit_price) + :expr2 AS `totalPrice`",
+                "SUM(unit_price) + :expr%d AS `totalPrice`",
             ],
         ];
     }
