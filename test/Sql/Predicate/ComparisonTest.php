@@ -25,32 +25,62 @@ class ComparisonTest extends TestCase
     {
     }
 
-    public function testContructorWithUnsupportedValueRaisesException()
+    /**
+     * @dataProvider provideUnsupportedCtorValues
+     */
+    public function testContructorWithUnsupportedValueRaisesException($value)
     {
-        foreach ([
-            new stdClass(),
-            new ArrayObject()
-        ] as $value) {
-            $this->expectException(InvalidArgumentException::class);
-            $predicate = new Comparison('tb.column', '=', $value);
-        }
+        $this->expectException(InvalidArgumentException::class);
+        $predicate = new Comparison('tb.column', '=', $value);
     }
 
-    public function testContructorWithUnsupportedOperatorRaisesException()
+    public function provideUnsupportedCtorValues(): array
     {
-        foreach (['+', '?', '1', 'N-O-T', 'I-s', '*'] as $operator) {
-            $this->expectException(InvalidArgumentException::class);
-            $predicate = new Comparison('tb.column', $operator, null);
-        }
+        return [
+            [new stdClass()],
+            [new ArrayObject()],
+        ];
     }
 
-    public function testGetSqlUsingNotSupportedOperatorWithNullValueRaisesException()
+    /**
+     * @dataProvider provideUnsupportedOperators
+     */
+    public function testContructorWithUnsupportedOperatorRaisesException($operator)
     {
-        foreach (['!=', '<>', '<', '<=', '>=', '>'] as $operator) {
-            $predicate = new Comparison('tb.column', $operator, null);
-            $this->expectException(InvalidArgumentException::class);
-            $predicate->getSQL();
-        }
+        $this->expectException(InvalidArgumentException::class);
+        $predicate = new Comparison('tb.column', $operator, null);
+    }
+
+    public function provideUnsupportedOperators(): array
+    {
+        return [
+            ['+'],
+            ['?'],
+            ['1'],
+            ['N-O-T'],
+            ['I-s'],
+            ['*'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideUnsupportedOperatorsForNull
+     */
+    public function testGetSqlUsingUnsupportedOperatorForNullValueRaisesException($operator)
+    {
+        $predicate = new Comparison('tb.column', $operator, null);
+        $this->expectException(InvalidArgumentException::class);
+        $predicate->getSQL();
+    }
+
+    public function provideUnsupportedOperatorsForNull(): array
+    {
+        return [
+            ['<'],
+            ['<='],
+            ['>='],
+            ['>'],
+        ];
     }
 
     public function testThatLiteralValuesAreSupported()
@@ -190,5 +220,4 @@ class ComparisonTest extends TestCase
         $sql = $predicate->getSQL();
         self::assertSame($sql, $predicate->getSQL());
     }
-
 }
