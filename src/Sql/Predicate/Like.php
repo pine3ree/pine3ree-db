@@ -52,11 +52,14 @@ class Like extends Predicate
     {
         self::assertValidIdentifier($identifier);
         self::assertValidPattern($pattern);
-        self::assertValidEscapeCharacter($escape);
 
         $this->identifier = $identifier;
         $this->pattern = $pattern;
-        $this->escape = $escape;
+
+        if (isset($escape)) {
+            self::assertValidEscapeCharacter($escape);
+            $this->escape = $escape;
+        }
     }
 
     protected static function assertValidPattern($pattern)
@@ -71,9 +74,6 @@ class Like extends Predicate
 
     protected static function assertValidEscapeCharacter(string $escape = null)
     {
-        if (null === $escape) {
-            return;
-        }
         if (strlen($escape) !== 1) {
             throw new InvalidArgumentException(
                 "The ESCAPE character must be either NULL or a 1-char string, `{$escape}` provided!"
