@@ -7,20 +7,16 @@
 
 namespace P3\Db;
 
-use InvalidArgumentException;
+use P3\Db\Sql\Alias;
+use P3\Db\Sql\Expression;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Delete;
 use P3\Db\Sql\Statement\Insert;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Update;
 
-use function gettype;
-use function is_array;
-use function is_string;
-use function sprintf;
 use function strtoupper;
-use function trim;
 
 /**
  * Class Sql exposes common SQL constants and utility methods
@@ -256,90 +252,9 @@ class Sql
         return isset(self::JOIN_TYPES[strtoupper($join)]);
     }
 
-    public static function assertValidJoin(string $join)
-    {
-        if (!self::isValidJoin($join)) {
-            throw new InvalidArgumentException(
-                "Invalid or unsupported SQL JOIN type: '{$join}' provided!"
-            );
-        }
-    }
-
     public static function isSupportedOperator(string $operator): bool
     {
         return isset(self::OPERATORS[strtoupper($operator)]);
-    }
-
-    public static function assertValidOperator($operator)
-    {
-        if (!is_string($operator)
-            || !self::isSupportedOperator($operator)
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                "Invalid or unsupported SQL operator, '%s' provided!",
-                is_string($operator) ? $operator : gettype($operator)
-            ));
-        }
-    }
-
-    /**
-     * Check that the given SQL is a non-emty string
-     *
-     * @param type $sql
-     * @return bool
-     */
-    public static function isEmptySQL($sql): bool
-    {
-        return !is_string($sql) || '' === trim($sql);
-    }
-
-    /**
-     * Will return true if the given predicate is not a valid type for building
-     * a Predicate
-     *
-     * @param mixed $predicate
-     * @param bool $checkEmptySet
-     * @return bool
-     */
-    public static function isEmptyPredicate($predicate, bool $checkEmptySet = false): bool
-    {
-        // empty values
-        if ($predicate === null || $predicate === []) {
-            return true;
-        }
-
-        // strings
-        if (is_string($predicate)) {
-            return trim($predicate) === '';
-        }
-
-        // predicates
-        if ($predicate instanceof Predicate) {
-            if ($checkEmptySet && $predicate instanceof Predicate\Set) {
-                return $predicate->isEmpty();
-            }
-            return false;
-        }
-
-        // last valid type: not-empty array
-        return !is_array($predicate);
-    }
-
-    public static function assertValidPredicate($predicate)
-    {
-        if (is_string($predicate)
-            || is_array($predicate)
-            || $predicate instanceof Predicate
-        ) {
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf(
-            "Invalid or unsupported predicate,"
-            . " must be a string, a predicate or a predicate-specs array,"
-            . " '%s' provided!",
-            is_string($predicate) ? $predicate : gettype($predicate)
-        ));
     }
 
     /**
@@ -390,20 +305,20 @@ class Sql
         return new Delete($table);
     }
 
-    public static function literal(string $literal): Sql\Literal
+    public static function literal(string $literal): Literal
     {
-        return new Sql\Literal($literal);
+        return new Literal($literal);
     }
 
-    public static function expression(string $expression, array $substitutions = []): Sql\Expression
+    public static function expression(string $expression, array $substitutions = []): Expression
     {
-        return new Sql\Expression($expression, $substitutions);
+        return new Expression($expression, $substitutions);
     }
 
     /**
      * @alias of self::expression()
      */
-    public static function expr(string $expression, array $substitutions = []): Sql\Expression
+    public static function expr(string $expression, array $substitutions = []): Expression
     {
         return self::expression($expression, $substitutions);
     }
@@ -412,21 +327,21 @@ class Sql
      * Create a sql-identifier
      *
      * @param string $identifier
-     * @return Sql\Identifier
+     * @return Identifier
      */
-    public static function identifier(string $identifier): Sql\Identifier
+    public static function identifier(string $identifier): Identifier
     {
-        return new Sql\Identifier($identifier);
+        return new Identifier($identifier);
     }
 
     /**
      * Create a sql-alias
      *
      * @param string $alias
-     * @return Sql\Alias
+     * @return Alias
      */
-    public static function alias(string $alias): Sql\Alias
+    public static function alias(string $alias): Alias
     {
-        return new Sql\Alias($alias);
+        return new Alias($alias);
     }
 }

@@ -53,7 +53,7 @@ class Comparison extends Predicate
     public function __construct($identifier, string $operator, $value)
     {
         self::assertValidIdentifier($identifier);
-        self::assertValidOperator($operator);
+        self::assertValidComparisonOperator($operator);
         self::assertValidComparisonValue($value);
 
         $this->identifier = $identifier;
@@ -61,7 +61,7 @@ class Comparison extends Predicate
         $this->value = $value;
     }
 
-    private static function assertValidOperator(string $operator)
+    protected static function assertValidComparisonOperator(string $operator)
     {
         if (!isset(Sql::COMPARISON_OPERATORS[$operator])) {
             throw new InvalidArgumentException(

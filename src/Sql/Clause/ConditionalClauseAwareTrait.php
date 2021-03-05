@@ -70,7 +70,7 @@ trait ConditionalClauseAwareTrait
         }
 
         $sql = $clause->getSQL($driver);
-        if (Sql::isEmptySQL($sql)) {
+        if (self::isEmptySQL($sql)) {
             return '';
         }
 

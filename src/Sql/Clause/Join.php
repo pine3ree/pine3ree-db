@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Clause;
 
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
@@ -53,7 +54,7 @@ class Join extends Clause
      */
     public function __construct(string $type, string $table, string $alias = null, $specification = null)
     {
-        Sql::assertValidJoin($type);
+        self::assertValidJoin($type);
 
         $this->type = $type;
         $this->setTable($table);
@@ -67,6 +68,15 @@ class Join extends Clause
             } else {
                 $this->setConditionalClause('specification', On::class, $specification);
             }
+        }
+    }
+
+    protected static function assertValidJoin(string $join)
+    {
+        if (!Sql::isValidJoin($join)) {
+            throw new InvalidArgumentException(
+                "Invalid or unsupported SQL JOIN type: '{$join}' provided!"
+            );
         }
     }
 
@@ -96,7 +106,7 @@ class Join extends Clause
             $specification = $this->specification->getSQL();
         } elseif ($this->specification instanceof On) {
             $specification = $this->getConditionalClauseSQL('specification', $driver);
-            if (!Sql::isEmptySQL($specification)) {
+            if (!self::isEmptySQL($specification)) {
                 $this->importParams($this->specification);
             }
         }

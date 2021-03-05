@@ -155,7 +155,7 @@ class Set extends Predicate
         $this->defaultLogicalOperator = $defaultLogicalOperator ?? Sql::AND;
 
         // quick test for empty value
-        if (Sql::isEmptyPredicate($predicates, true)) {
+        if (self::isEmptyPredicate($predicates, true)) {
             return;
         }
 
@@ -197,9 +197,9 @@ class Set extends Predicate
      */
     public function addPredicate($predicate): self
     {
-        Sql::assertValidPredicate($predicate);
+        self::assertValidPredicate($predicate);
 
-        if (Sql::isEmptyPredicate($predicate)) {
+        if (self::isEmptyPredicate($predicate)) {
             return $this; // throw?
         }
 
@@ -230,7 +230,7 @@ class Set extends Predicate
 
     protected function buildPredicate($predicate, bool $checkEmptyValue = false, bool $throw = true): ?Predicate
     {
-        if ($checkEmptyValue && Sql::isEmptyPredicate($predicate)) {
+        if ($checkEmptyValue && self::isEmptyPredicate($predicate)) {
             if ($throw) {
                 throw new InvalidArgumentException(
                     "Cannot build a predicate from an empty input value!"
@@ -345,7 +345,7 @@ class Set extends Predicate
             ?? self::OPERATOR_ALIAS[strtoupper($operator)]
             ?? strtoupper($operator);
 
-        Sql::assertValidOperator($operator);
+        self::assertValidOperator($operator);
 
         if (isset(Sql::COMPARISON_OPERATORS[$operator])) {
             if (is_array($value)) {
@@ -402,6 +402,55 @@ class Set extends Predicate
     }
 
     /**
+     * Will return true if the given predicate is not a valid type for building
+     * a Predicate
+     *
+     * @param mixed $predicate
+     * @param bool $checkEmptySet
+     * @return bool
+     */
+    protected static function isEmptyPredicate($predicate, bool $checkEmptySet = false): bool
+    {
+        // empty values
+        if ($predicate === null || $predicate === []) {
+            return true;
+        }
+
+        // strings
+        if (is_string($predicate)) {
+            return trim($predicate) === '';
+        }
+
+        // predicates
+        if ($predicate instanceof Predicate) {
+            if ($checkEmptySet && $predicate instanceof Predicate\Set) {
+                return $predicate->isEmpty();
+            }
+            return false;
+        }
+
+        // last valid type: not-empty array
+        return !is_array($predicate);
+    }
+
+    protected static function assertValidPredicate($predicate)
+    {
+        if (is_string($predicate)
+            || is_array($predicate)
+            || $predicate instanceof Predicate
+        ) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "Invalid or unsupported predicate,"
+            . " must be a string, a predicate or a predicate-specs array,"
+            . " '%s' provided!",
+            is_string($predicate) ? $predicate : gettype($predicate)
+        ));
+    }
+
+    /**
      * @return string Returns either "AND" or "OR"
      */
     public function getDefaultLogicalOperator(): string
@@ -449,7 +498,7 @@ class Set extends Predicate
             $logicalOperator = $p[0];
             $predicate = $p[1];
             $sql = $predicate->getSQL($driver);
-            if (Sql::isEmptySQL($sql)) {
+            if (self::isEmptySQL($sql)) {
                 continue;
             }
             if ($index > 0) {

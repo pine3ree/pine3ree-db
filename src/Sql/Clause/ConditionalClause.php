@@ -64,7 +64,7 @@ abstract class ConditionalClause extends Clause
         // predicate-set
 
         $predicates_sql = $this->conditions->getSQL($driver ?? Driver::ansi());
-        if (Sql::isEmptySQL($predicates_sql)) {
+        if (self::isEmptySQL($predicates_sql)) {
             return $this->sql = '';
         }
 

@@ -30,6 +30,7 @@ use function is_string;
 use function is_subclass_of;
 use function sprintf;
 use function strtolower;
+use function trim;
 
 /**
  * This abstract class represents a generic SQL element and is the ancestor
@@ -370,6 +371,17 @@ abstract class Element implements ElementInterface
             is_object($value) ? get_class($value) : gettype($value),
             static::class
         ));
+    }
+
+    /**
+     * Check that the given SQL is a non-emty string
+     *
+     * @param type $sql
+     * @return bool
+     */
+    protected static function isEmptySQL($sql): bool
+    {
+        return !is_string($sql) || '' === trim($sql);
     }
 
     /**

@@ -527,7 +527,7 @@ class Select extends Statement
         $sqls = [];
         foreach ($this->joins as $join) {
             $join_sql = $join->getSQL($driver);
-            if (Sql::isEmptySQL($join_sql)) {
+            if (self::isEmptySQL($join_sql)) {
                 continue;
             }
             $this->importParams($join);
@@ -792,7 +792,7 @@ class Select extends Statement
     {
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
-            if (Sql::isEmptySQL($union_sql)) {
+            if (self::isEmptySQL($union_sql)) {
                 return '';
             }
             $this->importParams($this->union);
@@ -801,7 +801,7 @@ class Select extends Statement
 
         if ($this->intersect instanceof self) {
             $intersect_sql = $this->intersect->getSQL($driver);
-            if (Sql::isEmptySQL($intersect_sql)) {
+            if (self::isEmptySQL($intersect_sql)) {
                 return '';
             }
             $this->importParams($this->intersect);
@@ -888,7 +888,7 @@ class Select extends Statement
         $sqls[] = $this->getLimitSQL($driver);
 
         foreach ($sqls as $index => $sql) {
-            if (Sql::isEmptySQL($sql)) {
+            if (self::isEmptySQL($sql)) {
                 unset($sqls[$index]);
             }
         }

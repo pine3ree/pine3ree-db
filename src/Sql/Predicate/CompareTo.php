@@ -40,14 +40,14 @@ abstract class CompareTo extends Predicate
     public function __construct($identifier, string $operator, Select $select)
     {
         self::assertValidIdentifier($identifier);
-        self::assertValidOperator($operator);
+        self::assertValidComparisonOperator($operator);
 
         $this->identifier = $identifier;
         $this->operator = $operator;
         $this->select = $select;
     }
 
-    private static function assertValidOperator(string $operator)
+    private static function assertValidComparisonOperator(string $operator)
     {
         if (!isset(Sql::COMPARISON_OPERATORS[$operator])) {
             throw new InvalidArgumentException(
