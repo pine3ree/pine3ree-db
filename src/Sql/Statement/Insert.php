@@ -83,18 +83,6 @@ class Insert extends Statement
      */
     public function columns(array $columns): self
     {
-        if (empty($columns)) {
-            throw new RuntimeException(
-                "Missing columns definitions in INSERT SQL!"
-            );
-        }
-
-        if (empty($columns)) {
-            throw new RuntimeException(
-                "Missing columns definitions in INSERT SQL!"
-            );
-        }
-
         self::assertValidColumns($columns);
 
         $this->columns = $columns;
@@ -104,6 +92,24 @@ class Insert extends Statement
         unset($this->sqls['columns'], $this->sqls['values']);
 
         return $this;
+    }
+
+    private static function assertValidColumns(array $columns)
+    {
+        if (empty($columns)) {
+            throw new RuntimeException(
+                "When specified, the INSERT column list must be a not empty array of column names!"
+            );
+        }
+
+        foreach ($columns as $column) {
+            if (!is_string($column) || is_numeric($column)) {
+                throw new RuntimeException(sprintf(
+                    'The INSERT columns must be valid table column names, `%s` provided!',
+                    is_string($column) ? $column : gettype($column)
+                ));
+            }
+        }
     }
 
     /**
@@ -241,24 +247,6 @@ class Insert extends Statement
         unset($this->sqls['values']);
 
         return $this;
-    }
-
-    private static function assertValidColumns(array $columns)
-    {
-        if (empty($columns)) {
-            throw new RuntimeException(
-                "When specified, the INSERT column list must be a not empty!"
-            );
-        }
-
-        foreach ($columns as $column) {
-            if (!is_string($column) || is_numeric($column)) {
-                throw new RuntimeException(sprintf(
-                    'The INSERT columns must be valid table column names, `%s` provided!',
-                    is_string($column) ? $column : gettype($column)
-                ));
-            }
-        }
     }
 
     /**
