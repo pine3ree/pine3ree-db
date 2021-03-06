@@ -826,6 +826,9 @@ class Select extends Statement
 
         $sql = rtrim("{$base_sql} {$clauses_sql}");
 
+        // quote any unquoted table name prefix
+        $sql = $this->quoteTableNames($sql, $driver);
+
         // quote any unquoted table alias prefix
         $sql = $this->quoteTableAliases($sql, $driver);
 
@@ -857,6 +860,33 @@ class Select extends Statement
         foreach ($tb_aliases as $tb_alias) {
             $search[] = "/(^|\(|\s){$tb_alias}\./";
             $replace[] = '\1' . "{$driver->quoteAlias($tb_alias)}.";
+        }
+
+        return preg_replace($search, $replace, $sql);
+    }
+
+    private function quoteTableNames(string $sql, Driver $driver): string
+    {
+        $tb_names = [];
+
+        if (!empty($this->table)) {
+            $tb_names[] = $this->table;
+        }
+
+        foreach ($this->joins as $join) {
+            if (!empty($join->table)) {
+                $tb_names[] = $join->table;
+            }
+        }
+
+        if (empty($tb_names)) {
+            return $sql;
+        }
+
+        $search = $replace = [];
+        foreach ($tb_names as $tb_name) {
+            $search[] = "/(^|\(|\s){$tb_name}\./";
+            $replace[] = '\1' . "{$driver->quoteIdentifier($tb_name)}.";
         }
 
         return preg_replace($search, $replace, $sql);
