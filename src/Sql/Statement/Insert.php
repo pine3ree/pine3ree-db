@@ -164,6 +164,7 @@ class Insert extends Statement
         if ($reset) {
             $this->values = [];
         }
+
         foreach ($multiple_values as $values) {
             $this->values($values);
         }
