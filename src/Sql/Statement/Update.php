@@ -104,8 +104,8 @@ class Update extends Statement
         }
 
         throw new InvalidArgumentException(sprintf(
-            "The set() `\$column_or_row` argument must be either a string or an array"
-            . " of column:value pairs, `%s` provided!",
+            "The set() `\$column_or_row` argument must be either a non empty string or an array"
+            . " of <column:string> => <value:scalar> pairs, `%s` provided!",
             is_object($column_or_row) ? get_class($column_or_row) : gettype($column_or_row)
         ));
     }
