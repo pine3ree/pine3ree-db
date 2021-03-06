@@ -8,9 +8,10 @@
 
 namespace P3\DbTest\Sql\Driver;
 
+use P3\Db\Sql;
+use P3\Db\Sql\Driver;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use P3\Db\Sql\Driver;
 use RuntimeException;
 
 use function getenv;
@@ -114,9 +115,9 @@ class PgSqlTest extends TestCase
     public function provideNonStringTestValues(): array
     {
         return [
-            [null, 'NULL'],
-            [false, '0'],
-            [true, '1'],
+            [null, Sql::NULL],
+            [false, Sql::FALSE],
+            [true, Sql::TRUE],
             [42, '42'],
             [12.345, '12.345'],
         ];

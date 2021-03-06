@@ -8,6 +8,7 @@
 
 namespace P3\DbTest\Sql\Driver;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
@@ -79,9 +80,9 @@ class AnsiTest extends TestCase
     public function provideTestValues(): array
     {
         return [
-            [null, 'NULL'],
-            [false, '0'],
-            [true, '1'],
+            [null, Sql::NULL],
+            [false, Sql::FALSE],
+            [true, Sql::TRUE],
             [42, '42'],
             [12.345, '12.345'],
             ["abc", "'abc'"],
