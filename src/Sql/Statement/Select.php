@@ -532,7 +532,10 @@ class Select extends Statement
         foreach ($this->joins as $join) {
             $join_sql = $join->getSQL($driver);
             if (self::isEmptySQL($join_sql)) {
+                // @codeCoverageIgnoreStart
+                // unreacheable code
                 continue;
+                // @codeCoverageIgnoreEnd
             }
             $this->importParams($join);
             $sqls[] = $join_sql;
