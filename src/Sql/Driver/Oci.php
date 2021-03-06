@@ -128,12 +128,15 @@ class Oci extends Driver
             }
 
             if (is_string($column)) {
-                $column = str_replace([$this->ql, $this->qr], '', $column);
-                $prefix = $alias ? $this->quoteAlias($alias) : null;
-                if (empty($prefix) && $add_tb_prefix) {
-                    $prefix = $this->quoteIdentifier($table);
+                if (false === strpos($column, '.')) {
+                    $prefix = $alias ? $this->quoteAlias($alias) : null;
+                    if (empty($prefix) && $add_tb_prefix) {
+                        $prefix = $this->quoteIdentifier($table);
+                    }
+                    $column_sql = $prefix ? "{$prefix}.{$column}" : $column;
+                } else {
+                    $column_sql = $column;
                 }
-                $column_sql = $prefix ? "{$prefix}.{$column}" : $column;
             } elseif ($column instanceof Literal) {
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof Select) {
