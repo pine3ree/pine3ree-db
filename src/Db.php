@@ -597,7 +597,7 @@ class Db
     }
 
     /**
-     * @see Sql\Driver::escape()
+     * @see Sql\Driver::quoteIdentifier()
      */
     public function quoteIdentifier(string $identifier): string
     {
@@ -605,7 +605,7 @@ class Db
     }
 
     /**
-     * @see Sql\Driver::escape()
+     * @see Sql\Driver::quoteAlias()
      */
     public function quoteAlias(string $alias): string
     {
@@ -613,7 +613,7 @@ class Db
     }
 
     /**
-     * @see Sql\Driver::escape()
+     * @see Sql\Driver::quoteValue()
      */
     public function quoteValue($value): string
     {
