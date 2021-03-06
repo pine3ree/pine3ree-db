@@ -294,9 +294,12 @@ class Insert extends Statement
         $values  = $this->getValuesSQL($driver);
 
         if (empty($values)) {
+            // @codeCoverageIgnoreStart
+            // should be unreacheable code
             throw new RuntimeException(
                 "Missing values definitions in INSERT SQL!"
             );
+            // @codeCoverageIgnoreEnd
         }
 
         $column_list = empty($columns) ? "" : "{$columns} ";
