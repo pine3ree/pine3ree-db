@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Driver;
 
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Expression;
@@ -15,8 +16,13 @@ use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 
+use function end;
 use function explode;
 use function implode;
+use function get_class;
+use function gettype;
+use function is_object;
+use function sprintf;
 use function strpos;
 use function substr;
 
@@ -50,7 +56,7 @@ class Oci extends Driver
      */
     public function quoteIdentifier(string $identifier): string
     {
-        if ($identifier === '*' || empty($this->qlr) || $this->isQuoted($identifier)) {
+        if ($identifier === '*' || $this->isQuoted($identifier)) {
             return $identifier;
         }
 
@@ -114,7 +120,7 @@ class Oci extends Driver
         foreach ($columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
                 $prefix = $alias ? $this->quoteAlias($alias) : null;
-                if (empty($prefix) && $add_tb_prefix && !empty($table)) {
+                if (empty($prefix) && $add_tb_prefix) {
                     $prefix = $this->quoteIdentifier($table);
                 }
                 $sqls[] = $prefix ? "{$prefix}.*" : "*";
@@ -131,7 +137,11 @@ class Oci extends Driver
                 $column_sql = $column->getSQL($this);
                 $select->importParams($column);
             } else {
-                continue; // skip or throw?
+                throw new InvalidArgumentException(sprintf(
+                    "Invalid db-table column type! Allowed types are: string, Literal,"
+                    . " Expression, Select, `%s` provided!",
+                    is_object($column) ? get_class($column) : gettype($column)
+                ));
             }
 
             // add alias?
