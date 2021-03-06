@@ -524,7 +524,6 @@ class SelectTest extends TestCase
         self::assertSame($sql, $select->getSQL());
     }
 
-
     public function testThatCloningAlsoClonesClauses()
     {
          $select1 = new Select('*', 'product', 'p');
