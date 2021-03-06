@@ -601,7 +601,7 @@ class Select extends Statement
     public function having($having): self
     {
         if ($having instanceof Closure) {
-            $having($this->having);
+            $having($this->having ?? $this->having = new Having());
             $this->sql = null;
             return $this;
         }

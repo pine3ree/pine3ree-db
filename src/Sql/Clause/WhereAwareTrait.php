@@ -29,7 +29,7 @@ trait WhereAwareTrait
     public function where($where): self
     {
         if ($where instanceof Closure) {
-            $where($this->where);
+            $where($this->where ?? $this->where = new Where());
             $this->sql = null;
             return $this;
         }
