@@ -302,7 +302,7 @@ class Select extends Statement
     }
 
     /**
-     * Prepend the dml-statement primary-table alias or name if not already present
+     * Prepend the statement primary-table alias or name if not already present
      *
      * @param string $column
      * @param bool $add_tb_prefix Add table prefix?
