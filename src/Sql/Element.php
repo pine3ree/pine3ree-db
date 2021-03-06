@@ -132,7 +132,7 @@ abstract class Element implements ElementInterface
      * sure that sql has been computed in the inner element.
      *
      * @param self $element
-     * @internal
+     * @return void
      */
     protected function importParams(self $element): void
     {
