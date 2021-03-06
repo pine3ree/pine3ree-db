@@ -9,7 +9,7 @@
 namespace P3\DbTest\Sql\Driver;
 
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Driver\Ansi;
+use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -92,18 +92,44 @@ class AnsiTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestValues
-     */
     public function testSetPdoIsNoOp()
     {
         $pdo = $this->prophesize(PDO::class);
-
         $this->driver->setPDO($pdo->reveal());
+        self::assertNull($this->getPropertyValue($this->driver, 'pdo'));
+    }
 
-        $pdoProp = new \ReflectionProperty(Ansi::class, 'pdo');
-        $pdoProp->setAccessible(true);
+    /**
+     * @dataProvider provideStringValues
+     */
+    public function testQuoteStringValue(string $string, string $expected)
+    {
+        self::assertSame($expected, $this->driver->quoteStringValue($string));
+    }
 
-        self::assertNull($pdoProp->getValue($this->driver));
+    public function provideStringValues(): array
+    {
+        return [
+            ["ab'c", "'ab\'c'"],
+            ['ab"c', "'ab\\\"c'"],
+        ];
+    }
+
+    public function testGetLimitSQL()
+    {
+        $select = new Select('*', 'product');
+        self::assertSame('', $this->driver->getLimitSQL($select));
+
+        $select = new Select('*', 'product');
+        $select->limit(10);
+        self::assertSame('[LIMIT 10]', $this->driver->getLimitSQL($select));
+
+        $select = new Select('*', 'product');
+        $select->limit(10)->offset(100);
+        self::assertSame('[LIMIT 10 OFFSET 100]', $this->driver->getLimitSQL($select));
+
+        $select = new Select('*', 'product');
+        $select->offset(100);
+        self::assertSame("[LIMIT " . PHP_INT_MAX .  " OFFSET 100]", $this->driver->getLimitSQL($select));
     }
 }
