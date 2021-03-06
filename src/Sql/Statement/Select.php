@@ -800,7 +800,10 @@ class Select extends Statement
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
             if (self::isEmptySQL($union_sql)) {
+                // @codeCoverageIgnoreStart
+                // unreacheable code
                 return '';
+                // @codeCoverageIgnoreEnd
             }
             $this->importParams($this->union);
             return ($this->union_all ? Sql::UNION_ALL : Sql::UNION) . " ({$union_sql})";
@@ -809,7 +812,10 @@ class Select extends Statement
         if ($this->intersect instanceof self) {
             $intersect_sql = $this->intersect->getSQL($driver);
             if (self::isEmptySQL($intersect_sql)) {
+                // @codeCoverageIgnoreStart
+                // unreacheable code
                 return '';
+                // @codeCoverageIgnoreEnd
             }
             $this->importParams($this->intersect);
             return Sql::INTERSECT . " ({$intersect_sql})";
