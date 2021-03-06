@@ -158,8 +158,8 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
             . " VALUES"
-            . " (:val%d, :val%d),"
-            . " (:val%d, :val%d)",
+            . " (%x, %x),"
+            . " (%x, %x)",
             $insert->getSQL($this->driver)
         );
     }
@@ -183,8 +183,8 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
             . " VALUES"
-            . " (:val%d, :val%d),"
-            . " (:val%d, :val%d)",
+            . " (%x, %x),"
+            . " (%x, %x)",
             $insert->getSQL($this->driver)
         );
 
@@ -198,7 +198,7 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
             . " VALUES"
-            . " (:val%d, :val%d)",
+            . " (%x, %x)",
             $insert->getSQL($this->driver)
         );
     }
@@ -268,8 +268,8 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`, `enabled`)"
             . " VALUES "
-            . "(:val%d, :val%d, :val%d), "
-            . "(:val%d, :val%d, :val%d)",
+            . "(%x, %x, %x), "
+            . "(%x, %x, %x)",
             $sql = $insert->getSQL($this->driver)
         );
 
@@ -285,9 +285,9 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`, `enabled`)"
             . " VALUES "
-            . "(:val%d, :val%d, :val%d), "
-            . "(:val%d, :val%d, :val%d), "
-            . "(:val%d, :val%d, :val%d)",
+            . "(%x, %x, %x), "
+            . "(%x, %x, %x), "
+            . "(%x, %x, %x)",
             $sql = $insert->getSQL($this->driver)
         );
     }

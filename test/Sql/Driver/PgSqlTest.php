@@ -140,14 +140,14 @@ class PgSqlTest extends TestCase
 
         $select = new Select();
         $select->limit(10);
-        self::assertStringMatchesFormat('LIMIT :limit%d', $this->driver->getLimitSQL($select));
+        self::assertStringMatchesFormat('LIMIT %x', $this->driver->getLimitSQL($select));
 
         $select = new Select();
         $select->limit(10)->offset(100);
-        self::assertStringMatchesFormat('LIMIT :limit%d OFFSET :offset%d', $this->driver->getLimitSQL($select));
+        self::assertStringMatchesFormat('LIMIT %x OFFSET %x', $this->driver->getLimitSQL($select));
 
         $select = new Select();
         $select->offset(100);
-        self::assertStringMatchesFormat("OFFSET :offset%d", $this->driver->getLimitSQL($select));
+        self::assertStringMatchesFormat("OFFSET %x", $this->driver->getLimitSQL($select));
     }
 }

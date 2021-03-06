@@ -67,7 +67,7 @@ class SelectTest extends TestCase
             ],
             [
                 new Expression("CONCAT('ABC', {str})", ['str' => 'DEF']),
-                "CONCAT('ABC', :expr%d)",
+                "CONCAT('ABC', %x)",
             ],
             [
                 [
@@ -136,7 +136,7 @@ class SelectTest extends TestCase
             [
                 new Expression("SUM(unit_price) + {tax}", ['tax' => 5.00]),
                 'totalPrice',
-                "SUM(unit_price) + :expr%d AS `totalPrice`",
+                "SUM(unit_price) + %x AS `totalPrice`",
             ],
         ];
     }
@@ -420,7 +420,7 @@ class SelectTest extends TestCase
             "SELECT SUM(stock) AS `totByCategory`"
             . " FROM `product` `p`"
             . " GROUP BY `category_id`"
-            . " HAVING `totByCategory` > :gt%d",
+            . " HAVING `totByCategory` > %x",
             $select->getSQL($this->driver)
         );
     }

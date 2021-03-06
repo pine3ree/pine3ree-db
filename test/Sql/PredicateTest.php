@@ -104,26 +104,26 @@ class PredicateTest extends TestCase
     public function testThatStringIdentifiersAreQuotedAsIdentifiers()
     {
         $predicate = $this->createInstance('tb.id', '=', 42);
-        self::assertStringMatchesFormat('"tb"."id" = :value%d', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."id" = %x', $predicate->getSQL());
     }
 
     public function testThatLiteralIdentifiersAreSupportedAndNotQuoted()
     {
         $literal = 'tb.column';
         $predicate = $this->createInstance(new Literal($literal), '=', 42);
-        self::assertStringMatchesFormat("{$literal} = :value%d", $predicate->getSQL());
+        self::assertStringMatchesFormat("{$literal} = %x", $predicate->getSQL());
     }
 
     public function testThatSqlIdentifiersAreSupportedAndQuotedProperly()
     {
         $predicate = $this->createInstance(new Identifier('tb.column'), '=', 42);
-        self::assertStringMatchesFormat('"tb"."column" = :value%d', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" = %x', $predicate->getSQL());
     }
 
     public function testThatAliasIdentifiersAreSupportedAndQuotedProperly()
     {
         $predicate = $this->createInstance(new Alias('my.alias'), '=', 42);
-        self::assertStringMatchesFormat('"my.alias" = :value%d', $predicate->getSQL());
+        self::assertStringMatchesFormat('"my.alias" = %x', $predicate->getSQL());
     }
 
     /**
@@ -171,7 +171,7 @@ class PredicateTest extends TestCase
         $predicate = $this->createInstance('t.id', Sql::EQ, 42);
 
         self::assertStringMatchesFormat(
-            '"t"."id" = :value%d',
+            '"t"."id" = %x',
             $sql = $predicate->getSQL()
         );
 
@@ -183,6 +183,6 @@ class PredicateTest extends TestCase
         $params_values = array_values($params);
 
         self::assertSame([42], $params_values);
-        self::assertStringMatchesFormat(':value%d', $params_keys[0]);
+        self::assertStringMatchesFormat('%x', $params_keys[0]);
     }
 }
