@@ -151,7 +151,7 @@ class OciTest extends TestCase
         self::assertStringMatchesFormat(
             '"cp".product_name AS "product_name",'
             . ' (unit_price * quantity) AS "totPrice",'
-            . ' ((unit_price * quantity / 100) * :expr%d) AS "totVat"',
+            . ' ((unit_price * quantity / 100) * :expr%x) AS "totVat"',
             $this->driver->getSelectColumnsSQL($select)
         );
     }
@@ -212,21 +212,21 @@ class OciTest extends TestCase
         $select = clone $selectPrototype;
         $select->limit(10);
         self::assertStringMatchesFormat(
-            "SELECT * FROM ({$sql}) WHERE ROWNUM <= :limit%d",
+            "SELECT * FROM ({$sql}) WHERE ROWNUM <= :limit%x",
             $this->driver->decorateSelectSQL($select, $sql)
         );
 
         $select = clone $selectPrototype;
         $select->limit(10)->offset(10);
         self::assertStringMatchesFormat(
-            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= :limit%d) WHERE %s > :offset%d",
+            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= :limit%x) WHERE %s > :offset%x",
             $this->driver->decorateSelectSQL($select, $sql)
         );
 
         $select = clone $selectPrototype;
         $select->offset(10);
         self::assertStringMatchesFormat(
-            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= %d) WHERE %s > :offset%d",
+            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= %d) WHERE %s > :offset%x",
             $this->driver->decorateSelectSQL($select, $sql)
         );
     }

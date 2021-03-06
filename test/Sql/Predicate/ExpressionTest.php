@@ -56,7 +56,7 @@ class ExpressionTest extends TestCase
     public function provideExpressions(): array
     {
         return [
-            ["id > {id}", ['id' => 42], "id > :expr%d"],
+            ["id > {id}", ['id' => 42], "id > :expr%x"],
             ["id > 42", [], "id > 42"],
         ];
     }
