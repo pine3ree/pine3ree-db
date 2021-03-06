@@ -391,8 +391,8 @@ class Insert extends Statement
     public function __clone()
     {
         parent::__clone();
-        if (isset($this->where)) {
-            $this->where = clone $this->where;
+        if (isset($this->select)) {
+            $this->select = clone $this->select;
         }
     }
 }
