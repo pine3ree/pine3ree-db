@@ -229,7 +229,12 @@ class Set extends Predicate
         $this->predicates[] = [$logicalOperator, $predicate];
         $this->nextLogicalOperator = null;
 
-        $this->sql = null; // remove rendered sql cache
+        // remove rendered sql cache
+        $this->sql = null;
+        // remove parent'srendered sql cache
+        if ($this->parent) {
+            $this->parent->sql = null;
+        }
 
         return $this;
     }
