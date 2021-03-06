@@ -10,6 +10,7 @@ namespace P3\DbTest\Sql\Driver;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Statement\Select;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -130,5 +131,23 @@ class PgSqlTest extends TestCase
             ["ab\\c", "'ab\\c'"],
             ["ab'c", "'ab''c'"],
         ];
+    }
+
+    public function testGetLimitSQL()
+    {
+        $select = new Select();
+        self::assertSame('', $this->driver->getLimitSQL($select));
+
+        $select = new Select();
+        $select->limit(10);
+        self::assertStringMatchesFormat('LIMIT :limit%d', $this->driver->getLimitSQL($select));
+
+        $select = new Select();
+        $select->limit(10)->offset(100);
+        self::assertStringMatchesFormat('LIMIT :limit%d OFFSET :offset%d', $this->driver->getLimitSQL($select));
+
+        $select = new Select();
+        $select->offset(100);
+        self::assertStringMatchesFormat("OFFSET :offset%d", $this->driver->getLimitSQL($select));
     }
 }
