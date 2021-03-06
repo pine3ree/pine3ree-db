@@ -152,7 +152,7 @@ abstract class Element implements ElementInterface
 
         $types = $element->getParamsTypes();
         foreach ($params as $marker => $value) {
-            $this->addParam($marker, $value, $types[$index] ?? null);
+            $this->addParam($marker, $value, $types[$marker] ?? null);
         }
     }
 
