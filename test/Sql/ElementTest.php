@@ -92,23 +92,6 @@ class ElementTest extends TestCase
         ];
     }
 
-    public function testGetNextIndex()
-    {
-        $element = $this->createInstance();
-        $index = $this->invokeMethod($element, 'getNextIndex');
-
-        self::assertSame($index + 1, $this->invokeMethod($element, 'getNextIndex'));
-        self::assertSame($index + 2, $this->invokeMethod($element, 'getNextIndex'));
-    }
-
-    public function testGetShortName()
-    {
-        $element = $this->createInstance();
-        $shortName = $this->invokeMethod($element, 'getShortName');
-
-        self::assertInternalType('string', $shortName);
-    }
-
     public function testGetSql()
     {
         $element = $this->createInstance();
@@ -121,45 +104,37 @@ class ElementTest extends TestCase
         $element = $this->createInstance($values);
 
         self::assertStringMatchesFormat(
-            'ELEMENT[%x, %x, %x, %x, %x]',
+            'ELEMENT[:param%d, :param%d, :param%d, :param%d, :param%d]',
             $sql = $element->getSQL()
         );
 
         // cached sql
         self::assertSame($sql, $element->getSQL());
         self::assertSame(
-            $values,
-            array_values($element->getParams())
-        );
-
-        foreach ($element->getParams() as $key => $param_value) {
-            self::assertStringMatchesFormat('%x', $key);
-        }
-
-        self::assertSame(
-            [
-                PDO::PARAM_NULL,
-                PDO::PARAM_INT,
-                PDO::PARAM_INT,
-                PDO::PARAM_STR,
-                PDO::PARAM_STR,
-            ],
-            array_values($element->getParamsTypes())
+            array_combine([':param1', ':param2', ':param3', ':param4', ':param5'], $values),
+            $element->getParams()
         );
 
         self::assertSame(
             [
-                'PDO::PARAM_NULL',
-                'PDO::PARAM_INT',
-                'PDO::PARAM_INT',
-                'PDO::PARAM_STR',
-                'PDO::PARAM_STR',
+                ':param1' => PDO::PARAM_NULL,
+                ':param2' => PDO::PARAM_INT,
+                ':param3' => PDO::PARAM_INT,
+                ':param4' => PDO::PARAM_STR,
+                ':param5' => PDO::PARAM_STR,
             ],
-            array_values($element->getParamsTypes(true))
+            $element->getParamsTypes()
         );
 
-        foreach ($element->getParamsTypes() as $key => $param_type) {
-            self::assertStringMatchesFormat('%x', $key);
-        }
+        self::assertSame(
+            [
+                ':param1' => 'PDO::PARAM_NULL',
+                ':param2' => 'PDO::PARAM_INT',
+                ':param3' => 'PDO::PARAM_INT',
+                ':param4' => 'PDO::PARAM_STR',
+                ':param5' => 'PDO::PARAM_STR',
+            ],
+            $element->getParamsTypes(true)
+        );
     }
 }

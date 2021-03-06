@@ -47,7 +47,7 @@ class InTest extends TestCase
     {
         $predicate = new Predicate\In('id', [1, 2, 3]);
 
-        self::assertStringMatchesFormat('"id" IN (%x, %x, %x)', $sql = $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" IN (:in%d, :in%d, :in%d)', $sql = $predicate->getSQL());
         // test cached sql
         self::assertSame($sql, $predicate->getSQL());
     }
@@ -57,7 +57,7 @@ class InTest extends TestCase
         $predicate = new Predicate\In('id', [1, 2, 3, null]);
 
         self::assertStringMatchesFormat(
-            '("id" IN (%x, %x, %x) OR "id" IS NULL)',
+            '("id" IN (:in%d, :in%d, :in%d) OR "id" IS NULL)',
             $sql = $predicate->getSQL()
         );
     }
@@ -67,7 +67,7 @@ class InTest extends TestCase
         $predicate = new Predicate\NotIn('id', [1, 2, 3, null]);
 
         self::assertStringMatchesFormat(
-            '("id" NOT IN (%x, %x, %x) AND "id" IS NOT NULL)',
+            '("id" NOT IN (:in%d, :in%d, :in%d) AND "id" IS NOT NULL)',
             $sql = $predicate->getSQL()
         );
     }

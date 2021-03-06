@@ -123,7 +123,7 @@ class ComparisonTest extends TestCase
     public function testEqualWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '=', $value);
-        self::assertStringMatchesFormat('"tb"."column" = %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" = :eq%d', $predicate->getSQL());
     }
 
     /**
@@ -132,10 +132,10 @@ class ComparisonTest extends TestCase
     public function testNotEqualWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '!=', $value);
-        self::assertStringMatchesFormat('"tb"."column" != %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" != :neq%d', $predicate->getSQL());
 
         $predicate = new Comparison("tb.column", '<>', $value);
-        self::assertStringMatchesFormat('"tb"."column" <> %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" <> :ne%d', $predicate->getSQL());
     }
 
     /**
@@ -144,7 +144,7 @@ class ComparisonTest extends TestCase
     public function testLessThanWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '<', $value);
-        self::assertStringMatchesFormat('"tb"."column" < %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" < :lt%d', $predicate->getSQL());
     }
 
     /**
@@ -153,7 +153,7 @@ class ComparisonTest extends TestCase
     public function testLessThanEqualWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '<=', $value);
-        self::assertStringMatchesFormat('"tb"."column" <= %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" <= :lte%d', $predicate->getSQL());
     }
 
     /**
@@ -162,7 +162,7 @@ class ComparisonTest extends TestCase
     public function testGreaterThanEqualWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '>=', $value);
-        self::assertStringMatchesFormat('"tb"."column" >= %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" >= :gte%d', $predicate->getSQL());
     }
 
     /**
@@ -171,7 +171,7 @@ class ComparisonTest extends TestCase
     public function testGreaterThanWithScalarValue($value)
     {
         $predicate = new Comparison("tb.column", '>', $value);
-        self::assertStringMatchesFormat('"tb"."column" > %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"tb"."column" > :gt%d', $predicate->getSQL());
     }
 
     public function provideScalarValues(): array

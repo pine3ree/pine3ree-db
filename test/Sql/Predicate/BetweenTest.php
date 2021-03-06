@@ -55,7 +55,7 @@ class BetweenTest extends TestCase
     {
         $predicate = new Predicate\Between('id', 24, 42);
 
-        self::assertStringMatchesFormat('"id" BETWEEN %x AND %x', $sql = $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" BETWEEN :min%d AND :max%d', $sql = $predicate->getSQL());
         // test cached sql
         self::assertSame($sql, $predicate->getSQL());
     }
@@ -64,6 +64,6 @@ class BetweenTest extends TestCase
     {
         $predicate = new Predicate\NotBetween('id', 24, 42);
 
-        self::assertStringMatchesFormat('"id" NOT BETWEEN %x AND %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" NOT BETWEEN :min%d AND :max%d', $predicate->getSQL());
     }
 }

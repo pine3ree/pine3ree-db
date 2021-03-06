@@ -85,7 +85,7 @@ class LikeTest extends TestCase
     {
         $predicate = new Predicate\Like('name', 'A%');
 
-        self::assertStringMatchesFormat('"name" LIKE %x', $sql = $predicate->getSQL());
+        self::assertStringMatchesFormat('"name" LIKE :like%d', $sql = $predicate->getSQL());
         // test cached sql
         self::assertSame($sql, $predicate->getSQL());
     }
@@ -94,13 +94,13 @@ class LikeTest extends TestCase
     {
         $predicate = new Predicate\Like('name', '%o', '#');
 
-        self::assertStringMatchesFormat('"name" LIKE %x ESCAPE \'#\'', $predicate->getSQL());
+        self::assertStringMatchesFormat('"name" LIKE :like%d ESCAPE \'#\'', $predicate->getSQL());
     }
 
     public function testNotLikeSql()
     {
         $predicate = new Predicate\NotLike('name', 'A%');
 
-        self::assertStringMatchesFormat('"name" NOT LIKE %x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"name" NOT LIKE :like%d', $predicate->getSQL());
     }
 }

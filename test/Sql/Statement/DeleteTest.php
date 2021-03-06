@@ -76,7 +76,7 @@ class DeleteTest extends TestCase
         $delete->where->lt('price', 0.25);
 
         self::assertStringMatchesFormat(
-            "DELETE FROM `product` WHERE `id` > %x AND `price` < %x",
+            "DELETE FROM `product` WHERE `id` > :gt%d AND `price` < :lt%d",
             $delete->getSQL($this->driver)
         );
     }
