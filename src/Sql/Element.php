@@ -163,47 +163,16 @@ abstract class Element implements ElementInterface
      * @param int|null $type The optional forced parameter type
      * @param string|null $name The optional original parameter name
      *
-     * @internal This is used internally by sql-elements or by the sql-drivers
-     *      when generating the sql-string
-     *
      * @return string
      */
     protected function createParam($value, int $type = null, string $name = null): string
     {
-        return $this->createNamedParam($value, $type, $name);
-        //return $this->createPositionalParam($value, $type);
-    }
-
-    /**
-     * Create a statement string marker for a given value
-     *
-     * @param mixed $value The parameter value
-     * @param int|null $type The optional forced parameter type
-     * @param string|null $name The optional original parameter name
-     *
-     * @return string
-     */
-    private function createNamedParam($value, int $type = null, string $name = null): string
-    {
         $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
         $marker = ":{$name}{$this->getNextIndex()}";
+//        $marker = ":{$name}" . bin2hex(random_bytes(3));
         $this->addParam($marker, $value, $type);
 
         return $marker;
-    }
-
-    /**
-     * Create a statement string marker for a given value
-     *
-     * @param mixed $value The parameter value
-     * @param int $type The optional forced parameter type
-     *
-     * @return string
-     */
-    private function createPositionalParam($value, int $type = null): string
-    {
-        $this->addParam(null, $value, $type);
-        return '?';
     }
 
     /**
