@@ -526,16 +526,16 @@ class SelectTest extends TestCase
 
     public function testThatCloningAlsoClonesClauses()
     {
-         $select1 = new Select('*', 'product', 'p');
-         $select1->where("TRUE IS TRUE");
-         $select1->having("FALSE IS FALSE");
+        $select1 = new Select('*', 'product', 'p');
+        $select1->where("TRUE IS TRUE");
+        $select1->having("FALSE IS FALSE");
 
-         $select2 = clone $select1;
+        $select2 = clone $select1;
 
-         self::assertEquals($select1->where, $select2->where);
-         self::assertNotSame($select1->where, $select2->where);
-         self::assertEquals($select1->having, $select2->having);
-         self::assertNotSame($select1->having, $select2->having);
+        self::assertEquals($select1->where, $select2->where);
+        self::assertNotSame($select1->where, $select2->where);
+        self::assertEquals($select1->having, $select2->having);
+        self::assertNotSame($select1->having, $select2->having);
     }
 
     public function testMagicGetter()
