@@ -10,7 +10,6 @@ namespace P3\Db\Sql\Statement;
 use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\TableAwareTrait;
@@ -19,12 +18,9 @@ use RuntimeException;
 use function array_keys;
 use function array_values;
 use function count;
-use function get_class;
 use function gettype;
 use function implode;
 use function is_numeric;
-use function is_object;
-use function is_scalar;
 use function is_string;
 use function json_encode;
 use function sprintf;
@@ -398,6 +394,10 @@ class Insert extends Statement
         if ('select' === $name) {
             return $this->select;
         }
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 
     public function __clone()
