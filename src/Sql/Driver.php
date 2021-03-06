@@ -206,9 +206,14 @@ abstract class Driver implements DriverInterface
         if (is_float($value)) {
             // make sure we use the dot '.' as decimal separator
             $lc_numeric = setlocale(LC_NUMERIC, 0);
+            if ($lc_numeric === 'C') {
+                return (string)$value;
+            }
+
             setlocale(LC_NUMERIC, 'C');
             $str_value = (string)$value;
             setlocale(LC_NUMERIC, $lc_numeric);
+
             return $str_value;
         }
 
