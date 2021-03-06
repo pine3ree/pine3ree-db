@@ -10,6 +10,7 @@ namespace P3\DbTest\Sql\Statement;
 
 use InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Update;
 use P3\DbTest\DiscloseTrait;
@@ -81,10 +82,10 @@ class UpdateTest extends TestCase
         $update->where->gte('id', 42);
 
         self::assertSame('product', $update->table);
-        self::assertInstanceOf(Sql\Clause\Where::class, $update->where);
+        self::assertInstanceOf(Where::class, $update->where);
         self::assertSame(['stock' => $literal], $update->set);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $update->nonexistentProperty;
     }
 }
