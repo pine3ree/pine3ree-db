@@ -103,7 +103,7 @@ class Oci extends Driver
         return $sql;
     }
 
-    public function getColumnsSQL(Select $select): string
+    public function getSelectColumnsSQL(Select $select): string
     {
         $table   = $select->table;
         $alias   = $select->alias;

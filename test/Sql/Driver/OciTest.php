@@ -138,7 +138,7 @@ class OciTest extends TestCase
         ];
     }
 
-    public function testGetColumnsSQL()
+    public function testGetSelectColumnsSQL()
     {
         $select = new Sql\Statement\Select();
         $select->from('cart_product', 'cp');
@@ -152,22 +152,22 @@ class OciTest extends TestCase
             '"cp".product_name AS "product_name",'
             . ' (unit_price * quantity) AS "totPrice",'
             . ' ((unit_price * quantity / 100) * :expr%d) AS "totVat"',
-            $this->driver->getColumnsSQL($select)
+            $this->driver->getSelectColumnsSQL($select)
         );
     }
 
-    public function testGetColumnsSqlWithoutColumnsSpecifications()
+    public function testGetSelectColumnsSqlWithoutColumnsSpecifications()
     {
         $select = new Sql\Statement\Select();
         $select->from('cart_product', 'cp');
 
         self::assertSame(
             '"cp".*',
-            $this->driver->getColumnsSQL($select)
+            $this->driver->getSelectColumnsSQL($select)
         );
     }
 
-    public function testGetColumnsSqlWithJoin()
+    public function testGetSelectColumnsSqlWithJoin()
     {
         $select = new Sql\Statement\Select();
         $select->from('cart_product');
@@ -175,11 +175,11 @@ class OciTest extends TestCase
 
         self::assertSame(
             'cart_product.*',
-            $this->driver->getColumnsSQL($select)
+            $this->driver->getSelectColumnsSQL($select)
         );
     }
 
-    public function testGetColumnsSqlWithColumnAndJoin()
+    public function testGetSelectColumnsSqlWithColumnAndJoin()
     {
         $select = new Sql\Statement\Select();
         $select->column('unit_price', 'unitPrice');
@@ -190,7 +190,7 @@ class OciTest extends TestCase
         self::assertSame(
             'cart_product.unit_price AS "unitPrice",'
             . ' "c".user_id AS "userId"',
-            $this->driver->getColumnsSQL($select)
+            $this->driver->getSelectColumnsSQL($select)
         );
     }
 
