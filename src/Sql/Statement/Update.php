@@ -166,6 +166,10 @@ class Update extends Statement
         if ('where' === $name) {
             return $this->where ?? $this->where = new Where();
         }
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 
     public function __clone()
