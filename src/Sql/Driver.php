@@ -181,7 +181,9 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Quote a value, when needed, to be used in a SQL expression
+     * Transform a value into a string suitable for SQL expressions
+     *
+     * String values will be encolsed in quotes and properly escaped, if necessary
      *
      * Potentially dangerous: always prefer parameter binding
      *
@@ -200,7 +202,7 @@ abstract class Driver implements DriverInterface
         }
 
         if (is_bool($value)) {
-            return (string)(int)$value;
+            return $value ? Sql::TRUE : Sql::FALSE;
         }
 
         if (is_float($value)) {
