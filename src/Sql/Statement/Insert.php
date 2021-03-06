@@ -213,7 +213,7 @@ class Insert extends Statement
     public function row(array $row, bool $reset = false)
     {
         if (empty($row)) {
-            throw new RuntimeException(
+            throw new InvalidArgumentException(
                 'Cannot INSERT an empty row!'
             );
         }
