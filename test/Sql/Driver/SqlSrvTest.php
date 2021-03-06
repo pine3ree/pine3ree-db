@@ -8,7 +8,6 @@
 
 namespace P3\DbTest\Sql\Driver;
 
-use PDO;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Sql\Driver;
 
