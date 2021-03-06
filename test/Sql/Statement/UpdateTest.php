@@ -64,6 +64,30 @@ class UpdateTest extends TestCase
         $update->set(['value1', 'price' => 1.23]);
     }
 
+    public function testGetSql()
+    {
+        $update = new Update('product');
+        $update->set('enabled', false);
+        $update->where("price < 0.1");
+
+        self::assertStringMatchesFormat(
+            "UPDATE `product` SET `enabled` = :set%d WHERE price < 0.1",
+            $sql = $update->getSQL($this->driver)
+        );
+
+        //cached sql
+        self::assertSame($sql, $update->getSQL($this->driver));
+
+        $update = new Update('product');
+        $update->set('enabled', false);
+        $update->where->lt('price', 0.1);
+
+        self::assertStringMatchesFormat(
+            "UPDATE `product` SET `enabled` = :set%d WHERE `price` < :lt%d",
+            $update->getSQL($this->driver)
+        );
+    }
+
     public function testThatCloningAlsoClonesWhereClause()
     {
         $update1 = new Update('product');
