@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Statement;
 
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Where;
@@ -92,7 +93,9 @@ class Update extends Statement
             return $this;
         }
 
-        if (is_string($column_or_row)) {
+        if (is_string($column_or_row)
+            && !is_numeric($column_or_row)
+        ) {
             $column = trim($column_or_row);
             if (!empty($column)) {
                 $this->set[$column] = $value;
