@@ -114,7 +114,7 @@ class Insert extends Statement
      * @return $this
      * @throws RuntimeException
      */
-    public function values(array $values, bool $reset = false)
+    public function values(array $values, bool $reset = false): self
     {
         self::assertValidValues($values);
 
@@ -146,7 +146,7 @@ class Insert extends Statement
      * @param bool $reset Reset the values for a single insert
      * @return $this
      */
-    public function multipleValues(array $multiple_values, bool $reset = false)
+    public function multipleValues(array $multiple_values, bool $reset = false): self
     {
         if (empty($multiple_values)) {
             throw new InvalidArgumentException(
@@ -187,7 +187,7 @@ class Insert extends Statement
      * @param array[] $rows An array of new records
      * @return $this
      */
-    public function rows(array $rows)
+    public function rows(array $rows): self
     {
         $this->select = null;
         $this->columns = [];
@@ -210,7 +210,7 @@ class Insert extends Statement
      * @return $this
      * @throws RuntimeException
      */
-    public function row(array $row, bool $reset = false)
+    public function row(array $row, bool $reset = false): self
     {
         if (empty($row)) {
             throw new InvalidArgumentException(
@@ -267,7 +267,7 @@ class Insert extends Statement
      * @param Select $select The select from statement used as source
      * @return $this
      */
-    public function select(Select $select)
+    public function select(Select $select): self
     {
         $this->values = null;
         $this->select = $select;
