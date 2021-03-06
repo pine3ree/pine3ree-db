@@ -274,7 +274,7 @@ class Select extends Statement
 
             if (is_string($column)) {
                 $column_sql = $driver->quoteIdentifier(
-                    $this->normalizeColumn($column, $add_tb_prefix)
+                    $this->normalizeColumn($column, $driver, $add_tb_prefix)
                 );
             } elseif ($column instanceof Literal) {
                 $column_sql = $column->getSQL();
@@ -308,13 +308,14 @@ class Select extends Statement
      * Prepend the statement primary-table alias or name if not already present
      *
      * @param string $column
+     * @param Driver $driver
      * @param bool $add_tb_prefix Add table prefix?
      * @return string
      */
-    public function normalizeColumn(string $column, bool $add_tb_prefix = false): string
+    public function normalizeColumn(string $column, Driver $driver, bool $add_tb_prefix = false): string
     {
         // unquote the column first
-        $column = str_replace([$this->ql, $this->qr], '', $column);
+        $column = str_replace([$driver->ql, $driver->qr], '', $column);
         if (false === strpos($column, '.')) {
             $prefix = $this->alias ?: (
                 $add_tb_prefix ? $this->table : null
