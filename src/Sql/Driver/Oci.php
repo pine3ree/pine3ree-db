@@ -148,7 +148,8 @@ class Oci extends Driver
             if (!is_numeric($key) && $key !== '' && $key !== $column) {
                 $column_sql .= " AS " . $this->quoteAlias($key);
             } elseif (is_string($column)) {
-                $column = end(explode('.', $column));
+                $parts = explode('.', $column);
+                $column = end($parts);
                 $column_sql .= " AS " . $this->quoteAlias($column);
             }
 
