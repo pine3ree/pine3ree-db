@@ -8,6 +8,7 @@
 
 namespace P3\DbTest\Sql;
 
+use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
 use P3\DbTest\DiscloseTrait;
@@ -92,6 +93,42 @@ class ElementTest extends TestCase
         ];
     }
 
+    public function testGetNextIndex()
+    {
+        $element = $this->createInstance();
+        $index = $this->invokeMethod($element, 'getNextIndex');
+
+        self::assertSame($index + 1, $this->invokeMethod($element, 'getNextIndex'));
+        self::assertSame($index + 2, $this->invokeMethod($element, 'getNextIndex'));
+    }
+
+    /**
+     * @dataProvider provideElements
+     */
+    public function testGetShortName(Element $e, string $expected)
+    {
+        self::assertSame($expected, $this->invokeMethod($e, 'getShortName'));
+    }
+
+    public function provideElements(): array
+    {
+        return [
+            [new Sql\Alias('totPrice'), 'Alias'],
+            [new Sql\Expression('id > {min}', ['min' => 42]), 'Expression'],
+            [new Sql\Identifier('product.id'), 'Identifier'],
+            [new Sql\Literal('TRUE'), 'Literal'],
+            [new Sql\Statement\Select(), 'Select'],
+            [new Sql\Statement\Insert(), 'Insert'],
+            [new Sql\Statement\Update(), 'Update'],
+            [new Sql\Statement\Delete(), 'Delete'],
+            [new Sql\Clause\Having(), 'Having'],
+            [new Sql\Clause\Join(Sql::JOIN_AUTO, 'cart'), 'Join'],
+            [new Sql\Clause\On(), 'On'],
+            [new Sql\Clause\Where(), 'Where'],
+            [new Sql\Predicate\Between('id', 11, 22), 'Between'],
+        ];
+    }
+
     public function testGetSql()
     {
         $element = $this->createInstance();
@@ -104,37 +141,45 @@ class ElementTest extends TestCase
         $element = $this->createInstance($values);
 
         self::assertStringMatchesFormat(
-            'ELEMENT[:param%d, :param%d, :param%d, :param%d, :param%d]',
+            'ELEMENT[:param%x, :param%x, :param%x, :param%x, :param%x]',
             $sql = $element->getSQL()
         );
 
         // cached sql
         self::assertSame($sql, $element->getSQL());
         self::assertSame(
-            array_combine([':param1', ':param2', ':param3', ':param4', ':param5'], $values),
-            $element->getParams()
+            $values,
+            array_values($element->getParams())
+        );
+
+        foreach ($element->getParams() as $key => $param_value) {
+            self::assertStringMatchesFormat(':param%x', $key);
+        }
+
+        self::assertSame(
+            [
+                PDO::PARAM_NULL,
+                PDO::PARAM_INT,
+                PDO::PARAM_INT,
+                PDO::PARAM_STR,
+                PDO::PARAM_STR,
+            ],
+            array_values($element->getParamsTypes())
         );
 
         self::assertSame(
             [
-                ':param1' => PDO::PARAM_NULL,
-                ':param2' => PDO::PARAM_INT,
-                ':param3' => PDO::PARAM_INT,
-                ':param4' => PDO::PARAM_STR,
-                ':param5' => PDO::PARAM_STR,
+                'PDO::PARAM_NULL',
+                'PDO::PARAM_INT',
+                'PDO::PARAM_INT',
+                'PDO::PARAM_STR',
+                'PDO::PARAM_STR',
             ],
-            $element->getParamsTypes()
+            array_values($element->getParamsTypes(true))
         );
 
-        self::assertSame(
-            [
-                ':param1' => 'PDO::PARAM_NULL',
-                ':param2' => 'PDO::PARAM_INT',
-                ':param3' => 'PDO::PARAM_INT',
-                ':param4' => 'PDO::PARAM_STR',
-                ':param5' => 'PDO::PARAM_STR',
-            ],
-            $element->getParamsTypes(true)
-        );
+        foreach ($element->getParamsTypes() as $key => $param_type) {
+            self::assertStringMatchesFormat(':param%x', $key);
+        }
     }
 }
