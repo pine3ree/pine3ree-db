@@ -151,8 +151,8 @@ abstract class Element implements ElementInterface
         }
 
         $types = $element->getParamsTypes();
-        foreach ($params as $index => $value) {
-            $this->addParam($index, $value, $types[$index] ?? null);
+        foreach ($params as $marker => $value) {
+            $this->addParam($marker, $value, $types[$index] ?? null);
         }
     }
 
@@ -178,17 +178,13 @@ abstract class Element implements ElementInterface
     /**
      * Add a parameter and its type to the internal list
      *
-     * @param int|string|null $index
+     * @param string $marker
      * @param mixed $value
      * @param int $type
      */
-    protected function addParam($index, $value, int $type = null)
+    protected function addParam(string $marker, $value, int $type = null)
     {
-        if (null === $index || is_int($index)) {
-            $index = count($this->params) + 1;
-        }
-
-        $this->params[$index] = $value;
+        $this->params[$marker] = $value;
 
         if (!isset($type)) {
             if (is_null($value)) {
@@ -203,7 +199,7 @@ abstract class Element implements ElementInterface
             }
         }
 
-        $this->params_types[$index] = $type;
+        $this->params_types[$marker] = $type;
     }
 
     /**
