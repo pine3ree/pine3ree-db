@@ -105,7 +105,7 @@ class Insert extends Statement
         foreach ($columns as $column) {
             if (!is_string($column) || is_numeric($column)) {
                 throw new RuntimeException(sprintf(
-                    'The INSERT columns must be valid table column names, `%s` provided!',
+                    'The INSERT columns must be valid tb-column names array, `%s` provided!',
                     is_string($column) ? $column : gettype($column)
                 ));
             }
