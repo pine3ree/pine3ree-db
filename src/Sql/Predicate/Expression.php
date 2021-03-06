@@ -12,7 +12,8 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use RuntimeException;
 
-use function str_replace;
+use function preg_quote;
+use function preg_replace;
 use function strpos;
 use function trim;
 
@@ -79,11 +80,15 @@ class Expression extends Predicate
         // replace the `{name}`-placeholders with `:name`-markers
         $sql = $this->expression;
         foreach ($this->substitutions as $name => $value) {
-            $sql = str_replace(
-                "{{$name}}",
-                $this->getValueSQL($value, null, 'expr'),
-                $sql
-            );
+            $search = "{{$name}}";
+            while (strpos($sql, $search) !== false) {
+                $sql = preg_replace(
+                    '/' . preg_quote($search) . '/',
+                    $this->getValueSQL($value, null, 'expr'),
+                    $sql,
+                    1
+                );
+            }
         }
 
         return $this->sql = $sql;
