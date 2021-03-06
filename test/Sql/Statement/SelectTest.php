@@ -17,12 +17,15 @@ use P3\Db\Sql\Expression;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select;
+use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 
 class SelectTest extends TestCase
 {
+    use DiscloseTrait;
+
     /** @var Driver\MySql */
     private $driver;
 
@@ -141,23 +144,23 @@ class SelectTest extends TestCase
     /**
      * @dataProvider provideInvalidTypeColumn
      */
-    public function textThatExceptionIsThrownOnInvalidTypeColumns($column)
+    public function testThatExceptionIsThrownWithInvalidTypeColumns($column)
     {
         $select = new Select(null, 'user');
 
         $this->expectException(InvalidArgumentException::class);
-        $select->columns([$column]);
+        $select->columns(['ca' => $column]);
     }
 
     /**
      * @dataProvider provideInvalidTypeColumn
      */
-    public function textThatExceptionIsThrownOnInvalidTypeColumn($column)
+    public function testThatExceptionIsThrownWithInvalidTypeColumn($column)
     {
         $select = new Select(null, 'user');
 
         $this->expectException(InvalidArgumentException::class);
-        $select->column($column);
+        $select->column($column, 'ca');
     }
 
     public function provideInvalidTypeColumn(): array
@@ -202,6 +205,15 @@ class SelectTest extends TestCase
         (new Select())->from(new Select([], 'subtable', ''), null);
     }
 
+    public function testGetColumnsSqlForwardToDriver()
+    {
+        ($select = new Select())->column('unit_price', 'unitPrice')->from('product', 'p');
+        self::assertSame(
+            'SELECT "p".unit_price AS "unitPrice" FROM product "p"',
+            $select->getSQL(new Driver\Oci())
+        );
+    }
+
     public function testSelectFromTable()
     {
         ($select = new Select())->from('product', null);
@@ -209,6 +221,29 @@ class SelectTest extends TestCase
 
         ($select = new Select())->from('product', 'p');
         self::assertSame("SELECT `p`.* FROM `product` `p`", $select->getSQL($this->driver));
+    }
+
+    public function testSelectWithJoinAndNOAliasTriggerTablePrefix()
+    {
+        ($select = new Select())->from('product', null);
+        $select->column('*');
+        $select->column('c.name', 'categoryName');
+        $select->leftJoin('category', 'c', 'c.id = product.category_id');
+
+        self::assertSame(
+            "SELECT `product`.*, `c`.`name` AS `categoryName`"
+            . " FROM `product`"
+            . " LEFT JOIN `category` `c` ON (`c`.id = `product`.category_id)",
+            $select->getSQL($this->driver)
+        );
+    }
+
+    public function testCallingFromAgainRaisesException()
+    {
+        ($select = new Select())->from('product', null);
+
+        $this->expectException(RuntimeException::class);
+        $select->from('another_table');
     }
 
     public function testSelectFromSubselect()
@@ -421,5 +456,35 @@ class SelectTest extends TestCase
             . " INNER JOIN `customer` `c` ON (`c`.`id` = `o`.`customer_id`)",
             $select->getSQL($this->driver)
         );
+    }
+
+    public function testMagicGetter()
+    {
+        $select = new Select('*', 'product', 'p');
+        $select->distinct();
+        $select->leftJoin('category', 'c', "c.id = p.category_id");
+        $select->where->gte('id', 42);
+        $select->having->lte('id', 4242);
+        $select->groupBy('category_id');
+        $select->orderBy('price');
+        $select->limit(100);
+        $select->offset(30);
+
+        self::assertSame('product', $select->from);
+        self::assertSame('p', $select->alias);
+        self::assertSame(Sql::DISTINCT, $select->quantifier);
+        self::assertInstanceOf(Sql\Clause\Join::class, $select->joins[0]);
+        self::assertInstanceOf(Sql\Clause\Where::class, $select->where);
+        self::assertInstanceOf(Sql\Clause\Having::class, $select->having);
+        self::assertSame(['category_id'], $select->groupBy);
+        self::assertSame(['price' => Sql::ASC], $select->orderBy);
+        self::assertSame(100, $select->limit);
+        self::assertSame(30, $select->offset);
+        self::assertSame(null, $select->union);
+        self::assertSame(null, $select->intersect);
+        self::assertSame(null, $select->union_all);
+
+        $this->expectException(\RuntimeException::class);
+        $select->nonexistentProperty;
     }
 }
