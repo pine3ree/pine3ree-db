@@ -213,9 +213,9 @@ class Select extends Statement
             . " a non empty string,"
             . " a non empty Expression or Literal expression or "
             . " a Select statement,"
-            . " `%s`%s!",
+            . " `%s` provided%s!",
             is_object($column) ? get_class($column) : gettype($column),
-            isset($key) ? " provided for index/column-alias `{$key}`" : ""
+            isset($key) ? " for index/column-alias `{$key}`" : ""
         ));
     }
 
