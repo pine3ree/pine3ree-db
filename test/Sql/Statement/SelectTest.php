@@ -379,17 +379,12 @@ class SelectTest extends TestCase
     public function testOrderByClause($orderBy, $sortDirOrReplace, string $expectedSQL)
     {
         $select = (new Select())->from('product');
-
         $select->orderBy($orderBy, $sortDirOrReplace);
-        self::assertSame(
-            "SELECT * FROM `product` ORDER BY {$expectedSQL}",
-            $select->getSQL($this->driver)
-        );
 
-        // test replace
-        $select->orderBy(['unit_price' => 'DESC'], true);
+        $orderBySQL = $expectedSQL ? " ORDER BY {$expectedSQL}" : '';
+
         self::assertSame(
-            "SELECT * FROM `product` ORDER BY `unit_price` DESC",
+            "SELECT * FROM `product`{$orderBySQL}",
             $select->getSQL($this->driver)
         );
     }
@@ -406,7 +401,28 @@ class SelectTest extends TestCase
             [new Alias("some.alias"), null, "`some.alias` ASC"],
             [new Identifier("some.column"), null, "`some`.`column` ASC"],
             [new Literal("(unit_price * quantity)"), null, "(unit_price * quantity) ASC"],
+            [['unit_price' => 'DESC'], true, '`unit_price` DESC'],
+            [['unit_price', 'stock'], 'DESC', '`unit_price` DESC, `stock` DESC'],
+            [[], 'DESC', ''],
         ];
+    }
+
+    public function testHavingMethod()
+    {
+        $select = new Select(null, 'product', 'p');
+        $select->sum('stock', 'totByCategory');
+        $select->groupBy('category_id');
+        $select->having(function (Sql\Clause\Having $having) {
+            $having->gt('totByCategory', 10);
+        });
+
+        self::assertStringMatchesFormat(
+            "SELECT SUM(stock) AS `totByCategory`"
+            . " FROM `product` `p`"
+            . " GROUP BY `category_id`"
+            . " HAVING `totByCategory` > :gt%d",
+            $select->getSQL($this->driver)
+        );
     }
 
     public function testJoinClause()
@@ -456,6 +472,71 @@ class SelectTest extends TestCase
             . " INNER JOIN `customer` `c` ON (`c`.`id` = `o`.`customer_id`)",
             $select->getSQL($this->driver)
         );
+    }
+
+    public function testThatAddIntersectAfterUnionRaisesExceptiom()
+    {
+        $select = new Select('*', 'product', 'p');
+        $union = (new Select('*', 'store1_product'))->orderBy('price');
+        $select->union($union);
+        $select->union; // triggers clear SQL cache
+
+        $this->expectException(RuntimeException::class);
+        $select->intersect(new Select('*', 'store2_product'));
+    }
+
+    public function testThatAddUnionAfterIntersectRaisesExceptiom()
+    {
+        $select = new Select('*', 'product', 'p');
+        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
+        $select->intersect($intersect);
+        $select->intersect; // triggers clear SQL cache
+
+        $this->expectException(RuntimeException::class);
+        $select->union(new Select('*', 'store2_product'));
+    }
+
+    public function testSqlCachePartialClearing()
+    {
+        $select = new Select('*', 'product', 'p');
+        $select->leftJoin('category', 'c', "c.id = p.category_id");
+        $select->groupBy('p.category_id');
+        $select->orderBy('p.price');
+
+        $sql = $select->getSQL();
+
+        $this->invokeMethod($select, 'clearSQL', 'columns');
+        self::assertSame($sql, $select->getSQL());
+
+        $this->invokeMethod($select, 'clearSQL', 'where');
+        self::assertSame($sql, $select->getSQL());
+
+        $this->invokeMethod($select, 'clearSQL', 'having');
+        self::assertSame($sql, $select->getSQL());
+
+        $this->invokeMethod($select, 'clearSQL', 'group');
+        self::assertSame($sql, $select->getSQL());
+
+        $this->invokeMethod($select, 'clearSQL', 'order');
+        self::assertSame($sql, $select->getSQL());
+
+        $this->invokeMethod($select, 'clearSQL', 'limit');
+        self::assertSame($sql, $select->getSQL());
+    }
+
+
+    public function testThatCloningAlsoClonesClauses()
+    {
+         $select1 = new Select('*', 'product', 'p');
+         $select1->where("TRUE IS TRUE");
+         $select1->having("FALSE IS FALSE");
+
+         $select2 = clone $select1;
+
+         self::assertEquals($select1->where, $select2->where);
+         self::assertNotSame($select1->where, $select2->where);
+         self::assertEquals($select1->having, $select2->having);
+         self::assertNotSame($select1->having, $select2->having);
     }
 
     public function testMagicGetter()
