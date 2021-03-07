@@ -502,11 +502,11 @@ class Db
 
         if ($bind_params && $stmt instanceof PDOStatement) {
             $types = $sqlStatement->getParamsTypes();
-            foreach ($sqlStatement->getParams() as $index => $value) {
+            foreach ($sqlStatement->getParams() as $marker => $value) {
                 $stmt->bindValue(
-                    $index, // string marker (:name) or the 1-indexed position
+                    $marker, // string marker (:name)
                     $value,
-                    $types[$index] ?? $this->getParamType($value)
+                    $types[$marker] ?? $this->getParamType($value)
                 );
             }
         }
