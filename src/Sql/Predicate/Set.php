@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use Countable;
 use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
@@ -39,7 +40,7 @@ use function trim;
  * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
  * @property-read self|null $parent The parent predicate-set if this set is a nested-set
 */
-class Set extends Predicate
+class Set extends Predicate implements Countable
 {
     /** @var Predicate[] */
     protected $predicates = [];
@@ -486,6 +487,11 @@ class Set extends Predicate
     public function isEmpty(): bool
     {
         return empty($this->predicates);
+    }
+
+    public function count(): int
+    {
+        return count($this->predicates);
     }
 
     public function getSQL(Driver $driver = null): string
