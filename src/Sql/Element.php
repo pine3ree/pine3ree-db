@@ -169,7 +169,7 @@ abstract class Element implements ElementInterface
     {
         $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
         $marker = ":{$name}{$this->getNextIndex()}";
-//        $marker = ":{$name}" . bin2hex(random_bytes(3));
+        //$marker = ":{$name}" . bin2hex(random_bytes(4));
         $this->addParam($marker, $value, $type);
 
         return $marker;
