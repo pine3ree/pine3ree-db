@@ -12,6 +12,8 @@ use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 
+use function trim;
+
 /**
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
  *
@@ -64,7 +66,7 @@ abstract class ConditionalClause extends Clause
         // predicate-set
 
         $predicates_sql = $this->conditions->getSQL($driver ?? Driver::ansi());
-        if (self::isEmptySQL($predicates_sql)) {
+        if ('' === $predicates_sql = trim($predicates_sql)) {
             return $this->sql = '';
         }
 
