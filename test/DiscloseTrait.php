@@ -34,14 +34,22 @@ trait DiscloseTrait
 
     private function getPropertyValue($object, string $propertyName)
     {
+        $property = $this->getProperty($object, $propertyName);
+
+        return $property->getValue($object);
+    }
+
+    private function getProperty($object, string $propertyName)
+    {
         if (!is_object($object)) {
             throw new InvalidArgumentException(
                 'The object argument must be a php object!'
             );
         }
-        $propertyName = new \ReflectionProperty(get_class($object), $propertyName);
-        $propertyName->setAccessible(true);
 
-        return $propertyName->getValue($object);
+        $property = new \ReflectionProperty(get_class($object), $propertyName);
+        $property->setAccessible(true);
+
+        return $property;
     }
 }
