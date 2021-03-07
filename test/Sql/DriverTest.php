@@ -8,10 +8,16 @@
 
 namespace P3\DbTest\Sql\Driver;
 
-use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use PDO;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
+use function setlocale;
+
+use const LC_NUMERIC;
 
 class DriverTest extends TestCase
 {
@@ -22,16 +28,48 @@ class DriverTest extends TestCase
 
     public function setUp(): void
     {
-        $this->driver = new class (null, "`", "`", "'") extends Driver {
-        };
+        $this->driver = $this->createInstance();
     }
 
     public function tearDown()
     {
     }
 
-    private function getInstance(): Driver
+    private function createInstance(PDO $pdo = null, string $ql = "`", string $qr = "`", string $qv = "'"): Driver
     {
+        return new class ($pdo, $ql, $qr, $qv) extends Driver {
+            public function getName(): string
+            {
+                if (isset($this->name)) {
+                    return $this->name;
+                }
+
+                parent::getName();
+                return $this->name = 'driver';
+            }
+        };
+    }
+
+    /**
+     * @dataProvider provideInvalidQuotingChars
+     */
+    public function testInvalidQuotinCharsRaisesException(string $ql, string $qr, string $v)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->createInstance(null, $ql, $qr, $v);
+    }
+
+    public function provideInvalidQuotingChars(): array
+    {
+        return [
+            ["", "", ""],
+            ["`", "", ""],
+            ["", "`", ""],
+            ["", "", "'"],
+            ["\\", "", ""],
+            ["", "\\", ""],
+            ["", "\\", "\\"],
+        ];
     }
 
     /**
@@ -79,6 +117,16 @@ class DriverTest extends TestCase
         self::assertSame($expected, $this->driver->quoteValue($value));
     }
 
+    public function testQuoteFloatValueIsNotLocaleDependent()
+    {
+        $lc_numeric = setlocale(LC_NUMERIC, 0);
+        setlocale(LC_NUMERIC, 'it_IT.UTF-8');
+
+        self::assertSame('1.23', $this->driver->quoteValue(1.23));
+
+        setlocale(LC_NUMERIC, $lc_numeric);
+    }
+
     public function testQuoteStringValueWithoutConnectionRaisesException()
     {
         $this->expectException(RuntimeException::class);
@@ -94,5 +142,49 @@ class DriverTest extends TestCase
             [42, '42'],
             [12.345, '12.345'],
         ];
+    }
+
+    /**
+     * @dataProvider provideUnsupportedValues
+     */
+    public function testQuoteUnsupportedValueTypeRaisesException($value)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->driver->quoteValue($value);
+    }
+
+    public function provideUnsupportedValues(): array
+    {
+        return [
+            [new \stdClass()],
+            [[1, 2, 3]],
+        ];
+    }
+
+    public function testQuoteStringValueWithConnectionRaisesExceptionIfPdoFails()
+    {
+        $str = '?#?';
+
+        $pdo = $this->prophesize(PDO::class);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->willReturn('fake');
+        $pdo->quote($str, PDO::PARAM_STR)->willReturn(false);
+
+        $driver = $this->createInstance($pdo->reveal());
+
+        $this->expectException(RuntimeException::class);
+        $driver->quoteValue($str);
+    }
+
+    public function testMagicGetter()
+    {
+        $driver = $this->createInstance(null, '#', '+', '`');
+
+        self::assertSame('#', $driver->ql);
+        self::assertSame('+', $driver->qr);
+        self::assertSame('`', $driver->qv);
+        self::assertSame('driver', $driver->name);
+
+        $this->expectException(RuntimeException::class);
+        $driver->nonexistentProperty;
     }
 }
