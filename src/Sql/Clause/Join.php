@@ -27,7 +27,7 @@ use function trim;
  * @property-read string $type The join type
  * @property-read string $table The joined-table
  * @property-read string|null $alias The joined-table alias, if any
- * @property-read On|Literal|null $on The ON-specification, if any
+ * @property-read On|Literal|null $pecification The ON-specification, if any
  * @property-read On|null $on The ON-clause (current or new instance) if the specification
  *      is not already set to a Literal
  */
