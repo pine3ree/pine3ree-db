@@ -35,9 +35,9 @@ interface ElementInterface
     /**
      * Return the (generated/imported) parameter pdo-types (PDO::PARAM_*)
      *
-     * @param bool $return_pdo_const_names Return stringify version instead of actual int constants?
+     * @param bool $returnPdoConstNames Return stringify version instead of actual int constants?
      *
      * @return array <int|string: int>
      */
-    public function getParamsTypes(bool $return_pdo_const_names = false): array;
+    public function getParamsTypes(bool $returnPdoConstNames = false): array;
 }

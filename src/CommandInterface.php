@@ -52,8 +52,8 @@ interface CommandInterface
      * Return the indexed params types of the composed SQL statement, available
      * after compiling the sql string
      *
-     * @param bool $return_pdo_const_names
+     * @param bool $returnPdoConstNames
      * @return array
      */
-    public function getParamsTypes(bool $return_pdo_const_names = false): array;
+    public function getParamsTypes(bool $returnPdoConstNames = false): array;
 }

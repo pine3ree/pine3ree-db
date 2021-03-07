@@ -54,9 +54,9 @@ abstract class Command implements CommandInterface
         return $this->sqlStatement->getParams();
     }
 
-    public function getParamsTypes(bool $return_pdo_const_names = false): array
+    public function getParamsTypes(bool $returnPdoConstNames = false): array
     {
-        return $this->sqlStatement->getParamsTypes($return_pdo_const_names);
+        return $this->sqlStatement->getParamsTypes($returnPdoConstNames);
     }
 
     /**

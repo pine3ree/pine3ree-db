@@ -78,9 +78,9 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
         return $this->conditions->getParams();
     }
 
-    public function getParamsTypes(bool $return_pdo_const_names = false): array
+    public function getParamsTypes(bool $returnPdoConstNames = false): array
     {
-        return $this->conditions->getParamsTypes($return_pdo_const_names);
+        return $this->conditions->getParamsTypes($returnPdoConstNames);
     }
 
     public function getSQL(Driver $driver = null): string

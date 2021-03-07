@@ -75,7 +75,7 @@ class Expression extends Predicate
         $driver = $driver ?? Driver::ansi();
 
         // reset any previous parameters
-        $this->params = $this->params_types = [];
+        $this->params = $this->paramsTypes = [];
 
         // replace the `{name}`-placeholders with `:name`-markers
         $sql = $this->expression;

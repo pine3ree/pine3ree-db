@@ -54,7 +54,7 @@ abstract class Element implements ElementInterface
      *
      * @var array<int|string, int>
      */
-    protected $params_types = [];
+    protected $paramsTypes = [];
 
     /** @var string */
     protected $shortName;
@@ -94,35 +94,45 @@ abstract class Element implements ElementInterface
         $this->clearSQL();
     }
 
+    /**
+     * Return the parameters values created after compiling the sql string, indexed
+     * by their sql markers
+     *
+     * @return array
+     */
     public function getParams(): array
     {
         return $this->params;
     }
 
-    public function getParamsTypes(bool $return_pdo_const_names = false): array
+    /**
+     * Return the parameters values types indexed by their sql markers
+     *
+     * @param bool $returnPdoConstNames Return pdo constants names instead of their values
+     * @return array
+     */
+    public function getParamsTypes(bool $returnPdoConstNames = false): array
     {
-        if ($return_pdo_const_names
-            && !empty($this->params_types)
-        ) {
+        if ($returnPdoConstNames && !empty($this->paramsTypes)) {
             $types = [];
-            foreach ($this->params_types as $key => $type) {
+            foreach ($this->paramsTypes as $marker => $type) {
                 if ($type === PDO::PARAM_STR) {
-                    $pdo_const = 'PDO::PARAM_STR';
+                    $pdoConstName = 'PDO::PARAM_STR';
                 } elseif ($type === PDO::PARAM_INT) {
-                    $pdo_const = 'PDO::PARAM_INT';
+                    $pdoConstName = 'PDO::PARAM_INT';
                 } elseif ($type === PDO::PARAM_NULL) {
-                    $pdo_const = 'PDO::PARAM_NULL';
+                    $pdoConstName = 'PDO::PARAM_NULL';
                 } elseif ($type === PDO::PARAM_LOB) {
-                    $pdo_const = 'PDO::PARAM_LOB';
+                    $pdoConstName = 'PDO::PARAM_LOB';
                 } else {
-                    $pdo_const = 'UNKNOWN';
+                    $pdoConstName = 'UNKNOWN';
                 }
-                $types[$key] = $pdo_const;
+                $types[$marker] = $pdoConstName;
             }
             return $types;
         }
 
-        return $this->params_types;
+        return $this->paramsTypes;
     }
 
     /**
@@ -199,7 +209,7 @@ abstract class Element implements ElementInterface
             }
         }
 
-        $this->params_types[$marker] = $type;
+        $this->paramsTypes[$marker] = $type;
     }
 
     /**
@@ -207,7 +217,7 @@ abstract class Element implements ElementInterface
      */
     protected function resetParams()
     {
-        $this->params = $this->params_types = [];
+        $this->params = $this->paramsTypes = [];
     }
 
     private function getNextIndex(): int
