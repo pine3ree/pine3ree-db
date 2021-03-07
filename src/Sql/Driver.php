@@ -215,7 +215,12 @@ abstract class Driver implements DriverInterface
         return $this->quoteStringValue($value);
     }
 
-    protected function quoteStringValue(string $value)
+    /**
+     * @param string $value
+     * @return string
+     * @throws RuntimeException
+     */
+    protected function quoteStringValue(string $value): string
     {
         if (!isset($this->pdo)) {
             throw new RuntimeException(
