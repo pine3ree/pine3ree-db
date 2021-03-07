@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Clause;
 
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Driver;
@@ -16,6 +17,7 @@ use RuntimeException;
 use function count;
 use function current;
 use function is_array;
+use function is_subclass_of;
 use function key;
 use function trim;
 
@@ -33,6 +35,8 @@ trait ConditionalClauseAwareTrait
      */
     private function setConditionalClause(string $property, $fqcn, $clause): self
     {
+        self::assertValidConditionaClauseClass($fqcn);
+
         if (is_array($clause)
             // ["&&" => conditions] or ["||" => conditions]
             && count($clause) === 1
@@ -78,5 +82,15 @@ trait ConditionalClauseAwareTrait
         $this->importParams($clause);
 
         return $sql;
+    }
+
+    private static function assertValidConditionaClauseClass(string $fqcn)
+    {
+        if (!is_subclass_of($fqcn, ConditionalClause::class, true)) {
+            throw new InvalidArgumentException(
+                "The provided class `{$fqcn}` is not extends"
+                . " `" . ConditionalClause::class . "`!"
+            );
+        }
     }
 }
