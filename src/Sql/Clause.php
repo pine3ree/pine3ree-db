@@ -45,7 +45,7 @@ abstract class Clause extends Element
             return $this->__name;
         }
 
-        $name = preg_replace('/[a-z][A-Z]/', '$1 $2', $this->getShortName());
+        $name = preg_replace('/([a-z])([A-Z])/', '$1 $2', $this->getShortName());
         $this->__name = strtoupper($name);
 
         return $this->__name;
