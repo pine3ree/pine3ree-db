@@ -35,7 +35,7 @@ class ElementTest extends TestCase
         return new class ($values) extends Element {
 
             /** @var array */
-            private $values;
+            private $values = [];
 
             /** @var array */
             private $values_types;
