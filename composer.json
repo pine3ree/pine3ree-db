@@ -1,6 +1,6 @@
 {
     "name": "pine3ree/p3-db",
-    "description": "A tiny PDO abstraction layer wrapper",
+    "description": "A tiny PDO database abstraction layer wrapper",
     "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
