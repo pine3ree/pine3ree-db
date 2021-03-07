@@ -8,6 +8,7 @@
 
 namespace P3\DbTest\Sql;
 
+use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
@@ -15,6 +16,7 @@ use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use stdClass;
 
 class ElementTest extends TestCase
 {
@@ -35,11 +37,25 @@ class ElementTest extends TestCase
             /** @var array */
             private $values;
 
+            /** @var array */
+            private $values_types;
+
             protected static $index;
 
             public function __construct(array $values = [])
             {
-                $this->values = $values;
+                foreach ($values as $value) {
+                    $this->addValue($value);
+                }
+            }
+
+            public function addValue($value, int $type = null)
+            {
+                $idx = "v:" . count($this->values);
+                $this->values[$idx] = $value;
+                if (isset($type)) {
+                    $this->values_types[$idx] = $type;
+                }
             }
 
             public function getSQL(Driver $driver = null): string
@@ -57,8 +73,9 @@ class ElementTest extends TestCase
                 if (!empty($this->values)) {
                     $sqls[] = "[";
                     $values_sqls = [];
-                    foreach ($this->values as $value) {
-                        $values_sqls[] = $this->getValueSQL($value, null, 'param');
+                    foreach ($this->values as $idx => $value) {
+                        $type = $this->values_types[$idx] ?? null;
+                        $values_sqls[] = $this->getValueSQL($value, $type, 'param');
                     }
                     $sqls[] = implode(", ", $values_sqls);
                     $sqls[] = "]";
@@ -78,7 +95,41 @@ class ElementTest extends TestCase
         $element2 = $this->createInstance([1, 2]);
 
         $this->expectException(RuntimeException::class);
-        $element1->importParams($element2);
+        $this->invokeMethod($element1, 'importParams', $element2);
+    }
+
+    /**
+     * @dataProvider provideUnsupportedIdentifiers
+     */
+    public function testQuotingUnsupportedIdentifierTypeRaisesException($identifier)
+    {
+        $element = $this->createInstance();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->invokeMethod($element, 'quoteGenericIdentifier', $identifier, Driver::ansi());
+    }
+
+    public function provideUnsupportedIdentifiers(): array
+    {
+        return [
+            [null],
+            [false],
+            [true],
+            [1],
+            [1.23],
+            [new stdClass()],
+        ];
+    }
+
+    /**
+     * @dataProvider provideUnsupportedOperators
+     */
+    public function testCallUnsupportedMethodRaisesException()
+    {
+        $element = $this->createInstance();
+
+        $this->expectException(RuntimeException::class);
+        $element->doSomething();
     }
 
     public function provideUnsupportedOperators(): array
@@ -140,8 +191,14 @@ class ElementTest extends TestCase
         $values = [null, 1, true, 1.23, 'A'];
         $element = $this->createInstance($values);
 
+        $element->addValue('B', PDO::PARAM_LOB);
+        $element->addValue('THHGTTG', 42);
+
+        $values[] = 'B';
+        $values[] = 'THHGTTG';
+
         self::assertStringMatchesFormat(
-            'ELEMENT[:param%x, :param%x, :param%x, :param%x, :param%x]',
+            'ELEMENT[:param%x, :param%x, :param%x, :param%x, :param%x, :param%x, :param%x]',
             $sql = $element->getSQL()
         );
 
@@ -163,6 +220,8 @@ class ElementTest extends TestCase
                 PDO::PARAM_INT,
                 PDO::PARAM_STR,
                 PDO::PARAM_STR,
+                PDO::PARAM_LOB,
+                42
             ],
             array_values($element->getParamsTypes())
         );
@@ -174,6 +233,8 @@ class ElementTest extends TestCase
                 'PDO::PARAM_INT',
                 'PDO::PARAM_STR',
                 'PDO::PARAM_STR',
+                'PDO::PARAM_LOB',
+                'UNKNOWN',
             ],
             array_values($element->getParamsTypes(true))
         );
