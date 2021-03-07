@@ -26,6 +26,7 @@ use function is_numeric;
 use function is_object;
 use function is_string;
 use function key;
+use function spl_object_hash;
 use function sprintf;
 use function strtoupper;
 use function trim;
@@ -225,7 +226,8 @@ class Set extends Predicate
         }
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
-        $this->predicates[] = [$logicalOperator, $predicate];
+        $key = "{$logicalOperator}:" . spl_object_hash($predicate);
+        $this->predicates[$key] = $predicate;
         $this->nextLogicalOperator = null;
 
         // remove rendered sql cache
@@ -501,14 +503,15 @@ class Set extends Predicate
         $driver = $driver ?? Driver::ansi();
 
         $sqls = [];
-        foreach ($this->predicates as $index => $p) {
-            $logicalOperator = $p[0];
-            $predicate = $p[1];
+        $count = 0;
+        foreach ($this->predicates as $key => $predicate) {
+            $logicalOperator = explode(':', $key)[0];
             $sql = $predicate->getSQL($driver);
             if (self::isEmptySQL($sql)) {
                 continue;
             }
-            if ($index > 0) {
+            $count += 1;
+            if ($count > 1) {
                 $sqls[] = $logicalOperator;
             }
             $sqls[] = $predicate instanceof self ? "({$sql})" : $sql;
