@@ -341,12 +341,12 @@ abstract class Element implements ElementInterface
     /**
      * Check that the given SQL is a non-emty string
      *
-     * @param type $sql
+     * @param string $sql
      * @return bool
      */
-    protected static function isEmptySQL($sql): bool
+    protected static function isEmptySQL(string $sql): bool
     {
-        return !is_string($sql) || '' === trim($sql);
+        return '' === ($sql = trim($sql));
     }
 
     /**
