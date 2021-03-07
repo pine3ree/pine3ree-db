@@ -141,7 +141,10 @@ abstract class Driver implements DriverInterface
             return "{$ql}{$identifier}{$qr}";
         }
 
-        return $ql . str_replace('.', "{$qr}.{$ql}", $identifier) . $qr;
+        $quoted = $ql . str_replace('.', "{$qr}.{$ql}", $identifier) . $qr;
+        $quoted = str_replace("{$ql}*{$qr}", '*', $quoted); // unquote the sql asterisk
+
+        return $quoted;
     }
 
     protected function isQuoted(string $identifier): bool
