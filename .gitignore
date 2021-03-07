@@ -4,5 +4,6 @@ composer.lock
 /coverage/
 /phpunit.xml
 /nbproject/
+/.*/
 .*.php
 *.php.*
