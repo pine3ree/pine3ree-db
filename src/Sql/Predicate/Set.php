@@ -11,7 +11,6 @@ use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 use RuntimeException;
@@ -231,8 +230,8 @@ class Set extends Predicate
 
         // remove rendered sql cache
         $this->sql = null;
-        // remove parent'srendered sql cache
-        if ($this->parent) {
+        // remove parent's rendered sql cache
+        if ($this->parent instanceof self) {
             $this->parent->sql = null;
         }
 
