@@ -143,11 +143,14 @@ class Oci extends Driver
                 $column_sql = $column->getSQL($this);
                 $select->importParams($column);
             } else {
+                // @codeCoverageIgnoreStart
+                // should be unreacheable due to table-column validity assertion
                 throw new InvalidArgumentException(sprintf(
                     "Invalid db-table column type! Allowed types are: string, Literal,"
                     . " Expression, Select, `%s` provided!",
                     is_object($column) ? get_class($column) : gettype($column)
                 ));
+                // @codeCoverageIgnoreEnd
             }
 
             // add alias?
