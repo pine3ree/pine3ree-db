@@ -20,6 +20,9 @@ trait WhereAwareTrait
 {
     use ConditionalClauseAwareTrait;
 
+    /** @var Where|null */
+    protected $where;
+
     /**
      * Set WHERE conditions
      *

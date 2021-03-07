@@ -29,9 +29,6 @@ class Delete extends Statement
     use WhereAwareTrait;
     use TableAwareTrait;
 
-    /** @var Where|null */
-    protected $where;
-
     /**
      * @param string|array $table The db table to delete from as a string or
      *      [alias => name] array

@@ -44,9 +44,6 @@ class Update extends Statement
      */
     private $set = [];
 
-    /** @var Where|null */
-    protected $where;
-
     /**
      * @param string $table The db table to update
      */

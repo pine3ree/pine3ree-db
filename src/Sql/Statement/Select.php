@@ -80,9 +80,6 @@ class Select extends Statement
     /** @var string|null */
     protected $alias;
 
-    /** @var Where|null */
-    protected $where;
-
     /** @var Join[] */
     protected $joins = [];
 
