@@ -33,11 +33,12 @@ use function get_class;
 use function gettype;
 use function implode;
 use function is_array;
-use function is_callable;
 use function is_numeric;
 use function is_object;
 use function is_string;
 use function max;
+use function preg_quote;
+use function preg_replace;
 use function rtrim;
 use function sprintf;
 use function str_replace;
@@ -762,7 +763,8 @@ class Select extends Statement
             );
         }
 
-        if (!empty($select->orderBy)) {
+        $orderBy = $select->orderBy;
+        if (!empty($orderBy)) {
             $select = clone $select;
             $select->orderBy = [];
         }
@@ -783,7 +785,8 @@ class Select extends Statement
             );
         }
 
-        if (!empty($select->orderBy)) {
+        $orderBy = $select->orderBy;
+        if (!empty($orderBy)) {
             $select = clone $select;
             $select->orderBy = [];
         }
@@ -871,7 +874,7 @@ class Select extends Statement
 
         $search = $replace = [];
         foreach ($tb_aliases as $tb_alias) {
-            $search[] = "/(^|\(|\s){$tb_alias}\./";
+            $search[] = "/(^|\(|\s)" . preg_quote($tb_alias) . "\./";
             $replace[] = '\1' . "{$driver->quoteAlias($tb_alias)}.";
         }
 
@@ -887,9 +890,7 @@ class Select extends Statement
         }
 
         foreach ($this->joins as $join) {
-            if (!empty($join->table)) {
-                $tb_names[] = $join->table;
-            }
+            $tb_names[] = $join->table;
         }
 
         if (empty($tb_names)) {
@@ -898,7 +899,7 @@ class Select extends Statement
 
         $search = $replace = [];
         foreach ($tb_names as $tb_name) {
-            $search[] = "/(^|\(|\s){$tb_name}\./";
+            $search[] = "/(^|\(|\s)" . preg_quote($tb_name) . "\./";
             $replace[] = '\1' . "{$driver->quoteIdentifier($tb_name)}.";
         }
 
