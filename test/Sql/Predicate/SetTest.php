@@ -106,17 +106,6 @@ class SetTest extends TestCase
         self::assertStringMatchesFormat('id > 42', $predicateSet->getSQL());
     }
 
-    public function testMagicProperties()
-    {
-        $predicateSet = new Predicate\Set([
-            "id > 42",
-        ]);
-
-        self::assertSame($predicateSet->getPredicates(), $predicateSet->predicates);
-        self::assertSame($predicateSet->getDefaultLogicalOperator(), $predicateSet->defaultLogicalOperator);
-        self::assertSame($predicateSet->getNextLogicalOperator(), $predicateSet->nextLogicalOperator);
-    }
-
     public function testBuildPredicateFromEmptySpecsWithRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -777,11 +766,25 @@ class SetTest extends TestCase
         $nestedSet->close()->close();
     }
 
+    public function testCountable()
+    {
+        $predicateSet = new Predicate\Set([
+            "id > 42",
+            "price > 100.0",
+        ]);
+
+        self::assertSame(2, $predicateSet->count());
+        self::assertCount(2, $predicateSet);
+        self::assertSame(count($predicateSet->getPredicates()), count($predicateSet));
+    }
+
     public function testMagicGetter()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
 
         self::assertSame($predicateSet->getPredicates(), $predicateSet->predicates);
+        self::assertSame($predicateSet->getDefaultLogicalOperator(), $predicateSet->defaultLogicalOperator);
+        self::assertSame($predicateSet->getNextLogicalOperator(), $predicateSet->nextLogicalOperator);
 
         $this->expectException(\RuntimeException::class);
         $predicateSet->nonexistentProperty;
