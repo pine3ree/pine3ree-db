@@ -846,8 +846,8 @@ class Set extends Predicate
     public function __clone()
     {
         parent::__clone();
-        foreach ($this->predicates as $i => $predicate) {
-            $this->predicates[$i] = [$predicate[0], clone $predicate[1]];
+        foreach ($this->predicates as $key => $predicate) {
+            $this->predicates[$key] = clone $predicate;
         }
     }
 
