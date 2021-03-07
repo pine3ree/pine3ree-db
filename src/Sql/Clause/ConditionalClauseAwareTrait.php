@@ -17,6 +17,7 @@ use function count;
 use function current;
 use function is_array;
 use function key;
+use function trim;
 
 /**
  * A trait for sql-statements that can include WHERE, HAVING and ON clauses
@@ -70,7 +71,7 @@ trait ConditionalClauseAwareTrait
         }
 
         $sql = $clause->getSQL($driver);
-        if (self::isEmptySQL($sql)) {
+        if ('' === $sql = trim($sql)) {
             return '';
         }
 
