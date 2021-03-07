@@ -40,13 +40,20 @@ class ElementTest extends TestCase
             /** @var array */
             private $values_types;
 
-            protected static $index;
+            protected static $index = 0;
+
+            protected const MAX_INDEX = 99;
 
             public function __construct(array $values = [])
             {
                 foreach ($values as $value) {
                     $this->addValue($value);
                 }
+            }
+
+            public static function getMaxIndex(): int
+            {
+                return static::MAX_INDEX;
             }
 
             public function addValue($value, int $type = null)
@@ -147,10 +154,13 @@ class ElementTest extends TestCase
     public function testGetNextIndex()
     {
         $element = $this->createInstance();
-        $index = $this->invokeMethod($element, 'getNextIndex');
+        $maxIndex = $element->getMaxIndex();
+        for ($i = 0; $i < $maxIndex; $i += 1) {
+            self::assertSame($i + 1, $this->invokeMethod($element, 'getNextIndex'));
+        }
 
-        self::assertSame($index + 1, $this->invokeMethod($element, 'getNextIndex'));
-        self::assertSame($index + 2, $this->invokeMethod($element, 'getNextIndex'));
+        // test that the index is reset after reaching its max limit
+        self::assertSame(1, $this->invokeMethod($element, 'getNextIndex'));
     }
 
     /**
