@@ -791,6 +791,19 @@ class SetTest extends TestCase
         self::assertSame(count($predicateSet->getPredicates()), count($predicateSet));
     }
 
+    public function testTraversable()
+    {
+        $predicateSet = new Predicate\Set([
+            "id > 42",
+            "price > 100.0",
+        ]);
+
+        $predicates = $predicateSet->getPredicates();
+        foreach ($predicateSet as $key => $predicate) {
+            self::assertSame($predicate, $predicates[$key] ?? null);
+        }
+    }
+
     public function testMagicGetter()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);

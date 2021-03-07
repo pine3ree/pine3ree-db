@@ -7,8 +7,10 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
+use IteratorAggregate;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
@@ -16,6 +18,7 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 use RuntimeException;
 use Throwable;
+use Traversable;
 
 use function count;
 use function current;
@@ -40,7 +43,7 @@ use function trim;
  * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
  * @property-read self|null $parent The parent predicate-set if this set is a nested-set
 */
-class Set extends Predicate implements Countable
+class Set extends Predicate implements Countable, IteratorAggregate
 {
     /** @var Predicate[] */
     protected $predicates = [];
@@ -492,6 +495,11 @@ class Set extends Predicate implements Countable
     public function count(): int
     {
         return count($this->predicates);
+    }
+
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->predicates);
     }
 
     public function getSQL(Driver $driver = null): string
