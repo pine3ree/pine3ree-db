@@ -11,6 +11,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
+use RuntimeException;
 
 use function trim;
 
@@ -470,6 +471,10 @@ abstract class ConditionalClause extends Clause
         if ('conditions' === $name) {
             return $this->conditions;
         };
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 
     public function __clone()
