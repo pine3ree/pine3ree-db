@@ -64,11 +64,6 @@ abstract class Driver implements DriverInterface
     protected $qr;
 
     /**
-     * @var string ql-concat-qr, used only for checks
-     */
-    protected $qlr;
-
-    /**
      * @var string The quote char for values, default is single-quote char "'"
      */
     protected $qv;
@@ -103,8 +98,6 @@ abstract class Driver implements DriverInterface
         $this->ql = $ql;
         $this->qr = $qr;
         $this->qv = $qv;
-
-        $this->qlr = "{$ql}{$qr}";
     }
 
     protected static function assertValidQuotingChar(string &$qc, string $type)
@@ -137,7 +130,7 @@ abstract class Driver implements DriverInterface
      */
     public function quoteIdentifier(string $identifier): string
     {
-        if ($identifier === '*' || empty($this->qlr) || $this->isQuoted($identifier)) {
+        if ($identifier === '*' || $this->isQuoted($identifier)) {
             return $identifier;
         }
 
@@ -170,10 +163,6 @@ abstract class Driver implements DriverInterface
      */
     public function quoteAlias(string $alias): string
     {
-        if (empty($this->qlr)) {
-            return $alias;
-        }
-
         $ql = $this->ql;
         $qr = $this->qr;
 
