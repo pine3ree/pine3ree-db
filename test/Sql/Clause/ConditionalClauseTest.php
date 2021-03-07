@@ -160,6 +160,31 @@ class ConditionalClauseTest extends TestCase
         self::assertSame($nestedSet->getParent(), $nestedSet->parent);
     }
 
+    public function testCountable()
+    {
+        $conditionalClause = $this->createInstance([
+            "id > 42",
+            "price > 100.0",
+        ]);
+
+        self::assertSame(2, $conditionalClause->count());
+        self::assertCount(2, $conditionalClause);
+        self::assertSame(count($conditionalClause->getConditions()), count($conditionalClause));
+    }
+
+    public function testTraversable()
+    {
+        $conditionalClause = $this->createInstance([
+            "id > 42",
+            "price > 100.0",
+        ]);
+
+        $predicates = $conditionalClause->getConditions()->getPredicates();
+        foreach ($conditionalClause as $key => $predicate) {
+            self::assertSame($predicate, $predicates[$key] ?? null);
+        }
+    }
+
     public function testMagicGetter()
     {
         $conditionalClause = $this->createInstance(['id' => 42]);

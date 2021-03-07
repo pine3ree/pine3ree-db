@@ -7,21 +7,26 @@
 
 namespace P3\Db\Sql\Clause;
 
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 use RuntimeException;
+use Traversable;
 
 use function trim;
 
 /**
- * This class abstracts the SQL conditional clauses WHERE, HAVING and ON
+ * This class abstracts the SQL conditional clauses WHERE, HAVING and ON by
+ * composing an internal predicate set
  *
  * @property-read Predicate\Set $conditions Return the predicate-set of this clause
  */
-abstract class ConditionalClause extends Clause
+abstract class ConditionalClause extends Clause implements Countable, IteratorAggregate
 {
     /**
      * @var Predicate\Set
@@ -56,6 +61,16 @@ abstract class ConditionalClause extends Clause
     public function isEmpty(): bool
     {
         return $this->conditions->isEmpty();
+    }
+
+    public function count(): int
+    {
+        return $this->conditions->count();
+    }
+
+    public function getIterator(): Traversable
+    {
+        return $this->conditions->getIterator();
     }
 
     public function getParams(): array
