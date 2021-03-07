@@ -120,8 +120,20 @@ class DriverTest extends TestCase
     public function testQuoteFloatValueIsNotLocaleDependent()
     {
         $lc_numeric = setlocale(LC_NUMERIC, 0);
-        setlocale(LC_NUMERIC, 'it_IT.UTF-8');
 
+        setlocale(LC_NUMERIC, 'C');
+        self::assertSame('1.23', $this->driver->quoteValue(1.23));
+
+        setlocale(LC_NUMERIC, 'it_IT.UTF-8');
+        self::assertSame('1.23', $this->driver->quoteValue(1.23));
+
+        setlocale(LC_NUMERIC, 'it_CH.UTF-8');
+        self::assertSame('1.23', $this->driver->quoteValue(1.23));
+
+        setlocale(LC_NUMERIC, 'de_DE.UTF-8');
+        self::assertSame('1.23', $this->driver->quoteValue(1.23));
+
+        setlocale(LC_NUMERIC, 'fr_FR.UTF-8');
         self::assertSame('1.23', $this->driver->quoteValue(1.23));
 
         setlocale(LC_NUMERIC, $lc_numeric);
