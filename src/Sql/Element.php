@@ -70,7 +70,7 @@ abstract class Element implements ElementInterface
      *
      * @const int
      */
-    private const MAX_INDEX = 999999;
+    protected const MAX_INDEX = 999999;
 
     /**
      * Build and return the parametrized SQL-string
@@ -221,7 +221,7 @@ abstract class Element implements ElementInterface
 
     private function getNextIndex(): int
     {
-        if (static::$index === self::MAX_INDEX) {
+        if (static::$index === static::MAX_INDEX) {
             return static::$index = 1;
         }
 
