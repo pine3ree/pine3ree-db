@@ -284,5 +284,9 @@ abstract class Driver implements DriverInterface
         if ($name === 'name') {
             return $this->name ?? $this->getName();
         }
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 }
