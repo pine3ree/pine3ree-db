@@ -11,6 +11,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
+use P3\Db\Sql\Statement\Select;
 use RuntimeException;
 
 use function trim;
@@ -39,6 +40,16 @@ abstract class ConditionalClause extends Clause
     }
 
     /**
+     * Get the composed predicate-set
+     *
+     * @return Predicate\Set
+     */
+    public function getConditions(): Predicate\Set
+    {
+        return $this->conditions;
+    }
+
+    /**
      * @see Predicate\Set::isEmpty()
      * @return bool
      */
@@ -59,9 +70,7 @@ abstract class ConditionalClause extends Clause
 
     public function getSQL(Driver $driver = null): string
     {
-        if (isset($this->sql)) {
-            return $this->sql;
-        }
+        // use the composed presicate-set sql cache
 
         // No need to reset the parameters here, this is forwarded to the composed
         // predicate-set
@@ -89,11 +98,10 @@ abstract class ConditionalClause extends Clause
      * @throws InvalidArgumentException
      * @return $this Provides fluent interface
      */
-    public function addPredicate($predicate): self
+    public function addPredicate($predicate): Predicate\Set
     {
         $this->sql = null;
-        $this->conditions->addPredicate($predicate);
-        return $this;
+        return $this->conditions->addPredicate($predicate);
     }
 
     /**
@@ -409,24 +417,6 @@ abstract class ConditionalClause extends Clause
     {
         $this->sql = null;
         return $this->conditions->gt($identifier, $value);
-    }
-
-    /**
-     * @see Predicate\Set::regExp()
-     */
-    public function regExp($identifier, array $regexp, bool $case_sensitive = false): Predicate\Set
-    {
-        $this->sql = null;
-        return $this->conditions->regExp($identifier, $regexp, $case_sensitive);
-    }
-
-    /**
-     * @see Predicate\Set::notRegExp()
-     */
-    public function notRegExp($identifier, array $regexp, bool $case_sensitive = false): Predicate\Set
-    {
-        $this->sql = null;
-        return $this->conditions->notRegExp($identifier, $regexp, $case_sensitive);
     }
 
     /**
