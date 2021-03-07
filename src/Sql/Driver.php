@@ -16,7 +16,9 @@ use ReflectionClass;
 use RuntimeException;
 
 use function addcslashes;
+use function gettype;
 use function is_bool;
+use function is_float;
 use function is_int;
 use function is_string;
 use function ltrim;
@@ -208,11 +210,16 @@ abstract class Driver implements DriverInterface
             return $str_value;
         }
 
-        if (!is_string($value)) {
-            $value = (string)$value;
+        if (is_string($value)) {
+            return $this->quoteStringValue($value);
         }
 
-        return $this->quoteStringValue($value);
+        // other types are nt supported
+        $type = gettype($value);
+        throw new InvalidArgumentException(
+            "Cannot quote non scalar value. Supported types are: null, bool,"
+            . " inti, float and string, `{$type}` provided!"
+        );
     }
 
     /**
