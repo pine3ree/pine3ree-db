@@ -10,6 +10,9 @@ namespace P3\Db\Sql\Driver;
 use InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
+use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
+use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement;
@@ -31,7 +34,10 @@ use const PHP_INT_MAX;
 /**
  * Oci sql-driver
  */
-class Oci extends Driver
+class Oci extends Driver implements
+    LimitSqlProvider,
+    SelectColumnsSqlProvider,
+    SelectSqlDecorator
 {
     /**
      * @const string Quoted table alias for LIMIT+OFFSET statements

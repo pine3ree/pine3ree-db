@@ -10,6 +10,7 @@ namespace P3\Db\Sql\Driver;
 use PDO;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
 use P3\Db\Sql\Statement\Select;
 
 use function implode;
@@ -17,7 +18,7 @@ use function implode;
 /**
  * Postgre sql-driver
  */
-class PgSql extends Driver
+class PgSql extends Driver implements LimitSqlProvider
 {
     public function __construct(PDO $pdo = null)
     {

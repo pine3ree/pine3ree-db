@@ -16,6 +16,9 @@ use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
+use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
+use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Identifier;
@@ -248,7 +251,7 @@ class Select extends Statement
         }
 
         // overridden by driver?
-        if (is_callable([$driver, 'getSelectColumnsSQL'])) {
+        if ($driver instanceof SelectColumnsSqlProvider) {
             return $this->sqls['columns'] = $driver->getSelectColumnsSQL($this);
         }
 
@@ -729,7 +732,7 @@ class Select extends Statement
         }
 
         // computed by driver?
-        if (is_callable([$driver, 'getLimitSQL'])) {
+        if ($driver instanceof LimitSqlProvider) {
             return $this->sqls['limit'] = $driver->getLimitSQL($this);
         }
 
@@ -842,7 +845,7 @@ class Select extends Statement
         // quote any unquoted table alias prefix
         $sql = $this->quoteTableAliases($sql, $driver);
 
-        if (is_callable([$driver, 'decorateSelectSQL'])) {
+        if ($driver instanceof SelectSqlDecorator) {
             $sql = $driver->decorateSelectSQL($this, $sql);
         }
 
