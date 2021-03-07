@@ -16,7 +16,8 @@ use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use stdClass;
+
+use function array_values;
 
 class SetTest extends TestCase
 {
@@ -292,7 +293,6 @@ class SetTest extends TestCase
         $specs = ['id', 'UNSUPPORTED', 24, 42];
         $this->expectException(InvalidArgumentException::class);
         $predicate = $this->buildPredicateFromSpecs($specs);
-//        self::assertStringMatchesFormat('"id" BETWEEN :min%x AND :max%x', $predicate->getSQL());
     }
 
     /**
@@ -405,13 +405,6 @@ class SetTest extends TestCase
         self::assertSame('', $predicateSet->getSQL());
     }
 
-//    public function testNotSetSql()
-//    {
-//        $predicateSet = new Predicate\NotSet('id', 24, 42);
-//
-//        self::assertStringMatchesFormat('"id" NOT BETWEEN :min%x AND :max%x', $predicateSet->getSQL());
-//    }
-
     public function testThatCloningAlsoClonesPredicates()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
@@ -420,9 +413,8 @@ class SetTest extends TestCase
         $oPredicates = $predicateSet->getPredicates();
         $cPredicates = $clonedSet->getPredicates();
 
-        foreach ($oPredicates as $i => $parr) {
-            list($olop, $oPred) = $parr;
-            list($clop, $cPred) = $cPredicates[$i];
+        foreach ($oPredicates as $key => $oPred) {
+            $cPred = $cPredicates[$key] ?? null;
             self::assertEquals($oPred, $cPred);
             self::assertNotSame($oPred, $cPred);
         }
@@ -482,61 +474,61 @@ class SetTest extends TestCase
         self::assertSame($fluent, $predicateSet);
         self::assertSame('TRUE IS TRUE', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Literal::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Literal::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->expression("id >= {idmin}", ['idmin' => 42]);
         self::assertSame($fluent, $predicateSet);
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Expression::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Expression::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->expr("id <= {idmax}", ['idmax' => 999]);
         self::assertSame($fluent, $predicateSet);
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Expression::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Expression::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->all("id", '<', (new Select('id', 'product')));
         self::assertStringMatchesFormat('%s ALL(%s', $predicateSet->getSQL());
         self::assertSame($fluent, $predicateSet);
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\All::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\All::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->any("id", '>', (new Select('id', 'product')));
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s ANY(%s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Any::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Any::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->some("id", '=', (new Select('id', 'product')));
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s SOME(%s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Some::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Some::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->between('id', 11, 22);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s BETWEEN %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Between::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Between::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->notBetween('id', 11, 22);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s NOT BETWEEN %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Between::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Between::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->exists(new Select('id', 'user'));
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s EXISTS (%s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Exists::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Exists::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c = 0;
         $predicateSet = new Predicate\Set();
@@ -546,63 +538,63 @@ class SetTest extends TestCase
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('NOT EXISTS (%s', $predicateSet->getSQL());
         self::assertCount(1, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\NotExists::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\NotExists::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->in('id', [1, 2]);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s IN (%s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\In::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\In::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->notIn('id', [1, 2]);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s NOT IN (%s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\NotIn::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\NotIn::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->in('id', [1, 2]);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s IN (%s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\In::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\In::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->notIn('id', [1, 2]);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s NOT IN (%s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\NotIn::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\NotIn::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->is('enabled', true);
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS TRUE', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Is::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Is::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->isNot('id', null);
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS NOT NULL', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\IsNot::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\IsNot::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->isNull('id');
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS NULL', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\IsNull::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\IsNull::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->isNotNull('id');
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS NOT NULL', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\IsNotNull::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\IsNotNull::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c = 0;
         $predicateSet = new Predicate\Set();
@@ -612,42 +604,42 @@ class SetTest extends TestCase
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS TRUE', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\IsTrue::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\IsTrue::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->isFalse('enabled');
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS FALSE', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\IsFalse::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\IsFalse::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->isUnknown('done');
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS UNKNOWN', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\IsUnknown::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\IsUnknown::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->isNotUnknown('done');
         self::assertSame($fluent, $predicateSet);
         self::assertStringEndsWith(' IS NOT UNKNOWN', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\IsNotUnknown::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\IsNotUnknown::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->like('name', 'A%');
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s LIKE %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Like::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Like::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->notLike('name', 'A%');
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s NOT LIKE %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\NotLike::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\NotLike::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c = 0;
         $predicateSet = new Predicate\Set();
@@ -657,35 +649,35 @@ class SetTest extends TestCase
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('"id" = %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->notEqual('id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "id" != %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->eq('type_id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "type_id" = %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->neq('type_id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "type_id" != %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->ne('type_id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "type_id" <> %s', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c = 0;
         $predicateSet = new Predicate\Set();
@@ -695,42 +687,42 @@ class SetTest extends TestCase
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('"id" < :lt%x', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->lt('other_id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "other_id" < :lt%x', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->lessThanEqual('id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "id" <= :lte%x', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->lte('other_id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "other_id" <= :lte%x', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->greaterThanEqual('id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "id" >= :gte%x', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->gte('other_id', 42);
         self::assertSame($fluent, $predicateSet);
         self::assertStringMatchesFormat('%s "other_id" >= :gte%x', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
-        self::assertInstanceOf(Predicate\Comparison::class, $predicateSet->getPredicates()[$c - 1][1]);
+        self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
     }
 
     public function testAndOrCalls()
