@@ -16,6 +16,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Literal;
 use P3\Db\Sql\TableAwareTrait;
+use RuntimeException;
 
 use function trim;
 
@@ -151,6 +152,10 @@ class Join extends Clause
             }
             return null;
         }
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 
     public function __clone()
