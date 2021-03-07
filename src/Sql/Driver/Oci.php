@@ -15,7 +15,6 @@ use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
 use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 
@@ -174,7 +173,7 @@ class Oci extends Driver implements
         return trim(implode(", ", $sqls));
     }
 
-    public function getLimitSQL(Statement $statement): string
+    public function getLimitSQL(Select $select): string
     {
         return '';
     }

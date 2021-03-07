@@ -10,6 +10,7 @@ namespace P3\Db\Sql\Driver;
 use PDO;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
 use P3\Db\Sql\Statement\Select;
 
 use const PHP_INT_MAX;
@@ -17,7 +18,7 @@ use const PHP_INT_MAX;
 /**
  * The default ANSI SQL Driver
  */
-class Ansi extends Driver
+class Ansi extends Driver implements LimitSqlProvider
 {
     public function __construct()
     {
