@@ -56,5 +56,9 @@ abstract class Clause extends Element
         if ('name' === $name) {
             return static::$name ?? $this->__name ?? $this->getName();
         }
+
+        throw new RuntimeException(
+            "Undefined property {$name}!"
+        );
     }
 }
