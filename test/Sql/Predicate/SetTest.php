@@ -757,6 +757,19 @@ class SetTest extends TestCase
         self::assertSame($nestedSet->getParent(), $nestedSet->parent);
     }
 
+    public function testThatNestedSetChangesClearParentSql()
+    {
+        $predicateSet = new Predicate\Set(['id' => 42]);
+        $nestedSet = $predicateSet->open();
+        $unnest = $nestedSet->close();
+
+        $predicateSet->getSQL();
+
+        self::assertNotNull($this->getPropertyValue($predicateSet, 'sql'));
+        $nestedSet->eq('id', 42);
+        self::assertNull($this->getPropertyValue($predicateSet, 'sql'));
+    }
+
     public function testCloseUnnestedSetRaisesException()
     {
         $predicateSet = new Predicate\Set();
