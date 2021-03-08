@@ -7,7 +7,6 @@
 
 namespace P3\Db\Sql\Clause;
 
-use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use P3\Db\Sql;
