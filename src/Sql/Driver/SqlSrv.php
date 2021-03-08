@@ -55,7 +55,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
         if ($limit === 0) {
             throw new RuntimeException(
                 "The number of rows provided for a FETCH clause must be greater"
-                . " then zero, `{$limit}` provided!"
+                . " than zero, `{$limit}` provided!"
             );
         }
 
