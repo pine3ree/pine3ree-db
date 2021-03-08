@@ -1023,7 +1023,7 @@ class Select extends Statement
         }
         if (!empty($this->joins)) {
             foreach ($this->joins as $k => $join) {
-                $this->joins[] = clone $this->where;
+                $this->joins[$k] = clone $this->where;
             }
         }
         if (isset($this->where)) {
