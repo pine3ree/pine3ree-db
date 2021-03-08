@@ -52,12 +52,17 @@
         "phpcbf": "phpcbf",
         "phpstan": "phpstan analyze -l max -c phpstan.neon ./src",
         "test": "phpunit --colors=always",
-        "coverage-html": "phpunit --colors=always --coverage-html coverage/html",
-        "coverage-xml": "phpunit --colors=always --coverage-xml coverage/xml",
-        "coverage-clover": "phpunit --colors=always --coverage-clover clover.xml",
         "check": [
             "@cs-check",
             "@test"
+        ],
+        "coverage-html": "phpunit --colors=always --coverage-html coverage/html",
+        "coverage-xml": "phpunit --colors=always --coverage-xml coverage/xml",
+        "coverage-clover": "phpunit --colors=always --coverage-clover clover.xml",
+        "test-coverage": [
+            "@coverage-html",
+            "@coverage-xml",
+            "@coverage-clover"
         ]
     }
 }
