@@ -71,7 +71,7 @@ class SqlSrvTest extends TestCase
         self::assertSame('', $this->driver->getLimitSQL($select));
 
         $select = new Select();
-        $select->orderBy('price');
+        $select->from('product')->orderBy('price');
         $select->limit(10);
         self::assertStringMatchesFormat(
             "OFFSET (0) ROWS FETCH FIRST (:fetch%x) ROWS ONLY",
@@ -79,7 +79,7 @@ class SqlSrvTest extends TestCase
         );
 
         $select = new Select();
-        $select->orderBy('price');
+        $select->from('product')->orderBy('price');
         $select->limit(10)->offset(100);
         self::assertStringMatchesFormat(
             "OFFSET (:offset%x) ROWS FETCH NEXT (:fetch%x) ROWS ONLY",
@@ -103,7 +103,8 @@ class SqlSrvTest extends TestCase
     public function testZeroLimitRaisesException()
     {
         $select = new Select();
-        $select->from('product')->limit(0);
+        $select->from('product')->orderBy('price');
+        $select->limit(0);
         $this->expectException(RuntimeException::class);
         $select->getSQL($this->driver);
     }
