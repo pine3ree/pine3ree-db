@@ -765,7 +765,7 @@ class SetTest extends TestCase
             $group->literal("id > 42");
         });
 
-        self::assertSame('(id < 24 OR id > 42)' , $predicateSet->getSQL());
+        self::assertSame('(id < 24 OR id > 42)', $predicateSet->getSQL());
     }
 
     public function testThatNestedSetChangesClearParentSql()
