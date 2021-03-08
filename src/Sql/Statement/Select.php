@@ -58,9 +58,9 @@ use const PHP_INT_MAX;
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any
- * @property-read array[] $groupBy An array of GROUP BY identifiers
+ * @property-read array $groupBy An array of GROUP BY identifiers
  * @property-read Having $having The Having clause, built on-first-access if null
- * @property-read array<string, string>[] $orderBy An array of ORDER BY identifier to sort-direction pairs
+ * @property-read array $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
