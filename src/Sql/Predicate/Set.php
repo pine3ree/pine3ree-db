@@ -8,6 +8,7 @@
 namespace P3\Db\Sql\Predicate;
 
 use ArrayIterator;
+use Closure;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -830,8 +831,7 @@ class Set extends Predicate implements Countable, IteratorAggregate
     }
 
     /**
-     * Close a previously opened  nested predicate-set, creating the effect of a
-     * SQL closing parenthesis
+     * Return to the original parent scope from a nested set scope
      *
      * @return $this fluent interface
      * @throws RuntimeException
@@ -845,6 +845,22 @@ class Set extends Predicate implements Countable, IteratorAggregate
         }
 
         return $this->parent;
+    }
+
+    /**
+     * Add a nested predicate-set, resulting in SQL conditions enclosed in parenthesis
+     *
+     * @param string $defaultLogicalOperator The default logical operator for the nested set
+     * @param Closure An anonymous function for manipulating the newly created nested-set given its as argument
+     *
+     * @return $this fluent interface
+     */
+    public function group(string $defaultLogicalOperator, Closure $group): self
+    {
+        $nestedPredicateSet = $this->openGroup($defaultLogicalOperator);
+        $group($nestedPredicateSet);
+
+        return $this;
     }
 
     /**

@@ -726,7 +726,7 @@ class SetTest extends TestCase
     }
 
 
-    public function testOpenWithoutLogicalOperator()
+    public function testOpenGroupWithoutLogicalOperator()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
 
@@ -739,7 +739,7 @@ class SetTest extends TestCase
         self::assertSame(Sql::AND, $nestedSet->getDefaultLogicalOperator());
     }
 
-    public function testOpenWithLogicalOperator()
+    public function testOpenGroupWithLogicalOperator()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
 
@@ -747,7 +747,7 @@ class SetTest extends TestCase
         self::assertSame(Sql::OR, $nestedSet->getDefaultLogicalOperator());
     }
 
-    public function testCloseNestedSet()
+    public function testCloseGroup()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
         $nestedSet = $predicateSet->openGroup();
@@ -755,6 +755,17 @@ class SetTest extends TestCase
 
         self::assertTrue($nestedSet->isEmpty());
         self::assertSame($nestedSet->getParent(), $nestedSet->parent);
+    }
+
+    public function testGroupWithClosure()
+    {
+        $predicateSet = new Predicate\Set();
+        $scope = $predicateSet->group(Sql::OR, function (Set $group) {
+            $group->literal("id < 24");
+            $group->literal("id > 42");
+        });
+
+        self::assertSame('(id < 24 OR id > 42)' , $predicateSet->getSQL());
     }
 
     public function testThatNestedSetChangesClearParentSql()
