@@ -827,7 +827,7 @@ class Set extends Predicate implements IteratorAggregate
     /**
      * Return to the original parent scope from a nested set scope
      *
-     * @return $this fluent interface
+     * @return self Return the parent predicate-set instance
      * @throws RuntimeException
      */
     public function closeGroup(): self
