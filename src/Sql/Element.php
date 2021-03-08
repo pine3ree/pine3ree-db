@@ -353,7 +353,7 @@ abstract class Element implements ElementInterface
      * @param string $sql
      * @return bool
      */
-    protected static function isEmptySQL(string $sql): bool
+    protected static function isEmptySQL(string &$sql): bool
     {
         return '' === ($sql = trim($sql));
     }
