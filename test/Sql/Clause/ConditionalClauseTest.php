@@ -81,8 +81,8 @@ class ConditionalClauseTest extends TestCase
     public function testPredicatesMethods(string $methodName, ...$args)
     {
         $conditionalClause = $this->createInstance();
-        $conditions = $conditionalClause->getConditions();
-        self::assertSame($conditions, $conditionalClause->{$methodName}(...$args));
+        $searchCondition = $conditionalClause->getSearchCondition();
+        self::assertSame($searchCondition, $conditionalClause->{$methodName}(...$args));
     }
 
     public function provideChainableMethodNames(): array
@@ -170,7 +170,7 @@ class ConditionalClauseTest extends TestCase
 
         self::assertSame(2, $conditionalClause->count());
         self::assertCount(2, $conditionalClause);
-        self::assertSame(count($conditionalClause->getConditions()), count($conditionalClause));
+        self::assertSame(count($conditionalClause->getSearchCondition()), count($conditionalClause));
     }
 
     public function testTraversable()
@@ -180,7 +180,7 @@ class ConditionalClauseTest extends TestCase
             "price > 100.0",
         ]);
 
-        $predicates = $conditionalClause->getConditions()->getPredicates();
+        $predicates = $conditionalClause->getSearchCondition()->getPredicates();
         foreach ($conditionalClause as $key => $predicate) {
             self::assertSame($predicate, $predicates[$key] ?? null);
         }
@@ -191,8 +191,8 @@ class ConditionalClauseTest extends TestCase
         $conditionalClause = $this->createInstance(['id' => 42]);
 
         self::assertSame(
-            $this->getPropertyValue($conditionalClause, 'conditions'),
-            $conditionalClause->conditions
+            $this->getPropertyValue($conditionalClause, 'searchCondition'),
+            $conditionalClause->searchCondition
         );
 
         $this->expectException(RuntimeException::class);

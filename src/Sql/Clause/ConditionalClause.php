@@ -23,14 +23,14 @@ use function trim;
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON by
  * composing an internal predicate set
  *
- * @property-read Predicate\Set $conditions Return the predicate-set of this clause
+ * @property-read Predicate\Set $searchCondition Return the predicate-set of this clause
  */
 abstract class ConditionalClause extends Clause implements Countable, IteratorAggregate
 {
     /**
      * @var Predicate\Set
      */
-    protected $conditions;
+    protected $searchCondition;
 
     protected static $useParenthesis = false;
 
@@ -40,7 +40,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
      */
     public function __construct($predicates = null, string $defaultLogicalOperator = null)
     {
-        $this->conditions = new Predicate\Set($predicates, $defaultLogicalOperator);
+        $this->searchCondition = new Predicate\Set($predicates, $defaultLogicalOperator);
     }
 
     /**
@@ -48,9 +48,9 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
      *
      * @return Predicate\Set
      */
-    public function getConditions(): Predicate\Set
+    public function getSearchCondition(): Predicate\Set
     {
-        return $this->conditions;
+        return $this->searchCondition;
     }
 
     /**
@@ -59,37 +59,43 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
      */
     public function isEmpty(): bool
     {
-        return $this->conditions->isEmpty();
+        return $this->searchCondition->isEmpty();
     }
 
     public function count(): int
     {
-        return $this->conditions->count();
+        return $this->searchCondition->count();
     }
 
     public function getIterator(): Traversable
     {
-        return $this->conditions->getIterator();
+        return $this->searchCondition->getIterator();
     }
 
     public function getParams(): array
     {
-        return $this->conditions->getParams();
+        return $this->searchCondition->getParams();
     }
 
     public function getParamsTypes(bool $returnPdoConstNames = false): array
     {
-        return $this->conditions->getParamsTypes($returnPdoConstNames);
+        return $this->searchCondition->getParamsTypes($returnPdoConstNames);
     }
 
     public function getSQL(Driver $driver = null): string
     {
-        // use the composed presicate-set sql cache
+        if (isset($this->sql)) {
+            return $this->sql;
+        }
+
+        if ($this->searchCondition->isEmpty()) {
+            return $this->sql = '';
+        }
 
         // No need to reset the parameters here, this is forwarded to the composed
         // predicate-set
 
-        $predicates_sql = $this->conditions->getSQL($driver ?? Driver::ansi());
+        $predicates_sql = $this->searchCondition->getSQL($driver ?? Driver::ansi());
         if ('' === $predicates_sql = trim($predicates_sql)) {
             return $this->sql = '';
         }
@@ -115,7 +121,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function addPredicate($predicate): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->addPredicate($predicate);
+        return $this->searchCondition->addPredicate($predicate);
     }
 
     /**
@@ -124,7 +130,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function literal(string $literal): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->literal($literal);
+        return $this->searchCondition->literal($literal);
     }
 
     /**
@@ -133,7 +139,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function expression(string $expression, array $substitutions = []): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->expression($expression, $substitutions);
+        return $this->searchCondition->expression($expression, $substitutions);
     }
 
     /**
@@ -142,7 +148,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function expr(string $expression, array $substitutions = []): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->expression($expression, $substitutions);
+        return $this->searchCondition->expression($expression, $substitutions);
     }
 
     /**
@@ -151,7 +157,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function all($identifier, string $operator, Select $select): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->all($identifier, $operator, $select);
+        return $this->searchCondition->all($identifier, $operator, $select);
     }
 
     /**
@@ -160,7 +166,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function any($identifier, string $operator, Select $select): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->any($identifier, $operator, $select);
+        return $this->searchCondition->any($identifier, $operator, $select);
     }
 
     /**
@@ -169,7 +175,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function some($identifier, string $operator, Select $select): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->some($identifier, $operator, $select);
+        return $this->searchCondition->some($identifier, $operator, $select);
     }
 
     /**
@@ -178,7 +184,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function between($identifier, $min_value, $max_value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->between($identifier, $min_value, $max_value);
+        return $this->searchCondition->between($identifier, $min_value, $max_value);
     }
 
     /**
@@ -187,7 +193,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function notBetween($identifier, $min_value, $max_value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->notBetween($identifier, $min_value, $max_value);
+        return $this->searchCondition->notBetween($identifier, $min_value, $max_value);
     }
 
     /**
@@ -196,7 +202,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function exists(Select $select): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->exists($select);
+        return $this->searchCondition->exists($select);
     }
 
     /**
@@ -205,7 +211,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function notExists(Select $select): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->notExists($select);
+        return $this->searchCondition->notExists($select);
     }
 
     /**
@@ -214,7 +220,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function in($identifier, array $value_list): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->in($identifier, $value_list);
+        return $this->searchCondition->in($identifier, $value_list);
     }
 
     /**
@@ -223,7 +229,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function notIn($identifier, array $value_list): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->notIn($identifier, $value_list);
+        return $this->searchCondition->notIn($identifier, $value_list);
     }
 
     /**
@@ -232,7 +238,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function is($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->is($identifier, $value);
+        return $this->searchCondition->is($identifier, $value);
     }
 
     /**
@@ -241,7 +247,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isNot($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->isNot($identifier, $value);
+        return $this->searchCondition->isNot($identifier, $value);
     }
 
     /**
@@ -250,7 +256,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isNull($identifier): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->isNull($identifier);
+        return $this->searchCondition->isNull($identifier);
     }
 
     /**
@@ -259,7 +265,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isNotNull($identifier): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->isNotNull($identifier);
+        return $this->searchCondition->isNotNull($identifier);
     }
 
     /**
@@ -268,7 +274,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isTrue($identifier): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->isTrue($identifier);
+        return $this->searchCondition->isTrue($identifier);
     }
 
     /**
@@ -277,7 +283,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isFalse($identifier): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->isFalse($identifier);
+        return $this->searchCondition->isFalse($identifier);
     }
 
     /**
@@ -286,7 +292,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isUnknown($identifier): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->isUnknown($identifier);
+        return $this->searchCondition->isUnknown($identifier);
     }
 
     /**
@@ -295,7 +301,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isNotUnknown($identifier): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->isNotUnknown($identifier);
+        return $this->searchCondition->isNotUnknown($identifier);
     }
 
     /**
@@ -304,7 +310,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function like($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->like($identifier, $value);
+        return $this->searchCondition->like($identifier, $value);
     }
 
     /**
@@ -313,7 +319,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function notLike($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->notLike($identifier, $value);
+        return $this->searchCondition->notLike($identifier, $value);
     }
 
     /**
@@ -322,7 +328,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function equal($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->equal($identifier, $value);
+        return $this->searchCondition->equal($identifier, $value);
     }
 
     /**
@@ -331,7 +337,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function eq($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->eq($identifier, $value);
+        return $this->searchCondition->eq($identifier, $value);
     }
 
     /**
@@ -340,7 +346,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function notEqual($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->notEqual($identifier, $value);
+        return $this->searchCondition->notEqual($identifier, $value);
     }
 
     /**
@@ -349,7 +355,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function neq($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->neq($identifier, $value);
+        return $this->searchCondition->neq($identifier, $value);
     }
 
     /**
@@ -358,7 +364,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function ne($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->ne($identifier, $value);
+        return $this->searchCondition->ne($identifier, $value);
     }
 
     /**
@@ -367,7 +373,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function lessThan($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->lessThan($identifier, $value);
+        return $this->searchCondition->lessThan($identifier, $value);
     }
 
     /**
@@ -376,7 +382,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function lt($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->lt($identifier, $value);
+        return $this->searchCondition->lt($identifier, $value);
     }
 
     /**
@@ -385,7 +391,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function lessThanEqual($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->lessThanEqual($identifier, $value);
+        return $this->searchCondition->lessThanEqual($identifier, $value);
     }
 
     /**
@@ -394,7 +400,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function lte($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->lte($identifier, $value);
+        return $this->searchCondition->lte($identifier, $value);
     }
 
     /**
@@ -403,7 +409,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function greaterThanEqual($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->greaterThanEqual($identifier, $value);
+        return $this->searchCondition->greaterThanEqual($identifier, $value);
     }
 
     /**
@@ -412,7 +418,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function gte($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->gte($identifier, $value);
+        return $this->searchCondition->gte($identifier, $value);
     }
 
     /**
@@ -421,7 +427,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function greaterThan($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->greaterThan($identifier, $value);
+        return $this->searchCondition->greaterThan($identifier, $value);
     }
 
     /**
@@ -430,7 +436,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function gt($identifier, $value): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->gt($identifier, $value);
+        return $this->searchCondition->gt($identifier, $value);
     }
 
     /**
@@ -438,7 +444,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
      */
     public function and(): Predicate\Set
     {
-        return $this->conditions->and();
+        return $this->searchCondition->and();
     }
 
     /**
@@ -446,7 +452,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
      */
     public function or(): Predicate\Set
     {
-        return $this->conditions->or();
+        return $this->searchCondition->or();
     }
 
     /**
@@ -462,7 +468,7 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function openGroup(string $defaultLogicalOperator = Sql::AND): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->openGroup($defaultLogicalOperator);
+        return $this->searchCondition->openGroup($defaultLogicalOperator);
     }
 
     /**
@@ -472,8 +478,8 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
      */
     public function __get(string $name)
     {
-        if ('conditions' === $name) {
-            return $this->conditions;
+        if ('searchCondition' === $name) {
+            return $this->searchCondition;
         };
 
         throw new RuntimeException(
@@ -484,6 +490,6 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function __clone()
     {
         parent::__clone();
-        $this->conditions = clone $this->conditions;
+        $this->searchCondition = clone $this->searchCondition;
     }
 }
