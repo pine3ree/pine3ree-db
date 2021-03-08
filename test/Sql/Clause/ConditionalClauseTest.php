@@ -14,6 +14,7 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Set;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
+use P3\Db\Exception\RuntimeException;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
@@ -194,7 +195,7 @@ class ConditionalClauseTest extends TestCase
             $conditionalClause->conditions
         );
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $conditionalClause->nonexistentProperty;
     }
 }

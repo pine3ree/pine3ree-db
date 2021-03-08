@@ -823,7 +823,7 @@ class SetTest extends TestCase
         self::assertSame($predicateSet->getDefaultLogicalOperator(), $predicateSet->defaultLogicalOperator);
         self::assertSame($predicateSet->getNextLogicalOperator(), $predicateSet->nextLogicalOperator);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $predicateSet->nonexistentProperty;
     }
 }

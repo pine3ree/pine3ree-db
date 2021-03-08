@@ -564,7 +564,7 @@ class SelectTest extends TestCase
         self::assertSame(null, $select->intersect);
         self::assertSame(null, $select->union_all);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $select->nonexistentProperty;
     }
 }
