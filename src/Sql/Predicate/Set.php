@@ -9,7 +9,6 @@ namespace P3\Db\Sql\Predicate;
 
 use ArrayIterator;
 use Closure;
-use Countable;
 use P3\Db\Exception\InvalidArgumentException;
 use IteratorAggregate;
 use P3\Db\Sql;
@@ -44,7 +43,7 @@ use function trim;
  * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
  * @property-read self|null $parent The parent predicate-set if this set is a nested-set
 */
-class Set extends Predicate implements Countable, IteratorAggregate
+class Set extends Predicate implements IteratorAggregate
 {
     /** @var Predicate[] */
     protected $predicates = [];
@@ -491,11 +490,6 @@ class Set extends Predicate implements Countable, IteratorAggregate
     public function isEmpty(): bool
     {
         return empty($this->predicates);
-    }
-
-    public function count(): int
-    {
-        return count($this->predicates);
     }
 
     public function getIterator(): Traversable

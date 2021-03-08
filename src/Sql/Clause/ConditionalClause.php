@@ -7,7 +7,6 @@
 
 namespace P3\Db\Sql\Clause;
 
-use Countable;
 use IteratorAggregate;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
@@ -25,7 +24,7 @@ use function trim;
  *
  * @property-read Predicate\Set $searchCondition Return the predicate-set of this clause
  */
-abstract class ConditionalClause extends Clause implements Countable, IteratorAggregate
+abstract class ConditionalClause extends Clause implements IteratorAggregate
 {
     /**
      * @var Predicate\Set
@@ -60,11 +59,6 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
     public function isEmpty(): bool
     {
         return $this->searchCondition->isEmpty();
-    }
-
-    public function count(): int
-    {
-        return $this->searchCondition->count();
     }
 
     public function getIterator(): Traversable

@@ -790,18 +790,6 @@ class SetTest extends TestCase
         $nestedSet->closeGroup()->closeGroup();
     }
 
-    public function testCountable()
-    {
-        $predicateSet = new Predicate\Set([
-            "id > 42",
-            "price > 100.0",
-        ]);
-
-        self::assertSame(2, $predicateSet->count());
-        self::assertCount(2, $predicateSet);
-        self::assertSame(count($predicateSet->getPredicates()), count($predicateSet));
-    }
-
     public function testTraversable()
     {
         $predicateSet = new Predicate\Set([
