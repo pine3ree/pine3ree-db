@@ -21,17 +21,19 @@ use function strtoupper;
 abstract class Clause extends Element
 {
     /**
-     * @var string The SQL-clause name: WHERE|HAVING|ON condition clauses
+     * @var string The SQL-clause base name: WHERE|HAVING|ON condition clauses
      */
     protected static $name;
 
     /**
-     * @var string WHERE|HAVING|ON Resolved name cache
+     * @var string WHERE|HAVING|ON|JOIN Resolved name(+modifiers) cached value
      */
     protected $__name;
 
     /**
-     * Return the SQL name for the clause (uppercase class-basename)
+     * Return the SQL name for the clause (uppercase class-basename) including
+     * optional modifiers
+     *
      * @return string
      */
     protected function getName(): string
