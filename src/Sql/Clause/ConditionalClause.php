@@ -460,10 +460,10 @@ abstract class ConditionalClause extends Clause implements Countable, IteratorAg
      *
      * @return Predicate\Set
      */
-    public function open(string $defaultLogicalOperator = Sql::AND): Predicate\Set
+    public function openGroup(string $defaultLogicalOperator = Sql::AND): Predicate\Set
     {
         $this->sql = null;
-        return $this->conditions->open($defaultLogicalOperator);
+        return $this->conditions->openGroup($defaultLogicalOperator);
     }
 
     /**

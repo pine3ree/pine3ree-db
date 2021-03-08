@@ -818,7 +818,7 @@ class Set extends Predicate implements Countable, IteratorAggregate
      *
      * @return self Return the new nested predicate-set instance
      */
-    public function open(string $defaultLogicalOperator = Sql::AND): self
+    public function openGroup(string $defaultLogicalOperator = Sql::AND): self
     {
         $defaultLogicalOperator = self::COMB[strtoupper($defaultLogicalOperator)] ?? Sql::AND;
 
@@ -836,7 +836,7 @@ class Set extends Predicate implements Countable, IteratorAggregate
      * @return $this fluent interface
      * @throws RuntimeException
      */
-    public function close(): self
+    public function closeGroup(): self
     {
         if (null === $this->parent) {
             throw new RuntimeException(
