@@ -1012,6 +1012,20 @@ class Select extends Statement
     public function __clone()
     {
         parent::__clone();
+        if ($this->from instanceof self) {
+            $this->from = clone $this->from;
+        }
+        if ($this->union instanceof self) {
+            $this->union = clone $this->union;
+        }
+        if ($this->intersect instanceof self) {
+            $this->intersect = clone $this->intersect;
+        }
+        if (!empty($this->joins)) {
+            foreach ($this->joins as $k => $join) {
+                $this->joins[] = clone $this->where;
+            }
+        }
         if (isset($this->where)) {
             $this->where = clone $this->where;
         }
