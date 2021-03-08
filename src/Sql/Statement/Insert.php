@@ -7,13 +7,13 @@
 
 namespace P3\Db\Sql\Statement;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\TableAwareTrait;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function array_keys;
 use function array_values;

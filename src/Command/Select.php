@@ -7,7 +7,7 @@
 
 namespace P3\Db\Command;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Command;
 use P3\Db\Command\Reader as ReaderInterface;
 use P3\Db\Command\Traits\Reader as ReaderTrait;
@@ -19,7 +19,7 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 use PDO;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function func_get_args;
 use function is_array;

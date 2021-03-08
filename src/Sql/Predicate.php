@@ -7,7 +7,7 @@
 
 namespace P3\Db\Sql;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Element;
 

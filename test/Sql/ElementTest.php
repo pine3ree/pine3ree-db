@@ -8,14 +8,14 @@
 
 namespace P3\DbTest\Sql;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
 use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 use stdClass;
 
 class ElementTest extends TestCase

@@ -7,8 +7,8 @@
 
 namespace P3\Db\Sql;
 
-use InvalidArgumentException;
-use RuntimeException;
+use P3\Db\Exception\InvalidArgumentException;
+use P3\Db\Exception\RuntimeException;
 
 use function trim;
 

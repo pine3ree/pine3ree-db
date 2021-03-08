@@ -8,7 +8,7 @@
 
 namespace P3\DbTest;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use ReflectionMethod;
 
 use function get_class;

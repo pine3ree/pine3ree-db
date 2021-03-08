@@ -11,7 +11,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
 use P3\Db\Sql\Statement\Select;
 use PDO;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function max;
 

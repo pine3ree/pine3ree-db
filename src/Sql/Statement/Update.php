@@ -7,14 +7,14 @@
 
 namespace P3\Db\Sql\Statement;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function get_class;
 use function gettype;

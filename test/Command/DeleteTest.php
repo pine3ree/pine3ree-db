@@ -16,7 +16,7 @@ use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 class DeleteTest extends TestCase
 {

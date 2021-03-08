@@ -7,10 +7,10 @@
 
 namespace P3\Db\Factory;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Db;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function array_change_key_case;
 use function filter_var;

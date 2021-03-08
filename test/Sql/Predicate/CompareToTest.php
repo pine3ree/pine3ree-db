@@ -8,7 +8,7 @@
 
 namespace P3\DbTest\Sql\Predicate;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Predicate\CompareTo;
 use P3\Db\Sql\Statement\Select;

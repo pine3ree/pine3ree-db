@@ -15,7 +15,7 @@ use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 use Traversable;
 
 use function trim;

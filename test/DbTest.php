@@ -8,7 +8,7 @@
 
 namespace P3\DbTest;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Command\Delete;
 use P3\Db\Command\Insert;
 use P3\Db\Command\Select;
@@ -21,7 +21,7 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 use stdClass;
 
 class DbTest extends TestCase

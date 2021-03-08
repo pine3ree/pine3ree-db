@@ -7,10 +7,10 @@
 
 namespace P3\Db\Sql;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function trim;
 use function preg_match;

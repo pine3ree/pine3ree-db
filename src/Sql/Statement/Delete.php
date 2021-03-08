@@ -13,7 +13,7 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function rtrim;
 

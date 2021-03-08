@@ -7,7 +7,7 @@
 
 namespace P3\Db;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Command\Delete;
 use P3\Db\Command\Insert;
 use P3\Db\Command\Select;
@@ -20,7 +20,7 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement as SqlStatement;
 use PDO;
 use PDOStatement;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function explode;
 use function func_get_args;

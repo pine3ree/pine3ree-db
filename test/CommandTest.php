@@ -9,7 +9,7 @@
 namespace P3\DbTest;
 
 //use PDO;
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use PDO;
 use PDOStatement;

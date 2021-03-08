@@ -7,7 +7,7 @@
 
 namespace P3\Db\Sql\Clause;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
@@ -16,7 +16,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Literal;
 use P3\Db\Sql\TableAwareTrait;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function trim;
 

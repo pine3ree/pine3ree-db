@@ -12,7 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function getenv;
 

@@ -8,13 +8,13 @@
 
 namespace P3\DbTest\Sql\Clause;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 use stdClass;
 
 class ConditionalClauseAwareTraitTest extends TestCase

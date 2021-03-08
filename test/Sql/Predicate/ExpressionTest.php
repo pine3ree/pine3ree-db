@@ -8,11 +8,11 @@
 
 namespace P3\DbTest\Sql\Predicate;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Predicate\Expression;
 use P3\Db\Sql\Driver;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 class ExpressionTest extends TestCase
 {

@@ -10,14 +10,14 @@ namespace P3\Db\Sql\Predicate;
 use ArrayIterator;
 use Closure;
 use Countable;
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use IteratorAggregate;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 use Throwable;
 use Traversable;
 

@@ -8,7 +8,7 @@
 
 namespace P3\DbTest\Sql;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Alias;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Identifier;

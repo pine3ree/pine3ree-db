@@ -7,13 +7,13 @@
 
 namespace P3\Db\Sql;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\DriverInterface;
 use PDO;
 use ReflectionClass;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function addcslashes;
 use function gettype;

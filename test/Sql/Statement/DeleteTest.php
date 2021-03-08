@@ -8,13 +8,13 @@
 
 namespace P3\DbTest\Sql\Statement;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Delete;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 class DeleteTest extends TestCase
 {

@@ -8,7 +8,7 @@
 namespace P3\Db\Sql\Statement;
 
 use Closure;
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Alias;
 use P3\Db\Sql\Clause\WhereAwareTrait;
@@ -27,7 +27,7 @@ use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
 use PDO;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 
 use function get_class;
 use function gettype;

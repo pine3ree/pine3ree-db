@@ -17,7 +17,7 @@ use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
-use RuntimeException;
+use P3\Db\Exception\RuntimeException;
 use stdClass;
 
 class SelectTest extends TestCase

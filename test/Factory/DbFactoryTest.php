@@ -8,7 +8,7 @@
 
 namespace P3\DbTest\Factory;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Db;
 use P3\Db\Factory\DbFactory;
 use PHPUnit\Framework\TestCase;

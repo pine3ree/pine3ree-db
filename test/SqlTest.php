@@ -8,7 +8,7 @@
 
 namespace P3\DbTest;
 
-use InvalidArgumentException;
+use P3\Db\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Sql;
 use P3\Db\Sql\Expression;
