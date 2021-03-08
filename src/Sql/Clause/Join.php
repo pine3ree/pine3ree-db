@@ -48,6 +48,7 @@ class Join extends Clause
     private $specification;
 
     /**
+     * @param string $name The full JOIN clause name with type (INNER JOIN, LEFT JOIN, ...)
      * @param string $type The join type
      * @param string $table The joined table name
      * @param string|null $alias The joined table alias, if any
