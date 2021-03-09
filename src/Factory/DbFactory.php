@@ -31,6 +31,7 @@ class DbFactory
     {
         $config = $container->has('config') ? $container->get('config') : null;
 
+        // build params only once
         if (empty($this->params)) {
             $this->marshallParams($config);
         }
