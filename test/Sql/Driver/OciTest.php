@@ -213,21 +213,22 @@ class OciTest extends TestCase
         $select->limit(10);
         self::assertStringMatchesFormat(
             "SELECT * FROM ({$sql}) WHERE ROWNUM <= :limit%x",
-            $this->driver->decorateSelectSQL($select, $sql)
+            $select->getSQL($this->driver)
         );
+        self::assertSame('', $this->driver->getLimitSQL($select));
 
         $select = clone $selectPrototype;
         $select->limit(10)->offset(10);
         self::assertStringMatchesFormat(
             "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= :limit%x) WHERE %s > :offset%x",
-            $this->driver->decorateSelectSQL($select, $sql)
+            $select->getSQL($this->driver)
         );
 
         $select = clone $selectPrototype;
         $select->offset(10);
         self::assertStringMatchesFormat(
             "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= %d) WHERE %s > :offset%x",
-            $this->driver->decorateSelectSQL($select, $sql)
+            $select->getSQL($this->driver)
         );
     }
 }
