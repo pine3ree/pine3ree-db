@@ -12,6 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\ElementInterface;
+use P3\Db\Sql\Statement\Select;
 use PDO;
 use ReflectionClass;
 use ReflectionException;
@@ -292,7 +293,7 @@ abstract class Driver implements DriverInterface
 
     protected function generateSelectSQL(Select $select): string
     {
-        return $this->call(Select, 'generateSQL', $this);
+        return $this->call($select, 'generateSQL', $this);
     }
 
     /**
@@ -308,16 +309,20 @@ abstract class Driver implements DriverInterface
     {
         $fqcn = get_class($element);
         $key = "{$fqcn}::{$methodName}" ;
+
         $method = self::$rm[$key] ?? null;
+
         if (!isset($method)) {
             try {
                 $method = new ReflectionMethod($fqcn, $methodName);
                 $method->setAccessible(true);
                 self::$rm[$key] = $method;
             } catch (ReflectionException $ex) {
-                self::$rm[$key] = false;
+                self::$rm[$key] = $method = false;
             }
-        } elseif (false === $method) {
+        }
+
+        if (false === $method) {
             throw new RuntimeException(
                 "Call to undefined method method `{$methodName}`!"
             );

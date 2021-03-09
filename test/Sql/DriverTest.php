@@ -21,6 +21,8 @@ use const LC_NUMERIC;
 
 class DriverTest extends TestCase
 {
+    use \P3\DbTest\DiscloseTrait;
+
     /**
      * @var Driver
      */
@@ -53,7 +55,7 @@ class DriverTest extends TestCase
     /**
      * @dataProvider provideInvalidQuotingChars
      */
-    public function testInvalidQuotinCharsRaisesException(string $ql, string $qr, string $v)
+    public function testInvalidQuotingCharsRaisesException(string $ql, string $qr, string $v)
     {
         $this->expectException(InvalidArgumentException::class);
         $this->createInstance(null, $ql, $qr, $v);
@@ -185,6 +187,14 @@ class DriverTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $driver->quoteValue($str);
+    }
+
+    public function testThatNonExistentElementMethodCallRaisesExceptionAndGetsCached()
+    {
+        $driver = $this->createInstance();
+        $literal = new Sql\Literal("CONCAT('prefix-', `name`, '-suffix')");
+        $this->expectException(RuntimeException::class);
+        $this->invokeMethod($driver, 'call', $literal, 'doSomething');
     }
 
     public function testMagicGetter()
