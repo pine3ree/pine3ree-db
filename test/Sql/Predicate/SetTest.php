@@ -733,8 +733,8 @@ class SetTest extends TestCase
         $nestedSet = $predicateSet->openGroup();
 
         self::assertInstanceOf(Set::class, $nestedSet);
-        self::assertSame($nestedSet->getParent(), $nestedSet->parent);
         self::assertSame($predicateSet, $nestedSet->parent);
+        self::assertSame($predicateSet, $nestedSet->getParent());
         self::assertSame([], $nestedSet->getPredicates());
         self::assertSame(Sql::AND, $nestedSet->getDefaultLogicalOperator());
     }
@@ -751,10 +751,9 @@ class SetTest extends TestCase
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
         $nestedSet = $predicateSet->openGroup();
-        $unnest = $nestedSet->closeGroup();
+        $parent = $nestedSet->closeGroup();
 
-        self::assertTrue($nestedSet->isEmpty());
-        self::assertSame($nestedSet->getParent(), $nestedSet->parent);
+        self::assertSame($predicateSet, $parent);
     }
 
     public function testGroupWithClosure()

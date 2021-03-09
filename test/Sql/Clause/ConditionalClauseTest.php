@@ -138,7 +138,6 @@ class ConditionalClauseTest extends TestCase
         $nestedSet = $conditionalClause->openGroup();
 
         self::assertInstanceOf(Set::class, $nestedSet);
-        self::assertSame($nestedSet->getParent(), $nestedSet->parent);
         self::assertSame([], $nestedSet->getPredicates());
         self::assertSame(Sql::AND, $nestedSet->getDefaultLogicalOperator());
     }
@@ -157,8 +156,7 @@ class ConditionalClauseTest extends TestCase
         $nestedSet = $conditionalClause->openGroup();
         $parent = $nestedSet->closeGroup();
 
-        self::assertTrue($nestedSet->isEmpty());
-        self::assertSame($nestedSet->getParent(), $nestedSet->parent);
+        self::assertSame($parent, $conditionalClause->getSearchCondition());
     }
 
     public function testTraversable()
