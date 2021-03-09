@@ -17,6 +17,7 @@ use function filter_var;
 use function implode;
 use function is_int;
 
+use const CASE_LOWER;
 use const FILTER_VALIDATE_BOOLEAN;
 
 /**
