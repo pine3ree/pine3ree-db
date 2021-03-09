@@ -832,11 +832,13 @@ class Select extends Statement
 
         $driver = $driver ?? Driver::ansi();
 
-        // generate a fresh sql string
-        $sql = $this->generateSQL($driver);
-
         if ($driver instanceof SelectSqlDecorator) {
-            $sql = $driver->decorateSelectSQL($this, $sql);
+            $sql = $driver->decorateSelectSQL($this);
+        }
+
+        if (!isset($sql)) {
+            // generate a fresh sql string
+            $sql = $this->generateSQL($driver);
         }
 
         return $this->sql = $sql;
@@ -851,7 +853,7 @@ class Select extends Statement
      * @param Driver $driver
      * @return string
      */
-    public function generateSQL(Driver $driver): string
+    protected function generateSQL(Driver $driver): string
     {
         $this->resetParams();
 

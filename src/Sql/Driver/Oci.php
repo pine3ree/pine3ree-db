@@ -83,33 +83,38 @@ class Oci extends Driver implements
         return implode('.', $segments);
     }
 
-    public function decorateSelectSQL(Select $select, string $sql): string
+    public function decorateSelectSQL(Select $select): ?string
     {
         $limit  = $select->limit;
         $offset = $select->offset;
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
-            $limit = $select->createParam($limit + $offset, PDO::PARAM_INT, 'limit');
-            return "SELECT * FROM ({$sql}) WHERE ROWNUM <= {$limit}";
+            $select_sql = $this->call($select, 'generateSQL', $this);
+            $limit = $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit');
+
+            return "SELECT * FROM ({$select_sql}) WHERE ROWNUM <= {$limit}";
         }
 
         if (isset($offset) && $offset > 0) {
             $tb = self::TB;
             $rn = self::RN;
+
+            $select_sql = $this->call($select, 'generateSQL', $this);
+
             $limit = isset($limit)
-                ? $select->createParam($limit + $offset, PDO::PARAM_INT, 'limit')
+                ? $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit')
                 : PHP_INT_MAX
             ;
             $limit_sql = "SELECT {$tb}.*, ROWNUM AS {$rn}"
-                . " FROM ({$sql}) {$tb}"
+                . " FROM ({$select_sql}) {$tb}"
                 . " WHERE ROWNUM <= {$limit}";
 
-            $offset = $select->createParam($offset, PDO::PARAM_INT, 'offset');
+            $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
 
             return "SELECT * FROM ({$limit_sql}) WHERE {$rn} > {$offset}";
         }
 
-        return $sql;
+        return null;
     }
 
     public function getSelectColumnsSQL(Select $select, bool &$cache = true): string
@@ -150,7 +155,7 @@ class Oci extends Driver implements
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof Select) {
                 $column_sql = $column->getSQL($this);
-                $select->importParams($column);
+                $this->importParams($select, $column);
                 $cache = $cache && $column instanceof Expression && !$column->hasParams();
             } else {
                 // @codeCoverageIgnoreStart

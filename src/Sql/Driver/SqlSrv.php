@@ -42,7 +42,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
         }
 
         if ($offset > 0) {
-            $offset = $select->createParam($offset, PDO::PARAM_INT, 'offset');
+            $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
         }
 
         $offset_sql = "OFFSET ({$offset}) ROWS";
@@ -59,7 +59,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
             );
         }
 
-        $fetch = $select->createParam($limit, PDO::PARAM_INT, 'fetch');
+        $fetch = $this->createParam($select, $limit, PDO::PARAM_INT, 'fetch');
         $fetch_sql = $offset === 0
             ? "FETCH FIRST ({$fetch}) ROWS ONLY"
             : "FETCH NEXT ({$fetch}) ROWS ONLY";

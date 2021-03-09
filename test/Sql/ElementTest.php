@@ -128,17 +128,6 @@ class ElementTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideUnsupportedOperators
-     */
-    public function testCallUnsupportedMethodRaisesException()
-    {
-        $element = $this->createInstance();
-
-        $this->expectException(RuntimeException::class);
-        $element->doSomething();
-    }
-
     public function provideUnsupportedOperators(): array
     {
         return [

@@ -77,14 +77,6 @@ abstract class Element implements ElementInterface
     protected const MAX_INDEX = 999999;
 
     /**
-     * A list of internal methods that can be called by a driver
-     */
-    protected const DRIVER_ALLOWED_METHODS = [
-        'createParam' => true,
-        'importParams' => true,
-    ];
-
-    /**
      * Build and return the parametrized SQL-string
      *
      * This method must call each inner element getSQL() method and then import
@@ -378,30 +370,5 @@ abstract class Element implements ElementInterface
     protected static function isEmptySQL(string &$sql): bool
     {
         return '' === ($sql = trim($sql));
-    }
-
-    /**
-     * Allow createParam() and importParams() to be called from inside a sql-driver
-     *
-     * @param string $methodName
-     * @param array $args
-     * @return mixed
-     */
-    public function __call(string $methodName, $args)
-    {
-        if (!empty(static::DRIVER_ALLOWED_METHODS[$methodName])) {
-            list($unused, $caller) = debug_backtrace(false, 2);
-            $callerClass = $caller['class'] ?? null;
-            if ($callerClass !== null
-                && is_subclass_of($callerClass, DriverInterface::class, true)
-            ) {
-                return $this->{$methodName}(...$args);
-            }
-        };
-
-        $class = static::class;
-        throw new RuntimeException(
-            "Call to undefined or internal method {$class}::{$methodName}())!"
-        );
     }
 }

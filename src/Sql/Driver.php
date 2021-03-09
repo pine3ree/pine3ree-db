@@ -11,8 +11,11 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\ElementInterface;
 use PDO;
 use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 use P3\Db\Exception\RuntimeException;
 
 use function addcslashes;
@@ -76,6 +79,13 @@ abstract class Driver implements DriverInterface
     private static $ansi;
 
     protected const ESCAPE_CHARLIST = "\x00\n\r\\'\"\x1a";
+
+    /**
+     * Reflection methods cache
+     *
+     * @var array
+     */
+    protected static $rm = [];
 
     /**
      * @param PDO|null $pdo the database connection, if any
@@ -268,6 +278,52 @@ abstract class Driver implements DriverInterface
     public static function ansi(): self
     {
         return self::$ansi ?? self::$ansi = new Ansi();
+    }
+
+    protected function createParam(ElementInterface $element, $value, int $type = null, string $name = null): string
+    {
+        return $this->call($element, 'createParam', $value, $type, $name);
+    }
+
+    protected function importParams(ElementInterface $into, ElementInterface $from)
+    {
+        $this->call($into, 'importParams', $from);
+    }
+
+    protected function generateSelectSQL(Select $select): string
+    {
+        return $this->call(Select, 'generateSQL', $this);
+    }
+
+    /**
+     * Invoke a sql element private method
+     *
+     * @param ElementInterface $element
+     * @param string $methodName
+     * @param array $args
+     * @return mixed
+     * @throws RuntimeException
+     */
+    protected function call(ElementInterface $element, string $methodName, ...$args)
+    {
+        $fqcn = get_class($element);
+        $key = "{$fqcn}::{$methodName}" ;
+        $method = self::$rm[$key] ?? null;
+        if (!isset($method)) {
+            try {
+                $method = new ReflectionMethod($fqcn, $methodName);
+                $method->setAccessible(true);
+                self::$rm[$key] = $method;
+            } catch (ReflectionException $ex) {
+                self::$rm[$key] = false;
+            }
+        } elseif (false === $method) {
+            throw new RuntimeException(
+                "Call to undefined method method `{$methodName}`!"
+            );
+        }
+
+        return $method->invokeArgs($element, $args);
     }
 
     public function __get(string $name)

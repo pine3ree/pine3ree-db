@@ -14,5 +14,16 @@ use P3\Db\Sql\Statement\Select;
  */
 interface SelectSqlDecorator
 {
-    public function decorateSelectSQL(Select $select, string $sql): string;
+    /**
+     * Generate and decorate a select SQL when needed, for instance when providing
+     * support for non-standard SQL features such as limit/offset.
+     *
+     * Even if it's not required, as we are using named parameter markers, the
+     * original sql select string is generated internally to maintan the correct
+     * ordering of imported parameters
+     *
+     * @param Select $select
+     * @return string|null
+     */
+    public function decorateSelectSQL(Select $select): ?string;
 }
