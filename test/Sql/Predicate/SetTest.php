@@ -11,7 +11,6 @@ namespace P3\DbTest\Sql\Predicate;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Predicate\Set;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
@@ -31,13 +30,13 @@ class SetTest extends TestCase
     {
     }
 
-    private function buildPredicateFromSpecs($specs, Set &$predicateSet = null)
+    private function buildPredicateFromSpecs($specs, Predicate\Set &$predicateSet = null)
     {
         $predicateSet = $predicateSet ?? new Predicate\Set();
         return $this->invokeMethod($predicateSet, 'buildPredicateFromSpecs', $specs);
     }
 
-    private function buildPredicate($specs, Set &$predicateSet = null, ...$args)
+    private function buildPredicate($specs, Predicate\Set &$predicateSet = null, ...$args)
     {
         $predicateSet = $predicateSet ?? new Predicate\Set();
         return $this->invokeMethod($predicateSet, 'buildPredicate', $specs, ...$args);
@@ -57,7 +56,7 @@ class SetTest extends TestCase
 
     public function testContructorWithoutPredicatesButOrLogicalOp()
     {
-        $predicateSet = new Predicate\Set(null, Set::COMB_OR);
+        $predicateSet = new Predicate\Set(null, Predicate\Set::COMB_OR);
         self::assertSame("OR", $predicateSet->getDefaultLogicalOperator());
 
         $predicateSet = new Predicate\Set(null, Sql::OR);
@@ -394,7 +393,7 @@ class SetTest extends TestCase
         self::assertSame('', $predicateSet->getSQL());
     }
 
-    public function testThatCloningKeepsPredicatesIntances()
+    public function testThatCloningKeepsPredicatesInstances()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
         $clonedSet = clone $predicateSet;
@@ -405,6 +404,28 @@ class SetTest extends TestCase
         foreach ($oPredicates as $key => $oPred) {
             $cPred = $cPredicates[$key] ?? null;
             self::assertSame($oPred, $cPred);
+        }
+    }
+
+    public function testThatCloningAlsoCloneInternalSets()
+    {
+        $nestedSet = new Predicate\Set(['id' => 42]);
+        $predicateSet = new Predicate\Set(['id' => 24]);
+        $predicateSet->addPredicate($nestedSet);
+        $clonedSet = clone $predicateSet;
+
+        $oPredicates = $predicateSet->getPredicates();
+        $cPredicates = $clonedSet->getPredicates();
+
+        foreach ($oPredicates as $key => $oPred) {
+            $cPred = $cPredicates[$key] ?? null;
+            self::assertInstanceOf(Predicate::class, $cPred);
+            if ($oPred instanceof Predicate\Set) {
+                self::assertEquals($oPred, $cPred);
+                self::assertNotSame($oPred, $cPred);
+            } else {
+                self::assertSame($oPred, $cPred);
+            }
         }
     }
 
@@ -731,7 +752,7 @@ class SetTest extends TestCase
 
         $nestedSet = $predicateSet->openGroup();
 
-        self::assertInstanceOf(Set::class, $nestedSet);
+        self::assertInstanceOf(Predicate\Set::class, $nestedSet);
         self::assertSame($predicateSet, $nestedSet->parent);
         self::assertSame($predicateSet, $nestedSet->getParent());
         self::assertSame([], $nestedSet->getPredicates());
@@ -758,7 +779,7 @@ class SetTest extends TestCase
     public function testGroupWithClosure()
     {
         $predicateSet = new Predicate\Set();
-        $scope = $predicateSet->group(function (Set $group) {
+        $scope = $predicateSet->group(function (Predicate\Set $group) {
             $group->literal("id < 24");
             $group->literal("id > 42");
         }, Sql::OR);

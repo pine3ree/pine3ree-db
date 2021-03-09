@@ -874,6 +874,16 @@ class Set extends Predicate implements IteratorAggregate
         return $this->parent;
     }
 
+    public function __clone()
+    {
+        parent::__clone();
+        foreach ($this->predicates as $key => $predicate) {
+            $this->predicates[$key] = $predicate instanceof self
+                ? clone $predicate
+                : $predicate;
+        }
+    }
+
     public function __get(string $name)
     {
         if ('predicates' === $name) {
