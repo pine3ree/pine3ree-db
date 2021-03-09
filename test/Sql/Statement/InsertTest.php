@@ -276,10 +276,6 @@ class InsertTest extends TestCase
         //cached sql
         self::assertSame($sql, $insert->getSQL($this->driver));
 
-        $values_sql = $this->invokeMethod($insert, 'getValuesSQL', $this->driver);
-        //cached sql
-        self::assertSame($values_sql, $this->invokeMethod($insert, 'getValuesSQL', $this->driver));
-
         $insert->row(['price' => 333.33, 'stock' => 333, 'enabled' => true]);
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
