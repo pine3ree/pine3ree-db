@@ -850,12 +850,12 @@ class Set extends Predicate implements IteratorAggregate
     /**
      * Add a nested predicate-set, resulting in SQL conditions enclosed in parenthesis
      *
-     * @param string $defaultLogicalOperator The default logical operator for the nested set
      * @param Closure An anonymous function for manipulating the newly created nested-set given its as argument
+     * @param string $defaultLogicalOperator The default logical operator for the nested set
      *
      * @return $this fluent interface
      */
-    public function group(string $defaultLogicalOperator, Closure $group): self
+    public function group(Closure $group, string $defaultLogicalOperator = Sql::AND): self
     {
         $nestedPredicateSet = $this->openGroup($defaultLogicalOperator);
         $group($nestedPredicateSet);

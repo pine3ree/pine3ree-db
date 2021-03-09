@@ -759,10 +759,10 @@ class SetTest extends TestCase
     public function testGroupWithClosure()
     {
         $predicateSet = new Predicate\Set();
-        $scope = $predicateSet->group(Sql::OR, function (Set $group) {
+        $scope = $predicateSet->group(function (Set $group) {
             $group->literal("id < 24");
             $group->literal("id > 42");
-        });
+        }, Sql::OR);
 
         self::assertSame('(id < 24 OR id > 42)', $predicateSet->getSQL());
     }
