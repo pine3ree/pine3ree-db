@@ -22,6 +22,7 @@ use Traversable;
 
 use function count;
 use function current;
+use function explode;
 use function get_class;
 use function gettype;
 use function implode;
@@ -30,7 +31,6 @@ use function is_numeric;
 use function is_object;
 use function is_string;
 use function key;
-use function spl_object_hash;
 use function sprintf;
 use function strtoupper;
 use function trim;
@@ -47,6 +47,9 @@ class Set extends Predicate implements IteratorAggregate
 {
     /** @var Predicate[] */
     protected $predicates = [];
+
+    /** @var int Internal counter for predicate keys */
+    protected $count = 0;
 
     /** @var string */
     protected $defaultLogicalOperator = Sql::AND;
@@ -230,8 +233,7 @@ class Set extends Predicate implements IteratorAggregate
         }
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
-        $key = "{$logicalOperator}:" . spl_object_hash($predicate);
-        $this->predicates[$key] = $predicate;
+        $this->insertPredicate($logicalOperator, $predicate);
         $this->nextLogicalOperator = null;
 
         // remove rendered sql cache
@@ -242,6 +244,20 @@ class Set extends Predicate implements IteratorAggregate
         }
 
         return $this;
+    }
+
+    /**
+     * Insert a predicate with give logical operator
+     *
+     * @param string $logicalOperator
+     * @param Predicate $predicate
+     * @return void
+     */
+    protected function insertPredicate(string $logicalOperator, Predicate $predicate): void
+    {
+        $this->count += 1;
+        $key = "{$logicalOperator}:{$this->count}";
+        $this->predicates[$key] = $predicate;
     }
 
     protected function buildPredicate($predicate, bool $checkEmptyValue = false, bool $throw = true): ?Predicate
