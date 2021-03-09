@@ -834,21 +834,20 @@ class Select extends Statement
 
         if ($driver instanceof SelectSqlDecorator) {
             $sql = $driver->decorateSelectSQL($this);
+            if (isset($sql)) {
+                return $this->sql = $sql;
+            }
         }
 
-        if (!isset($sql)) {
-            // generate a fresh sql string
-            $sql = $this->generateSQL($driver);
-        }
-
-        return $this->sql = $sql;
+        // generate and cache a fresh sql string
+        return $this->sql = $this->generateSQL($driver);
     }
 
     /**
      * Generate a fresh SQL string (triggers parameters import)
      *
-     * @internal Used by SelectSqlDecorator drivers to keep imported parameters
-     *      in the same order of appearance in the final sql statement string
+     * Also used by SelectSqlDecorator drivers to keep imported parameters in the
+     * same order of appearance in the final sql statement string
      *
      * @param Driver $driver
      * @return string
