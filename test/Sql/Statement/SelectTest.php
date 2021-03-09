@@ -527,15 +527,46 @@ class SelectTest extends TestCase
     public function testThatCloningAlsoClonesClauses()
     {
         $select1 = new Select('*', 'product', 'p');
+
+        $select1->leftJoin('category', 'c', 'USING(category_id)');
         $select1->where("TRUE IS TRUE");
         $select1->having("FALSE IS FALSE");
 
         $select2 = clone $select1;
 
+        $joins1 = $select1->joins;
+        foreach ($select2->joins as $k => $join2) {
+            self::assertEquals($joins1[$k], $join2);
+            self::assertNotSame($joins1[$k], $join2);
+        }
+
         self::assertEquals($select1->where, $select2->where);
         self::assertNotSame($select1->where, $select2->where);
         self::assertEquals($select1->having, $select2->having);
         self::assertNotSame($select1->having, $select2->having);
+
+        $select3 = new Select('*', $select1, 's1');
+        $select4 = clone $select3;
+
+        self::assertInstanceOf(Select::class, $select4->from);
+        self::assertEquals($select3->from, $select4->from);
+        self::assertNotSame($select3->from, $select4->from);
+
+        $select5 = new Select('*', 'store_product', 'sp');
+        $select5->union($select1);
+        $select6 = clone $select5;
+
+        self::assertInstanceOf(Select::class, $select6->union);
+        self::assertEquals($select5->union, $select6->union);
+        self::assertNotSame($select5->union, $select6->union);
+
+        $select7 = new Select('*', 'store_product', 'sp');
+        $select7->intersect($select1);
+        $select8 = clone $select7;
+
+        self::assertInstanceOf(Select::class, $select8->intersect);
+        self::assertEquals($select7->intersect, $select8->intersect);
+        self::assertNotSame($select7->intersect, $select8->intersect);
     }
 
     public function testMagicGetter()
