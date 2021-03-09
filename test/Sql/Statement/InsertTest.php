@@ -243,20 +243,6 @@ class InsertTest extends TestCase
         ];
     }
 
-//    public function testSetNumericColumnRaisesExceptionOnGetSQL()
-//    {
-//        $insert = new Insert('product');
-//        $this->expectException(InvalidArgumentException::class);
-//        $insert->set('1', '123');
-//    }
-//
-//    public function testSetRowWithNumericColumnRaisesExceptionOnGetSQL()
-//    {
-//        $insert = new Insert('product');
-//        $this->expectException(InvalidArgumentException::class);
-//        $insert->set(['value1', 'price' => 1.23]);
-//    }
-
     public function testGetSql()
     {
         $insert = new Insert('product');
@@ -286,6 +272,18 @@ class InsertTest extends TestCase
             . "(:val%x, :val%x, :val%x)",
             $sql = $insert->getSQL($this->driver)
         );
+    }
+
+    public function testColumnsSqlCache()
+    {
+        // simple string column =  sql-asterisk
+        $insert = new Insert('product');
+
+        $insert->row(['price' => 111.11, 'stock' => 111, 'enabled' => true]);
+        $insert->row(['price' => 222.22, 'stock' => 222, 'enabled' => false]);
+
+        $sql = $insert->getSQL();
+        self::assertArrayHasKey('columns', $this->getPropertyValue($insert, 'sqls'));
     }
 
     public function testGetSqlWithSelect()
