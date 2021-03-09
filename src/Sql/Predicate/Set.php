@@ -838,13 +838,13 @@ class Set extends Predicate implements IteratorAggregate
      */
     public function closeGroup(): self
     {
-        if (null === $this->parent) {
-            throw new RuntimeException(
-                "Cannot close an unnested predicate-set!"
-            );
+        if ($this->parent instanceof self) {
+            return $this->parent;
         }
 
-        return $this->parent;
+        throw new RuntimeException(
+            "Cannot close an unnested predicate-set!"
+        );
     }
 
     /**
