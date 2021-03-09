@@ -88,7 +88,7 @@ class Oci extends Driver implements
         $limit  = $select->limit;
         $offset = $select->offset;
 
-        if (isset($limit) && !isset($offset) || $offset === 0) {
+        if (isset($limit) && (!isset($offset) || $offset === 0)) {
             $limit = $select->createParam($limit + $offset, PDO::PARAM_INT, 'limit');
             return "SELECT * FROM ({$sql}) WHERE ROWNUM <= {$limit}";
         }
