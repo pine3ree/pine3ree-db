@@ -57,7 +57,7 @@ abstract class Element implements ElementInterface
 
     /**
      * The cached base-name of this element's class derived using reflection
-     * 
+     *
      * @var string
      */
     protected $shortName;
@@ -103,6 +103,16 @@ abstract class Element implements ElementInterface
     public function __clone()
     {
         $this->clearSQL();
+    }
+
+    /**
+     * Check if there are any parameters after compiling the sql string
+     *
+     * @return bool
+     */
+    public function hasParams(): bool
+    {
+        return !empty($this->params);
     }
 
     /**

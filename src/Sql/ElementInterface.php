@@ -24,6 +24,13 @@ interface ElementInterface
     public function getSQL(Driver $driver = null): string;
 
     /**
+     * Check if there are any parameters after compiling the sql string
+     *
+     * @return bool
+     */
+    public function hasParams(): bool;
+
+    /**
      * Return the parameters created for this element or imported from inner
      * elements or an empty array if getSQL() has not been called after last
      * modification.
