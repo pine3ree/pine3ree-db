@@ -381,7 +381,7 @@ class Select extends Statement
 
         if (empty($alias)) {
             throw new InvalidArgumentException(
-                "A FROM clause with a seb-select requires an alias!"
+                "A FROM clause with a sub-select requires an alias!"
             );
         }
     }
