@@ -103,8 +103,8 @@ class Oci extends Driver implements
 
             $limit = isset($limit)
                 ? $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit')
-                : PHP_INT_MAX
-            ;
+                : PHP_INT_MAX;
+
             $limit_sql = "SELECT {$tb}.*, ROWNUM AS {$rn}"
                 . " FROM ({$select_sql}) {$tb}"
                 . " WHERE ROWNUM <= {$limit}";
