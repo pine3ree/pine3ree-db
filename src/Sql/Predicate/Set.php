@@ -172,8 +172,9 @@ class Set extends Predicate implements IteratorAggregate
         }
 
         if ($predicates instanceof self) {
-            $this->predicates = $predicates->getPredicates();
-            $this->defaultLogicalOperator = $defaultLogicalOperator ?? $predicates->getDefaultLogicalOperator();
+            $this->count = $predicates->count;
+            $this->predicates = $predicates->predicates;
+            $this->defaultLogicalOperator = $defaultLogicalOperator ?? $predicates->defaultLogicalOperator;
             return;
         }
 
