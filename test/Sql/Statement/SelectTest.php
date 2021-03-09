@@ -498,30 +498,38 @@ class SelectTest extends TestCase
 
     public function testSqlCachePartialClearing()
     {
-        $select = new Select('*', 'product', 'p');
+        $select = new Select(['id', 'name', 'price', 'vat_rate'], 'product', 'p');
+        $select->sum('price', 'totPrice');
+        $select->where->gte('price', 0.5);
         $select->leftJoin('category', 'c', "c.id = p.category_id");
         $select->groupBy('p.category_id');
+        $select->having->gte('totPrice', 10.0);
         $select->orderBy('p.price');
+        $select->limit(10)->offset(20);
 
         $sql = $select->getSQL();
 
-        $this->invokeMethod($select, 'clearSQL', 'columns');
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+        $this->invokeMethod($select, 'clearPartialSQL', 'columns');
+        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
         self::assertSame($sql, $select->getSQL());
 
-        $this->invokeMethod($select, 'clearSQL', 'where');
+        self::assertArrayHasKey('group', $this->getPropertyValue($select, 'sqls'));
+        $this->invokeMethod($select, 'clearPartialSQL', 'group');
+        self::assertArrayNotHasKey('group', $this->getPropertyValue($select, 'sqls'));
+
         self::assertSame($sql, $select->getSQL());
 
-        $this->invokeMethod($select, 'clearSQL', 'having');
+        self::assertArrayHasKey('order', $this->getPropertyValue($select, 'sqls'));
+        $this->invokeMethod($select, 'clearPartialSQL', 'order');
+        self::assertArrayNotHasKey('order', $this->getPropertyValue($select, 'sqls'));
+
         self::assertSame($sql, $select->getSQL());
 
-        $this->invokeMethod($select, 'clearSQL', 'group');
-        self::assertSame($sql, $select->getSQL());
-
-        $this->invokeMethod($select, 'clearSQL', 'order');
-        self::assertSame($sql, $select->getSQL());
-
-        $this->invokeMethod($select, 'clearSQL', 'limit');
-        self::assertSame($sql, $select->getSQL());
+        self::assertArrayHasKey('limit', $this->getPropertyValue($select, 'sqls'));
+        $this->invokeMethod($select, 'clearPartialSQL', 'limit');
+        self::assertArrayNotHasKey('limit', $this->getPropertyValue($select, 'sqls'));
     }
 
     public function testThatCloningAlsoClonesClauses()
