@@ -55,7 +55,11 @@ abstract class Element implements ElementInterface
      */
     protected $paramsTypes = [];
 
-    /** @var string */
+    /**
+     * The cached base-name of this element's class derived using reflection
+     * 
+     * @var string
+     */
     protected $shortName;
 
     /**
