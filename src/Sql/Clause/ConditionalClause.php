@@ -16,8 +16,6 @@ use P3\Db\Sql\Statement\Select;
 use P3\Db\Exception\RuntimeException;
 use Traversable;
 
-use function trim;
-
 /**
  * This class abstracts the SQL conditional clauses WHERE, HAVING and ON by
  * composing an internal predicate set
