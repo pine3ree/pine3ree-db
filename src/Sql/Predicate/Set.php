@@ -233,7 +233,11 @@ class Set extends Predicate implements IteratorAggregate
         }
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
-        $this->insertPredicate($logicalOperator, $predicate);
+
+        $this->count += 1;
+        $key = "{$logicalOperator}:{$this->count}";
+        $this->predicates[$key] = $predicate;
+
         $this->nextLogicalOperator = null;
 
         // remove rendered sql cache
@@ -244,20 +248,6 @@ class Set extends Predicate implements IteratorAggregate
         }
 
         return $this;
-    }
-
-    /**
-     * Insert a predicate with give logical operator
-     *
-     * @param string $logicalOperator
-     * @param Predicate $predicate
-     * @return void
-     */
-    protected function insertPredicate(string $logicalOperator, Predicate $predicate): void
-    {
-        $this->count += 1;
-        $key = "{$logicalOperator}:{$this->count}";
-        $this->predicates[$key] = $predicate;
     }
 
     protected function buildPredicate($predicate, bool $checkEmptyValue = false, bool $throw = true): ?Predicate
