@@ -89,7 +89,7 @@ class Insert extends Statement
         $this->values = [];
 
         $this->sql = null;
-        unset($this->sqls['columns'], $this->sqls['values']);
+        unset($this->sqls['columns']);
 
         return $this;
     }
@@ -140,7 +140,6 @@ class Insert extends Statement
         $this->values[] = array_values($values);
 
         $this->sql = null;
-        unset($this->sqls['values']);
 
         return $this;
     }
@@ -170,7 +169,6 @@ class Insert extends Statement
         }
 
         $this->sql = null;
-        unset($this->sqls['values']);
 
         return $this;
     }
@@ -204,7 +202,7 @@ class Insert extends Statement
             $this->row($row);
         }
 
-        unset($this->sql, $this->sqls['columns'], $this->sqls['values']);
+        unset($this->sql, $this->sqls['columns']);
 
         return $this;
     }
@@ -228,7 +226,7 @@ class Insert extends Statement
         if ($reset) {
             $this->columns = $this->values = [];
             $this->sql = null;
-            unset($this->sqls['columns'], $this->sqls['values']);
+            unset($this->sqls['columns']);
         }
 
         if (empty($this->columns)) {
@@ -245,7 +243,6 @@ class Insert extends Statement
         $this->values[] = array_values($row);
 
         $this->sql = null;
-        unset($this->sqls['values']);
 
         return $this;
     }
@@ -262,7 +259,6 @@ class Insert extends Statement
         $this->select = $select;
 
         $this->sql = null;
-        unset($this->sqls['values']);
 
         return $this;
     }
@@ -332,15 +328,11 @@ class Insert extends Statement
 
     private function getValuesSQL(Driver $driver): string
     {
-        if (isset($this->sqls['values'])) {
-            return $this->sqls['values'];
-        }
-
         // INSERT...SELECT
         if ($this->select instanceof Select) {
             $sql = $this->select->getSQL($driver);
             $this->importParams($this->select);
-            return $this->sqls['values'] = $sql;
+            return $sql;
         }
 
         // INSERT...VALUES
@@ -349,7 +341,7 @@ class Insert extends Statement
             $sqls[] = $this->getRowValuesSQL($values, $driver);
         }
 
-        return $this->sqls['values'] = implode(", ", $sqls);
+        return implode(", ", $sqls);
     }
 
     private function getRowValuesSQL(array $values, Driver $driver): string
