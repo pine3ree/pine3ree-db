@@ -15,8 +15,6 @@ use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
 use P3\Db\Exception\RuntimeException;
 
-use function rtrim;
-
 /**
  * This class represents a DELETE sql-statement expression
  *
@@ -77,7 +75,7 @@ class Delete extends Statement
             );
         }
 
-        $this->sql = Sql::DELETE . " " . Sql::FROM . rtrim(" {$table} {$where_sql}");
+        $this->sql = Sql::DELETE . " " . Sql::FROM . " {$table} {$where_sql}";
         return $this->sql;
     }
 
