@@ -172,9 +172,16 @@ class Set extends Predicate implements IteratorAggregate
         }
 
         if ($predicates instanceof self) {
-            $this->count = $predicates->count;
-            $this->predicates = $predicates->predicates;
-            $this->defaultLogicalOperator = $defaultLogicalOperator ?? $predicates->defaultLogicalOperator;
+            $predicateSet = $predicates;
+            $this->count = $predicateSet->count;
+            $this->defaultLogicalOperator = $defaultLogicalOperator ?? $predicateSet->defaultLogicalOperator;
+            $predicates = $predicateSet->predicates;
+            foreach ($predicates as $key => $predicate) {
+                if ($predicate instanceof self) {
+                    $predicates[$key] = clone $predicate;
+                }
+            }
+            $this->predicates = $predicates;
             return;
         }
 
