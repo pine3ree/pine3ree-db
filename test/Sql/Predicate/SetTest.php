@@ -394,7 +394,7 @@ class SetTest extends TestCase
         self::assertSame('', $predicateSet->getSQL());
     }
 
-    public function testThatCloningAlsoClonesPredicates()
+    public function testThatCloningKeepsPredicatesIntances()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
         $clonedSet = clone $predicateSet;
@@ -404,8 +404,7 @@ class SetTest extends TestCase
 
         foreach ($oPredicates as $key => $oPred) {
             $cPred = $cPredicates[$key] ?? null;
-            self::assertEquals($oPred, $cPred);
-            self::assertNotSame($oPred, $cPred);
+            self::assertSame($oPred, $cPred);
         }
     }
 
