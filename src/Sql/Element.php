@@ -324,8 +324,7 @@ abstract class Element implements ElementInterface
             return;
         }
 
-        if (false
-            || $identifier instanceof Identifier
+        if ($identifier instanceof Identifier
             || $identifier instanceof Alias
             || $identifier instanceof Literal
         ) {
