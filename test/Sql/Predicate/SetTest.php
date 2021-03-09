@@ -407,11 +407,36 @@ class SetTest extends TestCase
         }
     }
 
-    public function testThatCloningAlsoCloneInternalSets()
+    public function testThatCloningAlsoClonesNestedSets()
     {
         $nestedSet = new Predicate\Set(['id' => 42]);
         $predicateSet = new Predicate\Set(['id' => 24]);
         $predicateSet->addPredicate($nestedSet);
+        $clonedSet = clone $predicateSet;
+
+        $oPredicates = $predicateSet->getPredicates();
+        $cPredicates = $clonedSet->getPredicates();
+
+        foreach ($oPredicates as $key => $oPred) {
+            $cPred = $cPredicates[$key] ?? null;
+            self::assertInstanceOf(Predicate::class, $cPred);
+            if ($oPred instanceof Predicate\Set) {
+                self::assertEquals($oPred, $cPred);
+                self::assertNotSame($oPred, $cPred);
+            } else {
+                self::assertSame($oPred, $cPred);
+            }
+        }
+    }
+
+    public function testThatConstructorWithSetAndNestedSetsClonesNestedSets()
+    {
+        $nestedSet = new Predicate\Set(['id' => 42]);
+
+        $originalSet = new Predicate\Set(['id' => 24]);
+        $originalSet->addPredicate($nestedSet);
+
+        $predicateSet = new Predicate\Set($originalSet);
         $clonedSet = clone $predicateSet;
 
         $oPredicates = $predicateSet->getPredicates();
