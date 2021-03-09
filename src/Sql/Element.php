@@ -43,12 +43,12 @@ abstract class Element implements ElementInterface
     protected $sql;
 
     /**
-     * @var array<int|string, mixed> A collection of indexed substitution parameters
+     * @var array<int|string, mixed> A collection of marker-indexed statement parameters
      */
     protected $params = [];
 
     /**
-     * A collection of indexed types for substitution parameters
+     * A collection of marker-indexed types for statement parameters
      * Types are expressed using PDO::PARAM_* constants
      *
      * @var array<int|string, int>
