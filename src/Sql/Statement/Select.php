@@ -251,9 +251,17 @@ class Select extends Statement
             return $this->sqls['columns'];
         }
 
+        // we can only cache when there are no parameters to import, start with
+        // true and set it ti false when meeting parametric column
+        $cache = true;
+
         // overridden by driver?
         if ($driver instanceof SelectColumnsSqlProvider) {
-            return $this->sqls['columns'] = $driver->getSelectColumnsSQL($this);
+            $sql = $driver->getSelectColumnsSQL($this, $cache);
+            if ($cache) {
+                $this->sqls['columns'] = $sql;
+            }
+            return $sql;
         }
 
         $add_tb_prefix = !empty($this->joins) && !empty($this->table);
@@ -282,6 +290,7 @@ class Select extends Statement
             } elseif ($column instanceof Expression || $column instanceof self) {
                 $column_sql = $column->getSQL($driver);
                 $this->importParams($column);
+                $cache = $cache && $column instanceof Expression && !$column->hasParams();
             } else {
                 // @codeCoverageIgnoreStart
                 // should be unreacheable
@@ -301,7 +310,11 @@ class Select extends Statement
             $sqls[] = $column_sql;
         }
 
-        $this->sqls['columns'] = $sql = trim(implode(", ", $sqls));
+        $sql = trim(implode(", ", $sqls));
+        if ($cache) {
+            $this->sqls['columns'] = $sql;
+        }
+
         return $sql;
     }
 
@@ -394,10 +407,6 @@ class Select extends Statement
             );
         }
 
-        if (isset($this->sqls['from'])) {
-            return $this->sqls['from'];
-        }
-
         if ($this->from instanceof self) {
             $from = "(" . $this->from->getSQL($driver) . ")";
             $this->importParams($this->from);
@@ -409,8 +418,7 @@ class Select extends Statement
             $from = trim("{$from} " . $driver->quoteAlias($this->alias));
         }
 
-        $this->sqls['from'] = $sql = Sql::FROM . " {$from}";
-        return $sql;
+        return Sql::FROM . " {$from}";
     }
 
     /**
@@ -525,10 +533,6 @@ class Select extends Statement
             return '';
         }
 
-        if (isset($this->sqls['join'])) {
-            return $this->sqls['join'];
-        }
-
         $sqls = [];
         foreach ($this->joins as $join) {
             $join_sql = $join->getSQL($driver);
@@ -542,8 +546,7 @@ class Select extends Statement
             $sqls[] = $join_sql;
         }
 
-        $this->sqls['join'] = $sql = trim(implode(" ", $sqls));
-        return $sql;
+        return trim(implode(" ", $sqls));
     }
 
     /**
@@ -583,6 +586,7 @@ class Select extends Statement
             return '';
         }
 
+        // partial caching is possibile as there are no params to import here
         if (isset($this->sqls['group'])) {
             return $this->sqls['group'];
         }
@@ -681,6 +685,7 @@ class Select extends Statement
             return '';
         }
 
+        // partial caching is possibile as there are no params to import here
         if (isset($this->sqls['order'])) {
             return $this->sqls['order'];
         }
@@ -704,9 +709,7 @@ class Select extends Statement
     public function limit(int $limit): self
     {
         $this->limit = max(0, $limit);
-
         $this->sql = null;
-        unset($this->sqls['limit']);
 
         return $this;
     }
@@ -715,26 +718,20 @@ class Select extends Statement
     {
         $offset = max(0, $offset);
         $this->offset = $offset > 0 ? $offset : null;
-
         $this->sql = null;
-        unset($this->sqls['limit']);
 
         return $this;
     }
 
     private function getLimitSQL(Driver $driver): string
     {
-        if (isset($this->sqls['limit'])) {
-            return $this->sqls['limit'];
-        }
-
         if (!isset($this->limit) && (int)$this->offset === 0) {
-            return $this->sqls['limit'] = '';
+            return '';
         }
 
         // computed by driver?
         if ($driver instanceof LimitSqlProvider) {
-            return $this->sqls['limit'] = $driver->getLimitSQL($this);
+            return $driver->getLimitSQL($this);
         }
 
         // Default implementation working for MySQL, PostgreSQL and Sqlite
@@ -752,7 +749,7 @@ class Select extends Statement
             $sql .= " " . Sql::OFFSET . " {$offset}";
         }
 
-        return $this->sqls['limit'] = $sql ?? '';
+        return $sql ?? '';
     }
 
     public function union(self $select, bool $all = false): self
@@ -833,9 +830,30 @@ class Select extends Statement
             return $this->sql;
         }
 
-        $this->resetParams();
-
         $driver = $driver ?? Driver::ansi();
+
+        // generate a fresh sql string
+        $sql = $this->generateSQL($driver);
+
+        if ($driver instanceof SelectSqlDecorator) {
+            $sql = $driver->decorateSelectSQL($this, $sql);
+        }
+
+        return $this->sql = $sql;
+    }
+
+    /**
+     * Generate a fresh SQL string (triggers parameters import)
+     *
+     * @internal Used by SelectSqlDecorator drivers to keep imported parameters
+     *      in the same order of appearance in the final sql statement string
+     *
+     * @param Driver $driver
+     * @return string
+     */
+    public function generateSQL(Driver $driver): string
+    {
+        $this->resetParams();
 
         $base_sql = $this->getBaseSQL($driver);
         $clauses_sql = $this->getClausesSQL($driver);
@@ -844,15 +862,10 @@ class Select extends Statement
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
-
         // quote any unquoted table alias prefix
         $sql = $this->quoteTableAliases($sql, $driver);
 
-        if ($driver instanceof SelectSqlDecorator) {
-            $sql = $driver->decorateSelectSQL($this, $sql);
-        }
-
-        return $this->sql = $sql;
+        return $sql;
     }
 
     private function quoteTableAliases(string $sql, Driver $driver): string

@@ -14,5 +14,5 @@ use P3\Db\Sql\Statement\Select;
  */
 interface SelectColumnsSqlProvider
 {
-    public function getSelectColumnsSQL(Select $select): string;
+    public function getSelectColumnsSQL(Select $select, bool &$cache = true): string;
 }

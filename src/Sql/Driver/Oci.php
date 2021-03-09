@@ -112,7 +112,7 @@ class Oci extends Driver implements
         return $sql;
     }
 
-    public function getSelectColumnsSQL(Select $select): string
+    public function getSelectColumnsSQL(Select $select, bool &$cache = true): string
     {
         $table   = $select->table;
         $alias   = $select->alias;
@@ -151,6 +151,7 @@ class Oci extends Driver implements
             } elseif ($column instanceof Expression || $column instanceof Select) {
                 $column_sql = $column->getSQL($this);
                 $select->importParams($column);
+                $cache = $cache && $column instanceof Expression && !$column->hasParams();
             } else {
                 // @codeCoverageIgnoreStart
                 // should be unreacheable due to table-column validity assertion
