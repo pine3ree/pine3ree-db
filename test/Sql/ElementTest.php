@@ -56,11 +56,6 @@ class ElementTest extends TestCase
                 return static::MAX_INDEX;
             }
 
-            public function setParent(Sql\ElementInterface $parent): void
-            {
-                $this->parent = $parent;
-            }
-
             public function addValue($value, int $type = null)
             {
                 $idx = "v:" . count($this->values);
