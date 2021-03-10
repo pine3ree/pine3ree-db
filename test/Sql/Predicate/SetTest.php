@@ -423,6 +423,7 @@ class SetTest extends TestCase
             if ($oPred instanceof Predicate\Set) {
                 self::assertEquals($oPred, $cPred);
                 self::assertNotSame($oPred, $cPred);
+                self::assertSame($clonedSet, $cPred->getParent());
             } else {
                 self::assertSame($oPred, $cPred);
             }
@@ -452,6 +453,28 @@ class SetTest extends TestCase
                 self::assertSame($oPred, $cPred);
             }
         }
+    }
+
+    public function testThatAddingNestedSetsBelongingToOtherSetGetsCloned()
+    {
+        $nestedSet0 = new Predicate\Set(['id' => 42]);
+
+        $predicateSet1 = new Predicate\Set();
+        $predicateSet1->addPredicate($nestedSet0);
+
+        $predicateSet2 = new Predicate\Set();
+        $predicateSet2->addPredicate($nestedSet0);
+
+        $predicates1 = $predicateSet1->predicates;
+        $predicates2 = $predicateSet2->predicates;
+
+        $nestedSet1 = reset($predicates1);
+        $nestedSet2 = reset($predicates2);
+
+        self::assertSame($nestedSet0, $nestedSet1);
+
+        self::assertEquals($nestedSet1, $nestedSet2);
+        self::assertNotSame($nestedSet1, $nestedSet2);
     }
 
     public function provideInvalidSpecs(): array

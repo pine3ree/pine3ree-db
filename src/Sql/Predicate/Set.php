@@ -178,10 +178,11 @@ class Set extends Predicate implements IteratorAggregate
             $predicates = $predicateSet->predicates;
             foreach ($predicates as $key => $predicate) {
                 if ($predicate instanceof self) {
-                    $predicates[$key] = clone $predicate;
+                    $predicate = clone $predicate;
+                    $predicate->parent = $this;
                 }
+                $this->predicates[$key] = $predicate;
             }
-            $this->predicates = $predicates;
             return;
         }
 
@@ -238,6 +239,15 @@ class Set extends Predicate implements IteratorAggregate
                     is_object($predicate) ? get_class($predicate) : gettype($predicate)
                 ));
             }
+        }
+
+        if ($predicate instanceof self) {
+            if ($predicate->parent !== null
+                && $predicate->parent !== $this
+            ) {
+                $predicate = clone $predicate;
+            }
+            $predicate->parent = $this;
         }
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
@@ -884,10 +894,12 @@ class Set extends Predicate implements IteratorAggregate
     public function __clone()
     {
         parent::__clone();
+        $this->parent = null;
         foreach ($this->predicates as $key => $predicate) {
-            $this->predicates[$key] = $predicate instanceof self
-                ? clone $predicate
-                : $predicate;
+            if ($predicate instanceof self) {
+                $this->predicates[$key] = $predicate = clone $predicate;
+                $predicate->parent = $this;
+            }
         }
     }
 
