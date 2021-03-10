@@ -164,6 +164,7 @@ class Join extends Clause
         parent::__clone();
         if ($this->specification instanceof On) {
             $this->specification = clone $this->specification;
+            $this->specification->parent = $this;
         }
     }
 }
