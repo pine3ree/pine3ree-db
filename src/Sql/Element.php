@@ -418,8 +418,10 @@ abstract class Element implements ElementInterface
             return $this->parent;
         };
 
-        throw new RuntimeException(
-            "Undefined property `{$name}`!"
-        );
+        throw new RuntimeException(sprintf(
+            "Undefined property `%s` for sql-element of class `%s`!",
+            $name,
+            static::class
+        ));
     }
 }
