@@ -97,12 +97,15 @@ abstract class Element implements ElementInterface
     protected function clearSQL()
     {
         $this->sql = null;
+        if ($this->parent instanceof self) {
+            $this->parent->clearSQL();
+        }
     }
 
     public function __clone()
     {
         $this->parent = null;
-        $this->clearSQL();
+        $this->sql = null;
     }
 
     /**
