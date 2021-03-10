@@ -874,9 +874,9 @@ class Set extends Predicate implements IteratorAggregate
     /**
      * Return the parent set if nested
      *
-     * @return self
+     * @return self|null
      */
-    public function getParent(): self
+    public function getParent(): ?self
     {
         return $this->parent;
     }
