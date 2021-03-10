@@ -32,7 +32,9 @@ use function trim;
 /**
  * This abstract class represents a generic SQL element and is the ancestor
  * of all the other sql-related classes.
- */
+ *
+ * @property-read ElementInterface|null $parent The parent element, if any
+*/
 abstract class Element implements ElementInterface
 {
     /**
@@ -52,6 +54,13 @@ abstract class Element implements ElementInterface
      * @var array<int|string, int>
      */
     protected $paramsTypes = [];
+
+    /**
+     * The parent element, if any
+     *
+     * @var ElementInterface|null
+     */
+    protected $parent;
 
     /**
      * The cached base-name of this element's class derived using reflection
@@ -144,6 +153,22 @@ abstract class Element implements ElementInterface
         }
 
         return $this->paramsTypes;
+    }
+
+    /**
+     * {@inheritDocs}
+     */
+    public function getParent(): ?ElementInterface
+    {
+        return $this->parent;
+    }
+
+    /**
+     * {@inheritDocs}
+     */
+    public function hasParent(): bool
+    {
+        return $this->parent instanceof ElementInterface;
     }
 
     /**
@@ -367,5 +392,16 @@ abstract class Element implements ElementInterface
     protected static function isEmptySQL(string &$sql): bool
     {
         return '' === ($sql = trim($sql));
+    }
+
+    public function __get(string $name)
+    {
+        if ('parent' === $name) {
+            return $this->parent;
+        };
+
+        throw new RuntimeException(
+            "Undefined property `{$name}`!"
+        );
     }
 }

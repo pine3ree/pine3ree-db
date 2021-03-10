@@ -41,7 +41,6 @@ use function trim;
  * @property-read string $defaultLogicalOperator
  * @property-read string|null $nextLogicalOperator The next logical operator
  * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
- * @property-read self|null $parent The parent predicate-set if this set is a nested-set
 */
 class Set extends Predicate implements IteratorAggregate
 {
@@ -56,9 +55,6 @@ class Set extends Predicate implements IteratorAggregate
 
     /** @var string|null */
     protected $nextLogicalOperator;
-
-    /** @var self|null */
-    protected $parent;
 
     /**
      * Logical operator aliases/identifiers for predicate-sets defined via arrays
@@ -881,16 +877,6 @@ class Set extends Predicate implements IteratorAggregate
         return $this;
     }
 
-    /**
-     * Return the parent set if nested
-     *
-     * @return self|null
-     */
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
-
     public function __clone()
     {
         parent::__clone();
@@ -917,12 +903,6 @@ class Set extends Predicate implements IteratorAggregate
             return $this->defaultLogicalOperator;
         };
 
-        if ('parent' === $name) {
-            return $this->parent;
-        };
-
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 }

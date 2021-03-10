@@ -154,9 +154,7 @@ class Join extends Clause
             return null;
         }
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 
     public function __clone()

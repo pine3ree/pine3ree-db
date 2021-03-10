@@ -1018,9 +1018,7 @@ class Select extends Statement
             return $this->intersect;
         }
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 
     public function __clone()

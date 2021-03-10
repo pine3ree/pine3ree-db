@@ -9,17 +9,14 @@
 namespace P3\DbTest;
 
 //use PDO;
-use P3\Db\Exception\InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use PDO;
-use PDOStatement;
 use P3\Db\Command;
 use P3\Db\Db;
+use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement;
+use PDO;
+use PDOStatement;
+use PHPUnit\Framework\TestCase;
 
 class CommandTest extends TestCase
 {
@@ -131,6 +128,7 @@ class CommandTest extends TestCase
             $this->command->sqlStatement === $this->command->__get('sqlStatement')
         );
 
+        $this->expectException(RuntimeException::class);
         $this->command->nonexistentProp;
     }
 

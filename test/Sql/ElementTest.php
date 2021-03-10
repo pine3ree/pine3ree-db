@@ -56,6 +56,11 @@ class ElementTest extends TestCase
                 return static::MAX_INDEX;
             }
 
+            public function setParent(Sql\ElementInterface $parent): void
+            {
+                $this->parent = $parent;
+            }
+
             public function addValue($value, int $type = null)
             {
                 $idx = "v:" . count($this->values);
@@ -177,6 +182,15 @@ class ElementTest extends TestCase
             [new Sql\Clause\Where(), 'Where'],
             [new Sql\Predicate\Between('id', 11, 22), 'Between'],
         ];
+    }
+
+    public function testHasParent()
+    {
+        $element = $this->createInstance();
+        $parent = $this->createInstance();
+
+        $element->setParent($parent);
+        self::assertTrue($element->hasParent());
     }
 
     public function testGetSql()

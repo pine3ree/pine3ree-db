@@ -47,4 +47,19 @@ interface ElementInterface
      * @return array <int|string: int>
      */
     public function getParamsTypes(bool $returnPdoConstNames = false): array;
+
+    /**
+     * Return the parent element, if any
+     *
+     * @return ElementInterface|null
+     */
+    public function getParent(): ?ElementInterface;
+
+    /**
+     * Check if element has a parent
+     *
+     * @return bool
+     */
+    public function hasParent(): bool;
+
 }

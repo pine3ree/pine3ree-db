@@ -477,9 +477,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
             return $this->searchCondition;
         };
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 
     public function __clone()

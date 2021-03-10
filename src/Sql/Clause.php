@@ -60,8 +60,6 @@ abstract class Clause extends Element
             return static::$name ?? $this->__name ?? $this->getName();
         }
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 }
