@@ -11,6 +11,7 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\ElementInterface;
 use P3\Db\Sql\Predicate;
 use P3\Db\Exception\RuntimeException;
 
@@ -44,11 +45,18 @@ trait ConditionalClauseAwareTrait
             && is_array($conditions = current($clause))
         ) {
             $clause = new $fqcn($conditions, $logicalOp);
-        } elseif (! $clause instanceof $fqcn) {
+        } elseif ($clause instanceof $fqcn) {
+            if ($clause->parent !== null && $clause->parent !== $this) {
+                $clause = clone $clause;
+            }
+        } else {
             $clause = new $fqcn($clause, Sql::AND);
         }
 
         $this->{$property} = $clause;
+        if ($this instanceof ElementInterface) {
+            $clause->parent = $this;
+        }
 
         $this->sql = null;
 
