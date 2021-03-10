@@ -133,13 +133,13 @@ class Comparison extends Predicate
         ) {
             $param = $this->value->getSQL($driver);
         } else {
-            $param = $this->createParam($this->value, null, $this->getParameterName($operator));
+            $param = $this->createParam($this->value, null, $this->getParamName($operator));
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";
     }
 
-    private function getParameterName(string $operator): string
+    private function getParamName(string $operator): string
     {
         if ('=' === $operator) {
             return 'eq';
