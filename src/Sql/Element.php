@@ -17,7 +17,6 @@ use PDO;
 use ReflectionClass;
 use P3\Db\Exception\RuntimeException;
 
-use function debug_backtrace;
 use function get_class;
 use function gettype;
 use function is_bool;
@@ -26,7 +25,6 @@ use function is_null;
 use function is_object;
 use function is_scalar;
 use function is_string;
-use function is_subclass_of;
 use function sprintf;
 use function strtolower;
 use function trim;
