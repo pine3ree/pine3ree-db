@@ -101,6 +101,7 @@ abstract class Element implements ElementInterface
 
     public function __clone()
     {
+        $this->parent = null;
         $this->clearSQL();
     }
 

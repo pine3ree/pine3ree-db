@@ -184,13 +184,16 @@ class ElementTest extends TestCase
         ];
     }
 
-    public function testHasParent()
+    public function testParent()
     {
         $element = $this->createInstance();
         $parent = $this->createInstance();
 
         $element->setParent($parent);
         self::assertTrue($element->hasParent());
+
+        $clone = clone $element;
+        self::assertFalse($clone->hasParent());
     }
 
     public function testGetSql()
