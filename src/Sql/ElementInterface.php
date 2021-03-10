@@ -8,6 +8,7 @@
 namespace P3\Db\Sql;
 
 use P3\Db\Sql\Driver;
+use P3\Db\Exception\RuntimeException;
 
 /**
  * This abstract class represents a generic SQL element and is the ancestor
@@ -49,6 +50,13 @@ interface ElementInterface
     public function getParamsTypes(bool $returnPdoConstNames = false): array;
 
     /**
+     * Check if element has a parent
+     *
+     * @return bool
+     */
+    public function hasParent(): bool;
+
+    /**
      * Return the parent element, if any
      *
      * @return ElementInterface|null
@@ -56,10 +64,11 @@ interface ElementInterface
     public function getParent(): ?ElementInterface;
 
     /**
-     * Check if element has a parent
+     * Set the parent element
+     * Raises exception if parent is already set.
      *
-     * @return bool
+     * @return void
+     * @throws RuntimeException
      */
-    public function hasParent(): bool;
-
+    public function setParent(ElementInterface $parent): void;
 }

@@ -162,6 +162,14 @@ abstract class Element implements ElementInterface
     /**
      * {@inheritDocs}
      */
+    public function hasParent(): bool
+    {
+        return $this->parent instanceof ElementInterface;
+    }
+
+    /**
+     * {@inheritDocs}
+     */
     public function getParent(): ?ElementInterface
     {
         return $this->parent;
@@ -170,9 +178,15 @@ abstract class Element implements ElementInterface
     /**
      * {@inheritDocs}
      */
-    public function hasParent(): bool
+    public function setParent(ElementInterface $parent): void
     {
-        return $this->parent instanceof ElementInterface;
+        if ($this->parent instanceof ElementInterface && $this->parent !== $parent) {
+            throw new RuntimeException(
+                "The parent of this element is already set!"
+            );
+        }
+
+        $this->parent = $parent;
     }
 
     /**
