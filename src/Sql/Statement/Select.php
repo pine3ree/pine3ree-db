@@ -186,12 +186,6 @@ class Select extends Statement
 
         $key = $alias ?? (is_string($column) ? $column : null);
 
-        if (isset($key)) {
-            $this->columns[$key] = $column;
-        } else {
-            $this->columns[] = $column;
-        }
-
         if ($column instanceof self) {
             if ($column === $this) {
                 throw new RuntimeException(
@@ -202,6 +196,12 @@ class Select extends Statement
                 $column = clone $column;
             }
             $column->parent = $this;
+        }
+
+        if (isset($key)) {
+            $this->columns[$key] = $column;
+        } else {
+            $this->columns[] = $column;
         }
 
         $this->clearPartialSQL('columns');
@@ -407,7 +407,7 @@ class Select extends Statement
                 "The FROM clause argument can be either"
                 . " a table name or"
                 . " a sub-select statement,"
-                . " `%` provided!",
+                . " `%s` provided!",
                 is_object($from) ? get_class($from) : gettype($from)
             ));
         }
@@ -1005,15 +1005,19 @@ class Select extends Statement
         if ('alias' === $name) {
             return $this->alias;
         }
+
         if ('quantifier' === $name) {
             return $this->quantifier;
         }
+
         if ('columns' === $name) {
             return $this->columns;
         }
+
         if ('from' === $name) {
             return $this->from ?? $this->table;
         }
+
         if ('where' === $name) {
             if (!isset($this->where)) {
                 $this->where = new Where();
@@ -1021,12 +1025,14 @@ class Select extends Statement
             }
             return $this->where;
         }
+
         if ('joins' === $name) {
             if (!empty($this->joins)) {
                 $this->clearPartialSQL('join');
             }
             return $this->joins;
         }
+
         if ('having' === $name) {
             if (!isset($this->having)) {
                 $this->having = new Having();
@@ -1034,18 +1040,22 @@ class Select extends Statement
             }
             return $this->having;
         }
+
         if ('groupBy' === $name) {
             return $this->groupBy;
         }
+
         if ('orderBy' === $name) {
             return $this->orderBy;
         }
+
         if ('limit' === $name) {
             return $this->limit;
         }
         if ('offset' === $name) {
             return $this->offset;
         }
+
         if ('union' === $name) {
             if (isset($this->union)) {
                 $this->sql = null;
@@ -1055,6 +1065,7 @@ class Select extends Statement
         if ('union_all' === $name) {
             return $this->union_all;
         }
+
         if ('intersect' === $name) {
             if (isset($this->intersect)) {
                 $this->sql = null;
@@ -1068,6 +1079,12 @@ class Select extends Statement
     public function __clone()
     {
         parent::__clone();
+        foreach ($this->columns as $key => $column) {
+            if ($column instanceof self) {
+                $this->columns[$key] = $column = clone $column;
+                $column->parent = $this;
+            }
+        }
         if ($this->from instanceof self) {
             $this->from = clone $this->from;
             $this->from->parent = $this;

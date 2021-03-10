@@ -179,6 +179,21 @@ class ElementTest extends TestCase
         ];
     }
 
+    public function testSetParentRaisesExceptionIfElementHasDifferentParent()
+    {
+        $element = $this->createInstance();
+
+        $parent1 = $this->createInstance();
+        $parent2 = $this->createInstance();
+
+        $element->setParent($parent1);
+        // should not throw
+        $element->setParent($parent1);
+
+        $this->expectException(RuntimeException::class);
+        $element->setParent($parent2);
+    }
+
     public function testParent()
     {
         $element = $this->createInstance();
@@ -191,14 +206,27 @@ class ElementTest extends TestCase
         self::assertFalse($clone->hasParent());
     }
 
-    public function testGetSql()
+    public function testClearParentSql()
     {
         $element = $this->createInstance();
+        $parent = $this->createInstance();
 
-        self::assertSame('ELEMENT', $element->getSQL());
-        self::assertSame([], $element->getParams());
-        self::assertSame([], $element->getParamsTypes());
+        $element->setParent($parent);
 
+        $element->getSQL();
+        $parent->getSQL();
+
+        self::assertNotNull($this->getPropertyValue($element, 'sql'));
+        self::assertNotNull($this->getPropertyValue($parent, 'sql'));
+
+        $this->invokeMethod($element, 'clearSQL');
+
+        self::assertNull($this->getPropertyValue($element, 'sql'));
+        self::assertNull($this->getPropertyValue($parent, 'sql'));
+    }
+
+    public function testParamsAndTypes()
+    {
         $values = [null, 1, true, 1.23, 'A'];
         $element = $this->createInstance($values);
 
@@ -208,13 +236,9 @@ class ElementTest extends TestCase
         $values[] = 'B';
         $values[] = 'THHGTTG';
 
-        self::assertStringMatchesFormat(
-            'ELEMENT[:param%x, :param%x, :param%x, :param%x, :param%x, :param%x, :param%x]',
-            $sql = $element->getSQL()
-        );
+        // trigger parameters building
+        $sql = $element->getSQL();
 
-        // cached sql
-        self::assertSame($sql, $element->getSQL());
         self::assertSame(
             $values,
             array_values($element->getParams())
@@ -253,5 +277,28 @@ class ElementTest extends TestCase
         foreach ($element->getParamsTypes() as $key => $param_type) {
             self::assertStringMatchesFormat(':param%x', $key);
         }
+    }
+
+    public function testGetSql()
+    {
+        $element = $this->createInstance();
+
+        self::assertSame('ELEMENT', $element->getSQL());
+        self::assertSame([], $element->getParams());
+        self::assertSame([], $element->getParamsTypes());
+
+        $values = [null, 1, true, 1.23, 'A'];
+        $element = $this->createInstance($values);
+
+        $element->addValue('B', PDO::PARAM_LOB);
+        $element->addValue('THHGTTG', 42);
+
+        $values[] = 'B';
+        $values[] = 'THHGTTG';
+
+        self::assertStringMatchesFormat(
+            'ELEMENT[:param%x, :param%x, :param%x, :param%x, :param%x, :param%x, :param%x]',
+            $sql = $element->getSQL()
+        );
     }
 }

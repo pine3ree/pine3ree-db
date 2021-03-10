@@ -84,16 +84,20 @@ class Delete extends Statement
         if ('table' === $name) {
             return $this->table;
         }
+
         if ('from' === $name) {
             return $this->table;
         }
+        
         if ('where' === $name) {
-            return $this->where ?? $this->where = new Where();
+            if (!isset($this->where)) {
+                $this->where = new Where();
+                $this->where->parent = $this;
+            }
+            return $this->where;
         }
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 
     public function __clone()
@@ -101,6 +105,8 @@ class Delete extends Statement
         parent::__clone();
         if (isset($this->where)) {
             $this->where = clone $this->where;
+            $this->where->parent = $this;
         }
+
     }
 }

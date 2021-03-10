@@ -172,6 +172,35 @@ class SelectTest extends TestCase
         ];
     }
 
+    public function testThatAddingItselfAsColumnRaisesException()
+    {
+        $select = new Select(null, 'user');
+
+        $this->expectException(RuntimeException::class);
+        $select->column($select, 'itself');
+    }
+
+    public function testThatAddingSelctColumnSetTheParent()
+    {
+        $select0 = new Select(null, 'category');
+
+        $select1 = new Select(null, 'cart_product');
+        $select2 = new Select(null, 'store_product');
+
+        $select1->column($select0, 'cat');
+        $select2->column($select0, 'cat');
+
+        $sc1 = $select1->columns['cat'];
+        $sc2 = $select2->columns['cat'];
+
+        self::assertSame($select0, $sc1);
+
+        self::assertSame($select1, $sc1->parent);
+        self::assertSame($select2, $sc2->parent);
+
+        self::assertNotEquals($sc1, $sc2);
+    }
+
     public function testSelectWithoutFromRaisesExceptionOnGetSQL()
     {
         $select = new Select();
@@ -207,7 +236,7 @@ class SelectTest extends TestCase
 
     public function testGetColumnsSqlForwardToDriver()
     {
-        ($select = new Select())->column('unit_price', 'unitPrice')->from('product', 'p');
+        $select = (new Select())->column('unit_price', 'unitPrice')->from('product', 'p');
         self::assertSame(
             'SELECT "p".unit_price AS "unitPrice" FROM product "p"',
             $select->getSQL(new Driver\Oci())
@@ -216,16 +245,16 @@ class SelectTest extends TestCase
 
     public function testSelectFromTable()
     {
-        ($select = new Select())->from('product', null);
+        $select = (new Select())->from('product', null);
         self::assertSame("SELECT * FROM `product`", $select->getSQL($this->driver));
 
-        ($select = new Select())->from('product', 'p');
+        $select = (new Select())->from('product', 'p');
         self::assertSame("SELECT `p`.* FROM `product` `p`", $select->getSQL($this->driver));
     }
 
     public function testSelectWithJoinAndNOAliasTriggerTablePrefix()
     {
-        ($select = new Select())->from('product', null);
+        $select = (new Select())->from('product', null);
         $select->column('*');
         $select->column('c.name', 'categoryName');
         $select->leftJoin('category', 'c', 'c.id = product.category_id');
@@ -240,7 +269,7 @@ class SelectTest extends TestCase
 
     public function testCallingFromAgainRaisesException()
     {
-        ($select = new Select())->from('product', null);
+        $select = (new Select())->from('product', null);
 
         $this->expectException(RuntimeException::class);
         $select->from('another_table');
@@ -248,21 +277,45 @@ class SelectTest extends TestCase
 
     public function testSelectFromSubselect()
     {
-        ($subSelect = new Select())->from('cart');
-        ($select = new Select())->from($subSelect, 'c');
+        $subSelect = (new Select())->from('cart');
+        $select = (new Select())->from($subSelect, 'c');
         self::assertSame("SELECT `c`.* FROM (SELECT * FROM `cart`) `c`", $select->getSQL($this->driver));
 
-        ($subSelect = new Select())->from('cart_product', 'cp')->where->gt('cp.price', 0);
-        ($select = new Select())->from($subSelect, 'p');
+        $subSelect = (new Select())->from('cart_product', 'cp');
+        $subSelect->where->gt('cp.price', 0);
+        $select = (new Select())->from($subSelect, 'p');
         self::assertStringStartsWith(
             "SELECT `p`.* FROM (SELECT `cp`.* FROM `cart_product` `cp` WHERE `cp`.`price` > :gt",
             $select->getSQL($this->driver)
         );
     }
 
+    public function testSelectFromSubselectClonesItIfAlreadyHasParent()
+    {
+        $subSelect = (new Select())->from('cart');
+
+        $select1 = new Select();
+        $select2 = new Select();
+
+        $select1->from($subSelect, 't');
+        $select2->from($subSelect, 't');
+
+        self::assertSame($subSelect, $select1->from);
+        self::assertEquals($select1->from, $select2->from);
+        self::assertNotSame($select1->from, $select2->from);
+    }
+
+    public function testSelectFromSubselectRaisesExceptionWhenAddingItself()
+    {
+        $select = new Select('*');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("cannot add itself as a FROM clause");
+        $select->from($select, 't');
+    }
+
     public function testSelectWithLimit()
     {
-        ($select = new Select())->from('user')->limit(10);
+        $select = (new Select())->from('user')->limit(10);
         self::assertStringStartsWith(
             "SELECT * FROM `user` LIMIT :limit",
             $select->getSQL($this->driver)
@@ -274,7 +327,7 @@ class SelectTest extends TestCase
 
     public function testSelectWithNegativeLimit()
     {
-        ($select = new Select())->from('user')->limit(-1);
+        $select = (new Select())->from('user')->limit(-1);
         self::assertStringStartsWith(
             "SELECT * FROM `user` LIMIT :limit",
             $select->getSQL($this->driver)
@@ -286,7 +339,7 @@ class SelectTest extends TestCase
 
     public function testSelectWithOffset()
     {
-        ($select = new Select())->from('user')->offset(100);
+        $select = (new Select())->from('user')->offset(100);
         self::assertStringStartsWith(
             "SELECT * FROM `user` LIMIT " . PHP_INT_MAX . " OFFSET :offset",
             $select->getSQL($this->driver)
@@ -298,13 +351,13 @@ class SelectTest extends TestCase
 
     public function testSelectZeroOrNegativeOffsetIsDiscarded()
     {
-        ($select = new Select())->from('user')->offset(0);
+        $select = (new Select())->from('user')->offset(0);
         self::assertSame(
             "SELECT * FROM `user`",
             $select->getSQL($this->driver)
         );
 
-        ($select = new Select())->from('user')->offset(-1);
+        $select = (new Select())->from('user')->offset(-1);
         self::assertSame(
             "SELECT * FROM `user`",
             $select->getSQL($this->driver)
@@ -313,7 +366,7 @@ class SelectTest extends TestCase
 
     public function testSelectWithLimitAndOffset()
     {
-        ($select = new Select())->from('user')->limit(10)->offset(100);
+        $select = (new Select())->from('user')->limit(10)->offset(100);
 
         self::assertStringStartsWith(
             "SELECT * FROM `user` LIMIT :limit",
@@ -328,7 +381,7 @@ class SelectTest extends TestCase
 
     public function testAnsiDriverDoesNotSupportLimitAndOffset()
     {
-        ($select = new Select())->from('user')->limit(10)->offset(100);
+        $select = (new Select())->from('user')->limit(10)->offset(100);
         self::assertSame(
             'SELECT * FROM "user" [LIMIT 10 OFFSET 100]',
             $select->getSQL(Driver::ansi())
@@ -474,6 +527,27 @@ class SelectTest extends TestCase
         );
     }
 
+    public function testAddJoinThatAlreadBelongsToOtherSelectClonesIt()
+    {
+        $select1 = (new Select(['*', "o.*"]))->from('order_product', 'op');
+        $select2 = (new Select(['*', "o.*"]))->from('order_product', 'op');
+
+        $join = new Join(Sql::JOIN_INNER, 'order', 'o');
+        $join->on->equal(new Identifier("op.order_id"), new Identifier("o.id"));
+
+        $select1->addJoin($join);
+        $select2->addJoin($join);
+
+        $join1 = $select1->joins[0];
+        $join2 = $select2->joins[0];
+
+        self::assertSame($join, $join1);
+        self::assertSame($select1, $join1->parent);
+        self::assertSame($select2, $join2->parent);
+        self::assertEquals($join1, $join2);
+        self::assertNotSame($join1, $join2);
+    }
+
     public function testThatAddIntersectAfterUnionRaisesExceptiom()
     {
         $select = new Select('*', 'product', 'p');
@@ -494,6 +568,22 @@ class SelectTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $select->union(new Select('*', 'store2_product'));
+    }
+
+    public function testAddingItselfAsUnionRaisesException()
+    {
+        $select = new Select('*');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("cannot add itself as a UNION clause");
+        $select->union($select);
+    }
+
+    public function testAddingItselfAsIntersectRaisesException()
+    {
+        $select = new Select('*');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("cannot add itself as an INTERSECT clause");
+        $select->intersect($select);
     }
 
     public function testCacheableColumnsSql()
@@ -533,32 +623,49 @@ class SelectTest extends TestCase
 
     public function testSqlCachePartialClearing()
     {
-        $select = new Select(['id', 'name', 'price', 'vat_rate'], 'product', 'p');
-        $select->sum('price', 'totPrice');
-        $select->where->gte('price', 0.5);
-        $select->leftJoin('category', 'c', "c.id = p.category_id");
-        $select->groupBy('p.category_id');
-        $select->having->gte('totPrice', 10.0);
-        $select->orderBy('p.price');
-        $select->limit(10)->offset(20);
+        $select0 = new Select(['id', 'name', 'price', 'vat_rate'], 'product', 'p');
+        $select0->sum('price', 'totPrice');
+        $select0->where->gte('price', 0.5);
+        $select0->leftJoin('category', 'c', "c.id = p.category_id");
+        $select0->groupBy('p.category_id');
+        $select0->having->gte('totPrice', 10.0);
+        $select0->orderBy('p.price');
+        $select0->limit(10)->offset(20);
 
-        $sql = $select->getSQL();
+        $select1 = clone $select0;
 
-        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
-        $this->invokeMethod($select, 'clearPartialSQL', 'columns');
-        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+        $sql = $select1->getSQL();
 
-        self::assertSame($sql, $select->getSQL());
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select1, 'sqls'));
+        $this->invokeMethod($select1, 'clearPartialSQL', 'columns');
+        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select1, 'sqls'));
 
-        self::assertArrayHasKey('group', $this->getPropertyValue($select, 'sqls'));
-        $this->invokeMethod($select, 'clearPartialSQL', 'group');
-        self::assertArrayNotHasKey('group', $this->getPropertyValue($select, 'sqls'));
+        self::assertSame($sql, $select1->getSQL());
 
-        self::assertSame($sql, $select->getSQL());
+        self::assertArrayHasKey('group', $this->getPropertyValue($select1, 'sqls'));
+        $this->invokeMethod($select1, 'clearPartialSQL', 'group');
+        self::assertArrayNotHasKey('group', $this->getPropertyValue($select1, 'sqls'));
 
-        self::assertArrayHasKey('order', $this->getPropertyValue($select, 'sqls'));
-        $this->invokeMethod($select, 'clearPartialSQL', 'order');
-        self::assertArrayNotHasKey('order', $this->getPropertyValue($select, 'sqls'));
+        self::assertSame($sql, $select1->getSQL());
+
+        self::assertArrayHasKey('order', $this->getPropertyValue($select1, 'sqls'));
+        $this->invokeMethod($select1, 'clearPartialSQL', 'order');
+        self::assertArrayNotHasKey('order', $this->getPropertyValue($select1, 'sqls'));
+
+        // test clear all partials
+        $select2 = clone $select0;
+
+        $sql = $select2->getSQL();
+
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select2, 'sqls'));
+        self::assertArrayHasKey('group', $this->getPropertyValue($select2, 'sqls'));
+        self::assertArrayHasKey('order', $this->getPropertyValue($select2, 'sqls'));
+        $this->invokeMethod($select2, 'clearPartialSQL');
+        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select2, 'sqls'));
+        self::assertArrayNotHasKey('group', $this->getPropertyValue($select2, 'sqls'));
+        self::assertArrayNotHasKey('order', $this->getPropertyValue($select2, 'sqls'));
+
+        self::assertSame($sql, $select2->getSQL());
     }
 
     public function testThatCloningAlsoClonesClauses()
@@ -609,6 +716,22 @@ class SelectTest extends TestCase
 
         self::assertEquals($select7->intersect, $select8->intersect);
         self::assertNotSame($select7->intersect, $select8->intersect);
+    }
+
+    public function testThatCloningAlsoClonesColumnsOfTypeSelect()
+    {
+        $column = new Select('*', 'category', 'c');
+
+        $select1 = new Select(['cat' => $column, 'price'], 'product', 'p');
+        $select2 = clone $select1;
+
+        $column1 = $select1->columns['cat'];
+        $column2 = $select2->columns['cat'];
+
+        self::assertEquals($column1, $column2);
+        self::assertNotSame($column1, $column2);
+        self::assertSame($select1, $column1->parent);
+        self::assertSame($select2, $column2->parent);
     }
 
     public function testMagicGetter()

@@ -11,6 +11,7 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Element;
 use P3\Db\Sql\ElementInterface;
 use P3\Db\Sql\Predicate;
 use P3\Db\Exception\RuntimeException;
@@ -58,7 +59,10 @@ trait ConditionalClauseAwareTrait
             $clause->parent = $this;
         }
 
-        $this->sql = null;
+        if ($this instanceof Element) {
+            $this->clearSQL();
+        }
+
 
         return $this;
     }
