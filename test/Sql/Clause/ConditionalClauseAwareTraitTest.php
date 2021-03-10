@@ -46,6 +46,19 @@ class ConditionalClauseAwareTraitTest extends TestCase
         return $condClauseAware;
     }
 
+    private function createClauseInstance()
+    {
+        return $this->getMockForAbstractClass(
+            ConditionalClause::class,
+            [],
+            'MyClauseFQCN',
+            true,
+            true,
+            true,
+            ['__get']
+        );
+    }
+
     public function testUsingInvalidConditionalClauseClassRisesException()
     {
         $condClauseAware = $this->createInstance();
@@ -58,7 +71,7 @@ class ConditionalClauseAwareTraitTest extends TestCase
     {
         $condClauseAware = $this->createInstance();
 
-        $myClause = $this->getMockForAbstractClass(ConditionalClause::class, [], 'MyClauseFQCN');
+        $myClause = $this->createClauseInstance();
 
         $this->invokeMethod($condClauseAware, 'setConditionalClause', 'myClause', 'MyClauseFQCN', $myClause);
 
@@ -91,7 +104,7 @@ class ConditionalClauseAwareTraitTest extends TestCase
     {
         $condClauseAware = $this->createInstance();
 
-        $myClause = $this->getMockForAbstractClass(ConditionalClause::class, [], 'MyClauseFQCN');
+        $myClause = $this->createClauseInstance();
 
         $this->invokeMethod($condClauseAware, 'setConditionalClause', 'myClause', 'MyClauseFQCN', $myClause);
 
