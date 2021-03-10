@@ -192,8 +192,19 @@ class Select extends Statement
             $this->columns[] = $column;
         }
 
-        $this->sql = null;
-        unset($this->sqls['columns']);
+        if ($column instanceof self) {
+            if ($column === $this) {
+                throw new RuntimeException(
+                    "A sql select statement cannot add itself as a column!"
+                );
+            }
+            if ($column->parent !== null && $column->parent !== $this) {
+                $column = clone $column;
+            }
+            $column->parent = $this;
+        }
+
+        $this->clearPartialSQL('columns');
 
         return $this;
     }
@@ -359,7 +370,16 @@ class Select extends Statement
         self::assertValidFrom($from, $alias);
 
         if ($from instanceof self) {
+            if ($from === $this) {
+                throw new RuntimeException(
+                    "A sql select statement cannot add itself as a FROM clause!"
+                );
+            }
+            if ($from->parent !== null && $from->parent !== $this) {
+                $from = clone $from;
+            }
             $this->from = $from;
+            $this->from->parent = $this;
         } else {
             $this->setTable($from);
         }
@@ -429,10 +449,15 @@ class Select extends Statement
      */
     public function addJoin(Join $join): self
     {
-        $this->joins[] = $join;
+        if ($join->parent !== null && $join->parent !== $this) {
+            $join = clone $join;
+        }
 
-        $this->sql = null;
-        unset($this->sqls['join']);
+        $this->joins[] = $join;
+        $join->parent = $this;
+
+        $this->clearSQL();
+        $this->clearPartialSQL('join');
 
         return $this;
     }
@@ -760,13 +785,22 @@ class Select extends Statement
             );
         }
 
+        if ($select === $this) {
+            throw new RuntimeException(
+                "A sql select statement cannot add itself as a UNION clause!"
+            );
+        }
+
         $orderBy = $select->orderBy;
         if (!empty($orderBy)) {
             $select = clone $select;
             $select->orderBy = [];
+        } elseif ($select->parent !== null && $select->parent !== $this) {
+            $select = clone $select;
         }
 
         $this->union = $select;
+        $this->union->parent = $this;
         $this->union_all = $all;
 
         $this->sql = null;
@@ -782,13 +816,22 @@ class Select extends Statement
             );
         }
 
+        if ($select === $this) {
+            throw new RuntimeException(
+                "A sql select statement cannot add itself as an INTERSECT clause!"
+            );
+        }
+
         $orderBy = $select->orderBy;
         if (!empty($orderBy)) {
             $select = clone $select;
             $select->orderBy = [];
+        } elseif ($select->parent !== null && $select->parent !== $this) {
+            $select = clone $select;
         }
 
         $this->intersect = $select;
+        $this->intersect->parent = $this;
 
         $this->sql = null;
 
@@ -972,23 +1015,24 @@ class Select extends Statement
             return $this->from ?? $this->table;
         }
         if ('where' === $name) {
-            if (isset($this->where)) {
-                $this->sql = null;
+            if (!isset($this->where)) {
+                $this->where = new Where();
+                $this->where->parent = $this;
             }
-            return $this->where ?? $this->where = new Where();
+            return $this->where;
         }
         if ('joins' === $name) {
             if (!empty($this->joins)) {
-                $this->sql = null;
-                unset($this->sqls['join']);
+                $this->clearPartialSQL('join');
             }
             return $this->joins;
         }
         if ('having' === $name) {
-            if (isset($this->having)) {
-                $this->sql = null;
+            if (!isset($this->having)) {
+                $this->having = new Having();
+                $this->having->parent = $this;
             }
-            return $this->having ?? $this->having = new Having();
+            return $this->having;
         }
         if ('groupBy' === $name) {
             return $this->groupBy;
@@ -1026,23 +1070,29 @@ class Select extends Statement
         parent::__clone();
         if ($this->from instanceof self) {
             $this->from = clone $this->from;
+            $this->from->parent = $this;
         }
         if ($this->union instanceof self) {
             $this->union = clone $this->union;
+            $this->union->parent = $this;
         }
         if ($this->intersect instanceof self) {
             $this->intersect = clone $this->intersect;
+            $this->intersect->parent = $this;
         }
         if (!empty($this->joins)) {
             foreach ($this->joins as $k => $join) {
-                $this->joins[$k] = clone $join;
+                $this->joins[$k] = $join = clone $join;
+                $join->parent = $this;
             }
         }
-        if (isset($this->where)) {
+        if ($this->where instanceof Where) {
             $this->where = clone $this->where;
+            $this->where->parent = $this;
         }
-        if (isset($this->having)) {
+        if ($this->having instanceof Having) {
             $this->having = clone $this->having;
+            $this->having->parent = $this;
         }
     }
 }
