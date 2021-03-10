@@ -205,7 +205,7 @@ class Set extends Predicate implements IteratorAggregate
     }
 
     /**
-     * Add a predicate or a predicate-set
+     * Add a predicate or a predicate-set or predicate build specifications
      *
      * @param Predicate|string|array $predicate A Predicate|Predicate\Set instance
      *      or a specs-array [identifier, operator, value[, extra]] or [identifier => value]
@@ -221,7 +221,12 @@ class Set extends Predicate implements IteratorAggregate
             return $this; // throw?
         }
 
-        if (! $predicate instanceof Predicate) {
+        if ($predicate instanceof Predicate) {
+            if ($predicate->parent !== null && $predicate->parent !== $this) {
+                $predicate = clone $predicate;
+            }
+            $predicate->parent = $this;
+        } else {
             $predicate = $this->buildPredicate($predicate, false, false);
             if (! $predicate instanceof Predicate) {
                 throw new InvalidArgumentException(sprintf(
@@ -234,14 +239,6 @@ class Set extends Predicate implements IteratorAggregate
                     . " `%s` provided!",
                     is_object($predicate) ? get_class($predicate) : gettype($predicate)
                 ));
-            }
-        }
-
-        if ($predicate instanceof self) {
-            if ($predicate->parent !== null
-                && $predicate->parent !== $this
-            ) {
-                $predicate = clone $predicate;
             }
             $predicate->parent = $this;
         }
@@ -839,7 +836,6 @@ class Set extends Predicate implements IteratorAggregate
 
         $nestedPredicateSet = new self([], $defaultLogicalOperator);
         $this->addPredicate($nestedPredicateSet);
-        $nestedPredicateSet->parent = $this;
 
         return $nestedPredicateSet;
     }
@@ -882,10 +878,8 @@ class Set extends Predicate implements IteratorAggregate
         parent::__clone();
         $this->parent = null;
         foreach ($this->predicates as $key => $predicate) {
-            if ($predicate instanceof self) {
-                $this->predicates[$key] = $predicate = clone $predicate;
-                $predicate->parent = $this;
-            }
+            $this->predicates[$key] = $predicate = clone $predicate;
+            $predicate->parent = $this;
         }
     }
 

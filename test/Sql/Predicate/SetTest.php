@@ -393,65 +393,46 @@ class SetTest extends TestCase
         self::assertSame('', $predicateSet->getSQL());
     }
 
-    public function testThatCloningKeepsPredicatesInstances()
-    {
-        $predicateSet = new Predicate\Set(['id' => 42]);
-        $clonedSet = clone $predicateSet;
-
-        $oPredicates = $predicateSet->getPredicates();
-        $cPredicates = $clonedSet->getPredicates();
-
-        foreach ($oPredicates as $key => $oPred) {
-            $cPred = $cPredicates[$key] ?? null;
-            self::assertSame($oPred, $cPred);
-        }
-    }
-
-    public function testThatCloningAlsoClonesNestedSets()
-    {
-        $nestedSet = new Predicate\Set(['id' => 42]);
-        $predicateSet = new Predicate\Set(['id' => 24]);
-        $predicateSet->addPredicate($nestedSet);
-        $clonedSet = clone $predicateSet;
-
-        $oPredicates = $predicateSet->getPredicates();
-        $cPredicates = $clonedSet->getPredicates();
-
-        foreach ($oPredicates as $key => $oPred) {
-            $cPred = $cPredicates[$key] ?? null;
-            self::assertInstanceOf(Predicate::class, $cPred);
-            if ($oPred instanceof Predicate\Set) {
-                self::assertEquals($oPred, $cPred);
-                self::assertNotSame($oPred, $cPred);
-                self::assertSame($clonedSet, $cPred->getParent());
-            } else {
-                self::assertSame($oPred, $cPred);
-            }
-        }
-    }
-
-    public function testThatConstructorWithSetAndNestedSetsClonesNestedSets()
+    public function testThatConstructorWithSetAndNestedSetsClonesTheProvidedPredicates()
     {
         $nestedSet = new Predicate\Set(['id' => 42]);
 
-        $originalSet = new Predicate\Set(['id' => 24]);
-        $originalSet->addPredicate($nestedSet);
+        $predicateSet0 = new Predicate\Set(['id' => 24]);
+        $predicateSet0->addPredicate($nestedSet);
 
-        $predicateSet = new Predicate\Set($originalSet);
-        $clonedSet = clone $predicateSet;
+        $predicateSet1 = new Predicate\Set($predicateSet0);
+        $predicateSet2 = clone $predicateSet1;
 
-        $oPredicates = $predicateSet->getPredicates();
-        $cPredicates = $clonedSet->getPredicates();
+        $predicates1 = $predicateSet1->getPredicates();
+        $predicates2 = $predicateSet2->getPredicates();
 
-        foreach ($oPredicates as $key => $oPred) {
-            $cPred = $cPredicates[$key] ?? null;
-            self::assertInstanceOf(Predicate::class, $cPred);
-            if ($oPred instanceof Predicate\Set) {
-                self::assertEquals($oPred, $cPred);
-                self::assertNotSame($oPred, $cPred);
-            } else {
-                self::assertSame($oPred, $cPred);
-            }
+        foreach ($predicates1 as $key => $p1) {
+            $p2 = $predicates2[$key] ?? null;
+            self::assertInstanceOf(Predicate::class, $p2);
+            self::assertEquals($p1, $p2);
+            self::assertNotSame($p1, $p2);
+            self::assertSame($predicateSet2, $p2->getParent());
+        }
+    }
+
+    public function testThatCloningAlsoClonesComposedPredicatesAndSetTheirParentToTheClone()
+    {
+        $nestedSet = new Predicate\Set(['id' => 42]);
+
+        $predicateSet1 = new Predicate\Set(['id' => 24]);
+        $predicateSet1->addPredicate($nestedSet);
+
+        $predicateSet2 = clone $predicateSet1;
+
+        $predicates1 = $predicateSet1->getPredicates();
+        $predicates2 = $predicateSet2->getPredicates();
+
+        foreach ($predicates1 as $key => $p1) {
+            $p2 = $predicates2[$key] ?? null;
+            self::assertInstanceOf(Predicate::class, $p2);
+            self::assertEquals($p1, $p2);
+            self::assertNotSame($p1, $p2);
+            self::assertSame($predicateSet2, $p2->getParent());
         }
     }
 
