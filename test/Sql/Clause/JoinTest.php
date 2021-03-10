@@ -114,14 +114,21 @@ class JoinTest extends TestCase
 
     public function testThatCloningAlsoClonesSpecification()
     {
-        $join = new Join(Sql::JOIN_LEFT, 'category', 'c');
-        $join->on->eq('c.id', new Sql\Identifier('p.category_id'));
+        $join1 = new Join(Sql::JOIN_LEFT, 'category', 'c');
+        $join1->on->eq('c.id', new Sql\Identifier('p.category_id'));
 
-        $clone = clone $join;
+        $join2 = clone $join1;
 
-        self::assertEquals($join->specification, $clone->specification);
-        self::assertNotSame($join->specification, $clone->specification);
-        self::assertEquals($join->on, $clone->on);
-        self::assertNotSame($join->on, $clone->on);
+        self::assertEquals($join1, $join2);
+        self::assertNotSame($join1, $join2);
+
+        self::assertEquals($join1->specification, $join2->specification);
+        self::assertNotSame($join1->specification, $join2->specification);
+
+        self::assertEquals($join1->on, $join2->on);
+        self::assertNotSame($join1->on, $join2->on);
+
+        self::assertEquals($join1->on->searchCondition, $join2->on->searchCondition);
+        self::assertNotSame($join1->on->searchCondition, $join2->on->searchCondition);
     }
 }
