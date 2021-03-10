@@ -32,20 +32,16 @@ abstract class Statement extends Element
     }
 
     /**
-     * Remove any cached SQL string
-     */
-    protected function clearSQL()
-    {
-        parent::clearSQL();
-        $this->sqls = [];
-    }
-
-    /**
-     * Remove cached SQL string for the give part and the cached full SQL string itself
+     * Remove cached SQL string for the given part - or all parts f no part is
+     * provided - and also the full cached SQL string itself
      */
     protected function clearPartialSQL(string $part = null)
     {
         parent::clearSQL();
-        unset($this->sqls[$part]);
+        if (isset($part)) {
+            unset($this->sqls[$part]);
+        } else {
+            $this->sqls = [];
+        }
     }
 }
