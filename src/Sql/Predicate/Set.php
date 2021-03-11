@@ -163,7 +163,7 @@ class Set extends Predicate implements IteratorAggregate
         $this->defaultLogicalOperator = $defaultLogicalOperator ?? Sql::AND;
 
         // quick test for empty value
-        if (self::isEmptyPredicate($predicates, true)) {
+        if (null === $predicates || self::isEmptyPredicate($predicates, true)) {
             return;
         }
 
