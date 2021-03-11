@@ -84,10 +84,7 @@ abstract class Element implements ElementInterface
     protected const MAX_INDEX = 999999;
 
     /**
-     * Build and return the parametrized SQL-string
-     *
-     * This method must call each inner element getSQL() method and then import
-     * its parameters
+     * {@inheritDoc}
      */
     abstract public function getSQL(DriverInterface $driver = null): string;
 
@@ -109,9 +106,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * Check if there are any parameters after compiling the sql string
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function hasParams(): bool
     {
@@ -119,10 +114,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * Return the parameters values created after compiling the sql string, indexed
-     * by their sql markers
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getParams(): array
     {
@@ -130,37 +122,15 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * Return the parameters values types indexed by their sql markers
-     *
-     * @param bool $returnPdoConstNames Return pdo constants names instead of their values
-     * @return array
+     * {@inheritDoc}
      */
-    public function getParamsTypes(bool $returnPdoConstNames = false): array
+    public function getParamsTypes(): array
     {
-        if ($returnPdoConstNames && !empty($this->paramsTypes)) {
-            $types = [];
-            foreach ($this->paramsTypes as $marker => $type) {
-                if ($type === PDO::PARAM_STR) {
-                    $pdoConstName = 'PDO::PARAM_STR';
-                } elseif ($type === PDO::PARAM_INT) {
-                    $pdoConstName = 'PDO::PARAM_INT';
-                } elseif ($type === PDO::PARAM_NULL) {
-                    $pdoConstName = 'PDO::PARAM_NULL';
-                } elseif ($type === PDO::PARAM_LOB) {
-                    $pdoConstName = 'PDO::PARAM_LOB';
-                } else {
-                    $pdoConstName = 'UNKNOWN';
-                }
-                $types[$marker] = $pdoConstName;
-            }
-            return $types;
-        }
-
         return $this->paramsTypes;
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      */
     public function hasParent(): bool
     {
@@ -168,7 +138,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      */
     public function getParent(): ?ElementInterface
     {
@@ -176,7 +146,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      */
     public function setParent(ElementInterface $parent): void
     {

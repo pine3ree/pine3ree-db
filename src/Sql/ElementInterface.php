@@ -36,8 +36,10 @@ interface ElementInterface
     public function hasParams(): bool;
 
     /**
-     * Return the parameters created for this element or imported from inner
-     * elements or an empty array if getSQL() has not been called after last
+     * Return the parameters values created for this element or imported from
+     * inner elements after compiling the sql string, indexed by their sql markers
+     *
+     * This method returns an empty array if getSQL() has not been called after last
      * modification.
      *
      * @return array
@@ -47,11 +49,9 @@ interface ElementInterface
     /**
      * Return the (generated/imported) parameter pdo-types (PDO::PARAM_*)
      *
-     * @param bool $returnPdoConstNames Return stringify version instead of actual int constants?
-     *
      * @return array|int[]|array<string|int, int>
      */
-    public function getParamsTypes(bool $returnPdoConstNames = false): array;
+    public function getParamsTypes(): array;
 
     /**
      * Check if element has a parent

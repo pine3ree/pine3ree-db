@@ -109,13 +109,6 @@ class CommandTest extends TestCase
         self::assertSame($sqlStatement->getParamsTypes(), $command->getParamsTypes());
     }
 
-    public function testGetParamsTypesWithTrueArgIsForwardedToSqlStatement()
-    {
-        $command = clone $this->command;
-        $sqlStatement = $command->sqlStatement;
-        self::assertSame($sqlStatement->getParamsTypes(true), $command->getParamsTypes(true));
-    }
-
     public function testExecute()
     {
         $command = clone $this->command;

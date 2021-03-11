@@ -7,10 +7,6 @@
 
 namespace P3\Db\Sql;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql\Alias;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Literal;
 use PDO;
 
 /**

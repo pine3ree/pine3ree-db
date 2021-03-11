@@ -70,9 +70,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
         return $this->searchCondition->getParams();
     }
 
-    public function getParamsTypes(bool $returnPdoConstNames = false): array
+    public function getParamsTypes(): array
     {
-        return $this->searchCondition->getParamsTypes($returnPdoConstNames);
+        return $this->searchCondition->getParamsTypes();
     }
 
     public function getSQL(DriverInterface $driver = null): string

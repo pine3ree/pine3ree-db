@@ -44,19 +44,28 @@ abstract class Command implements CommandInterface
         return $this->sqlStatement;
     }
 
+    /**
+     * @see Sql\Element:: getSQL()
+     */
     public function getSQL(): string
     {
         return $this->sqlStatement->getSQL($this->db->getDriver(true));
     }
 
+    /**
+     * @see Sql\Element:: getParams()
+     */
     public function getParams(): array
     {
         return $this->sqlStatement->getParams();
     }
 
-    public function getParamsTypes(bool $returnPdoConstNames = false): array
+    /**
+     * @see Sql\Element:: getParamsTypes()
+     */
+    public function getParamsTypes(): array
     {
-        return $this->sqlStatement->getParamsTypes($returnPdoConstNames);
+        return $this->sqlStatement->getParamsTypes();
     }
 
     /**

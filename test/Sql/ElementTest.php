@@ -262,19 +262,6 @@ class ElementTest extends TestCase
             array_values($element->getParamsTypes())
         );
 
-        self::assertSame(
-            [
-                'PDO::PARAM_NULL',
-                'PDO::PARAM_INT',
-                'PDO::PARAM_INT',
-                'PDO::PARAM_STR',
-                'PDO::PARAM_STR',
-                'PDO::PARAM_LOB',
-                'UNKNOWN',
-            ],
-            array_values($element->getParamsTypes(true))
-        );
-
         foreach ($element->getParamsTypes() as $key => $param_type) {
             self::assertStringMatchesFormat(':param%x', $key);
         }
