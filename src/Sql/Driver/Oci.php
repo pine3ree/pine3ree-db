@@ -146,8 +146,8 @@ class Oci extends Driver implements
                     if (empty($prefix) && $add_tb_prefix) {
                         $prefix = $this->quoteIdentifier($table);
                     }
-                    $column = $this->quoteIdentifier($column);
-                    $column_sql = !empty($prefix) ? "{$prefix}.{$column}" : $column;
+                    $q_column = $this->quoteIdentifier($column);
+                    $column_sql = !empty($prefix) ? "{$prefix}.{$q_column}" : $q_column;
                 } else {
                     $column_sql = $this->quoteIdentifier($column);
                 }
