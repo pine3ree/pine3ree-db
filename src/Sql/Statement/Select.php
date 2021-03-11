@@ -469,7 +469,6 @@ class Select extends Statement
         $join->parent = $this;
 
         $this->clearSQL();
-        $this->clearPartialSQL('join');
 
         return $this;
     }
@@ -611,8 +610,7 @@ class Select extends Statement
 
         $this->groupBy[] = $groupBy;
 
-        $this->sql = null;
-        unset($this->sqls['group']);
+        $this->clearPartialSQL('group');
 
         return $this;
     }
@@ -646,8 +644,11 @@ class Select extends Statement
     public function having($having): self
     {
         if ($having instanceof Closure) {
-            $having($this->having ?? $this->having = new Having());
-            $this->sql = null;
+            if (!isset($this->having)) {
+                $this->having = new Having();
+                $this->having->parent = $this;
+            }
+            $having($this->having);
             return $this;
         }
 
@@ -710,8 +711,7 @@ class Select extends Statement
 
         $this->orderBy[$orderBy] = $sortdir;
 
-        $this->sql = null;
-        unset($this->sqls['order']);
+        $this->clearPartialSQL('order');
 
         return $this;
     }
@@ -746,7 +746,8 @@ class Select extends Statement
     public function limit(int $limit): self
     {
         $this->limit = max(0, $limit);
-        $this->sql = null;
+
+        $this->clearSQL();
 
         return $this;
     }
@@ -755,7 +756,8 @@ class Select extends Statement
     {
         $offset = max(0, $offset);
         $this->offset = $offset > 0 ? $offset : null;
-        $this->sql = null;
+
+        $this->clearSQL();
 
         return $this;
     }
@@ -815,7 +817,7 @@ class Select extends Statement
         $this->union->parent = $this;
         $this->union_all = $all;
 
-        $this->sql = null;
+        $this->clearSQL();
 
         return $this;
     }
@@ -845,7 +847,7 @@ class Select extends Statement
         $this->intersect = $select;
         $this->intersect->parent = $this;
 
-        $this->sql = null;
+        $this->clearSQL();
 
         return $this;
     }
@@ -1039,9 +1041,6 @@ class Select extends Statement
         }
 
         if ('joins' === $name) {
-            if (!empty($this->joins)) {
-                $this->clearPartialSQL('join');
-            }
             return $this->joins;
         }
 
@@ -1069,9 +1068,6 @@ class Select extends Statement
         }
 
         if ('union' === $name) {
-            if (isset($this->union)) {
-                $this->sql = null;
-            }
             return $this->union;
         }
         if ('union_all' === $name) {
@@ -1079,9 +1075,6 @@ class Select extends Statement
         }
 
         if ('intersect' === $name) {
-            if (isset($this->intersect)) {
-                $this->sql = null;
-            }
             return $this->intersect;
         }
 

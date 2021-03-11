@@ -460,6 +460,21 @@ class SelectTest extends TestCase
         ];
     }
 
+    public function testWhereMethod()
+    {
+        $select = new Select(null, 'product', 'p');
+        $select->where(function (Sql\Clause\Where $where) {
+            $where->gt('price', 10);
+        });
+
+        self::assertStringMatchesFormat(
+            "SELECT `p`.*"
+            . " FROM `product` `p`"
+            . " WHERE `price` > :gt%x",
+            $select->getSQL($this->driver)
+        );
+    }
+
     public function testHavingMethod()
     {
         $select = new Select(null, 'product', 'p');

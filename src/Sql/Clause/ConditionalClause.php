@@ -116,7 +116,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function addPredicate($predicate): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->addPredicate($predicate);
     }
 
@@ -125,7 +124,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function literal(string $literal): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->literal($literal);
     }
 
@@ -134,7 +132,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function expression(string $expression, array $substitutions = []): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->expression($expression, $substitutions);
     }
 
@@ -143,7 +140,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function expr(string $expression, array $substitutions = []): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->expression($expression, $substitutions);
     }
 
@@ -152,7 +148,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function all($identifier, string $operator, Select $select): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->all($identifier, $operator, $select);
     }
 
@@ -161,7 +156,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function any($identifier, string $operator, Select $select): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->any($identifier, $operator, $select);
     }
 
@@ -170,7 +164,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function some($identifier, string $operator, Select $select): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->some($identifier, $operator, $select);
     }
 
@@ -179,7 +172,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function between($identifier, $min_value, $max_value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->between($identifier, $min_value, $max_value);
     }
 
@@ -188,7 +180,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function notBetween($identifier, $min_value, $max_value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->notBetween($identifier, $min_value, $max_value);
     }
 
@@ -197,7 +188,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function exists(Select $select): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->exists($select);
     }
 
@@ -206,7 +196,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function notExists(Select $select): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->notExists($select);
     }
 
@@ -215,7 +204,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function in($identifier, array $value_list): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->in($identifier, $value_list);
     }
 
@@ -224,7 +212,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function notIn($identifier, array $value_list): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->notIn($identifier, $value_list);
     }
 
@@ -233,7 +220,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function is($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->is($identifier, $value);
     }
 
@@ -242,7 +228,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function isNot($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->isNot($identifier, $value);
     }
 
@@ -251,7 +236,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function isNull($identifier): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->isNull($identifier);
     }
 
@@ -260,7 +244,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function isNotNull($identifier): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->isNotNull($identifier);
     }
 
@@ -269,7 +252,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function isTrue($identifier): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->isTrue($identifier);
     }
 
@@ -278,7 +260,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function isFalse($identifier): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->isFalse($identifier);
     }
 
@@ -287,7 +268,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function isUnknown($identifier): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->isUnknown($identifier);
     }
 
@@ -296,7 +276,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function isNotUnknown($identifier): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->isNotUnknown($identifier);
     }
 
@@ -305,7 +284,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function like($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->like($identifier, $value);
     }
 
@@ -314,7 +292,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function notLike($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->notLike($identifier, $value);
     }
 
@@ -323,7 +300,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function equal($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->equal($identifier, $value);
     }
 
@@ -332,7 +308,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function eq($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->eq($identifier, $value);
     }
 
@@ -341,7 +316,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function notEqual($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->notEqual($identifier, $value);
     }
 
@@ -350,7 +324,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function neq($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->neq($identifier, $value);
     }
 
@@ -359,7 +332,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function ne($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->ne($identifier, $value);
     }
 
@@ -368,7 +340,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function lessThan($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->lessThan($identifier, $value);
     }
 
@@ -377,7 +348,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function lt($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->lt($identifier, $value);
     }
 
@@ -386,7 +356,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function lessThanEqual($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->lessThanEqual($identifier, $value);
     }
 
@@ -395,7 +364,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function lte($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->lte($identifier, $value);
     }
 
@@ -404,7 +372,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function greaterThanEqual($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->greaterThanEqual($identifier, $value);
     }
 
@@ -413,7 +380,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function gte($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->gte($identifier, $value);
     }
 
@@ -422,7 +388,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function greaterThan($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->greaterThan($identifier, $value);
     }
 
@@ -431,7 +396,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function gt($identifier, $value): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->gt($identifier, $value);
     }
 
@@ -463,7 +427,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     public function openGroup(string $defaultLogicalOperator = Sql::AND): Predicate\Set
     {
-        $this->sql = null;
         return $this->searchCondition->openGroup($defaultLogicalOperator);
     }
 

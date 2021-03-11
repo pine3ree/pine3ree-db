@@ -252,12 +252,8 @@ class Set extends Predicate implements IteratorAggregate
 
         $this->nextLogicalOperator = null;
 
-        // remove rendered sql cache
-        $this->sql = null;
-        // remove parent's rendered sql cache
-        if ($this->parent instanceof self) {
-            $this->parent->sql = null;
-        }
+        // remove rendered sql cache from tie element and its parent
+        $this->clearSQL();
 
         return $this;
     }
@@ -878,7 +874,6 @@ class Set extends Predicate implements IteratorAggregate
     public function __clone()
     {
         parent::__clone();
-        $this->parent = null;
         foreach ($this->predicates as $key => $predicate) {
             $this->predicates[$key] = $predicate = clone $predicate;
             $predicate->parent = $this;

@@ -56,7 +56,9 @@ trait ConditionalClauseAwareTrait
         $this->{$property} = $clause;
         if ($this instanceof Element) {
             $clause->parent = $this;
-            $this->clearSQL();
+            if (!$clause->isEmpty()) {
+                $this->clearSQL();
+            }
         }
 
         return $this;
