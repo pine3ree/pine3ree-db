@@ -114,7 +114,7 @@ class ElementTest extends TestCase
         $element = $this->createInstance();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->invokeMethod($element, 'quoteGenericIdentifier', $identifier, Driver::ansi());
+        $this->invokeMethod($element, 'getIdentifierSQL', $identifier, Driver::ansi());
     }
 
     public function provideUnsupportedIdentifiers(): array

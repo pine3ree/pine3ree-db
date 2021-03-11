@@ -94,7 +94,7 @@ class Like extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        $identifier = self::quoteGenericIdentifier($this->identifier, $driver);
+        $identifier = $this->getIdentifierSQL($this->identifier, $driver);
         $operator = static::$not ? Sql::NOT_LIKE : Sql::LIKE;
         $param = $this->getValueSQL($this->pattern, PDO::PARAM_STR, 'like');
         $escape = !empty($this->escape) ? " " . Sql::ESCAPE . " " . $driver->quoteValue($this->escape) : "";

@@ -9,9 +9,12 @@ namespace P3\Db\Sql;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\ElementInterface;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 use ReflectionClass;
@@ -20,10 +23,12 @@ use ReflectionMethod;
 use P3\Db\Exception\RuntimeException;
 
 use function addcslashes;
+use function get_class;
 use function gettype;
 use function is_bool;
 use function is_float;
 use function is_int;
+use function is_object;
 use function is_string;
 use function ltrim;
 use function rtrim;
@@ -136,10 +141,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Quote a yet unquoted identifier that represents a table column
-     *
-     * @param string $identifier The target identifier (column, table.column, t.column)
-     * @return string
+     * {@inheritDoc}
      */
     public function quoteIdentifier(string $identifier): string
     {
@@ -169,10 +171,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Quote an alias
-     *
-     * @param string $alias The alias string to quote
-     * @return string
+     * {@inheritDoc}
      */
     public function quoteAlias(string $alias): string
     {
@@ -183,15 +182,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Transform a value into a string suitable for SQL expressions
-     *
-     * String values will be encolsed in quotes and properly escaped, if necessary
-     *
-     * Potentially dangerous: always prefer parameter binding
-     *
-     * @param mixed $value
-     * @return string
-     * @throws RuntimeException
+     * {@inheritDoc}
      */
     public function quoteValue($value): string
     {

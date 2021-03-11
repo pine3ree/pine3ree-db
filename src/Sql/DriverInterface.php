@@ -7,6 +7,10 @@
 
 namespace P3\Db\Sql;
 
+use P3\Db\Exception\InvalidArgumentException;
+use P3\Db\Sql\Alias;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use PDO;
 
 /**
@@ -31,7 +35,7 @@ interface DriverInterface
     public function setPDO(PDO $pdo);
 
     /**
-     * Quote a yet unquoted identifier that represents a table column
+     * Quote a string identifier representing a database table or a table column
      *
      * @param string $identifier The target identifier (column, table.column, t.column)
      * @return string
@@ -39,7 +43,7 @@ interface DriverInterface
     public function quoteIdentifier(string $identifier): string;
 
     /**
-     * Quote an alias
+     * Quote a string to be used as a SQL alias
      *
      * @param string $alias The alias string to quote
      * @return string

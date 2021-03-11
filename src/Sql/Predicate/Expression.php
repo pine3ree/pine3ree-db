@@ -136,7 +136,7 @@ class Expression extends Predicate
         string $name = null
     ): string {
         if ($value instanceof Identifier || $value instanceof Alias) {
-            return self::quoteGenericIdentifier($value, $driver);
+            return $this->getIdentifierSQL($value, $driver);
         }
 
         return parent::getValueSQL($value, $param_type, $name);

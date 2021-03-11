@@ -64,7 +64,7 @@ class PredicateTest extends TestCase
 
                 $sqls = [];
 
-                $sqls[] = $this->quoteGenericIdentifier($this->identifier, $driver);
+                $sqls[] = $this->getIdentifierSQL($this->identifier, $driver);
                 $sqls[] = $this->operator;
                 $sqls[] = $this->getValueSQL($this->value, null, 'value');
 

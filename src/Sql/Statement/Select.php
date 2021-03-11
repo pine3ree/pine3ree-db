@@ -628,7 +628,7 @@ class Select extends Statement
 
         $groupBy = $this->groupBy;
         foreach ($groupBy as $key => $identifier) {
-            $groupBy[$key] = self::quoteGenericIdentifier($identifier, $driver);
+            $groupBy[$key] = $this->getIdentifierSQL($identifier, $driver);
         }
 
         $this->sqls['group'] = $sql = Sql::GROUP_BY . " " . implode(", ", $groupBy);
@@ -736,7 +736,7 @@ class Select extends Statement
                 $expr = $parts[1];
                 $identifier = new $fqcn($expr);
             }
-            $sqls[] = self::quoteGenericIdentifier($identifier, $driver) . " {$direction}";
+            $sqls[] = $this->getIdentifierSQL($identifier, $driver) . " {$direction}";
         }
 
         $this->sqls['order'] = $sql = Sql::ORDER_BY . " " . implode(", ", $sqls);

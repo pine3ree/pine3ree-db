@@ -93,7 +93,7 @@ class In extends Predicate
 
         $driver = $driver ?? Driver::ansi();
 
-        $identifier = self::quoteGenericIdentifier($this->identifier, $driver);
+        $identifier = $this->getIdentifierSQL($this->identifier, $driver);
 
         $operator = static::$not ? Sql::NOT_IN : Sql::IN;
 
