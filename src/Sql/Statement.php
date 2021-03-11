@@ -44,4 +44,10 @@ abstract class Statement extends Element
             $this->sqls = [];
         }
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->sqls = [];
+    }
 }
