@@ -24,7 +24,6 @@ use function implode;
 use function get_class;
 use function gettype;
 use function is_object;
-use function preg_match;
 use function sprintf;
 use function strpos;
 
@@ -68,7 +67,7 @@ class Oci extends Driver implements
         // table and column names that have characters other than uppercase letters
         // or numbers mus be quoted
         if (false === strpos($identifier, '.')) {
-            if (preg_match('/(:?^_|[^A-Z0-9_])/', $identifier)) {
+            if ('_' === $identifier[0]) {
                 return parent::quoteIdentifier($identifier);
             }
             return $identifier;

@@ -66,13 +66,13 @@ class OciTest extends TestCase
         return [
             ['*', '*'],
             ['USERNAME', 'USERNAME'],
-            ['"username"', '"username"'],
+            ['username', 'username'],
             ['_username', '"_username"'],
             ['TABLE.USERNAME', 'TABLE.USERNAME'],
-            ['table.USERNAME', '"table".USERNAME'],
-            ['table.username', '"table"."username"'],
-            ['table._username', '"table"."_username"'],
-            ['"u"."username"', '"u"."username"'],
+            ['table.USERNAME', 'table.USERNAME'],
+            ['table.username', 'table.username'],
+            ['table._username', 'table."_username"'],
+            ['"u"."username"', '"u"."username"'], // leave them quoted?
         ];
     }
 
@@ -152,7 +152,7 @@ class OciTest extends TestCase
         ]);
 
         self::assertStringMatchesFormat(
-            '"cp"."product_name" AS "product_name",'
+            '"cp".product_name AS "product_name",'
             . ' (unit_price * quantity) AS "totPrice",'
             . ' ((unit_price * quantity / 100) * :expr%x) AS "totVat"',
             $this->driver->getSelectColumnsSQL($select)
@@ -177,7 +177,7 @@ class OciTest extends TestCase
         $select->leftJoin('cart', 'c', 'c.id = cp.cart_id');
 
         self::assertSame(
-            '"cart_product".*',
+            'cart_product.*',
             $this->driver->getSelectColumnsSQL($select)
         );
     }
@@ -191,8 +191,8 @@ class OciTest extends TestCase
         $select->leftJoin('cart', 'c', 'c.id = cp.cart_id');
 
         self::assertSame(
-            '"cart_product"."unit_price" AS "unitPrice",'
-            . ' "c"."user_id" AS "userId"',
+            'cart_product.unit_price AS "unitPrice",'
+            . ' "c".user_id AS "userId"',
             $this->driver->getSelectColumnsSQL($select)
         );
     }
