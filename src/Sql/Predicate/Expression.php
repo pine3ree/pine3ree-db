@@ -13,8 +13,13 @@ use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Predicate;
 use P3\Db\Exception\RuntimeException;
 
+use function get_class;
+use function gettype;
+use function is_object;
+use function is_scalar;
 use function preg_quote;
 use function preg_replace;
+use function sprintf;
 use function strpos;
 use function trim;
 
@@ -52,13 +57,39 @@ class Expression extends Predicate
         }
         $this->expression = $expression;
         foreach ($substitutions as $name => $value) {
-            if (false === strpos($expression, "{{$name}}")) {
-                throw new InvalidArgumentException(
-                    "Placeholder `{{$name}}` not found in the sql-expression!"
-                );
-            }
+            self::assertValidSubstitution($name, $value);
             $this->substitutions[$name] = $value;
         }
+    }
+
+    protected static function assertValidSubstitution(string $name, $value)
+    {
+        if (false === strpos($this->expression, "{{$name}}")) {
+            throw new InvalidArgumentException(
+                "Placeholder `{{$name}}` not found in the sql-expression!"
+            );
+        }
+
+        if (is_scalar($value)
+            || $value === null
+            || $value instanceof Literal
+            || $value instanceof Identifier
+            || $value instanceof Alias
+        ) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            "An expression-substitution value must be either"
+            . " a scalar,"
+            . " null,"
+            . " a SQL-literal,"
+            . " a SQL-alias or"
+            . " a SQL-identifier,"
+            . " `%s` provided in class``%s!",
+            is_object($value) ? get_class($value) : gettype($value),
+            static::class
+        ));
     }
 
     public function getSQL(DriverInterface $driver = null): string
@@ -85,7 +116,7 @@ class Expression extends Predicate
             while (strpos($sql, $search) !== false) {
                 $sql = preg_replace(
                     '/' . preg_quote($search) . '/',
-                    $this->getValueSQL($value, null, 'expr'),
+                    $this->getSubstitutionValueSQL($driver, $value, null, 'expr'),
                     $sql,
                     1
                 );
@@ -93,6 +124,19 @@ class Expression extends Predicate
         }
 
         return $this->sql = $sql;
+    }
+
+    protected function getSubstitutionValueSQL(
+        DriverInterface $driver,
+        $value,
+        int $param_type = null,
+        string $name = null
+    ): string {
+        if ($value instanceof Identifier || $value instanceof Alias) {
+            return self::quoteGenericIdentifier($value, $driver);
+        }
+
+        return parent::getValueSQL($value, $param_type, $name);
     }
 
     public function __get(string $name)
