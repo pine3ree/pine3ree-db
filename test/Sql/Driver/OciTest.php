@@ -68,11 +68,29 @@ class OciTest extends TestCase
             ['USERNAME', 'USERNAME'],
             ['username', 'username'],
             ['_username', '"_username"'],
-            ['TABLE.USERNAME', 'TABLE.USERNAME'],
-            ['table.USERNAME', 'table.USERNAME'],
-            ['table.username', 'table.username'],
-            ['table._username', 'table."_username"'],
+            ['TABLE.USERNAME', '"TABLE".USERNAME'],
+            ['table.USERNAME', '"table".USERNAME'],
+            ['table.username', '"table".username'],
+            ['table._username', '"table"."_username"'],
+            ['table.column', '"table"."column"'], // reserved table, table
             ['"u"."username"', '"u"."username"'], // leave them quoted?
+        ];
+    }
+
+    /**
+     * @dataProvider provideReservedWords
+     */
+    public function testQuoteReservedWordIdentifier(string $identifier, string $expected)
+    {
+        self::assertSame($expected, $this->driver->quoteIdentifier($identifier));
+    }
+
+    public function provideReservedWords(): array
+    {
+        return [
+            ['betWeen', '"betWeen"'],
+            ['char', '"char"'],
+            ['EXISTS', '"EXISTS"'],
         ];
     }
 

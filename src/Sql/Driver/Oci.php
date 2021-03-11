@@ -26,6 +26,7 @@ use function gettype;
 use function is_object;
 use function sprintf;
 use function strpos;
+use function strtoupper;
 
 use const PHP_INT_MAX;
 
@@ -47,6 +48,121 @@ class Oci extends Driver implements
      */
     private const RN = '"__oci_rn"';
 
+    private const RESERVED_WORDS = [
+        'ACCESS' => true,
+        'ADD' => true,
+        'ALL' => true,
+        'ALTER' => true,
+        'AND' => true,
+        'ANY' => true,
+        'ARRAYLEN' => true,
+        'AS' => true,
+        'ASC' => true,
+        'AUDIT' => true,
+        'BETWEEN' => true,
+        'BY' => true,
+        'CHAR' => true,
+        'CHECK' => true,
+        'CLUSTER' => true,
+        'COLUMN' => true,
+        'COMMENT' => true,
+        'COMPRESS' => true,
+        'CONNECT' => true,
+        'CREATE' => true,
+        'CURRENT' => true,
+        'DATE' => true,
+        'DECIMAL' => true,
+        'DEFAULT' => true,
+        'DELETE' => true,
+        'DESC' => true,
+        'DISTINCT' => true,
+        'DROP' => true,
+        'ELSE' => true,
+        'EXCLUSIVE' => true,
+        'EXISTS' => true,
+        'FILE' => true,
+        'FLOAT' => true,
+        'FOR' => true,
+        'FROM' => true,
+        'GRANT' => true,
+        'GROUP' => true,
+        'HAVING' => true,
+        'IDENTIFIED' => true,
+        'IMMEDIATE' => true,
+        'IN' => true,
+        'INCREMENT' => true,
+        'INDEX' => true,
+        'INITIAL' => true,
+        'INSERT' => true,
+        'INTEGER' => true,
+        'INTERSECT' => true,
+        'INTO' => true,
+        'IS' => true,
+        'LEVEL' => true,
+        'LIKE' => true,
+        'LOCK' => true,
+        'LONG' => true,
+        'MAXEXTENTS' => true,
+        'MINUS' => true,
+        'MODE' => true,
+        'MODIFY' => true,
+        'NOAUDIT' => true,
+        'NOCOMPRESS' => true,
+        'NOT' => true,
+        'NOTFOUND' => true,
+        'NOWAIT' => true,
+        'NULL' => true,
+        'NUMBER' => true,
+        'OF' => true,
+        'OFFLINE' => true,
+        'ON' => true,
+        'ONLINE' => true,
+        'OPTION' => true,
+        'OR' => true,
+        'ORDER' => true,
+        'PCTFREE' => true,
+        'PRIOR' => true,
+        'PRIVILEGES' => true,
+        'PUBLIC' => true,
+        'RAW' => true,
+        'RENAME' => true,
+        'RESOURCE' => true,
+        'REVOKE' => true,
+        'ROW' => true,
+        'ROWID' => true,
+        'ROWLABEL' => true,
+        'ROWNUM' => true,
+        'ROWS' => true,
+        'SELECT' => true,
+        'SESSION' => true,
+        'SET' => true,
+        'SHARE' => true,
+        'SIZE' => true,
+        'SMALLINT' => true,
+        'SQLBUF' => true,
+        'START' => true,
+        'SUCCESSFUL' => true,
+        'SYNONYM' => true,
+        'SYSDATE' => true,
+        'TABLE' => true,
+        'THEN' => true,
+        'TO' => true,
+        'TRIGGER' => true,
+        'UID' => true,
+        'UNION' => true,
+        'UNIQUE' => true,
+        'UPDATE' => true,
+        'USER' => true,
+        'VALIDATE' => true,
+        'VALUES' => true,
+        'VARCHAR' => true,
+        'VARCHAR2' => true,
+        'VIEW' => true,
+        'WHENEVER' => true,
+        'WHERE' => true,
+        'WITH' => true,
+    ];
+
     public function __construct(PDO $pdo = null)
     {
         parent::__construct($pdo, '"', '"', "'");
@@ -67,7 +183,9 @@ class Oci extends Driver implements
         // table and column names that have characters other than uppercase letters
         // or numbers mus be quoted
         if (false === strpos($identifier, '.')) {
-            if ('_' === $identifier[0]) {
+            if ('_' === $identifier[0]
+                || isset(self::RESERVED_WORDS[strtoupper($identifier)])
+            ) {
                 return parent::quoteIdentifier($identifier);
             }
             return $identifier;
