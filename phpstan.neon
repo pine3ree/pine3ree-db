@@ -5,6 +5,7 @@ parameters:
         - php
     reportUnmatchedIgnoredErrors: true
     ignoreErrors:
-        - '#::quoteIdentifier() expects string, string|null given#'
-        - '#Access to an undefined property object::\$parent#'
-        - '#Method P3\Db\Db::fetchOne() should return array|null but returns array|object|null#'
+        - '#Method P3\\Db\\Db::pdo\(\) should return PDO but returns PDO\|null#'
+        - '#Method P3\\Db\\Db\:\:fetchOne\(\) should return array\|null but returns array\|object\|null#'
+        - '#Access to an undefined property object\:\:\$parent#'
+        - '#Oci\:\:quoteIdentifier\(\) expects string\, string\|null given#'
