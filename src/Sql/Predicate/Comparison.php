@@ -142,30 +142,16 @@ class Comparison extends Predicate
 
     private function getParamName(string $operator): string
     {
-        if ('=' === $operator) {
-            return 'eq';
-        }
-        if ('!=' === $operator) {
-            return 'neq';
-        }
-        if ('<>' === $operator) {
-            return 'ne';
-        }
-        if ('<' === $operator) {
-            return 'lt';
-        }
-        if ('<=' === $operator) {
-            return 'lte';
-        }
-        if ('>=' === $operator) {
-            return 'gte';
-        }
-        if ('>' === $operator) {
-            return 'gt';
-        }
+        static $map = [
+            '='  => 'eq',
+            '!=' => 'neq',
+            '<>' => 'ne',
+            '<'  => 'lt',
+            '<=' => 'lte',
+            '>=' => 'gte',
+            '>'  => 'gt',
+        ];
 
-        // @codeCoverageIgnoreStart
-        return 'comp';
-        // @codeCoverageIgnoreEnd
+        return $map[$operator] ?? 'comp';
     }
 }
