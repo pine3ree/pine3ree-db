@@ -295,11 +295,11 @@ class Select extends Statement
         $sqls = [];
         foreach ($this->columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
-                $prefix = $this->alias ? $driver->quoteAlias($this->alias) : null;
+                $prefix = !empty($this->alias) ? $driver->quoteAlias($this->alias) : null;
                 if (empty($prefix) && $add_tb_prefix) {
                     $prefix = $driver->quoteIdentifier($this->table);
                 }
-                $sqls[] = $prefix ? ("{$prefix}." . Sql::ASTERISK) : Sql::ASTERISK;
+                $sqls[] = !empty($prefix) ? ("{$prefix}." . Sql::ASTERISK) : Sql::ASTERISK;
                 continue; // no-alias
             }
 
@@ -860,7 +860,7 @@ class Select extends Statement
                 // @codeCoverageIgnoreEnd
             }
             $this->importParams($this->union);
-            return ($this->union_all ? Sql::UNION_ALL : Sql::UNION) . " ({$union_sql})";
+            return ($this->union_all === true ? Sql::UNION_ALL : Sql::UNION) . " ({$union_sql})";
         }
 
         if ($this->intersect instanceof self) {
@@ -926,7 +926,7 @@ class Select extends Statement
     private function quoteTableAliases(string $sql, Driver $driver): string
     {
         $tb_aliases = [];
-        if ($this->alias) {
+        if (!empty($this->alias)) {
             $tb_aliases[] = $this->alias;
         }
         foreach ($this->joins as $join) {
@@ -977,7 +977,7 @@ class Select extends Statement
     private function getBaseSQL(Driver $driver): string
     {
         $select = Sql::SELECT;
-        if ($this->quantifier) {
+        if (!empty($this->quantifier)) {
             $select .= " {$this->quantifier}";
         }
 
