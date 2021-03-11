@@ -75,7 +75,7 @@ class Comparison extends Predicate
     protected static function assertValidComparisonValue($value)
     {
         if (is_scalar($value)
-            || null === $value
+            || $value === null
             || $value instanceof Literal
             || $value instanceof Identifier
             || $value instanceof Alias
