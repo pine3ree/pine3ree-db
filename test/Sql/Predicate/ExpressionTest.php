@@ -10,7 +10,8 @@ namespace P3\DbTest\Sql\Predicate;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Predicate\Expression;
-use P3\Db\Sql\Driver;
+use P3\Db\Sql\Alias;
+use P3\Db\Sql\Identifier;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Exception\RuntimeException;
 
@@ -42,6 +43,12 @@ class ExpressionTest extends TestCase
         new Expression("id > {id}", ['published' => true]);
     }
 
+    public function testExpressionWithInvalidSubstitutionValueTypeRaisesException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Expression("id > {id}", ['id' => new \stdClass()]);
+    }
+
     /**
      * @dataProvider provideExpressions
      */
@@ -58,6 +65,8 @@ class ExpressionTest extends TestCase
         return [
             ["id > {id}", ['id' => 42], "id > :expr%x"],
             ["id > 42", [], "id > 42"],
+            ["id > {categoryId}", ['categoryId' => new Identifier('c.id')], 'id > "c"."id"'],
+            ["id > {minPrice}", ['minPrice' => new Alias('minPrice')], 'id > "minPrice"'],
         ];
     }
 
