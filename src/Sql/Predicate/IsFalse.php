@@ -7,6 +7,9 @@
 
 namespace P3\Db\Sql\Predicate;
 
+use P3\Db\Sql\Alias;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate\Is;
 
 /**
@@ -15,7 +18,7 @@ use P3\Db\Sql\Predicate\Is;
 class IsFalse extends Is
 {
     /**
-     * @param string|Literal $identifier
+     * @param string|Alias|Identifier|Literal $identifier
      */
     public function __construct($identifier)
     {

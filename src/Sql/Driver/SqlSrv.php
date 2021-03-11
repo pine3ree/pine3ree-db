@@ -51,7 +51,6 @@ class SqlSrv extends Driver implements LimitSqlProvider
             return $offset_sql;
         }
 
-        $limit = (int)$limit;
         if ($limit === 0) {
             throw new RuntimeException(
                 "The number of rows provided for a FETCH clause must be greater"

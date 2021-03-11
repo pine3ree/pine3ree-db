@@ -9,7 +9,9 @@ namespace P3\Db\Sql\Predicate;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
@@ -26,7 +28,7 @@ use function sprintf;
  */
 class In extends Predicate
 {
-    /** @var string|Literal */
+    /** @var string|Alias|Identifier|Literal */
     protected $identifier;
 
     /** @var array|Select */
@@ -44,7 +46,7 @@ class In extends Predicate
     protected static $index = 0;
 
     /**
-     * @param string|Literal $identifier
+     * @param string|Alias|Identifier|Literal $identifier
      * @param array|Select $value_list
      */
     public function __construct($identifier, $value_list)

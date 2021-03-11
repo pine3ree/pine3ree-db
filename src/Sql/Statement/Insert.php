@@ -46,15 +46,14 @@ class Insert extends Statement
     /** @var string[] */
     private $columns = [];
 
-    /** @var array[]|null */
-    private $values;
+    /** @var array[] */
+    private $values = [];
 
-    /** @var Select */
+    /** @var Select|null */
     private $select;
 
     /**
-     * @param array|string $table
-     * @param string $alias
+     * @param string $table
      */
     public function __construct(string $table = null)
     {
@@ -63,13 +62,23 @@ class Insert extends Statement
         }
     }
 
+    /**
+     * Add the IGNORE flag
+     *
+     * @return $this Provides a fluent interface
+     */
     public function ignore(): self
     {
         $this->ignore = true;
         return $this;
     }
 
-    public function into($table): self
+    /**
+     * Set the target INTO clause table name
+     *
+     * @return $this Provides a fluent interface
+     */
+    public function into(string $table): self
     {
         $this->setTable($table);
         return $this;
@@ -79,7 +88,7 @@ class Insert extends Statement
      * Define the INSERT columns, this will also clear any defined values
      *
      * @param array $columns
-     * @return $this
+     * @return $this Provides a fluent interface
      */
     public function columns(array $columns): self
     {
@@ -117,7 +126,7 @@ class Insert extends Statement
      *
      * @param array $values
      * @param bool $reset Reset the values for a single insert
-     * @return $this
+     * @return $this Provides a fluent interface
      * @throws RuntimeException
      */
     public function values(array $values, bool $reset = false): self
@@ -149,7 +158,7 @@ class Insert extends Statement
      *
      * @param array[] $multiple_values
      * @param bool $reset Reset the values for a single insert
-     * @return $this
+     * @return $this Provides a fluent interface
      */
     public function multipleValues(array $multiple_values, bool $reset = false): self
     {
@@ -190,7 +199,7 @@ class Insert extends Statement
      * Set the rows to be INSERTed
      *
      * @param array[] $rows An array of new records
-     * @return $this
+     * @return $this Provides a fluent interface
      */
     public function rows(array $rows): self
     {
@@ -212,7 +221,7 @@ class Insert extends Statement
      *
      * @param array $row The record to insert
      * @param bool $reset Reset columns and values for a single insert
-     * @return $this
+     * @return $this Provides a fluent interface
      * @throws RuntimeException
      */
     public function row(array $row, bool $reset = false): self
@@ -251,12 +260,12 @@ class Insert extends Statement
      * Set the values of the records to be INSERTed
      *
      * @param Select $select The select from statement used as source
-     * @return $this
+     * @return $this Provides a fluent interface
      */
     public function select(Select $select): self
     {
-        $this->values = null;
         $this->select = $select;
+        $this->values = [];
 
         $this->sql = null;
 

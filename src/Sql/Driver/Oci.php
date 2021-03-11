@@ -133,21 +133,21 @@ class Oci extends Driver implements
         $sqls = [];
         foreach ($columns as $key => $column) {
             if ($column === Sql::ASTERISK) {
-                $prefix = $alias ? $this->quoteAlias($alias) : null;
+                $prefix = !empty($alias) ? $this->quoteAlias($alias) : null;
                 if (empty($prefix) && $add_tb_prefix) {
                     $prefix = $this->quoteIdentifier($table);
                 }
-                $sqls[] = $prefix ? "{$prefix}.*" : "*";
+                $sqls[] = !empty($prefix) ? "{$prefix}.*" : "*";
                 continue; // no-alias
             }
 
             if (is_string($column)) {
                 if (false === strpos($column, '.')) {
-                    $prefix = $alias ? $this->quoteAlias($alias) : null;
+                    $prefix = !empty($alias) ? $this->quoteAlias($alias) : null;
                     if (empty($prefix) && $add_tb_prefix) {
                         $prefix = $this->quoteIdentifier($table);
                     }
-                    $column_sql = $prefix ? "{$prefix}.{$column}" : $column;
+                    $column_sql = !empty($prefix) ? "{$prefix}.{$column}" : $column;
                 } else {
                     $column_sql = $column;
                 }

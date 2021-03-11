@@ -18,6 +18,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement as SqlStatement;
+use P3\Db\Sql\Statement\Select as SqlSelect;
 use PDO;
 use PDOStatement;
 use P3\Db\Exception\RuntimeException;
@@ -42,7 +43,7 @@ use const PHP_INT_MAX;
  */
 class Db
 {
-    /** @var PDO */
+    /** @var PDO|null */
     private $pdo;
 
     /** @var string */
@@ -162,7 +163,7 @@ class Db
         if ($force_reconnection || !isset($this->pdo)) {
             $this->pdoIsInitialized = false;
             $this->pdo = $this->createPDO();
-            $this->initializePDO($this->pdo);
+            $this->initializePDO();
         }
     }
 
@@ -185,7 +186,7 @@ class Db
     }
 
     /**
-     * Get the active pdo instance, id any, optionally forcing its instantiation
+     * Get the active pdo instance, if any, optionally forcing its instantiation
      *
      * @param bool $instantiate Create a new PDO connection if not already connected
      * @return PDO|null
@@ -193,7 +194,7 @@ class Db
     public function getPDO(bool $instantiate = false): ?PDO
     {
         if (isset($this->pdo)) {
-            $this->pdoIsInitialized || $this->initializePDO($this->pdo);
+            $this->pdoIsInitialized || $this->initializePDO();
             return $this->pdo;
         }
 
@@ -207,7 +208,7 @@ class Db
     private function pdo(): PDO
     {
         if (isset($this->pdo)) {
-            $this->pdoIsInitialized || $this->initializePDO($this->pdo);
+            $this->pdoIsInitialized || $this->initializePDO();
             return $this->pdo;
         }
 
@@ -240,13 +241,16 @@ class Db
     /**
      * Perform initialization commands when required based on the connecion driver
      *
-     * @param PDO $pdo
-     * @return void
+     * @return bool
      */
-    private function initializePDO(): void
+    private function initializePDO(): bool
     {
-        if ($this->pdoIsInitialized || !isset($this->pdo)) {
-            return;
+        if ($this->pdoIsInitialized) {
+            return true;
+        }
+
+        if (!isset($this->pdo)) {
+            return false;
         }
 
         // set attributes if a PDO instance was passed in
@@ -265,6 +269,7 @@ class Db
         }
 
         $this->pdoIsInitialized = true;
+        return true;
     }
 
     /**
@@ -317,10 +322,10 @@ class Db
     /**
      * Create and return a new Select command
      *
-     * @param array|string|string[]|Literal|Literal[]|Select|Select[] $columns
+     * @param array|string|string[]|Literal|Literal[]|SqlSelect|SqlSelect[] $columns
      *      An array of columns with optional key-as-alias or a single column or
      *      the sql-asterisk
-     * @param string!Select|null $from The db-table name or a sub-select statement
+     * @param string|SqlSelect|null $from The db-table name or a sub-select statement
      * @param string|null $alias The db-table alias
      * @return Select
      */
@@ -363,7 +368,7 @@ class Db
             $select->orderBy($order);
         }
 
-        return $select->fetchOne();
+        return $select->fetchOne(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -427,7 +432,7 @@ class Db
      *
      * @param string|null $table
      * @param array<string, mixed> $row_or_rows A new table row/row-set
-     * @return Insert|bool
+     * @return Insert|int|bool
      */
     public function insert(string $table = null, array $row_or_rows = null)
     {

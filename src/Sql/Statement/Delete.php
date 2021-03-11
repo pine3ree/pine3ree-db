@@ -28,8 +28,7 @@ class Delete extends Statement
     use TableAwareTrait;
 
     /**
-     * @param string|array $table The db table to delete from as a string or
-     *      [alias => name] array
+     * @param string $table The db table name to delete from
      */
     public function __construct(string $table = null)
     {
@@ -88,7 +87,7 @@ class Delete extends Statement
         if ('from' === $name) {
             return $this->table;
         }
-        
+
         if ('where' === $name) {
             if (!isset($this->where)) {
                 $this->where = new Where();

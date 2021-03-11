@@ -13,7 +13,6 @@ use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
-use P3\Db\Exception\RuntimeException;
 use Traversable;
 
 /**
@@ -32,7 +31,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
     protected static $useParenthesis = false;
 
     /**
-     * @param null|Predicate[]|self|Predicate|Predicate\Set|array|string $predicates
+     * @param null|Predicate[]|Predicate|Predicate\Set|array|string $predicates
      * @param string $defaultLogicalOperator One of `AND`, `OR`,  or `&&`, `||` aliases
      */
     public function __construct($predicates = null, string $defaultLogicalOperator = null)
@@ -111,8 +110,8 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      *
      * @param Predicate|string|array $predicate A Predicate|Predicate\Set instance
      *      or a specs-array [identifier, operator, value] or [identifier => value]
+     * @return Predicate\Set
      * @throws InvalidArgumentException
-     * @return $this Provides fluent interface
      */
     public function addPredicate($predicate): Predicate\Set
     {

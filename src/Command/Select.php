@@ -37,7 +37,7 @@ use function is_array;
  * @property-read Join[] $joins An array of Join clauses if any
  * @property-read array[] $groupBy An array of GROUP BY identifiers
  * @property-read Having $having The Having clause, built on-first-access if null
- * @property-read array<string, string>[] $orderBy An array of ORDER BY identifier to sort-direction pairs
+ * @property-read array<string, string>|string[] $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
@@ -54,7 +54,7 @@ class Select extends Command implements ReaderInterface
     /**
      * @param Db $db
      * @param string|string[]|Literal|Literal[]|SqlSelect|SqlSelect[] $columns
-     * @param string!SqlSelect|null $from The db-table name or a sub-select statement
+     * @param string|SqlSelect|null $from The db-table name or a sub-select statement
      * @param string|null $alias
      */
     public function __construct(Db $db, $columns = null, $from = null, string $alias = null)

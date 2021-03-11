@@ -31,13 +31,13 @@ use function sprintf;
  */
 class Comparison extends Predicate
 {
-    /** @var string|Literal */
+    /** @var string|Alias|Identifier|Literal */
     protected $identifier;
 
     /** @var string */
     protected $operator;
 
-    /** @var string|int|bool|Literal */
+    /** @var scalar|Literal|Identifier|Alias|null */
     protected $value;
 
     /**
@@ -46,9 +46,9 @@ class Comparison extends Predicate
     protected static $index = 0;
 
     /**
-     * @param string|Literal $identifier
+     * @param string|Alias|Identifier|Literal $identifier
      * @param string $operator
-     * @param string|int|bool|Literal $value
+     * @param scalar|Literal|Identifier|Alias|null $value
      */
     public function __construct($identifier, string $operator, $value)
     {

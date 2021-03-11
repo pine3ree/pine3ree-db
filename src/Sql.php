@@ -263,7 +263,7 @@ class Sql
      * @param array|string|string[]|Literal|Literal[]|Select|Select[] $columns
      *      An array of columns with optional key-as-alias or a single column or
      *      the sql-asterisk
-     * @param string!Select|null $from The db-table name or a sub-select statement
+     * @param string|Select|null $from The db-table name or a sub-select statement
      * @param string|null $alias The db-table alias
      * @return Select
      */

@@ -301,7 +301,7 @@ abstract class Driver implements DriverInterface
      *
      * @param ElementInterface $element
      * @param string $methodName
-     * @param array $args
+     * @param array ...$args
      * @return mixed
      * @throws RuntimeException
      */

@@ -12,6 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
 use P3\Db\Exception\RuntimeException;
@@ -69,7 +70,7 @@ class Update extends Statement
     /**
      * Set new value(s) for column(s)
      *
-     * @param string|array<string: scalar|null|string|Literal> $column_or_row
+     * @param string|array<string, scalar|null|string|Literal> $column_or_row
      *      A single column or a set of column:value pairs
      * @param mixed $value The value for a single column
      * @return $this
@@ -101,9 +102,11 @@ class Update extends Statement
         }
 
         throw new InvalidArgumentException(sprintf(
-            "The set() `\$column_or_row` argument must be either a non empty string or an array"
-            . " of <column:string> => <value:scalar> pairs, `%s` provided!",
-            is_object($column_or_row) ? get_class($column_or_row) : gettype($column_or_row)
+            "The set() `\$column_or_row` argument must be either"
+            . " a non empty string"
+            . " or an array of <column: string> => <value: scalar|null|string|Literal> pairs,"
+            . " `%s` provided!",
+            gettype($column_or_row)
         ));
     }
 

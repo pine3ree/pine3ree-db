@@ -225,9 +225,8 @@ class Set extends Predicate implements IteratorAggregate
             if ($predicate->parent !== null && $predicate->parent !== $this) {
                 $predicate = clone $predicate;
             }
-            $predicate->parent = $this;
         } else {
-            $predicate = $this->buildPredicate($predicate, false, false);
+            $predicate = $this->buildPredicate($input = $predicate, false, false);
             if (! $predicate instanceof Predicate) {
                 throw new InvalidArgumentException(sprintf(
                     "Adding a predicate must be done using either as a string, a"
@@ -237,11 +236,12 @@ class Set extends Predicate implements IteratorAggregate
                     . " or ['&&', specs], ['||', specs]"
                     . " or ['&&' => [...], ['||' => [...],"
                     . " `%s` provided!",
-                    is_object($predicate) ? get_class($predicate) : gettype($predicate)
+                    is_object($input) ? get_class($input) : gettype($input)
                 ));
             }
-            $predicate->parent = $this;
         }
+
+        $predicate->parent = $this;
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
 
@@ -860,10 +860,11 @@ class Set extends Predicate implements IteratorAggregate
     /**
      * Add a nested predicate-set, resulting in SQL conditions enclosed in parenthesis
      *
-     * @param Closure An anonymous function for manipulating the newly created nested-set given its as argument
+     * @param Closure $group An anonymous function for manipulating the newly created
+     *      nested-set given its as argument
      * @param string $defaultLogicalOperator The default logical operator for the nested set
      *
-     * @return $this fluent interface
+     * @return $this Fluent interface
      */
     public function group(Closure $group, string $defaultLogicalOperator = Sql::AND): self
     {

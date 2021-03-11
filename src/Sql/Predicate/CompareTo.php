@@ -9,7 +9,10 @@ namespace P3\Db\Sql\Predicate;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
@@ -20,7 +23,7 @@ use function implode;
  */
 abstract class CompareTo extends Predicate
 {
-    /** @var string|Literal */
+    /** @var string|Alias|Identifier|Literal */
     protected $identifier;
 
     /** @var string */
@@ -33,7 +36,7 @@ abstract class CompareTo extends Predicate
     protected static $quantifier;
 
     /**
-     * @param string|Literal $identifier
+     * @param string|Alias|Identifier|Literal $identifier
      * @param string $operator
      * @param Select $select
      */

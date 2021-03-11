@@ -9,7 +9,9 @@ namespace P3\Db\Sql\Predicate;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use PDO;
@@ -26,7 +28,7 @@ use function strlen;
  */
 class Like extends Predicate
 {
-    /** @var string|Literal */
+    /** @var string|Alias|Identifier|Literal */
     protected $identifier;
 
     /** @var string|Literal */
@@ -44,7 +46,7 @@ class Like extends Predicate
     protected static $index = 0;
 
     /**
-     * @param string|identifier|Alias|Literal $identifier
+     * @param string|Alias|Identifier|Literal $identifier
      * @param string|Literal $pattern
      * @param string|null $escape An optional custom escape character
      */

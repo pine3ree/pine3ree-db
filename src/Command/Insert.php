@@ -89,7 +89,7 @@ class Insert extends Command implements WriterInterface
      * @see SqlInsert::row()
      * @return $this
      */
-    public function row(array $row)
+    public function row(array $row, bool $reset = false)
     {
         $this->sqlStatement->row($row);
         return $this;

@@ -21,6 +21,9 @@ use function trim;
  */
 class Literal extends Predicate
 {
+    /** @var string */
+    protected $literal;
+
     public function __construct(string $literal)
     {
         $literal = trim($literal);
@@ -30,12 +33,12 @@ class Literal extends Predicate
             );
         }
 
-        $this->sql = $literal;
+        $this->sql = $this->literal = $literal;
     }
 
     public function getSQL(Driver $driver = null): string
     {
-        return $this->sql;
+        return $this->literal;
     }
 
     public function __clone()

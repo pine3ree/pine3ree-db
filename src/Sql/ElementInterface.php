@@ -45,7 +45,7 @@ interface ElementInterface
      *
      * @param bool $returnPdoConstNames Return stringify version instead of actual int constants?
      *
-     * @return array <int|string: int>
+     * @return array|int[]|array<string|int, int>
      */
     public function getParamsTypes(bool $returnPdoConstNames = false): array;
 

@@ -8,24 +8,24 @@
 
 namespace P3\DbTest;
 
-use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Command\Delete;
 use P3\Db\Command\Insert;
 use P3\Db\Command\Select;
 use P3\Db\Command\Update;
 use P3\Db\Db;
+use P3\Db\Exception\InvalidArgumentException;
+use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Sqlite;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
-use ReflectionProperty;
-use P3\Db\Exception\RuntimeException;
 use stdClass;
 
 class DbTest extends TestCase
 {
+    use DiscloseTrait;
+
     /**
      * The Db instance used to interact with sqlite memory database
      *
@@ -115,42 +115,32 @@ EOIS
 
     public function testConnect()
     {
-        $connect = new ReflectionMethod(Db::class, 'connect');
-        $connect->setAccessible(true);
-
         $db = new Db(self::DSN);
-        $connect->invoke($db);
-
+        $this->invokeMethod($db, 'connect');
         self::assertTrue($db->isConnected());
 
         $db = new Db(self::DSN);
-        $connect->invokeArgs($db, [true]);
+        $this->invokeMethod($db, 'connect', true);
         self::assertTrue($db->isConnected());
     }
 
     public function testDisconnect()
     {
-        $disconnect = new ReflectionMethod(Db::class, 'disconnect');
-        $disconnect->setAccessible(true);
-
         $pdo = $this->prophesize(PDO::class);
 
         $db = new Db($pdo->reveal());
         self::assertTrue($db->isConnected());
-        $disconnect->invoke($db);
+        $this->invokeMethod($db, 'disconnect');
         self::assertFalse($db->isConnected());
     }
 
     public function testReconnect()
     {
-        $reconnect = new ReflectionMethod(Db::class, 'reconnect');
-        $reconnect->setAccessible(true);
-
         $db = new Db(self::DSN);
         $pdo = $db->getPDO(true);
 
         self::assertTrue($db->isConnected());
-        $reconnect->invoke($db);
+        $this->invokeMethod($db, 'reconnect');
         self::assertTrue($db->isConnected());
 
         self::assertInstanceOf(PDO::class, $db->getPDO(false));
@@ -159,14 +149,11 @@ EOIS
         // reconnect without DNS
         $db = new Db($pdo);
         $this->expectException(RuntimeException::class);
-        $reconnect->invoke($db);
+        $this->invokeMethod($db, 'reconnect');
     }
 
     public function testInitializePDO()
     {
-        $initializePDO = new ReflectionMethod(Db::class, 'initializePDO');
-        $initializePDO->setAccessible(true);
-
         $options = [
             PDO::ATTR_TIMEOUT => 15,
         ];
@@ -186,8 +173,16 @@ EOIS
             PDO::ATTR_TIMEOUT => 15,
         ]);
 
-        $initializePDO->invoke($db);
-        $initializePDO->invoke($db);
+        self::assertTrue($this->invokeMethod($db, 'initializePDO'));
+        // already initialized test
+        self::assertTrue($this->invokeMethod($db, 'initializePDO'));
+    }
+
+    public function testCallInitializePdoWithoutPdoReturnsFalse()
+    {
+        $db = new Db(self::DSN);
+
+        self::assertFalse($this->invokeMethod($db, 'initializePDO'));
     }
 
     public function testhatGetShallowDriverDoesNotCreateConnection()
@@ -230,10 +225,7 @@ EOIS
         $pdo = $db->getPDO(true);
         $driver = $db->getDriver(false);
 
-        $pdoProp = new ReflectionProperty(Driver::class, 'pdo');
-        $pdoProp->setAccessible(true);
-
-        self::assertSame($pdo, $pdoProp->getValue($driver));
+        self::assertSame($pdo, $this->getPropertyValue($driver, 'pdo'));
     }
 
     public function testInvalidDsnPrefixLeadsToAnsiDriverInstance()
@@ -264,11 +256,8 @@ EOIS
         $pdo = $this->prophesize(PDO::class);
         $db = new Db($pdo->reveal());
 
-        $createPdo = new ReflectionMethod(Db::class, 'createPDO');
-        $createPdo->setAccessible(true);
-
         $this->expectException(RuntimeException::class);
-        $createPdo->invoke($db);
+        $this->invokeMethod($db, 'createPDO');
     }
 
     public function testSelectCall()
@@ -455,16 +444,13 @@ EOIS
     {
         $db = new Db(self::DSN);
 
-        $getParamType = new ReflectionMethod(Db::class, 'getParamType');
-        $getParamType->setAccessible(true);
-
-        self::assertSame(PDO::PARAM_NULL, $getParamType->invokeArgs($db, [null]));
-        self::assertSame(PDO::PARAM_INT, $getParamType->invokeArgs($db, [42]));
-        self::assertSame(PDO::PARAM_INT, $getParamType->invokeArgs($db, [true]));
-        self::assertSame(PDO::PARAM_INT, $getParamType->invokeArgs($db, [false]));
-        self::assertSame(PDO::PARAM_STR, $getParamType->invokeArgs($db, ['ABC']));
-        self::assertSame(PDO::PARAM_STR, $getParamType->invokeArgs($db, [[1, 2, 3]]));
-        self::assertSame(PDO::PARAM_STR, $getParamType->invokeArgs($db, [new stdClass()]));
+        self::assertSame(PDO::PARAM_NULL, $this->invokeMethod($db, 'getParamType', null));
+        self::assertSame(PDO::PARAM_INT,  $this->invokeMethod($db, 'getParamType', 42));
+        self::assertSame(PDO::PARAM_INT,  $this->invokeMethod($db, 'getParamType', true));
+        self::assertSame(PDO::PARAM_INT,  $this->invokeMethod($db, 'getParamType', false));
+        self::assertSame(PDO::PARAM_STR,  $this->invokeMethod($db, 'getParamType', 'ABC'));
+        self::assertSame(PDO::PARAM_STR,  $this->invokeMethod($db, 'getParamType', [1, 2, 3]));
+        self::assertSame(PDO::PARAM_STR,  $this->invokeMethod($db, 'getParamType', new stdClass()));
     }
 
     public function testExecCall()

@@ -10,6 +10,8 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 
@@ -26,7 +28,7 @@ use function strtoupper;
  */
 class Is extends Predicate
 {
-    /** @var string|Literal */
+    /** @var string|Alias|Identifier|Literal */
     protected $identifier;
 
     /** @var bool|null|string */
@@ -36,8 +38,7 @@ class Is extends Predicate
     protected static $not = false;
 
     /**
-     * @param string|Literal $identifier
-     * @param string $operator
+     * @param string|Identifier|Alias|Literal $identifier
      * @param bool|null|string $value
      */
     public function __construct($identifier, $value)
@@ -56,7 +57,7 @@ class Is extends Predicate
     }
 
     /**
-     * @param mixed $value
+     * @param string $value
      * @return bool|null|string
      * @throws InvalidArgumentException
      */

@@ -54,15 +54,15 @@ use const PHP_INT_MAX;
  * @property-read string|null $table The db table to select from if already set
  * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
- * @property-read string[] $columns The columns to be returned
+ * @property-read string[]|Literal[]|Expression[]|self[]|array<string, string|Literal|Expression|self> $columns The columns to be returned
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any
  * @property-read array $groupBy An array of GROUP BY identifiers
  * @property-read Having $having The Having clause, built on-first-access if null
  * @property-read array $orderBy An array of ORDER BY identifier to sort-direction pairs
- * @property-read int|null $limit The Having clause if any
- * @property-read int|null $offset The Having clause if any
+ * @property-read int|null $limit The LIMIT clause value if any
+ * @property-read int|null $offset The OFFSET clause value if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
  * @property-read bool|null $union_all Is it a UNION ALL clause?
  * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
@@ -75,7 +75,9 @@ class Select extends Statement
     /** @var string|null */
     protected $quantifier;
 
-    /** @var string[] */
+    /**
+     * @var string[]|Literal[]|Expression[]|self[]|array<string, string|Literal|Expression|self>
+     */
     protected $columns = [];
 
     /** @var string|self */
@@ -129,7 +131,7 @@ class Select extends Statement
 
     /**
      * @param string $quantifier
-     * @return $this
+     * @return $this Provides a fluent interface
      */
     public function quantifier(string $quantifier): self
     {
@@ -142,8 +144,9 @@ class Select extends Statement
     }
 
     /**
-     * @param string $quantifier
-     * @return $this
+     * Set the DISTINCT clause
+     *
+     * @return $this Provides a fluent interface
      */
     public function distinct(): self
     {
@@ -159,7 +162,7 @@ class Select extends Statement
      * expressions
      *
      * @param string|string[]|Literal|Literal[]|self|self[] $columns
-     * @return $this
+     * @return $this Provides a fluent interface
      */
     public function columns($columns): self
     {
@@ -180,6 +183,14 @@ class Select extends Statement
         return $this;
     }
 
+    /**
+     * Add a column to the select list
+     *
+     * @param string|Literal|Expression|Select $column
+     * @param string $alias
+     * @return $this Provides a fluent interface
+     * @throws RuntimeException
+     */
     public function column($column, string $alias = null): self
     {
         self::assertValidColumn($column, $alias);
@@ -354,7 +365,7 @@ class Select extends Statement
     /**
      * Set the SELECT FROM table or sub-Select
      *
-     * @param string!self $from The db-table name to select from
+     * @param string|self $from The db-table name to select from
      * @param string|null $alias The db-table alias, if any
      * @return $this
      */
@@ -444,8 +455,8 @@ class Select extends Statement
     /**
      * Add a join clause instance to this statement
      *
-     * @param Join The join clause
-     * @return $this
+     * @param Join $join The join clause
+     * @return $this Provides a fluent interface
      */
     public function addJoin(Join $join): self
     {

@@ -38,7 +38,7 @@ use function trim;
 abstract class Element implements ElementInterface
 {
     /**
-     * @var string The rendered SQL statement string with optional parameter markers
+     * @var string|null The rendered SQL statement string with optional parameter markers
      */
     protected $sql;
 
@@ -314,7 +314,7 @@ abstract class Element implements ElementInterface
      * Quote a generic identifier (column|alias|literal) used in predicates, group-by,
      * order-by clauses according to its type
      *
-     * @param string|Alias|Literal $identifier
+     * @param string|Alias|Identifier|Literal $identifier
      * @param Driver $driver A SQL-driver
      * @return string
      * @throws InvalidArgumentException
