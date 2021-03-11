@@ -33,10 +33,7 @@ class In extends Predicate
     protected $identifier;
 
     /** @var array|Select */
-    protected $value_list;
-
-    /** @var bool */
-    protected $has_null = false;
+    protected $valueList;
 
     /** @var bool */
     protected static $not = false;
@@ -48,29 +45,29 @@ class In extends Predicate
 
     /**
      * @param string|Alias|Identifier|Literal $identifier
-     * @param array|Select $value_list
+     * @param array|Select $valueList
      */
-    public function __construct($identifier, $value_list)
+    public function __construct($identifier, $valueList)
     {
         self::assertValidIdentifier($identifier);
-        self::assertValidValueList($value_list);
+        self::assertValidValueList($valueList);
 
         $this->identifier = $identifier;
-        $this->value_list = $value_list;
+        $this->valueList = $valueList;
     }
 
-    protected static function assertValidValueList($value_list)
+    protected static function assertValidValueList($valueList)
     {
-        if (!is_array($value_list) && ! $value_list instanceof Select) {
+        if (!is_array($valueList) && ! $valueList instanceof Select) {
             throw new InvalidArgumentException(sprintf(
                 "A IN/NOT-IN predicate value list must be either an array of values"
                 . " or a Select statement, '%s' provided!",
-                is_object($value_list) ? get_class($value_list) : gettype($value_list)
+                is_object($valueList) ? get_class($valueList) : gettype($valueList)
             ));
         }
 
-        if (is_array($value_list)) {
-            foreach ($value_list as $value) {
+        if (is_array($valueList)) {
+            foreach ($valueList as $value) {
                 self::assertValidValue($value);
             }
         }
@@ -97,18 +94,18 @@ class In extends Predicate
 
         $operator = static::$not ? Sql::NOT_IN : Sql::IN;
 
-        if ($this->value_list instanceof Select) {
-            $select_sql = $this->value_list->getSQL($driver);
-            $this->importParams($this->value_list);
+        if ($this->valueList instanceof Select) {
+            $select_sql = $this->valueList->getSQL($driver);
+            $this->importParams($this->valueList);
 
             return $this->sql = "{$identifier} {$operator} ({$select_sql})";
         }
 
         $values = [];
-        $has_null = false;
-        foreach ($this->value_list as $value) {
+        $hasNull = false;
+        foreach ($this->valueList as $value) {
             if (null === $value) {
-                $has_null = true;
+                $hasNull = true;
                 continue;
             }
             $values[] = $this->getValueSQL($value, null, 'in');
@@ -117,7 +114,7 @@ class In extends Predicate
         $ivl_sql = "(" . (empty($values) ? Sql::NULL : implode(", ", $values)) . ")";
 
         $null_sql = "";
-        if ($has_null) {
+        if ($hasNull) {
             $null_sql = " " . (
                 static::$not
                 ? Sql::AND . " {$identifier} " . Sql::IS_NOT . " " . Sql::NULL
@@ -126,7 +123,7 @@ class In extends Predicate
         }
 
         $sql = "{$identifier} {$operator} {$ivl_sql}{$null_sql}";
-        if ($has_null) {
+        if ($hasNull) {
             $sql = "({$sql})";
         }
 

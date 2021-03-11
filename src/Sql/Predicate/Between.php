@@ -25,10 +25,10 @@ class Between extends Predicate
     protected $identifier;
 
     /** @var mixed */
-    protected $min_value;
+    protected $minValue;
 
     /** @var mixed */
-    protected $max_value;
+    protected $maxValue;
 
     protected static $not = false;
 
@@ -39,19 +39,19 @@ class Between extends Predicate
 
     /**
      * @param string|Alias|Identifier|Literal $identifier
-     * @param mixed $min_value
-     * @param mixed $max_value
+     * @param mixed $minValue
+     * @param mixed $maxValue
      */
-    public function __construct($identifier, $min_value, $max_value)
+    public function __construct($identifier, $minValue, $maxValue)
     {
         self::assertValidIdentifier($identifier);
         $this->identifier = $identifier;
 
-        self::assertValidLimit($min_value);
-        self::assertValidLimit($max_value);
+        self::assertValidLimit($minValue);
+        self::assertValidLimit($maxValue);
 
-        $this->min_value = $min_value;
-        $this->max_value = $max_value;
+        $this->minValue = $minValue;
+        $this->maxValue = $maxValue;
     }
 
     protected static function assertValidLimit($value)
@@ -79,8 +79,8 @@ class Between extends Predicate
 
         $identifier = $this->getIdentifierSQL($this->identifier, $driver);
         $operator = static::$not ? Sql::NOT_BETWEEN : Sql::BETWEEN;
-        $min = $this->getValueSQL($this->min_value, null, 'min');
-        $max = $this->getValueSQL($this->max_value, null, 'max');
+        $min = $this->getValueSQL($this->minValue, null, 'min');
+        $max = $this->getValueSQL($this->maxValue, null, 'max');
 
         return $this->sql = "{$identifier} {$operator} {$min} AND {$max}";
     }
