@@ -45,7 +45,7 @@ abstract class Command implements CommandInterface
     }
 
     /**
-     * @see Sql\Element:: getSQL()
+     * @see Sql\Element::getSQL()
      */
     public function getSQL(): string
     {
@@ -53,7 +53,7 @@ abstract class Command implements CommandInterface
     }
 
     /**
-     * @see Sql\Element:: getParams()
+     * @see Sql\Element::getParams()
      */
     public function getParams(): array
     {
@@ -61,7 +61,7 @@ abstract class Command implements CommandInterface
     }
 
     /**
-     * @see Sql\Element:: getParamsTypes()
+     * @see Sql\Element::getParamsTypes()
      */
     public function getParamsTypes(): array
     {
