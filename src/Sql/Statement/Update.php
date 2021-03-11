@@ -12,17 +12,16 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
 use P3\Db\Exception\RuntimeException;
 
-use function get_class;
 use function gettype;
 use function implode;
 use function is_array;
 use function is_numeric;
-use function is_object;
 use function is_string;
 use function sprintf;
 use function trim;
@@ -110,7 +109,7 @@ class Update extends Statement
         ));
     }
 
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -132,7 +131,7 @@ class Update extends Statement
         return $this->sql;
     }
 
-    private function getBaseSQL(Driver $driver): string
+    private function getBaseSQL(DriverInterface $driver): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(

@@ -10,6 +10,7 @@ namespace P3\Db\Sql\Statement;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\TableAwareTrait;
@@ -272,7 +273,7 @@ class Insert extends Statement
         return $this;
     }
 
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -317,7 +318,7 @@ class Insert extends Statement
         return $this->sql = "{$insert} " . Sql::INTO . " {$table} {$column_list}" . Sql::VALUES . " {$values}";
     }
 
-    private function getColumnsSQL(Driver $driver): string
+    private function getColumnsSQL(DriverInterface $driver): string
     {
         if (empty($this->columns)) {
             return '';
@@ -335,7 +336,7 @@ class Insert extends Statement
         return $this->sqls['columns'] = "(" . implode(", ", $sqls) . ")";
     }
 
-    private function getValuesSQL(Driver $driver): string
+    private function getValuesSQL(DriverInterface $driver): string
     {
         // INSERT...SELECT
         if ($this->select instanceof Select) {
@@ -353,7 +354,7 @@ class Insert extends Statement
         return implode(", ", $sqls);
     }
 
-    private function getRowValuesSQL(array $values, Driver $driver): string
+    private function getRowValuesSQL(array $values, DriverInterface $driver): string
     {
         $sqls = [];
         foreach ($values as $value) {

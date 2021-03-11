@@ -7,12 +7,16 @@
 
 namespace P3\Db\Sql;
 
-use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Exception\RuntimeException;
 
 /**
- * This abstract class represents a generic SQL element and is the ancestor
- * of all the other sql-related classes.
+ * Represents a generic SQL element
+ *
+ * A sql element provides the sql string it represents with the help of a sql driver
+ *
+ * Sql elements also support parameters for usage used in full sql-statements and
+ * may belong to other elements
  */
 interface ElementInterface
 {
@@ -22,7 +26,7 @@ interface ElementInterface
      * This method must call each inner element getSQL() method and then import
      * its parameters
      */
-    public function getSQL(Driver $driver = null): string;
+    public function getSQL(DriverInterface $driver = null): string;
 
     /**
      * Check if there are any parameters after compiling the sql string

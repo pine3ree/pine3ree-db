@@ -11,6 +11,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
 use P3\Db\Exception\RuntimeException;
@@ -49,7 +50,7 @@ class Delete extends Statement
         return $this;
     }
 
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;

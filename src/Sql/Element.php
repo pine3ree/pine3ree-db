@@ -9,7 +9,7 @@ namespace P3\Db\Sql;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Alias;
-use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\ElementInterface;
@@ -89,7 +89,7 @@ abstract class Element implements ElementInterface
      * This method must call each inner element getSQL() method and then import
      * its parameters
      */
-    abstract public function getSQL(Driver $driver = null): string;
+    abstract public function getSQL(DriverInterface $driver = null): string;
 
     /**
      * Remove the cached SQL string
@@ -315,11 +315,11 @@ abstract class Element implements ElementInterface
      * order-by clauses according to its type
      *
      * @param string|Alias|Identifier|Literal $identifier
-     * @param Driver $driver A SQL-driver
+     * @param DriverInterface $driver A SQL-driver
      * @return string
      * @throws InvalidArgumentException
      */
-    protected static function quoteGenericIdentifier($identifier, Driver $driver): string
+    protected static function quoteGenericIdentifier($identifier, DriverInterface $driver): string
     {
         // the identifier is considered a db table column, quote accordingly
         if (is_string($identifier)) {

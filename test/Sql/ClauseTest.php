@@ -40,7 +40,7 @@ class ClauseTest extends TestCase
                 return "unnamedClause";
             }
 
-            public function getSQL(Sql\Driver $driver = null): string
+            public function getSQL(Sql\DriverInterface $driver = null): string
             {
                 return "[{$this->getName()}]";
             }
@@ -52,7 +52,7 @@ class ClauseTest extends TestCase
         return new class () extends Clause {
             protected static $name = "NAMED CLAUSE";
 
-            public function getSQL(Sql\Driver $driver = null): string
+            public function getSQL(Sql\DriverInterface $driver = null): string
             {
                 return "[{$this->getName()}]";
             }

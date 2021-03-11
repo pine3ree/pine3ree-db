@@ -11,6 +11,7 @@ use IteratorAggregate;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 use Traversable;
@@ -74,7 +75,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
         return $this->searchCondition->getParamsTypes($returnPdoConstNames);
     }
 
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;

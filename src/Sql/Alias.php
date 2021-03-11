@@ -9,6 +9,7 @@ namespace P3\Db\Sql;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
 use P3\Db\Exception\RuntimeException;
 
@@ -50,10 +51,10 @@ class Alias extends Element
     /**
      * Return a properly quoted alias
      *
-     * @param Driver $driver
+     * @param DriverInterface $driver
      * @return string
      */
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         return $this->sql = ($driver ?? Driver::ansi())->quoteAlias($this->alias);
     }

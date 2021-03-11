@@ -15,6 +15,7 @@ use P3\Db\Command\Update;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement as SqlStatement;
@@ -67,10 +68,10 @@ class Db
     /** @var string */
     private $pdoClass = PDO::class;
 
-    /** @var Driver A connection-aware sql-driver instance*/
+    /** @var DriverInterface A connection-aware sql-driver instance*/
     private $driver;
 
-    /** @var Driver A connection-less sql-driver instance*/
+    /** @var DriverInterface A connection-less sql-driver instance*/
     private $_driver;
 
     /**
@@ -602,7 +603,7 @@ class Db
     }
 
     /**
-     * @see Sql\Driver::quoteIdentifier()
+     * @see Sql\DriverInterface::quoteIdentifier()
      */
     public function quoteIdentifier(string $identifier): string
     {
@@ -610,7 +611,7 @@ class Db
     }
 
     /**
-     * @see Sql\Driver::quoteAlias()
+     * @see Sql\DriverInterface::quoteAlias()
      */
     public function quoteAlias(string $alias): string
     {
@@ -618,7 +619,7 @@ class Db
     }
 
     /**
-     * @see Sql\Driver::quoteValue()
+     * @see Sql\DriverInterface::quoteValue()
      */
     public function quoteValue($value): string
     {

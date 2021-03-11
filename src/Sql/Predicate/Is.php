@@ -8,9 +8,10 @@
 namespace P3\Db\Sql\Predicate;
 
 use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql\Driver;
 use P3\Db\Sql;
 use P3\Db\Sql\Alias;
+use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
@@ -100,7 +101,7 @@ class Is extends Predicate
         ));
     }
 
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;

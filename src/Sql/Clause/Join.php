@@ -13,6 +13,7 @@ use P3\Db\Sql\Clause;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
 use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Literal;
 use P3\Db\Sql\TableAwareTrait;
@@ -80,7 +81,7 @@ class Join extends Clause
         }
     }
 
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;

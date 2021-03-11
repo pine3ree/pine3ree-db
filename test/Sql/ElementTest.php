@@ -11,6 +11,7 @@ namespace P3\DbTest\Sql;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
 use P3\DbTest\DiscloseTrait;
 use PDO;
@@ -65,7 +66,7 @@ class ElementTest extends TestCase
                 }
             }
 
-            public function getSQL(Driver $driver = null): string
+            public function getSQL(DriverInterface $driver = null): string
             {
                 if (isset($this->sql)) {
                     return $this->sql;

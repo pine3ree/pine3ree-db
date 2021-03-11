@@ -19,6 +19,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
 use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
 use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
+use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Identifier;
@@ -267,7 +268,7 @@ class Select extends Statement
         return $this->column(new Literal("{$sqlAggregateFunc}({$identifier})"), $alias);
     }
 
-    private function getColumnsSQL(Driver $driver): string
+    private function getColumnsSQL(DriverInterface $driver): string
     {
         if (isset($this->sqls['columns'])) {
             return $this->sqls['columns'];
@@ -344,11 +345,11 @@ class Select extends Statement
      * Prepend the statement primary-table alias or name if not already present
      *
      * @param string $column
-     * @param Driver $driver
+     * @param DriverInterface $driver
      * @param bool $add_tb_prefix Add table prefix?
      * @return string
      */
-    public function normalizeColumn(string $column, Driver $driver, bool $add_tb_prefix = false): string
+    public function normalizeColumn(string $column, DriverInterface $driver, bool $add_tb_prefix = false): string
     {
         // unquote the column first
         $column = str_replace([$driver->ql, $driver->qr], '', $column);
@@ -430,7 +431,7 @@ class Select extends Statement
         }
     }
 
-    private function getFromSQL(Driver $driver): string
+    private function getFromSQL(DriverInterface $driver): string
     {
         if (empty($this->from) && empty($this->table)) {
             throw new RuntimeException(
@@ -563,7 +564,7 @@ class Select extends Statement
         );
     }
 
-    private function getJoinSQL(Driver $driver): string
+    private function getJoinSQL(DriverInterface $driver): string
     {
         if (empty($this->joins)) {
             return '';
@@ -616,7 +617,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getGroupBySQL(Driver $driver): string
+    private function getGroupBySQL(DriverInterface $driver): string
     {
         if (empty($this->groupBy)) {
             return '';
@@ -654,7 +655,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getHavingSQL(Driver $driver): string
+    private function getHavingSQL(DriverInterface $driver): string
     {
         return $this->getConditionalClauseSQL('having', $driver);
     }
@@ -715,7 +716,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getOrderBySQL(Driver $driver): string
+    private function getOrderBySQL(DriverInterface $driver): string
     {
         if (empty($this->orderBy)) {
             return '';
@@ -759,7 +760,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getLimitSQL(Driver $driver): string
+    private function getLimitSQL(DriverInterface $driver): string
     {
         if (!isset($this->limit) && (int)$this->offset === 0) {
             return '';
@@ -849,7 +850,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getUnionOrIntersectSQL(Driver $driver): string
+    private function getUnionOrIntersectSQL(DriverInterface $driver): string
     {
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver);
@@ -878,7 +879,7 @@ class Select extends Statement
         return '';
     }
 
-    public function getSQL(Driver $driver = null): string
+    public function getSQL(DriverInterface $driver = null): string
     {
         if (isset($this->sql)) {
             return $this->sql;
@@ -903,10 +904,10 @@ class Select extends Statement
      * Also used by SelectSqlDecorator drivers to keep imported parameters in the
      * same order of appearance in the final sql statement string
      *
-     * @param Driver $driver
+     * @param DriverInterface $driver
      * @return string
      */
-    protected function generateSQL(Driver $driver): string
+    protected function generateSQL(DriverInterface $driver): string
     {
         $this->resetParams();
 
@@ -923,7 +924,7 @@ class Select extends Statement
         return $sql;
     }
 
-    private function quoteTableAliases(string $sql, Driver $driver): string
+    private function quoteTableAliases(string $sql, DriverInterface $driver): string
     {
         $tb_aliases = [];
         if (!empty($this->alias)) {
@@ -949,7 +950,7 @@ class Select extends Statement
         return preg_replace($search, $replace, $sql);
     }
 
-    private function quoteTableNames(string $sql, Driver $driver): string
+    private function quoteTableNames(string $sql, DriverInterface $driver): string
     {
         $tb_names = [];
 
@@ -974,7 +975,7 @@ class Select extends Statement
         return preg_replace($search, $replace, $sql);
     }
 
-    private function getBaseSQL(Driver $driver): string
+    private function getBaseSQL(DriverInterface $driver): string
     {
         $select = Sql::SELECT;
         if (!empty($this->quantifier)) {
@@ -987,7 +988,7 @@ class Select extends Statement
         return trim("{$select} {$columns} {$from}");
     }
 
-    private function getClausesSQL(Driver $driver): string
+    private function getClausesSQL(DriverInterface $driver): string
     {
         $sqls = [];
 
