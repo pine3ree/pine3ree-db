@@ -65,9 +65,10 @@ class Oci extends Driver implements
             return $identifier;
         }
 
-        // table and column names starting with the underscore char must be quoted
+        // table and column names that have characters other than uppercase letters
+        // or numbers mus be quoted
         if (false === strpos($identifier, '.')) {
-            if ('_' === substr($identifier, 0, 1)) {
+            if (preg_match('/(:?^_|[^A-Z0-9])/', $identifier)) {
                 return parent::quoteIdentifier($identifier);
             }
             return $identifier;
@@ -75,9 +76,7 @@ class Oci extends Driver implements
 
         $segments = explode('.', $identifier);
         foreach ($segments as $i => $segment) {
-            if ('_' === substr($segment, 0, 1)) {
-                $segments[$i] = parent::quoteIdentifier($segment);
-            }
+            $segments[$i] = $this->quoteIdentifier($segment);
         }
 
         return implode('.', $segments);
