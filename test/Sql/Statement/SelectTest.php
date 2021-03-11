@@ -238,7 +238,7 @@ class SelectTest extends TestCase
     {
         $select = (new Select())->column('unit_price', 'unitPrice')->from('product', 'p');
         self::assertSame(
-            'SELECT "p".unit_price AS "unitPrice" FROM product "p"',
+            'SELECT "p"."unit_price" AS "unitPrice" FROM "product" "p"',
             $select->getSQL(new Driver\Oci())
         );
     }
