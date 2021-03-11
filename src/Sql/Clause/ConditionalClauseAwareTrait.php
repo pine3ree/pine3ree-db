@@ -12,7 +12,6 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Element;
-use P3\Db\Sql\ElementInterface;
 use P3\Db\Sql\Predicate;
 use P3\Db\Exception\RuntimeException;
 
@@ -55,14 +54,10 @@ trait ConditionalClauseAwareTrait
         }
 
         $this->{$property} = $clause;
-        if ($this instanceof ElementInterface) {
-            $clause->parent = $this;
-        }
-
         if ($this instanceof Element) {
+            $clause->parent = $this;
             $this->clearSQL();
         }
-
 
         return $this;
     }
