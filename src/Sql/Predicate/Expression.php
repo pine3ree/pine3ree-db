@@ -57,12 +57,12 @@ class Expression extends Predicate
         }
         $this->expression = $expression;
         foreach ($substitutions as $name => $value) {
-            self::assertValidSubstitution($name, $value);
+            $this->assertValidSubstitution($name, $value);
             $this->substitutions[$name] = $value;
         }
     }
 
-    protected static function assertValidSubstitution(string $name, $value)
+    protected function assertValidSubstitution(string $name, $value)
     {
         if (false === strpos($this->expression, "{{$name}}")) {
             throw new InvalidArgumentException(
