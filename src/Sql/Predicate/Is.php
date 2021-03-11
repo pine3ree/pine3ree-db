@@ -38,7 +38,7 @@ class Is extends Predicate
     protected static $not = false;
 
     /**
-     * @param string|Identifier|Alias|Literal $identifier
+     * @param string|Alias|Identifier|Literal $identifier
      * @param bool|null|string $value
      */
     public function __construct($identifier, $value)
