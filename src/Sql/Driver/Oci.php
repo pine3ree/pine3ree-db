@@ -221,7 +221,7 @@ class Oci extends Driver implements
 
             if (isset($limit)) {
                 $limit = $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit');
-                $select_sql += " WHERE ROWNUM <= {$limit}";
+                $select_sql .= " WHERE ROWNUM <= {$limit}";
             }
 
             $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
