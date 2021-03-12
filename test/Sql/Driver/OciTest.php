@@ -8,16 +8,19 @@
 
 namespace P3\DbTest\Sql\Driver;
 
-use PDO;
-use PHPUnit\Framework\TestCase;
+use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
-use P3\Db\Exception\RuntimeException;
+use P3\DbTest\DiscloseTrait;
+use PDO;
+use PHPUnit\Framework\TestCase;
 
 use function getenv;
 
 class OciTest extends TestCase
 {
+    use DiscloseTrait;
+
     /** @var Driver\Oci */
     private $driver;
 
@@ -223,33 +226,79 @@ class OciTest extends TestCase
         self::assertSame('', $this->driver->getLimitSQL($select));
     }
 
-    public function testDecoratedSelectSQL()
+    public function testDecorateSelectSQL()
     {
         $selectPrototype = new Sql\Statement\Select('*', 'user');
         $selectPrototype->where("id > 42");
 
         $sql = $selectPrototype->getSQL($this->driver);
+        $sql = str_replace([" ", "\n"], '%w', $sql);
 
         $select = clone $selectPrototype;
         $select->limit(10);
+        self::assertSame('', $this->driver->getLimitSQL($select));
         self::assertStringMatchesFormat(
             "SELECT * FROM ({$sql}) WHERE ROWNUM <= :limit%x",
-            $select->getSQL($this->driver)
+            $this->driver->decorateSelectSQL($select)
         );
-        self::assertSame('', $this->driver->getLimitSQL($select));
 
         $select = clone $selectPrototype;
         $select->limit(10)->offset(10);
+        self::assertSame('', $this->driver->getLimitSQL($select));
         self::assertStringMatchesFormat(
             "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= :limit%x) WHERE %s > :offset%x",
-            $select->getSQL($this->driver)
+            //$select->getSQL($this->driver)
+            $this->driver->decorateSelectSQL($select)
         );
 
         $select = clone $selectPrototype;
         $select->offset(10);
         self::assertStringMatchesFormat(
             "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s) WHERE %s > :offset%x",
-            $select->getSQL($this->driver)
+            $this->driver->decorateSelectSQL($select)
+        );
+    }
+
+    public function testDecorateSelect()
+    {
+        $selectPrototype = new Sql\Statement\Select('*', 'user');
+        $selectPrototype->where("id > 42");
+
+        $sql = $selectPrototype->getSQL($this->driver);
+        $sql = str_replace([" ", "\n"], '%w', $sql);
+
+        $select = clone $selectPrototype;
+        $select->limit(10);
+        self::assertSame('', $this->driver->getLimitSQL($select));
+        $wrapper = $this->driver->decorateSelect($select);
+        self::assertStringMatchesFormat(
+            "SELECT %A*%wFROM ({$sql})%A%wWHERE ROWNUM <= :lte%x",
+            $this->invokeMethod($wrapper, 'generateSQL', $this->driver)
+        );
+
+        $select = clone $selectPrototype;
+        $select->limit(10)->offset(10);
+        self::assertSame('', $this->driver->getLimitSQL($select));
+        $wrapper = $this->driver->decorateSelect($select);
+        self::assertStringMatchesFormat(
+            "SELECT %A*"
+            . "%wFROM"
+            . "%w("
+                . "%wSELECT %A*, ROWNUM AS %s"
+                . "%wFROM ({$sql})%A"
+                . "%wWHERE ROWNUM <= :lte%x"
+            . "%w)%A"
+            . "%wWHERE %s > :gt%x",
+            $this->invokeMethod($wrapper, 'generateSQL', $this->driver)
+        );
+
+        $select = clone $selectPrototype;
+        $select->offset(10);
+        self::assertSame('', $this->driver->getLimitSQL($select));
+        $wrapper = $this->driver->decorateSelect($select);
+        self::assertStringMatchesFormat(
+            "SELECT %A*%wFROM%w(SELECT %A*, ROWNUM AS %s%wFROM ({$sql})%A)%A%wWHERE %s > :gt%x",
+            $this->invokeMethod($wrapper, 'generateSQL', $this->driver)
         );
     }
 }

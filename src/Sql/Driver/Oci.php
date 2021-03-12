@@ -232,7 +232,6 @@ class Oci extends Driver implements
         return $this->generateSelectSQL($select);
     }
 
-    // @codeCoverageIgnoreStart
     public function decorateSelect(Select $select): Select
     {
         $limit  = $select->limit;
@@ -271,7 +270,6 @@ class Oci extends Driver implements
 
         return $select;
     }
-    // @codeCoverageIgnoreEnd
 
     public function getSelectColumnsSQL(Select $select, bool &$cache = true): string
     {
