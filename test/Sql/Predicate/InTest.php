@@ -82,4 +82,43 @@ class InTest extends TestCase
             $predicate->getSQL()
         );
     }
+
+    public function testThatSetSelectParentAndClonesItIfALreadyHas()
+    {
+        $valueList0 = Sql::select('id', 'product');
+
+        $predicate1 = new Predicate\In('id', $valueList0);
+        $predicate2 = new Predicate\In('id', $valueList0);
+
+        $valueList1 = $predicate1->valueList;
+        $valueList2 = $predicate2->valueList;
+
+        self::assertSame($predicate1, $valueList1->parent);
+        self::assertSame($predicate2, $valueList2->parent);
+
+        self::assertSame($valueList0, $valueList1);
+        self::assertEquals($valueList1, $valueList2);
+        self::assertNotSame($valueList1, $valueList2);
+    }
+
+    public function testCloningWithSelectAlsoClonesSelectAndSetParent()
+    {
+        $valueList0 = Sql::select('id', 'product');
+
+        $predicate1 = new Predicate\In('id', $valueList0);
+        $predicate2 = clone $predicate1;
+
+        self::assertNull($predicate1->parent);
+        self::assertNull($predicate2->parent);
+
+        $valueList1 = $predicate1->valueList;
+        $valueList2 = $predicate2->valueList;
+
+        self::assertSame($predicate1, $valueList1->parent);
+        self::assertSame($predicate2, $valueList2->parent);
+
+        self::assertSame($valueList0, $valueList1);
+        self::assertEquals($valueList1, $valueList2);
+        self::assertNotSame($valueList1, $valueList2);
+    }
 }

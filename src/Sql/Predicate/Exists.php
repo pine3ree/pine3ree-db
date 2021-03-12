@@ -15,6 +15,8 @@ use P3\Db\Sql\Statement\Select;
 
 /**
  * This class represents a sql EXISTS predicate
+ *
+ * @property-read Select $select The sql select statement this EXISTS predicate refers to
  */
 class Exists extends Predicate
 {
@@ -29,7 +31,12 @@ class Exists extends Predicate
      */
     public function __construct(Select $select)
     {
+        if ($select->parent !== null && $select->parent !== $this) {
+            $select = clone $select;
+        }
+
         $this->select = $select;
+        $this->select->parent = $this;
     }
 
     public function getSQL(DriverInterface $driver = null): string
@@ -48,5 +55,21 @@ class Exists extends Predicate
         $this->importParams($this->select);
 
         return $this->sql = "{$operator} ({$select_sql})";
+    }
+
+    public function __get(string $name)
+    {
+        if ('select' === $name) {
+            return $this->select;
+        }
+
+        return parent::__get($name);
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->select = clone $this->select;
+        $this->select->parent = $this;
     }
 }

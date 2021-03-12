@@ -26,6 +26,8 @@ use function sprintf;
 
 /**
  * This class represents a sql IN condition
+ *
+ * @property-read array|Select $valueList The IN value-list
  */
 class In extends Predicate
 {
@@ -53,6 +55,14 @@ class In extends Predicate
         self::assertValidValueList($valueList);
 
         $this->identifier = $identifier;
+
+        if ($valueList instanceof Select) {
+            if ($valueList->parent !== null && $valueList->parent !== $this) {
+                $valueList = clone $valueList;
+            }
+            $valueList->parent = $this;
+        }
+
         $this->valueList = $valueList;
     }
 
@@ -128,5 +138,23 @@ class In extends Predicate
         }
 
         return $this->sql = $sql;
+    }
+
+    public function __get(string $name)
+    {
+        if ('valueList' === $name) {
+            return $this->valueList;
+        }
+
+        return parent::__get($name);
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        if ($this->valueList instanceof Select) {
+            $this->valueList = clone $this->valueList;
+            $this->valueList->parent = $this;
+        }
     }
 }

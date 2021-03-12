@@ -21,6 +21,8 @@ use function implode;
 
 /**
  * This class represents a sql operator-ALL/ANY/SOME(SELECT...) condition
+ *
+ * @property-read Select $select The sql select statement this predicate refers to
  */
 abstract class CompareTo extends Predicate
 {
@@ -48,7 +50,13 @@ abstract class CompareTo extends Predicate
 
         $this->identifier = $identifier;
         $this->operator = $operator;
+
+        if ($select->parent !== null && $select->parent !== $this) {
+            $select = clone $select;
+        }
+
         $this->select = $select;
+        $this->select->parent = $this;
     }
 
     private static function assertValidComparisonOperator(string $operator)
@@ -79,5 +87,21 @@ abstract class CompareTo extends Predicate
         $quantifier = static::$quantifier;
 
         return $this->sql = "{$identifier} {$this->operator} {$quantifier} ({$select_sql})";
+    }
+
+    public function __get(string $name)
+    {
+        if ('select' === $name) {
+            return $this->select;
+        }
+
+        return parent::__get($name);
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->select = clone $this->select;
+        $this->select->parent = $this;
     }
 }
