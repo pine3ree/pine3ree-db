@@ -764,7 +764,6 @@ class Select extends Statement
     {
         if ($offset <= 0) {
             $offset = null;
-            return $this;
         }
 
         // no change? avoid clearing the cache
