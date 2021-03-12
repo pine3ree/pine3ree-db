@@ -290,7 +290,9 @@ class Oci extends Driver implements
             } elseif (is_string($column)) {
                 $parts = explode('.', $column);
                 $column = end($parts);
-                $column_sql .= " AS " . $this->quoteAlias($column);
+                if ($column !== "*") {
+                    $column_sql .= " AS " . $this->quoteAlias($column);
+                }
             }
 
             $sqls[] = $column_sql;
