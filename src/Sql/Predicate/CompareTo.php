@@ -78,6 +78,6 @@ abstract class CompareTo extends Predicate
 
         $quantifier = static::$quantifier;
 
-        return $this->sql = "{$identifier} {$this->operator} {$quantifier}({$select_sql})";
+        return $this->sql = "{$identifier} {$this->operator} {$quantifier} ({$select_sql})";
     }
 }
