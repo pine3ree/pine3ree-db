@@ -12,6 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
 use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
+use P3\Db\Sql\Driver\Feature\SelectDecorator;
 use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
@@ -28,25 +29,24 @@ use function sprintf;
 use function strpos;
 use function strtoupper;
 
-use const PHP_INT_MAX;
-
 /**
  * Oci sql-driver
  */
 class Oci extends Driver implements
     LimitSqlProvider,
     SelectColumnsSqlProvider,
+    SelectDecorator,
     SelectSqlDecorator
 {
     /**
      * @const string Quoted table alias for LIMIT+OFFSET statements
      */
-    private const TB = '"__oci_tb"';
+    private const TB = '__oci_tb';
 
     /**
      * @const string Quoted ROWNUM alias for LIMIT+OFFSET statements
      */
-    private const RN = '"__oci_rn"';
+    private const RN = '__oci_rn';
 
     private const RESERVED_WORDS = [
         'ACCESS' => true,
@@ -199,7 +199,7 @@ class Oci extends Driver implements
         return implode('.', $segments);
     }
 
-    public function decorateSelectSQL(Select $select): ?string
+    public function decorateSelectSQL(Select $select): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;
@@ -212,12 +212,12 @@ class Oci extends Driver implements
         }
 
         if (isset($offset) && $offset > 0) {
-            $tb = self::TB;
-            $rn = self::RN;
+            $qtb = $this->quoteAlias(self::TB);
+            $qrn = $this->quoteAlias(self::RN);
 
             $select_sql = $this->generateSelectSQL($select);
-            $select_sql = "SELECT {$tb}.*, ROWNUM AS {$rn}"
-                . " FROM ({$select_sql}) {$tb}";
+            $select_sql = "SELECT {$qtb}.*, ROWNUM AS {$qrn}"
+                . " FROM ({$select_sql}) {$qtb}";
 
             if (isset($limit)) {
                 $limit = $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit');
@@ -226,10 +226,10 @@ class Oci extends Driver implements
 
             $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
 
-            return "SELECT * FROM ({$select_sql}) WHERE {$rn} > {$offset}";
+            return "SELECT * FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
         }
 
-        return null;
+        return $this->generateSelectSQL($select);
     }
 
     // @codeCoverageIgnoreStart
@@ -239,36 +239,34 @@ class Oci extends Driver implements
         $offset = $select->offset;
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
-            $tb = trim(self::TB, '"');
-
             $from = clone $select;
             $from->limit(null);
 
-            $select = new Select('*', $from, $tb);
-            $select->where->lte(new Literal("ROWNUM"), $limit);
+            $wrapper = new Select('*', $from, self::TB);
+            $wrapper->where->lte(new Literal("ROWNUM"), $limit);
 
-            return $select;
+            return $wrapper;
         }
 
         if (isset($offset) && $offset > 0) {
-            $tb = trim(self::TB, '"');
-            $rn = trim(self::RN, '"');
+            $tb0 = self::TB . '0';
+            $tb1 = self::TB . '1';
 
             $from = clone $select;
             $from->offset(null)->limit(null);
 
             // create a select to gather ROWNUM values
-            $select = new Select('*', $from, "{$tb}0");
-            $select->column(new Literal("ROWNUM"), $rn);
+            $inner = new Select('*', $from, $tb0);
+            $inner->column(new Literal("ROWNUM"), self::RN);
 
             if (isset($limit)) {
-                $select->where->lte(new Literal("ROWNUM"), $offset + $limit);
+                $inner->where->lte(new Literal("ROWNUM"), $offset + $limit);
             }
 
-            $select = new Select('*', $select, "{$tb}1");
-            $select->where->gt(new Sql\Alias($rn), $offset);
+            $outer = new Select('*', $inner, $tb1);
+            $outer->where->gt(new Sql\Alias(self::RN), $offset);
 
-            return $select;
+            return $outer;
         }
 
         return $select;

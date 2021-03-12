@@ -23,7 +23,7 @@ interface SelectSqlDecorator
      * ordering of imported parameters
      *
      * @param Select $select
-     * @return string|null
+     * @return string
      */
-    public function decorateSelectSQL(Select $select): ?string;
+    public function decorateSelectSQL(Select $select): string;
 }
