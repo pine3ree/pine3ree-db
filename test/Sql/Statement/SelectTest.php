@@ -325,16 +325,25 @@ class SelectTest extends TestCase
         self::assertSame(10, current($params) ?? null);
     }
 
-    public function testSelectWithNegativeLimit()
+    public function testSelectWithNegativeOrNullLimitShouldDisableLimit()
     {
-        $select = (new Select())->from('user')->limit(-1);
+        $select = (new Select())->from('user');
+
+        $select->limit(10);
+        $select->limit(-1);
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wLIMIT :limit%x",
+            "SELECT *%wFROM `user`",
             $select->getSQL($this->driver)
         );
 
-        $params = $select->getParams();
-        self::assertSame(0, current($params) ?? null);
+        $select->limit(10);
+        $select->limit(null);
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`",
+            $select->getSQL($this->driver)
+        );
+
+        self::assertCount(0, $select->getParams());
     }
 
     public function testSelectWithOffset()
@@ -349,9 +358,15 @@ class SelectTest extends TestCase
         self::assertSame(100, current($params) ?? null);
     }
 
-    public function testSelectZeroOrNegativeOffsetIsDiscarded()
+    public function testSelectZeroOrNullOrNegativeOffsetIsDiscarded()
     {
         $select = (new Select())->from('user')->offset(0);
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`",
+            $select->getSQL($this->driver)
+        );
+
+        $select = (new Select())->from('user')->offset(null);
         self::assertStringMatchesFormat(
             "SELECT *%wFROM `user`",
             $select->getSQL($this->driver)
