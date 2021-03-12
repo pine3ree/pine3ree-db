@@ -563,7 +563,7 @@ class Select extends Statement
         );
     }
 
-    private function getJoinSQL(DriverInterface $driver): string
+    private function getJoinSQL(DriverInterface $driver, string $space = " "): string
     {
         if (empty($this->joins)) {
             return '';
@@ -582,7 +582,7 @@ class Select extends Statement
             $sqls[] = $join_sql;
         }
 
-        return trim(implode(" ", $sqls));
+        return trim(implode($space, $sqls));
     }
 
     /**
@@ -913,10 +913,12 @@ class Select extends Statement
     {
         $this->resetParams();
 
+        $space = isset($this->parent) ? " " : "\n";
+
         $base_sql = $this->getBaseSQL($driver);
         $clauses_sql = $this->getClausesSQL($driver);
 
-        $sql = rtrim("{$base_sql} {$clauses_sql}");
+        $sql = rtrim("{$base_sql}{$space}{$clauses_sql}");
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
@@ -977,7 +979,7 @@ class Select extends Statement
         return preg_replace($search, $replace, $sql);
     }
 
-    private function getBaseSQL(DriverInterface $driver): string
+    private function getBaseSQL(DriverInterface $driver, string $space = " "): string
     {
         $select = Sql::SELECT;
         if (!empty($this->quantifier)) {
@@ -987,14 +989,14 @@ class Select extends Statement
         $columns = $this->getColumnsSQL($driver);
         $from = $this->getFromSQL($driver);
 
-        return trim("{$select} {$columns} {$from}");
+        return trim("{$select} {$columns}{$space}{$from}");
     }
 
-    private function getClausesSQL(DriverInterface $driver): string
+    private function getClausesSQL(DriverInterface $driver, string $space = " "): string
     {
         $sqls = [];
 
-        $sqls[] = $this->getJoinSQL($driver);
+        $sqls[] = $this->getJoinSQL($driver, $space);
         $sqls[] = $this->getWhereSQL($driver);
         $sqls[] = $this->getGroupBySQL($driver);
         $sqls[] = $this->getHavingSQL($driver);
@@ -1008,7 +1010,7 @@ class Select extends Statement
             }
         }
 
-        return implode(" ", $sqls);
+        return implode($space, $sqls);
     }
 
     public function __get(string $name)
