@@ -905,7 +905,7 @@ class Select extends Statement
         $driver = $driver ?? Driver::ansi();
 
         if ($driver instanceof SelectSqlDecorator) {
-            return $driver->decorateSelectSQL($this);
+            return $this->sql = $driver->decorateSelectSQL($this);
         }
 
         if ($driver instanceof SelectDecorator) {
