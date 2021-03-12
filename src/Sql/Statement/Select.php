@@ -18,6 +18,7 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
 use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
+use P3\Db\Sql\Driver\Feature\SelectDecorator;
 use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
