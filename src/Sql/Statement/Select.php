@@ -743,20 +743,36 @@ class Select extends Statement
         return $sql;
     }
 
-    public function limit(int $limit): self
+    public function limit(?int $limit): self
     {
-        $this->limit = max(0, $limit);
+        if ($limit < 0) {
+            $limit = null;
+        }
 
+        // no change? avoid clearing the cache
+        if ($limit === $this->limit) {
+            return $this;
+        }
+
+        $this->limit = $limit;
         $this->clearSQL();
 
         return $this;
     }
 
-    public function offset(int $offset): self
+    public function offset(?int $offset): self
     {
-        $offset = max(0, $offset);
-        $this->offset = $offset > 0 ? $offset : null;
+        if ($offset <= 0) {
+            $offset = null;
+            return $this;
+        }
 
+        // no change? avoid clearing the cache
+        if ($offset === $this->offset) {
+            return $this;
+        }
+
+        $this->offset = $offset;
         $this->clearSQL();
 
         return $this;

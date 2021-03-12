@@ -277,7 +277,7 @@ class Select extends Command implements ReaderInterface
      * @see SqlSelect::limit()
      * @return $this
      */
-    public function limit(int $limit): self
+    public function limit(?int $limit): self
     {
         $this->sqlStatement->limit($limit);
         return $this;
@@ -287,7 +287,7 @@ class Select extends Command implements ReaderInterface
      * @see SqlSelect::offset()
      * @return $this
      */
-    public function offset(int $offset): self
+    public function offset(?int $offset): self
     {
         $this->sqlStatement->offset($offset);
         return $this;
