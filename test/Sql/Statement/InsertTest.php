@@ -243,6 +243,28 @@ class InsertTest extends TestCase
         ];
     }
 
+    public function testInsertFromSelectSourceSetParentAndClonesSelectIfHasParent()
+    {
+        $select = (new Select())->from('store_product');
+
+        $insert1 = new Insert('product');
+        $insert2 = new Insert('product');
+
+        $insert1->select($select);
+        $insert2->select($select);
+
+        $select1 = $insert1->select;
+        $select2 = $insert2->select;
+
+        self::assertSame($insert1, $select1->parent);
+        self::assertSame($insert2, $select2->parent);
+
+        self::assertSame($select, $select1);
+
+        self::assertEquals($select1, $select2);
+        self::assertNotSame($select1, $select2);
+    }
+
     public function testGetSql()
     {
         $insert = new Insert('product');
