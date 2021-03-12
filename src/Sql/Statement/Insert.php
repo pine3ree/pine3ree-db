@@ -263,6 +263,12 @@ class Insert extends Statement
      */
     public function select(Select $select): self
     {
+        if ($select->parent !== null && $select->parent !== $this) {
+            $select = clone $select;
+        }
+
+        $select->parent = $this;
+
         $this->select = $select;
         $this->values = [];
 
@@ -393,6 +399,7 @@ class Insert extends Statement
         parent::__clone();
         if (isset($this->select)) {
             $this->select = clone $this->select;
+            $this->select->parent = $this;
         }
     }
 }
