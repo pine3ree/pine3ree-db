@@ -106,8 +106,8 @@ class InsertTest extends TestCase
         $insert = $this->createInsertCommand();
         $insert->into('user')->row(['username' => 'popeye']);
 
-        self::assertStringStartsWith(
-            "INSERT INTO `user` (`username`) VALUES (:val",
+        self::assertStringMatchesFormat(
+            "INSERT INTO `user` (`username`) VALUES (:val%x)",
             $insert->getSql()
         );
     }

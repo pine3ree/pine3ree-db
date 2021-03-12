@@ -196,7 +196,7 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user', 'u');
 
-        self::assertSame("SELECT `u`.* FROM `user` `u`", $select->getSql());
+        self::assertStringMatchesFormat("SELECT `u`.*%wFROM `user` `u`", $select->getSql());
 
         self::assertSame(
             $select->getSqlStatement()->getSQL($db->getDriver()),
@@ -213,21 +213,21 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->quantifier(Sql::DISTINCT)->from('user', 'u');
-        self::assertSame("SELECT DISTINCT `u`.* FROM `user` `u`", $select->getSql());
+        self::assertStringMatchesFormat("SELECT DISTINCT `u`.*%wFROM `user` `u`", $select->getSql());
     }
 
     public function testDistinct()
     {
         $select = $this->createSelectCommand($db);
         $select->distinct()->from('user', 'u');
-        self::assertSame("SELECT DISTINCT `u`.* FROM `user` `u`", $select->getSql());
+        self::assertStringMatchesFormat("SELECT DISTINCT `u`.*%wFROM `user` `u`", $select->getSql());
     }
 
     public function testColumns()
     {
         $select = $this->createSelectCommand($db);
         $select->columns(['id', 'email'])->from('user', 'u');
-        self::assertSame("SELECT `u`.`id`, `u`.`email` FROM `user` `u`", $select->getSql());
+        self::assertStringMatchesFormat("SELECT `u`.`id`, `u`.`email`%wFROM `user` `u`", $select->getSql());
     }
 
     public function testColumn()
@@ -239,12 +239,12 @@ class SelectTest extends TestCase
             ->column('logged_at', 'lastAccess')
             ->from('user', 'u');
 
-        self::assertSame(
+        self::assertStringMatchesFormat(
             "SELECT"
             . " `u`.`id`,"
             . " `u`.`email`,"
             . " `u`.`logged_at` AS `lastAccess`"
-            . " FROM `user` `u`",
+            . "%wFROM `user` `u`",
             $select->getSql()
         );
     }
@@ -253,36 +253,36 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->sum('price')->from('product');
-        self::assertSame(
-            "SELECT SUM(price) FROM `product`",
+        self::assertStringMatchesFormat(
+            "SELECT SUM(price)%wFROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->min('price')->from('product');
-        self::assertSame(
-            "SELECT MIN(price) FROM `product`",
+        self::assertStringMatchesFormat(
+            "SELECT MIN(price)%wFROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->max('price')->from('product');
-        self::assertSame(
-            "SELECT MAX(price) FROM `product`",
+        self::assertStringMatchesFormat(
+            "SELECT MAX(price)%wFROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->avg('price')->from('product');
-        self::assertSame(
-            "SELECT AVG(price) FROM `product`",
+        self::assertStringMatchesFormat(
+            "SELECT AVG(price)%wFROM `product`",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->aggregate('SOMEFUNCTION', 'price')->from('product');
-        self::assertSame(
-            "SELECT SOMEFUNCTION(price) FROM `product`",
+        self::assertStringMatchesFormat(
+            "SELECT SOMEFUNCTION(price)%wFROM `product`",
             $select->getSql()
         );
     }
@@ -298,9 +298,10 @@ class SelectTest extends TestCase
         $select->from('user', 'u');
         $select->{$joinMethod}('session', 's', "s.user_id = u.id");
 
-        self::assertSame(
-            "SELECT `u`.* FROM `user` `u`"
-            . " {$joinSQL} `session` `s` ON (`s`.user_id = `u`.id)",
+        self::assertStringMatchesFormat(
+            "SELECT `u`.*"
+            . "%wFROM `user` `u`"
+            . "%w{$joinSQL} `session` `s` ON (`s`.user_id = `u`.id)",
             $select->getSql()
         );
 
@@ -319,9 +320,10 @@ class SelectTest extends TestCase
         $join = new Sql\Clause\Join(Sql::JOIN_INNER, 'session', 's', "s.user_id = u.id");
         $select->addJoin($join);
 
-        self::assertSame(
-            "SELECT `u`.* FROM `user` `u`"
-            . " INNER JOIN `session` `s` ON (`s`.user_id = `u`.id)",
+        self::assertStringMatchesFormat(
+            "SELECT `u`.*"
+            . "%wFROM `user` `u`"
+            . "%wINNER JOIN `session` `s` ON (`s`.user_id = `u`.id)",
             $select->getSql()
         );
         self::assertSame(
@@ -350,16 +352,16 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user');
         $select->where->greaterThan('id', 42);
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` WHERE `id` > :gt",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wWHERE `id` > :gt%x",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->from('user');
         $select->where("id > 42");
-        self::assertSame(
-            "SELECT * FROM `user` WHERE id > 42",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wWHERE id > 42",
             $select->getSql()
         );
     }
@@ -369,16 +371,16 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user');
         $select->having->lessThan(Sql::literal("(id * 10)"), 42);
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` HAVING (id * 10) < :lt",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wHAVING (id * 10) < :lt%x",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->from('user');
         $select->having("(id*10) <= 42");
-        self::assertSame(
-            "SELECT * FROM `user` HAVING (id*10) <= 42",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wHAVING (id*10) <= 42",
             $select->getSql()
         );
     }
@@ -387,14 +389,14 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->from('user')->groupBy('type_id');
-        self::assertSame(
-            "SELECT * FROM `user` GROUP BY `type_id`",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wGROUP BY `type_id`",
             $select->getSql()
         );
 
         $select->groupBy('category_id', true);
-        self::assertSame(
-            "SELECT * FROM `user` GROUP BY `category_id`",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wGROUP BY `category_id`",
             $select->getSql()
         );
     }
@@ -403,15 +405,15 @@ class SelectTest extends TestCase
     {
         $select = $this->createSelectCommand($db);
         $select->from('user')->orderBy('id');
-        self::assertSame(
-            "SELECT * FROM `user` ORDER BY `id` ASC",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wORDER BY `id` ASC",
             $select->getSql()
         );
 
         $select = $this->createSelectCommand($db);
         $select->from('user')->orderBy('id', 'DESC');
-        self::assertSame(
-            "SELECT * FROM `user` ORDER BY `id` DESC",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wORDER BY `id` DESC",
             $select->getSql()
         );
     }
@@ -421,8 +423,8 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user')->limit(10);
 
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` LIMIT :limit",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wLIMIT :limit%x",
             $select->getSql()
         );
     }
@@ -432,8 +434,8 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user')->offset(100);
 
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` LIMIT " . PHP_INT_MAX . " OFFSET :offset",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wLIMIT " . PHP_INT_MAX . " OFFSET :offset%x",
             $select->getSql()
         );
     }
@@ -445,8 +447,8 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->union($union)->from('user');
 
-        self::assertSame(
-            "SELECT * FROM `user` UNION (SELECT * FROM `session`)",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wUNION (SELECT *%wFROM `session`)",
             $select->getSql()
         );
     }
@@ -458,8 +460,8 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->intersect($intersect)->from('user');
 
-        self::assertSame(
-            "SELECT * FROM `user` INTERSECT (SELECT * FROM `session`)",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wINTERSECT (SELECT *%wFROM `session`)",
             $select->getSql()
         );
     }

@@ -49,7 +49,7 @@ class SelectTest extends TestCase
         $select->from('customer');
 
         self::assertStringMatchesFormat(
-            "SELECT {$expected_columns_sql} FROM `customer`",
+            "SELECT {$expected_columns_sql}%wFROM `customer`",
             $select->getSQL($this->driver)
         );
     }
@@ -102,7 +102,7 @@ class SelectTest extends TestCase
         $select->columns([]);
         $select->from('customer', 'c');
 
-        self::assertSame("SELECT `c`.* FROM `customer` `c`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat("SELECT `c`.*%wFROM `customer` `c`", $select->getSQL($this->driver));
 
         $select = new Select();
         $select->columns([
@@ -111,7 +111,7 @@ class SelectTest extends TestCase
         ]);
         $select->from('customer', 'c');
 
-        self::assertSame("SELECT `c`.`id`, `c`.`name` FROM `customer` `c`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat("SELECT `c`.`id`, `c`.`name`%wFROM `customer` `c`", $select->getSQL($this->driver));
     }
 
     /**
@@ -122,7 +122,7 @@ class SelectTest extends TestCase
         $select = new Select(null, 'product');
         $select->column($column, $alias);
 
-        self::assertStringMatchesFormat("SELECT {$column_sql} FROM `product`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat("SELECT {$column_sql}%wFROM `product`", $select->getSQL($this->driver));
     }
 
     public function provideColumn(): array
@@ -237,8 +237,8 @@ class SelectTest extends TestCase
     public function testGetColumnsSqlForwardToDriver()
     {
         $select = (new Select())->column('unit_price', 'unitPrice')->from('product', 'p');
-        self::assertSame(
-            'SELECT "p".unit_price AS "unitPrice" FROM product "p"',
+        self::assertStringMatchesFormat(
+            'SELECT "p".unit_price AS "unitPrice"%wFROM product "p"',
             $select->getSQL(new Driver\Oci())
         );
     }
@@ -246,10 +246,10 @@ class SelectTest extends TestCase
     public function testSelectFromTable()
     {
         $select = (new Select())->from('product', null);
-        self::assertSame("SELECT * FROM `product`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat("SELECT *%wFROM `product`", $select->getSQL($this->driver));
 
         $select = (new Select())->from('product', 'p');
-        self::assertSame("SELECT `p`.* FROM `product` `p`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat("SELECT `p`.*%wFROM `product` `p`", $select->getSQL($this->driver));
     }
 
     public function testSelectWithJoinAndNOAliasTriggerTablePrefix()
@@ -259,10 +259,10 @@ class SelectTest extends TestCase
         $select->column('c.name', 'categoryName');
         $select->leftJoin('category', 'c', 'c.id = product.category_id');
 
-        self::assertSame(
+        self::assertStringMatchesFormat(
             "SELECT `product`.*, `c`.`name` AS `categoryName`"
-            . " FROM `product`"
-            . " LEFT JOIN `category` `c` ON (`c`.id = `product`.category_id)",
+            . "%wFROM `product`"
+            . "%wLEFT JOIN `category` `c` ON (`c`.id = `product`.category_id)",
             $select->getSQL($this->driver)
         );
     }
@@ -279,13 +279,13 @@ class SelectTest extends TestCase
     {
         $subSelect = (new Select())->from('cart');
         $select = (new Select())->from($subSelect, 'c');
-        self::assertSame("SELECT `c`.* FROM (SELECT * FROM `cart`) `c`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat("SELECT `c`.*%wFROM (SELECT *%wFROM `cart`) `c`", $select->getSQL($this->driver));
 
         $subSelect = (new Select())->from('cart_product', 'cp');
         $subSelect->where->gt('cp.price', 0);
         $select = (new Select())->from($subSelect, 'p');
-        self::assertStringStartsWith(
-            "SELECT `p`.* FROM (SELECT `cp`.* FROM `cart_product` `cp` WHERE `cp`.`price` > :gt",
+        self::assertStringMatchesFormat(
+            "SELECT `p`.*%wFROM (SELECT `cp`.*%wFROM `cart_product` `cp`%wWHERE `cp`.`price` > :gt%x) `p`",
             $select->getSQL($this->driver)
         );
     }
@@ -316,8 +316,8 @@ class SelectTest extends TestCase
     public function testSelectWithLimit()
     {
         $select = (new Select())->from('user')->limit(10);
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` LIMIT :limit",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wLIMIT :limit%x",
             $select->getSQL($this->driver)
         );
 
@@ -328,8 +328,8 @@ class SelectTest extends TestCase
     public function testSelectWithNegativeLimit()
     {
         $select = (new Select())->from('user')->limit(-1);
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` LIMIT :limit",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wLIMIT :limit%x",
             $select->getSQL($this->driver)
         );
 
@@ -340,8 +340,8 @@ class SelectTest extends TestCase
     public function testSelectWithOffset()
     {
         $select = (new Select())->from('user')->offset(100);
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` LIMIT " . PHP_INT_MAX . " OFFSET :offset",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wLIMIT " . PHP_INT_MAX . " OFFSET :offset%x",
             $select->getSQL($this->driver)
         );
 
@@ -352,14 +352,14 @@ class SelectTest extends TestCase
     public function testSelectZeroOrNegativeOffsetIsDiscarded()
     {
         $select = (new Select())->from('user')->offset(0);
-        self::assertSame(
-            "SELECT * FROM `user`",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`",
             $select->getSQL($this->driver)
         );
 
         $select = (new Select())->from('user')->offset(-1);
-        self::assertSame(
-            "SELECT * FROM `user`",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`",
             $select->getSQL($this->driver)
         );
     }
@@ -368,11 +368,10 @@ class SelectTest extends TestCase
     {
         $select = (new Select())->from('user')->limit(10)->offset(100);
 
-        self::assertStringStartsWith(
-            "SELECT * FROM `user` LIMIT :limit",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `user`%wLIMIT :limit%x OFFSET :offset%x",
             $select->getSQL($this->driver)
         );
-        self::assertNotFalse(strpos($select->getSQL($this->driver), " OFFSET :offset"));
 
         $params = $select->getParams();
         self::assertSame(10, current($params) ?? null);
@@ -382,8 +381,8 @@ class SelectTest extends TestCase
     public function testAnsiDriverDoesNotSupportLimitAndOffset()
     {
         $select = (new Select())->from('user')->limit(10)->offset(100);
-        self::assertSame(
-            'SELECT * FROM "user" [LIMIT 10 OFFSET 100]',
+        self::assertStringMatchesFormat(
+            'SELECT *%wFROM "user"%w[LIMIT 10 OFFSET 100]',
             $select->getSQL(Driver::ansi())
         );
 
@@ -398,15 +397,15 @@ class SelectTest extends TestCase
         $select = (new Select())->sum("unit_price*quantity", "productTotal")->from('cart_product');
 
         $select->groupBy($groupBy);
-        self::assertSame(
-            "SELECT SUM(unit_price*quantity) AS `productTotal` FROM `cart_product` GROUP BY {$expectedSQL}",
+        self::assertStringMatchesFormat(
+            "SELECT SUM(unit_price*quantity) AS `productTotal`%wFROM `cart_product`%wGROUP BY {$expectedSQL}",
             $select->getSQL($this->driver)
         );
 
         // test replace
         $select->groupBy(['tax_id'], true);
-        self::assertSame(
-            "SELECT SUM(unit_price*quantity) AS `productTotal` FROM `cart_product` GROUP BY `tax_id`",
+        self::assertStringMatchesFormat(
+            "SELECT SUM(unit_price*quantity) AS `productTotal`%wFROM `cart_product`%wGROUP BY `tax_id`",
             $select->getSQL($this->driver)
         );
     }
@@ -434,10 +433,10 @@ class SelectTest extends TestCase
         $select = (new Select())->from('product');
         $select->orderBy($orderBy, $sortDirOrReplace);
 
-        $orderBySQL = $expectedSQL ? " ORDER BY {$expectedSQL}" : '';
+        $orderBySQL = $expectedSQL ? "%wORDER BY {$expectedSQL}" : '';
 
-        self::assertSame(
-            "SELECT * FROM `product`{$orderBySQL}",
+        self::assertStringMatchesFormat(
+            "SELECT *%wFROM `product`{$orderBySQL}",
             $select->getSQL($this->driver)
         );
     }
@@ -469,8 +468,8 @@ class SelectTest extends TestCase
 
         self::assertStringMatchesFormat(
             "SELECT `p`.*"
-            . " FROM `product` `p`"
-            . " WHERE `price` > :gt%x",
+            . "%wFROM `product` `p`"
+            . "%wWHERE `price` > :gt%x",
             $select->getSQL($this->driver)
         );
     }
@@ -486,9 +485,9 @@ class SelectTest extends TestCase
 
         self::assertStringMatchesFormat(
             "SELECT SUM(stock) AS `totByCategory`"
-            . " FROM `product` `p`"
-            . " GROUP BY `category_id`"
-            . " HAVING `totByCategory` > :gt%x",
+            . "%wFROM `product` `p`"
+            . "%wGROUP BY `category_id`"
+            . "%wHAVING `totByCategory` > :gt%x",
             $select->getSQL($this->driver)
         );
     }
@@ -498,16 +497,16 @@ class SelectTest extends TestCase
         // using string a specification => will generate a ON clause
         $select = (new Select(['*', "c.*"]))->from('order', 'o');
         $select->leftJoin('customer', 'c', "c.id = o.customer_id");
-        self::assertSame(
-            "SELECT `o`.*, `c`.* FROM `order` `o` LEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
+        self::assertStringMatchesFormat(
+            "SELECT `o`.*, `c`.*%wFROM `order` `o`%wLEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
             $select->getSQL($this->driver)
         );
 
         // using literal-predicate a specification
         $select = (new Select())->from('user', 'u');
         $select->leftJoin('customer', 'c', new Sql\Predicate\Literal("USING (customer_id)"));
-        self::assertSame(
-            "SELECT `u`.* FROM `user` `u` LEFT JOIN `customer` `c` USING (customer_id)",
+        self::assertStringMatchesFormat(
+            "SELECT `u`.*%wFROM `user` `u`%wLEFT JOIN `customer` `c` USING (customer_id)",
             $select->getSQL($this->driver)
         );
 
@@ -515,10 +514,11 @@ class SelectTest extends TestCase
         $select = (new Select(['*', "o.*", 'c.*']))->from('order_product', 'op');
         $select->leftJoin('order', 'o', "op.order_id = o.id");
         $select->leftJoin('customer', 'c', "c.id = o.customer_id");
-        self::assertSame(
-            "SELECT `op`.*, `o`.*, `c`.* FROM `order_product` `op`"
-            . " LEFT JOIN `order` `o` ON (`op`.order_id = `o`.id)"
-            . " LEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
+        self::assertStringMatchesFormat(
+            "SELECT `op`.*, `o`.*, `c`.*"
+            . "%wFROM `order_product` `op`"
+            . "%wLEFT JOIN `order` `o` ON (`op`.order_id = `o`.id)"
+            . "%wLEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
             $select->getSQL($this->driver)
         );
     }
@@ -534,10 +534,11 @@ class SelectTest extends TestCase
         $join = new Join(Sql::JOIN_INNER, 'customer', 'c');
         $join->on->equal(new Identifier("c.id"), new Identifier("o.customer_id"));
         $select->addJoin($join);
-        self::assertSame(
-            "SELECT `op`.*, `o`.*, `c`.* FROM `order_product` `op`"
-            . " INNER JOIN `order` `o` ON (`op`.`order_id` = `o`.`id`)"
-            . " INNER JOIN `customer` `c` ON (`c`.`id` = `o`.`customer_id`)",
+        self::assertStringMatchesFormat(
+            "SELECT `op`.*, `o`.*, `c`.*"
+            . "%wFROM `order_product` `op`"
+            . "%wINNER JOIN `order` `o` ON (`op`.`order_id` = `o`.`id`)"
+            . "%wINNER JOIN `customer` `c` ON (`c`.`id` = `o`.`customer_id`)",
             $select->getSQL($this->driver)
         );
     }

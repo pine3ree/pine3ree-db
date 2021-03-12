@@ -104,8 +104,10 @@ class UpdateTest extends TestCase
         $update = $this->createUpdateCommand($db);
         $update->table('user')->set(['enabled' => true])->where("id = 42");
 
-        self::assertStringStartsWith("UPDATE `user` SET `enabled` = :set", $update->getSql());
-        self::assertStringEndsWith(" WHERE id = 42", $update->getSql());
+        self::assertStringMatchesFormat(
+            "UPDATE `user` SET `enabled` = :set%x WHERE id = 42",
+            $update->getSql()
+        );
     }
 
     public function testExecSuccessReturnsInt()

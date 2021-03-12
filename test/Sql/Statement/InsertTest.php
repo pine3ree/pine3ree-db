@@ -253,9 +253,9 @@ class InsertTest extends TestCase
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
             . " (`price`, `stock`, `enabled`)"
-            . " VALUES "
-            . "(:val%x, :val%x, :val%x), "
-            . "(:val%x, :val%x, :val%x)",
+            . " VALUES"
+            . " (:val%x, :val%x, :val%x),"
+            . " (:val%x, :val%x, :val%x)",
             $sql = $insert->getSQL($this->driver)
         );
 
@@ -266,10 +266,10 @@ class InsertTest extends TestCase
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
             . " (`price`, `stock`, `enabled`)"
-            . " VALUES "
-            . "(:val%x, :val%x, :val%x), "
-            . "(:val%x, :val%x, :val%x), "
-            . "(:val%x, :val%x, :val%x)",
+            . " VALUES"
+            . " (:val%x, :val%x, :val%x),"
+            . " (:val%x, :val%x, :val%x),"
+            . " (:val%x, :val%x, :val%x)",
             $sql = $insert->getSQL($this->driver)
         );
     }

@@ -61,7 +61,7 @@ class CompareToTest extends TestCase
         $predicate = $this->createInstance('c.id', '>', $select);
 
         self::assertSame(
-            '"c"."id" > FEW(SELECT "cart_id" FROM "cart_to_product")',
+            '"c"."id" > FEW (SELECT "cart_id" FROM "cart_to_product")',
             $sql = $predicate->getSQL()
         );
 

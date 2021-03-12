@@ -31,7 +31,7 @@ class InTest extends TestCase
     public function testContructorWithUnsupportedValueRaisesException($value)
     {
         $this->expectException(InvalidArgumentException::class);
-        $predicate = new Predicate\In('id', $value);
+        new Predicate\In('id', $value);
     }
 
     public function provideUnsupportedCtorValues(): array
@@ -77,7 +77,7 @@ class InTest extends TestCase
         $select = Sql::select('id', 'product');
         $predicate = new Predicate\In('id', $select);
 
-        self::assertStringMatchesFormat(
+        self::assertSame(
             '"id" IN (SELECT "id" FROM "product")',
             $predicate->getSQL()
         );
