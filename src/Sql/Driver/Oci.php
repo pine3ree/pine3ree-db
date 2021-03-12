@@ -232,6 +232,49 @@ class Oci extends Driver implements
         return null;
     }
 
+    // @codeCoverageIgnoreStart
+    public function decorateSelect(Select $select): Select
+    {
+        $limit  = $select->limit;
+        $offset = $select->offset;
+
+        if (isset($limit) && (!isset($offset) || $offset === 0)) {
+            $tb = trim(self::TB, '"');
+
+            $from = clone $select;
+            $from->limit(null);
+
+            $select = new Select('*', $from, $tb);
+            $select->where->lte(new Literal("ROWNUM"), $limit);
+
+            return $select;
+        }
+
+        if (isset($offset) && $offset > 0) {
+            $tb = trim(self::TB, '"');
+            $rn = trim(self::RN, '"');
+
+            $from = clone $select;
+            $from->offset(null)->limit(null);
+
+            // create a select to gather ROWNUM values
+            $select = new Select('*', $from, "{$tb}0");
+            $select->column(new Literal("ROWNUM"), $rn);
+
+            if (isset($limit)) {
+                $select->where->lte(new Literal("ROWNUM"), $offset + $limit);
+            }
+
+            $select = new Select('*', $select, "{$tb}1");
+            $select->where->gt(new Sql\Alias($rn), $offset);
+
+            return $select;
+        }
+
+        return $select;
+    }
+    // @codeCoverageIgnoreEnd
+
     public function getSelectColumnsSQL(Select $select, bool &$cache = true): string
     {
         $table   = $select->table;
