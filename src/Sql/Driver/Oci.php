@@ -206,7 +206,7 @@ class Oci extends Driver implements
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
             $select_sql = $this->generateSelectSQL($select);
-            $limit = $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit');
+            $limit = $this->createParam($select, $limit, PDO::PARAM_INT, 'limit');
 
             return "SELECT * FROM ({$select_sql}) WHERE ROWNUM <= {$limit}";
         }
@@ -216,18 +216,17 @@ class Oci extends Driver implements
             $rn = self::RN;
 
             $select_sql = $this->generateSelectSQL($select);
+            $select_sql = "SELECT {$tb}.*, ROWNUM AS {$rn}"
+                . " FROM ({$select_sql}) {$tb}";
 
-            $limit = isset($limit)
-                ? $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit')
-                : PHP_INT_MAX;
-
-            $limit_sql = "SELECT {$tb}.*, ROWNUM AS {$rn}"
-                . " FROM ({$select_sql}) {$tb}"
-                . " WHERE ROWNUM <= {$limit}";
+            if (isset($limit)) {
+                $limit = $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit');
+                $select_sql += " WHERE ROWNUM <= {$limit}";
+            }
 
             $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
 
-            return "SELECT * FROM ({$limit_sql}) WHERE {$rn} > {$offset}";
+            return "SELECT * FROM ({$select_sql}) WHERE {$rn} > {$offset}";
         }
 
         return null;
