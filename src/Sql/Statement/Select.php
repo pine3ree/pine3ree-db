@@ -915,8 +915,8 @@ class Select extends Statement
 
         $space = isset($this->parent) ? " " : "\n";
 
-        $base_sql = $this->getBaseSQL($driver);
-        $clauses_sql = $this->getClausesSQL($driver);
+        $base_sql = $this->getBaseSQL($driver, $space);
+        $clauses_sql = $this->getClausesSQL($driver, $space);
 
         $sql = rtrim("{$base_sql}{$space}{$clauses_sql}");
 
