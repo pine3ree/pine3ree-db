@@ -248,7 +248,7 @@ class OciTest extends TestCase
         $select = clone $selectPrototype;
         $select->offset(10);
         self::assertStringMatchesFormat(
-            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= %d) WHERE %s > :offset%x",
+            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s) WHERE %s > :offset%x",
             $select->getSQL($this->driver)
         );
     }
