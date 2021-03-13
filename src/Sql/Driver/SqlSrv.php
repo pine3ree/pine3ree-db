@@ -34,7 +34,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
             return '';
         }
 
-        $orderBy  = $select->orderBy;
+        $orderBy = $select->orderBy;
         if (empty($orderBy)) {
             throw new RuntimeException(
                 "Cannot apply limit/offset to `sqlsrv` without an ORDER-BY clause!"
@@ -45,7 +45,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
             $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
         }
 
-        $offset_sql = "OFFSET ({$offset}) ROWS";
+        $offset_sql = "OFFSET {$offset} ROWS";
 
         if (!isset($limit)) {
             return $offset_sql;
@@ -60,8 +60,8 @@ class SqlSrv extends Driver implements LimitSqlProvider
 
         $fetch = $this->createParam($select, $limit, PDO::PARAM_INT, 'fetch');
         $fetch_sql = $offset === 0
-            ? "FETCH FIRST ({$fetch}) ROWS ONLY"
-            : "FETCH NEXT ({$fetch}) ROWS ONLY";
+            ? "FETCH FIRST {$fetch} ROWS ONLY"
+            : "FETCH NEXT {$fetch} ROWS ONLY";
 
         return "{$offset_sql} {$fetch_sql}";
     }

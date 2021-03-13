@@ -74,7 +74,7 @@ class SqlSrvTest extends TestCase
         $select->from('product')->orderBy('price');
         $select->limit(10);
         self::assertStringMatchesFormat(
-            "OFFSET (0) ROWS FETCH FIRST (:fetch%x) ROWS ONLY",
+            "OFFSET 0 ROWS FETCH FIRST :fetch%x ROWS ONLY",
             $this->driver->getLimitSQL($select)
         );
 
@@ -82,14 +82,17 @@ class SqlSrvTest extends TestCase
         $select->from('product')->orderBy('price');
         $select->limit(10)->offset(100);
         self::assertStringMatchesFormat(
-            "OFFSET (:offset%x) ROWS FETCH NEXT (:fetch%x) ROWS ONLY",
+            "OFFSET :offset%x ROWS FETCH NEXT :fetch%x ROWS ONLY",
             $this->driver->getLimitSQL($select)
         );
 
         $select = new Select();
         $select->orderBy('price');
         $select->offset(100);
-        self::assertStringMatchesFormat("OFFSET (:offset%x) ROWS", $this->driver->getLimitSQL($select));
+        self::assertStringMatchesFormat(
+            "OFFSET :offset%x ROWS",
+            $this->driver->getLimitSQL($select)
+        );
     }
 
     public function testGetLimitSqlWithoutOrderByRaisesException()
