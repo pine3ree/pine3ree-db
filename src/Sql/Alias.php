@@ -11,6 +11,7 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
+use P3\Db\Sql\Params;
 use P3\Db\Exception\RuntimeException;
 
 use function trim;

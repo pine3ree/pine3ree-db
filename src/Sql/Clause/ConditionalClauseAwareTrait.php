@@ -12,6 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Exception\RuntimeException;
 
@@ -72,7 +73,7 @@ trait ConditionalClauseAwareTrait
      * @return string
      * @throws RuntimeException
      */
-    private function getConditionalClauseSQL(string $property, DriverInterface $driver): string
+    private function getConditionalClauseSQL(string $property, DriverInterface $driver, Params $params): string
     {
         if (!isset($this->{$property})) {
             return '';
@@ -85,12 +86,10 @@ trait ConditionalClauseAwareTrait
             );
         }
 
-        $sql = $clause->getSQL($driver);
+        $sql = $clause->getSQL($driver, $params);
         if ('' === $sql = trim($sql)) {
             return '';
         }
-
-        $this->importParams($clause);
 
         return $sql;
     }

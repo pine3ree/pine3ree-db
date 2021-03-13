@@ -14,6 +14,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 
 use function gettype;
@@ -101,13 +102,14 @@ class Is extends Predicate
         ));
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $identifier = $this->getIdentifierSQL($this->identifier, $driver);
 

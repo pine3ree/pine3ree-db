@@ -11,6 +11,7 @@ use PDO;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 
 use function implode;
@@ -31,7 +32,7 @@ class PgSql extends Driver implements LimitSqlProvider
      * @param Select $select
      * @return string
      */
-    public function getLimitSQL(Select $select): string
+    public function getLimitSQL(Select $select, Params $params): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;
@@ -42,13 +43,13 @@ class PgSql extends Driver implements LimitSqlProvider
 
         $sqls = [];
         if (isset($limit)) {
-            $limit = $this->createParam($select, $limit, PDO::PARAM_INT, 'limit');
+            $limit = $params->createParam($limit, PDO::PARAM_INT, 'limit');
             $sqls[] = Sql::LIMIT . " {$limit}";
         }
 
         $offset = (int)$offset;
         if ($offset > 0) {
-            $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->createParam($offset, PDO::PARAM_INT, 'offset');
             $sqls[] = Sql::OFFSET . " {$offset}";
         }
 

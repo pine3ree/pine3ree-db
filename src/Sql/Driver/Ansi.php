@@ -11,6 +11,7 @@ use PDO;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 
 use const PHP_INT_MAX;
@@ -41,7 +42,7 @@ class Ansi extends Driver implements LimitSqlProvider
      * @param Select $select
      * @return string
      */
-    public function getLimitSQL(Select $select): string
+    public function getLimitSQL(Select $select, Params $params): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;

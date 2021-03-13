@@ -14,6 +14,7 @@ use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
 use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Literal;
 use P3\Db\Sql\TableAwareTrait;
@@ -81,9 +82,9 @@ class Join extends Clause
         }
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
@@ -103,14 +104,13 @@ class Join extends Clause
             return $this->sql;
         }
 
+        $params = $params ?? ($this->params = new Params());
+
         $specification = '';
         if ($this->specification instanceof Literal) {
             $specification = $this->specification->getSQL();
         } elseif ($this->specification instanceof On) {
-            $specification = $this->getConditionalClauseSQL('specification', $driver);
-            if (!self::isEmptySQL($specification)) {
-                $this->importParams($this->specification);
-            }
+            $specification = $this->getConditionalClauseSQL('specification', $driver, $params);
         }
 
         $this->sql = trim("{$join} {$table} {$specification}");

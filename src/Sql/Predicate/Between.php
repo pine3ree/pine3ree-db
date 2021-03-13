@@ -14,6 +14,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 
 /**
@@ -67,20 +68,21 @@ class Between extends Predicate
         }
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
         $this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $identifier = $this->getIdentifierSQL($this->identifier, $driver);
         $operator = static::$not ? Sql::NOT_BETWEEN : Sql::BETWEEN;
-        $min = $this->getValueSQL($this->minValue, null, 'min');
-        $max = $this->getValueSQL($this->maxValue, null, 'max');
+        $min = $this->getValueSQL($params, $this->minValue, null, 'min');
+        $max = $this->getValueSQL($params, $this->maxValue, null, 'max');
 
         return $this->sql = "{$identifier} {$operator} {$min} AND {$max}";
     }

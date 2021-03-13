@@ -25,6 +25,7 @@ use P3\Db\Sql\Element;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
@@ -269,7 +270,7 @@ class Select extends Statement
         return $this->column(new Literal("{$sqlAggregateFunc}({$identifier})"), $alias);
     }
 
-    private function getColumnsSQL(DriverInterface $driver): string
+    private function getColumnsSQL(DriverInterface $driver, Params $params): string
     {
         if (isset($this->sqls['columns'])) {
             return $this->sqls['columns'];
@@ -281,7 +282,7 @@ class Select extends Statement
 
         // overridden by driver?
         if ($driver instanceof SelectColumnsSqlProvider) {
-            $sql = $driver->getSelectColumnsSQL($this, $cache);
+            $sql = $driver->getSelectColumnsSQL($this, $params, $cache);
             if ($cache) {
                 $this->sqls['columns'] = $sql;
             }
@@ -312,9 +313,8 @@ class Select extends Statement
             } elseif ($column instanceof Literal) {
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof self) {
-                $column_sql = $column->getSQL($driver);
-                $this->importParams($column);
-                $cache = $cache && $column instanceof Expression && !$column->hasParams();
+                $column_sql = $column->getSQL($driver, $params);
+                $cache = false;
             } else {
                 // @codeCoverageIgnoreStart
                 // should be unreacheable
@@ -432,7 +432,7 @@ class Select extends Statement
         }
     }
 
-    private function getFromSQL(DriverInterface $driver): string
+    private function getFromSQL(DriverInterface $driver, Params $params): string
     {
         if (empty($this->from) && empty($this->table)) {
             throw new RuntimeException(
@@ -441,8 +441,7 @@ class Select extends Statement
         }
 
         if ($this->from instanceof self) {
-            $from = "(" . $this->from->getSQL($driver) . ")";
-            $this->importParams($this->from);
+            $from = "(" . $this->from->getSQL($driver, $params) . ")";
         } else {
             $from = $driver->quoteIdentifier($this->table);
         }
@@ -564,7 +563,7 @@ class Select extends Statement
         );
     }
 
-    private function getJoinSQL(DriverInterface $driver, string $space = " "): string
+    private function getJoinSQL(DriverInterface $driver, Params $params, string $space = " "): string
     {
         if (empty($this->joins)) {
             return '';
@@ -572,14 +571,13 @@ class Select extends Statement
 
         $sqls = [];
         foreach ($this->joins as $join) {
-            $join_sql = $join->getSQL($driver);
+            $join_sql = $join->getSQL($driver, $params);
             if (self::isEmptySQL($join_sql)) {
                 // @codeCoverageIgnoreStart
                 // unreacheable code
                 continue;
                 // @codeCoverageIgnoreEnd
             }
-            $this->importParams($join);
             $sqls[] = $join_sql;
         }
 
@@ -657,9 +655,9 @@ class Select extends Statement
         return $this;
     }
 
-    private function getHavingSQL(DriverInterface $driver): string
+    private function getHavingSQL(DriverInterface $driver, Params $params): string
     {
-        return $this->getConditionalClauseSQL('having', $driver);
+        return $this->getConditionalClauseSQL('having', $driver, $params);
     }
 
     /**
@@ -778,7 +776,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getLimitSQL(DriverInterface $driver): string
+    private function getLimitSQL(DriverInterface $driver, Params $params): string
     {
         if (!isset($this->limit) && (int)$this->offset === 0) {
             return '';
@@ -786,13 +784,13 @@ class Select extends Statement
 
         // computed by driver?
         if ($driver instanceof LimitSqlProvider) {
-            return $driver->getLimitSQL($this);
+            return $driver->getLimitSQL($this, $params);
         }
 
         // Default implementation working for MySQL, PostgreSQL and Sqlite
         // PostgreSQL also supports OFFSET without LIMIT
         if (isset($this->limit)) {
-            $limit = $this->createParam($this->limit, PDO::PARAM_INT, 'limit');
+            $limit = $params->createParam($this->limit, PDO::PARAM_INT, 'limit');
             $sql = Sql::LIMIT . " {$limit}";
         }
 
@@ -800,7 +798,7 @@ class Select extends Statement
             if (!isset($sql)) {
                 $sql = Sql::LIMIT . " " . PHP_INT_MAX;
             }
-            $offset = $this->createParam($this->offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->createParam($this->offset, PDO::PARAM_INT, 'offset');
             $sql .= " " . Sql::OFFSET . " {$offset}";
         }
 
@@ -868,54 +866,54 @@ class Select extends Statement
         return $this;
     }
 
-    private function getUnionOrIntersectSQL(DriverInterface $driver): string
+    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params): string
     {
         if ($this->union instanceof self) {
-            $union_sql = $this->union->getSQL($driver);
+            $union_sql = $this->union->getSQL($driver, $params);
             if (self::isEmptySQL($union_sql)) {
                 // @codeCoverageIgnoreStart
                 // unreacheable code
                 return '';
                 // @codeCoverageIgnoreEnd
             }
-            $this->importParams($this->union);
+            //$this->importParams($this->union);
             return ($this->union_all === true ? Sql::UNION_ALL : Sql::UNION) . " ({$union_sql})";
         }
 
         if ($this->intersect instanceof self) {
-            $intersect_sql = $this->intersect->getSQL($driver);
+            $intersect_sql = $this->intersect->getSQL($driver, $params);
             if (self::isEmptySQL($intersect_sql)) {
                 // @codeCoverageIgnoreStart
                 // unreacheable code
                 return '';
                 // @codeCoverageIgnoreEnd
             }
-            $this->importParams($this->intersect);
             return Sql::INTERSECT . " ({$intersect_sql})";
         }
 
         return '';
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         if ($driver instanceof SelectSqlDecorator) {
-            return $this->sql = $driver->decorateSelectSQL($this);
+            return $this->sql = $driver->decorateSelectSQL($this, $params);
         }
 
         if ($driver instanceof SelectDecorator) {
-            $select = $driver->decorateSelect($this);
-            return $this->sql = $select->generateSQL($driver);
+            $select = $driver->decorateSelect($this, $params);
+            return $this->sql = $select->generateSQL($driver, $params);
         }
 
         // generate and cache a fresh sql string
-        return $this->sql = $this->generateSQL($driver);
+        return $this->sql = $this->generateSQL($driver, $params);
     }
 
     /**
@@ -927,14 +925,14 @@ class Select extends Statement
      * @param DriverInterface $driver
      * @return string
      */
-    protected function generateSQL(DriverInterface $driver): string
+    protected function generateSQL(DriverInterface $driver, Params $params): string
     {
         $this->resetParams();
 
         $space = isset($this->parent) ? " " : "\n";
 
-        $base_sql = $this->getBaseSQL($driver, $space);
-        $clauses_sql = $this->getClausesSQL($driver, $space);
+        $base_sql = $this->getBaseSQL($driver, $params, $space);
+        $clauses_sql = $this->getClausesSQL($driver, $params, $space);
 
         $sql = rtrim("{$base_sql}{$space}{$clauses_sql}");
 
@@ -997,30 +995,30 @@ class Select extends Statement
         return preg_replace($search, $replace, $sql);
     }
 
-    private function getBaseSQL(DriverInterface $driver, string $space = " "): string
+    private function getBaseSQL(DriverInterface $driver, Params $params, string $space = " "): string
     {
         $select = Sql::SELECT;
         if (!empty($this->quantifier)) {
             $select .= " {$this->quantifier}";
         }
 
-        $columns = $this->getColumnsSQL($driver);
-        $from = $this->getFromSQL($driver);
+        $columns = $this->getColumnsSQL($driver, $params);
+        $from = $this->getFromSQL($driver, $params);
 
         return trim("{$select} {$columns}{$space}{$from}");
     }
 
-    private function getClausesSQL(DriverInterface $driver, string $space = " "): string
+    private function getClausesSQL(DriverInterface $driver, Params $params, string $space = " "): string
     {
         $sqls = [];
 
-        $sqls[] = $this->getJoinSQL($driver, $space);
-        $sqls[] = $this->getWhereSQL($driver);
+        $sqls[] = $this->getJoinSQL($driver, $params, $space);
+        $sqls[] = $this->getWhereSQL($driver, $params);
         $sqls[] = $this->getGroupBySQL($driver);
-        $sqls[] = $this->getHavingSQL($driver);
-        $sqls[] = $this->getUnionOrIntersectSQL($driver);
+        $sqls[] = $this->getHavingSQL($driver, $params);
+        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params);
         $sqls[] = $this->getOrderBySQL($driver);
-        $sqls[] = $this->getLimitSQL($driver);
+        $sqls[] = $this->getLimitSQL($driver, $params);
 
         foreach ($sqls as $index => $sql) {
             if (self::isEmptySQL($sql)) {

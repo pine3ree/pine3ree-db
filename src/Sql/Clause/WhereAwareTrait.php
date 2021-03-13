@@ -11,6 +11,7 @@ use Closure;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 
 /**
@@ -44,8 +45,8 @@ trait WhereAwareTrait
         return $this;
     }
 
-    private function getWhereSQL(DriverInterface $driver): string
+    private function getWhereSQL(DriverInterface $driver, Params $params): string
     {
-        return $this->getConditionalClauseSQL('where', $driver);
+        return $this->getConditionalClauseSQL('where', $driver, $params);
     }
 }

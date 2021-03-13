@@ -14,6 +14,7 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\TableAwareTrait;
 use P3\Db\Exception\RuntimeException;
@@ -109,18 +110,19 @@ class Update extends Statement
         ));
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
         $this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
-        $base_sql  = $this->getBaseSQL($driver);
-        $where_sql = $this->getWhereSQL($driver);
+        $base_sql  = $this->getBaseSQL($driver, $params);
+        $where_sql = $this->getWhereSQL($driver, $params);
         if (self::isEmptySQL($where_sql)) {
             throw new RuntimeException(
                 "UPDATE statements without conditions are not allowed!"
@@ -131,7 +133,7 @@ class Update extends Statement
         return $this->sql;
     }
 
-    private function getBaseSQL(DriverInterface $driver): string
+    private function getBaseSQL(DriverInterface $driver, Params $params): string
     {
         if (empty($this->table)) {
             throw new RuntimeException(
@@ -150,7 +152,7 @@ class Update extends Statement
         $set = [];
         foreach ($this->set as $column => $value) {
             $column = $driver->quoteIdentifier($column);
-            $param  = $this->getValueSQL($value, null, 'set');
+            $param  = $this->getValueSQL($params, $value, null, 'set');
             $set[]  = "{$column} = {$param}";
         }
 

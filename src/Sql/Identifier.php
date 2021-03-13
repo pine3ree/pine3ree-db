@@ -11,6 +11,7 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
+use P3\Db\Sql\Params;
 use P3\Db\Exception\RuntimeException;
 
 use function trim;
@@ -54,7 +55,7 @@ class Identifier extends Element
      * @param DriverInterface $driver
      * @return string
      */
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
         return $this->sql = ($driver ?? Driver::ansi())->quoteIdentifier($this->identifier);
     }

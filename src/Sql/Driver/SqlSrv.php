@@ -9,6 +9,7 @@ namespace P3\Db\Sql\Driver;
 
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 use P3\Db\Exception\RuntimeException;
@@ -25,7 +26,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
         parent::__construct($pdo, '[', ']', "'");
     }
 
-    public function getLimitSQL(Select $select): string
+    public function getLimitSQL(Select $select, Params $params = null): string
     {
         $limit  = $select->limit;
         $offset = max(0, (int)$select->offset);
@@ -41,8 +42,10 @@ class SqlSrv extends Driver implements LimitSqlProvider
             );
         }
 
+        $params = $params ?? new Params();
+
         if ($offset > 0) {
-            $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->createParam($offset, PDO::PARAM_INT, 'offset');
         }
 
         $offset_sql = "OFFSET {$offset} ROWS";
@@ -58,7 +61,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
             );
         }
 
-        $fetch = $this->createParam($select, $limit, PDO::PARAM_INT, 'fetch');
+        $fetch = $params->createParam($limit, PDO::PARAM_INT, 'fetch');
         $fetch_sql = $offset === 0
             ? "FETCH FIRST {$fetch} ROWS ONLY"
             : "FETCH NEXT {$fetch} ROWS ONLY";

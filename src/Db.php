@@ -17,6 +17,7 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement as SqlStatement;
 use P3\Db\Sql\Statement\Select as SqlSelect;
@@ -497,22 +498,24 @@ class Db
      * prepared/binded PDOStatement
      *
      * @param SqlStatement $sqlStatement
-     * @param bool $bind_params Bind statement parameters values (via PDOStatement::bindValue())?
+     * @param bool $bindValues Bind statement parameters values (via PDOStatement::bindValue())?
      * @return PDOStatement|false
      */
-    public function prepare(SqlStatement $sqlStatement, bool $bind_params = false)
+    public function prepare(SqlStatement $sqlStatement, bool $bindValues = false)
     {
         $stmt = $this->pdo()->prepare($sqlStatement->getSQL(
             $this->driver ?? $this->getDriver(true)
         ));
 
-        if ($bind_params && $stmt instanceof PDOStatement) {
-            $types = $sqlStatement->getParamsTypes();
-            foreach ($sqlStatement->getParams() as $marker => $value) {
+        if ($bindValues && $stmt instanceof PDOStatement) {
+            $params = $sqlStatement->getParams();
+            $values = $params->getValues();
+            $ptypes = $params->getTypes();
+            foreach ($values as $marker => $value) {
                 $stmt->bindValue(
                     $marker, // string marker (:name)
                     $value,
-                    $types[$marker] ?? $this->getParamType($value)
+                    $ptypes[$marker] ?? $this->getParamType($value)
                 );
             }
         }

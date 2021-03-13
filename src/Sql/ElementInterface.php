@@ -7,8 +7,9 @@
 
 namespace P3\Db\Sql;
 
-use P3\Db\Sql\DriverInterface;
 use P3\Db\Exception\RuntimeException;
+use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 
 /**
  * Represents a generic SQL element
@@ -25,15 +26,22 @@ interface ElementInterface
      *
      * This method must call each inner element getSQL() method and then import
      * its parameters
+     *
+     * @param DriverInterface $driver
+     * @param Params $params An optional parameter collector. If not set a new instance will created.
      */
-    public function getSQL(DriverInterface $driver = null): string;
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string;
 
     /**
-     * Check if there are any parameters after compiling the sql string
+     * Return the parameters collector created for this element after compiling
+     * the sql string
      *
-     * @return bool
+     * This method returns null if getSQL() has not been called or if this is not
+     * the top level element
+     *
+     * @return Params|null
      */
-    public function hasParams(): bool;
+    public function getParams(): ?Params;
 
     /**
      * Return the parameters values created for this element or imported from
@@ -44,7 +52,7 @@ interface ElementInterface
      *
      * @return array
      */
-    public function getParams(): array;
+    public function getParamsValues(): array;
 
     /**
      * Return the (generated/imported) parameter pdo-types (PDO::PARAM_*)

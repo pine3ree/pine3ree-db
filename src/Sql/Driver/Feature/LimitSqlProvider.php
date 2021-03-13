@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Driver\Feature;
 
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 
 /**
@@ -14,5 +15,5 @@ use P3\Db\Sql\Statement\Select;
  */
 interface LimitSqlProvider
 {
-    public function getLimitSQL(Select $select): string;
+    public function getLimitSQL(Select $select, Params $params): string;
 }

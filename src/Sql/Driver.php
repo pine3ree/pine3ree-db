@@ -12,6 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver\Ansi;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\ElementInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 use ReflectionClass;
@@ -268,19 +269,9 @@ abstract class Driver implements DriverInterface
         return self::$ansi ?? self::$ansi = new Ansi();
     }
 
-    protected function createParam(ElementInterface $element, $value, int $type = null, string $name = null): string
+    protected function generateSelectSQL(Select $select, Params $params): string
     {
-        return $this->call($element, 'createParam', $value, $type, $name);
-    }
-
-    protected function importParams(ElementInterface $into, ElementInterface $from)
-    {
-        $this->call($into, 'importParams', $from);
-    }
-
-    protected function generateSelectSQL(Select $select): string
-    {
-        return $this->call($select, 'generateSQL', $this);
+        return $this->call($select, 'generateSQL', $this, $params);
     }
 
     /**

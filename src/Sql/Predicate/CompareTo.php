@@ -14,6 +14,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
@@ -69,21 +70,19 @@ abstract class CompareTo extends Predicate
         }
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
         $this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $identifier = $this->getIdentifierSQL($this->identifier, $driver);
-
-        $select_sql = $this->select->getSQL($driver);
-        $this->importParams($this->select);
-
+        $select_sql = $this->select->getSQL($driver, $params);
         $quantifier = static::$quantifier;
 
         return $this->sql = "{$identifier} {$this->operator} {$quantifier} ({$select_sql})";

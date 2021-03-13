@@ -12,6 +12,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 use Traversable;
@@ -65,9 +66,19 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
         return $this->searchCondition->getIterator();
     }
 
-    public function getParams(): array
+    public function hasParams(): bool
+    {
+        return $this->searchCondition->hasParams();
+    }
+
+    public function getParams(): ?Params
     {
         return $this->searchCondition->getParams();
+    }
+
+    public function getParamsValues(): array
+    {
+        return $this->searchCondition->getParamsValues();
     }
 
     public function getParamsTypes(): array
@@ -75,9 +86,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
         return $this->searchCondition->getParamsTypes();
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
@@ -88,7 +99,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
         // No need to reset the parameters here, this is forwarded to the composed
         // predicate-set
 
-        $predicates_sql = $this->searchCondition->getSQL($driver ?? Driver::ansi());
+        $predicates_sql = $this->searchCondition->getSQL($driver ?? Driver::ansi(), $params);
         // @codeCoverageIgnoreStart
         // This case should be already covered by previous isEmpty check
         if ('' === $predicates_sql) {

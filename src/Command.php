@@ -9,6 +9,7 @@ namespace P3\Db;
 
 use PDOStatement;
 use P3\Db\CommandInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement as SqlStatement;
 
 /**
@@ -28,6 +29,11 @@ abstract class Command implements CommandInterface
      * @var SqlStatement
      */
     protected $sqlStatement;
+
+    /**
+     * @var Params
+     */
+    protected $params;
 
     /**
      * @param Db $db The database abstraction layer
@@ -53,14 +59,25 @@ abstract class Command implements CommandInterface
     }
 
     /**
+     * {@inheritDoc}
      * @see Sql\Element::getParams()
      */
-    public function getParams(): array
+    public function getParams(): ?Params
     {
         return $this->sqlStatement->getParams();
     }
 
     /**
+     * {@inheritDoc}
+     * @see Sql\Element::getParamsTypes()
+     */
+    public function getParamsValues(): array
+    {
+        return $this->sqlStatement->getParamsValues();
+    }
+
+    /**
+     * {@inheritDoc}
      * @see Sql\Element::getParamsTypes()
      */
     public function getParamsTypes(): array
@@ -71,12 +88,12 @@ abstract class Command implements CommandInterface
     /**
      * Prepare the sql-statement
      *
-     * @param bool $bind_params
+     * @param bool $bindValues
      * @return PDOStatement|false
      */
-    protected function prepare(bool $bind_params = false)
+    protected function prepare(bool $bindValues = false)
     {
-        return $this->db->prepare($this->sqlStatement, $bind_params);
+        return $this->db->prepare($this->sqlStatement, $bindValues);
     }
 
     public function __get(string $name)

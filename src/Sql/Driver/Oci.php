@@ -16,6 +16,7 @@ use P3\Db\Sql\Driver\Feature\SelectDecorator;
 use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use PDO;
 
@@ -199,14 +200,14 @@ class Oci extends Driver implements
         return implode('.', $segments);
     }
 
-    public function decorateSelectSQL(Select $select): string
+    public function decorateSelectSQL(Select $select, Params $params): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
-            $select_sql = $this->generateSelectSQL($select);
-            $limit = $this->createParam($select, $limit, PDO::PARAM_INT, 'limit');
+            $select_sql = $this->generateSelectSQL($select, $params);
+            $limit = $params->createParam($limit, PDO::PARAM_INT, 'limit');
 
             return "SELECT * FROM ({$select_sql}) WHERE ROWNUM <= {$limit}";
         }
@@ -215,24 +216,24 @@ class Oci extends Driver implements
             $qtb = $this->quoteAlias(self::TB);
             $qrn = $this->quoteAlias(self::RN);
 
-            $select_sql = $this->generateSelectSQL($select);
+            $select_sql = $this->generateSelectSQL($select, $params);
             $select_sql = "SELECT {$qtb}.*, ROWNUM AS {$qrn}"
                 . " FROM ({$select_sql}) {$qtb}";
 
             if (isset($limit)) {
-                $limit = $this->createParam($select, $limit + $offset, PDO::PARAM_INT, 'limit');
+                $limit = $params->createParam($limit + $offset, PDO::PARAM_INT, 'limit');
                 $select_sql .= " WHERE ROWNUM <= {$limit}";
             }
 
-            $offset = $this->createParam($select, $offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->createParam($offset, PDO::PARAM_INT, 'offset');
 
             return "SELECT * FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
         }
 
-        return $this->generateSelectSQL($select);
+        return $this->generateSelectSQL($select, $params);
     }
 
-    public function decorateSelect(Select $select): Select
+    public function decorateSelect(Select $select, Params $params = null): Select
     {
         $limit  = $select->limit;
         $offset = $select->offset;
@@ -271,7 +272,7 @@ class Oci extends Driver implements
         return $select;
     }
 
-    public function getSelectColumnsSQL(Select $select, bool &$cache = true): string
+    public function getSelectColumnsSQL(Select $select, Params $params, bool &$cache = true): string
     {
         $table   = $select->table;
         $alias   = $select->alias;
@@ -309,9 +310,8 @@ class Oci extends Driver implements
             } elseif ($column instanceof Literal) {
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof Select) {
-                $column_sql = $column->getSQL($this);
-                $this->importParams($select, $column);
-                $cache = $cache && $column instanceof Expression && !$column->hasParams();
+                $column_sql = $column->getSQL($this, $params);
+                $cache = false;
             } else {
                 // @codeCoverageIgnoreStart
                 // should be unreacheable due to table-column validity assertion
@@ -340,7 +340,7 @@ class Oci extends Driver implements
         return trim(implode(", ", $sqls));
     }
 
-    public function getLimitSQL(Select $select): string
+    public function getLimitSQL(Select $select, Params $params): string
     {
         return '';
     }

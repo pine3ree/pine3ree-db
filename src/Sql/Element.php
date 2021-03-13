@@ -13,6 +13,7 @@ use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\ElementInterface;
+use P3\Db\Sql\Params;
 use PDO;
 use ReflectionClass;
 use P3\Db\Exception\RuntimeException;
@@ -43,17 +44,9 @@ abstract class Element implements ElementInterface
     protected $sql;
 
     /**
-     * @var array<int|string, mixed> A collection of marker-indexed statement parameters
+     * @var Params|null The element's parameters collector, if any
      */
-    protected $params = [];
-
-    /**
-     * A collection of marker-indexed types for statement parameters
-     * Types are expressed using PDO::PARAM_* constants
-     *
-     * @var array<int|string, int>
-     */
-    protected $paramsTypes = [];
+    protected $params;
 
     /**
      * The parent element, if any
@@ -70,23 +63,9 @@ abstract class Element implements ElementInterface
     protected $shortName;
 
     /**
-     * The parameter index counter
-     *
-     * @var int
-     */
-    protected static $index = 0;
-
-    /**
-     * The maximum numeric index after which the named-param counter reset to 1
-     *
-     * @const int
-     */
-    protected const MAX_INDEX = 999999;
-
-    /**
      * {@inheritDoc}
      */
-    abstract public function getSQL(DriverInterface $driver = null): string;
+    abstract public function getSQL(DriverInterface $driver = null, Params $params = null): string;
 
     /**
      * Remove the cached SQL string
@@ -94,6 +73,7 @@ abstract class Element implements ElementInterface
     protected function clearSQL()
     {
         $this->sql = null;
+        $this->params = null;
         if ($this->parent instanceof self) {
             $this->parent->clearSQL();
         }
@@ -103,6 +83,7 @@ abstract class Element implements ElementInterface
     {
         $this->parent = null;
         $this->sql = null;
+        $this->params = null;
     }
 
     /**
@@ -110,13 +91,13 @@ abstract class Element implements ElementInterface
      */
     public function hasParams(): bool
     {
-        return !empty($this->params);
+        return isset($this->params) ? !$this->params->isEmpty() : false;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getParams(): array
+    public function getParams(): ?Params
     {
         return $this->params;
     }
@@ -124,9 +105,17 @@ abstract class Element implements ElementInterface
     /**
      * {@inheritDoc}
      */
+    public function getParamsValues(): array
+    {
+        return isset($this->params) ? $this->params->getValues() : [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getParamsTypes(): array
     {
-        return $this->paramsTypes;
+        return isset($this->params) ? $this->params->getTypes() : [];
     }
 
     /**
@@ -160,109 +149,11 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * Import parameters and types from inner element.
-     *
-     * Since parameters and markers are created during sql rendering, we make
-     * sure that sql has been computed in the inner element.
-     *
-     * @param self $element
-     * @return void
-     */
-    protected function importParams(self $element): void
-    {
-        // The operation fails if the inner element's sql string has not been
-        // rendered yet, because it's during rendering that parameters and their
-        // sql placeholders are created
-        if (!isset($element->sql)) {
-            throw new RuntimeException(
-                "Cannot import parameters from sql-element without a compiled SQL string!"
-            );
-        }
-
-        $params = $element->getParams();
-        if (empty($params)) {
-            return;
-        }
-
-        $types = $element->getParamsTypes();
-        foreach ($params as $marker => $value) {
-            $this->addParam($marker, $value, $types[$marker] ?? null);
-        }
-    }
-
-    /**
-     * Create a SQL-string marker for the given value
-     *
-     * @param mixed $value The parameter value
-     * @param int|null $type The optional forced parameter type
-     * @param string|null $name The optional original parameter name
-     *
-     * @return string
-     */
-    protected function createParam($value, int $type = null, string $name = null): string
-    {
-        $name = strtolower($name ?? $this->shortName ?? $this->getShortName());
-        $marker = ":{$name}{$this->getNextIndex()}";
-        //$marker = ":{$name}" . bin2hex(random_bytes(4));
-        $this->addParam($marker, $value, $type);
-
-        return $marker;
-    }
-
-    /**
-     * Add a parameter and its type to the internal list
-     *
-     * @param string $marker
-     * @param mixed $value
-     * @param int $type
-     */
-    protected function addParam(string $marker, $value, int $type = null)
-    {
-        $this->params[$marker] = $value;
-
-        if (!isset($type)) {
-            if (is_null($value)) {
-                $type = PDO::PARAM_NULL;
-            } elseif (is_int($value) || is_bool($value)) {
-                // use int-type for bool:
-                // @see https://bugs.php.net/bug.php?id=38386
-                // @see https://bugs.php.net/bug.php?id=49255
-                $type = PDO::PARAM_INT;
-            } else {
-                $type = PDO::PARAM_STR;
-            }
-        }
-
-        $this->paramsTypes[$marker] = $type;
-    }
-
-    /**
      * Parameters and types must be reset before computing the element's SQL string
      */
     protected function resetParams()
     {
-        $this->params = $this->paramsTypes = [];
-    }
-
-    private function getNextIndex(): int
-    {
-        if (static::$index === static::MAX_INDEX) {
-            return static::$index = 1;
-        }
-
-        return static::$index += 1;
-    }
-
-    /**
-     * Get the class basename
-     *
-     * @return string
-     */
-    protected function getShortName(): string
-    {
-        return $this->shortName ?? (
-            $this->shortName = (new ReflectionClass($this))->getShortName()
-        );
+        $this->params = null;
     }
 
     /**
@@ -273,11 +164,11 @@ abstract class Element implements ElementInterface
      * @param string|null $name Optional parameter name seed for pdo marker generation
      * @return string
      */
-    protected function getValueSQL($value, int $param_type = null, string $name = null): string
+    protected function getValueSQL(Params $params, $value, int $param_type = null, string $name = null): string
     {
         return $value instanceof Literal
             ? $value->getSQL()
-            : $this->createParam($value, $param_type, $name);
+            : $params->createParam($value, $param_type, $name);
     }
 
     /**

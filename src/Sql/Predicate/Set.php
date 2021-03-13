@@ -15,6 +15,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Exception\RuntimeException;
@@ -511,9 +512,9 @@ class Set extends Predicate implements IteratorAggregate
         return new ArrayIterator($this->predicates);
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && $params === null) {
             return $this->sql;
         }
 
@@ -521,15 +522,16 @@ class Set extends Predicate implements IteratorAggregate
             return $this->sql = '';
         }
 
-        $this->resetParams();
+        //$this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $sqls = [];
         $count = 0;
         foreach ($this->predicates as $key => $predicate) {
             $logicalOperator = explode(':', $key)[0];
-            $sql = $predicate->getSQL($driver);
+            $sql = $predicate->getSQL($driver, $params);
             if (self::isEmptySQL($sql)) {
                 continue;
             }
@@ -538,14 +540,13 @@ class Set extends Predicate implements IteratorAggregate
                 $sqls[] = $logicalOperator;
             }
             $sqls[] = $predicate instanceof self ? "({$sql})" : $sql;
-            $this->importParams($predicate);
         }
 
         if (empty($sqls)) {
             return $this->sql = '';
         }
 
-        if (1 === count($sqls)) {
+        if (1 === $count) {
             return $this->sql = current($sqls);
         }
 

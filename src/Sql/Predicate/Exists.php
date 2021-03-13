@@ -10,6 +10,7 @@ namespace P3\Db\Sql\Predicate;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
@@ -39,20 +40,19 @@ class Exists extends Predicate
         $this->select->parent = $this;
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
         $this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $operator = static::$not ? Sql::NOT_EXISTS : Sql::EXISTS;
-
-        $select_sql = $this->select->getSQL($driver);
-        $this->importParams($this->select);
+        $select_sql = $this->select->getSQL($driver, $params);
 
         return $this->sql = "{$operator} ({$select_sql})";
     }

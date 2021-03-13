@@ -8,6 +8,7 @@
 namespace P3\Db;
 
 use PDOStatement;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement as SqlStatement;
 
 /**
@@ -41,15 +42,23 @@ interface CommandInterface
     public function getSQL(): string;
 
     /**
-     * Return the indexed params of the composed SQL statement available after
+     * Return the parameter collector of the composed SQL statement available after
+     * compiling the sql string
+     *
+     * @return Params|null
+     */
+    public function getParams(): ?Params;
+
+    /**
+     * Return the indexed parameters of the composed SQL statement available after
      * compiling the sql string
      *
      * @return array
      */
-    public function getParams(): array;
+    public function getParamsValues(): array;
 
     /**
-     * Return the indexed params types of the composed SQL statement, available
+     * Return the indexed parameters types of the composed SQL statement, available
      * after compiling the sql string
      *
      * @return array

@@ -13,6 +13,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Exception\RuntimeException;
 
@@ -95,9 +96,9 @@ class Expression extends Predicate
         ));
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
@@ -108,9 +109,7 @@ class Expression extends Predicate
         $this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
-
-        // reset any previous parameters
-        $this->params = $this->paramsTypes = [];
+        $params = $params ?? ($this->params = new Params());
 
         // replace the `{name}`-placeholders with `:name`-markers
         $sql = $this->expression;
@@ -119,7 +118,7 @@ class Expression extends Predicate
             while (strpos($sql, $search) !== false) {
                 $sql = preg_replace(
                     '/' . preg_quote($search) . '/',
-                    $this->getSubstitutionValueSQL($driver, $value, null, 'expr'),
+                    $this->getSubstitutionValueSQL($driver, $params, $value, null, 'expr'),
                     $sql,
                     1
                 );
@@ -131,6 +130,7 @@ class Expression extends Predicate
 
     protected function getSubstitutionValueSQL(
         DriverInterface $driver,
+        Params $params,
         $value,
         int $param_type = null,
         string $name = null
@@ -139,7 +139,7 @@ class Expression extends Predicate
             return $this->getIdentifierSQL($value, $driver);
         }
 
-        return parent::getValueSQL($value, $param_type, $name);
+        return parent::getValueSQL($params, $value, $param_type, $name);
     }
 
     public function __get(string $name)

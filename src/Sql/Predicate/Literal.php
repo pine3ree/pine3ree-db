@@ -9,6 +9,7 @@ namespace P3\Db\Sql\Predicate;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Exception\RuntimeException;
 
@@ -36,7 +37,7 @@ class Literal extends Predicate
         $this->sql = $this->literal = $literal;
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
         return $this->literal;
     }

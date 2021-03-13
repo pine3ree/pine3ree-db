@@ -11,6 +11,7 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\TableAwareTrait;
@@ -277,9 +278,9 @@ class Insert extends Statement
         return $this;
     }
 
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
@@ -298,11 +299,12 @@ class Insert extends Statement
         $this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $insert  = $this->ignore ? Sql::INSERT_IGNORE : Sql::INSERT;
         $table   = $driver->quoteIdentifier($this->table);
         $columns = $this->getColumnsSQL($driver);
-        $values  = $this->getValuesSQL($driver);
+        $values  = $this->getValuesSQL($driver, $params);
 
         if (empty($values)) {
             // @codeCoverageIgnoreStart
@@ -340,13 +342,11 @@ class Insert extends Statement
         return $this->sqls['columns'] = "(" . implode(", ", $sqls) . ")";
     }
 
-    private function getValuesSQL(DriverInterface $driver): string
+    private function getValuesSQL(DriverInterface $driver, Params $params): string
     {
         // INSERT...SELECT
         if ($this->select instanceof Select) {
-            $sql = $this->select->getSQL($driver);
-            $this->importParams($this->select);
-            return $sql;
+            return $this->select->getSQL($driver, $params);
         }
 
         // INSERT...VALUES

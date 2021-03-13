@@ -14,6 +14,7 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
 
@@ -90,24 +91,23 @@ class In extends Predicate
      *
      * @return string
      */
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql)) {
+        if (isset($this->sql) && empty($params)) {
             return $this->sql;
         }
 
         $this->resetParams();
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $identifier = $this->getIdentifierSQL($this->identifier, $driver);
 
         $operator = static::$not ? Sql::NOT_IN : Sql::IN;
 
         if ($this->valueList instanceof Select) {
-            $select_sql = $this->valueList->getSQL($driver);
-            $this->importParams($this->valueList);
-
+            $select_sql = $this->valueList->getSQL($params, $driver);
             return $this->sql = "{$identifier} {$operator} ({$select_sql})";
         }
 
@@ -118,7 +118,7 @@ class In extends Predicate
                 $hasNull = true;
                 continue;
             }
-            $values[] = $this->getValueSQL($value, null, 'in');
+            $values[] = $this->getValueSQL($params, $value, null, 'in');
         }
 
         $ivl_sql = "(" . (empty($values) ? Sql::NULL : implode(", ", $values)) . ")";

@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Driver\Feature;
 
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 
 /**
@@ -21,5 +22,5 @@ interface SelectColumnsSqlProvider
      * @param bool $cache Flag tat will be set to true if generated sql can be cached
      * @return string
      */
-    public function getSelectColumnsSQL(Select $select, bool &$cache = true): string;
+    public function getSelectColumnsSQL(Select $select, Params $params, bool &$cache = true): string;
 }

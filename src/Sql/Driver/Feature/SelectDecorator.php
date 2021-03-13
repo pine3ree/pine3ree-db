@@ -7,6 +7,7 @@
 
 namespace P3\Db\Sql\Driver\Feature;
 
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 
 /**
@@ -22,5 +23,5 @@ interface SelectDecorator
      * @param Select $select
      * @return Select
      */
-    public function decorateSelect(Select $select): Select;
+    public function decorateSelect(Select $select, Params $params = null): Select;
 }
