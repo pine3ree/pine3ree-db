@@ -33,7 +33,7 @@ class ConditionalClauseTest extends TestCase
     private function createInstance($predicates = null, string $defaultLogicalOperator = null): ConditionalClause
     {
         return new class ($predicates, $defaultLogicalOperator) extends ConditionalClause {
-            protected static $name = "WHERE CONDITIONS ARE THAT";
+            protected static $name = "MY CONDITIONS ARE:";
         };
     }
 
@@ -70,7 +70,7 @@ class ConditionalClauseTest extends TestCase
         $conditionalClause = $this->createInstance();
         $conditionalClause->addPredicate(new Predicate\Literal("TRUE IS TRUE"));
 
-        self::assertSame("WHERE CONDITIONS ARE THAT TRUE IS TRUE", $conditionalClause->getSQL());
+        self::assertSame("MY CONDITIONS ARE: TRUE IS TRUE", $conditionalClause->getSQL());
         $conditionalClause->addPredicate(new Predicate\Literal("FALSE IS FALSE"));
         self::assertNull($this->getPropertyValue($conditionalClause, 'sql'));
     }
