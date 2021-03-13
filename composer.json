@@ -58,7 +58,7 @@
         ],
         "coverage-html": "phpunit --colors=always --coverage-html coverage/html",
         "coverage-xml": "phpunit --colors=always --coverage-xml coverage/xml",
-        "coverage-clover": "phpunit --colors=always --coverage-clover clover.xml",
+        "coverage-clover": "phpunit --colors=always --coverage-clover coverage/clover.xml",
         "test-coverage": [
             "@coverage-html",
             "@coverage-xml",
