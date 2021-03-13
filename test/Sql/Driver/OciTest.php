@@ -301,4 +301,10 @@ class OciTest extends TestCase
             $this->invokeMethod($wrapper, 'generateSQL', $this->driver)
         );
     }
+
+    public function testDecorateSelectReturnSameInstanceIfNoLimits()
+    {
+        $select = new Sql\Statement\Select('*', 'user');
+        self::assertSame($select, $this->driver->decorateSelect($select));
+    }
 }
