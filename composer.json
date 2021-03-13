@@ -1,18 +1,25 @@
 {
     "name": "pine3ree/p3-db",
-    "description": "A tiny PDO database abstraction layer wrapper",
+    "description": "A tiny PDO database abstraction layer",
     "type": "library",
-    "license": "BSD-3-Clause",
     "keywords": [
         "database",
-        "db",
         "pdo",
-        "php",
         "pine3ree",
+        "db",
         "p3",
         "p3-db"
     ],
     "homepage": "https://github.com/pine3ree/p3-db",
+    "readme": "README.md",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "pine3ree",
+            "homepage": "https://github.com/pine3ree",
+            "role": "Developer"
+        }
+    ],
     "support": {
         "docs": "https://github.com/pine3ree/p3-db/README.md",
         "issues": "https://github.com/pine3ree/p3-db/issues",
@@ -21,9 +28,15 @@
     "config": {
         "sort-packages": false
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    },
     "require": {
         "php": "^7.1",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-pcre": "*"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.9",
