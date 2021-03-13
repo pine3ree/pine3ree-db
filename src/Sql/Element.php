@@ -168,7 +168,7 @@ abstract class Element implements ElementInterface
     {
         return $value instanceof Literal
             ? $value->getSQL()
-            : $params->createParam($value, $param_type, $name);
+            : $params->add($value, $param_type, $name);
     }
 
     /**

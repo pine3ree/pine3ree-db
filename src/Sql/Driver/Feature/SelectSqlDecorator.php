@@ -26,5 +26,5 @@ interface SelectSqlDecorator
      * @param Select $select
      * @return string
      */
-    public function decorateSelectSQL(Select $select, Params $params = null): string;
+    public function decorateSelectSQL(Select $select, Params $params): string;
 }

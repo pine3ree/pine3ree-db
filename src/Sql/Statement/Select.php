@@ -790,7 +790,7 @@ class Select extends Statement
         // Default implementation working for MySQL, PostgreSQL and Sqlite
         // PostgreSQL also supports OFFSET without LIMIT
         if (isset($this->limit)) {
-            $limit = $params->createParam($this->limit, PDO::PARAM_INT, 'limit');
+            $limit = $params->add($this->limit, PDO::PARAM_INT, 'limit');
             $sql = Sql::LIMIT . " {$limit}";
         }
 
@@ -798,7 +798,7 @@ class Select extends Statement
             if (!isset($sql)) {
                 $sql = Sql::LIMIT . " " . PHP_INT_MAX;
             }
-            $offset = $params->createParam($this->offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->add($this->offset, PDO::PARAM_INT, 'offset');
             $sql .= " " . Sql::OFFSET . " {$offset}";
         }
 

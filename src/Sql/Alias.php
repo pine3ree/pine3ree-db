@@ -52,10 +52,9 @@ class Alias extends Element
     /**
      * Return a properly quoted alias
      *
-     * @param DriverInterface $driver
-     * @return string
+     * {@inheritDoc}
      */
-    public function getSQL(DriverInterface $driver = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
         return $this->sql = ($driver ?? Driver::ansi())->quoteAlias($this->alias);
     }

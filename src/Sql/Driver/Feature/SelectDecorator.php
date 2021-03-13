@@ -23,5 +23,5 @@ interface SelectDecorator
      * @param Select $select
      * @return Select
      */
-    public function decorateSelect(Select $select, Params $params = null): Select;
+    public function decorateSelect(Select $select, Params $params): Select;
 }

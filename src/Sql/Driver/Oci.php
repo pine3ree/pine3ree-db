@@ -34,10 +34,10 @@ use function strtoupper;
  * Oci sql-driver
  */
 class Oci extends Driver implements
-    LimitSqlProvider,
     SelectColumnsSqlProvider,
+//    SelectSqlDecorator,
     SelectDecorator,
-    SelectSqlDecorator
+    LimitSqlProvider
 {
     /**
      * @const string Quoted table alias for LIMIT+OFFSET statements
@@ -207,7 +207,7 @@ class Oci extends Driver implements
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
             $select_sql = $this->generateSelectSQL($select, $params);
-            $limit = $params->createParam($limit, PDO::PARAM_INT, 'limit');
+            $limit = $params->add($limit, PDO::PARAM_INT, 'limit');
 
             return "SELECT * FROM ({$select_sql}) WHERE ROWNUM <= {$limit}";
         }
@@ -221,11 +221,11 @@ class Oci extends Driver implements
                 . " FROM ({$select_sql}) {$qtb}";
 
             if (isset($limit)) {
-                $limit = $params->createParam($limit + $offset, PDO::PARAM_INT, 'limit');
+                $limit = $params->add($limit + $offset, PDO::PARAM_INT, 'limit');
                 $select_sql .= " WHERE ROWNUM <= {$limit}";
             }
 
-            $offset = $params->createParam($offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->add($offset, PDO::PARAM_INT, 'offset');
 
             return "SELECT * FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
         }
@@ -233,7 +233,7 @@ class Oci extends Driver implements
         return $this->generateSelectSQL($select, $params);
     }
 
-    public function decorateSelect(Select $select, Params $params = null): Select
+    public function decorateSelect(Select $select, Params $params): Select
     {
         $limit  = $select->limit;
         $offset = $select->offset;
