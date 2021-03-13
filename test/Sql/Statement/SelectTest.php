@@ -699,6 +699,42 @@ class SelectTest extends TestCase
         self::assertSame($sql, $select2->getSQL());
     }
 
+    public function testThatChangsInInternalElementsClearAllParentsSqlCache()
+    {
+        $select = new Select('*', 'product');
+        $select->where->gt('id', 42);
+
+        $predicate1 = new Sql\Predicate\Comparison('price', '>', 10.0);
+        $predicate2 = new Sql\Predicate\Comparison('vat_rate', '>', 5.0);
+
+        $predicateSet = new Sql\Predicate\Set([
+            $predicate1,
+            $predicate2,
+        ]);
+
+        $select->where->addPredicate($predicateSet);
+
+        $sql = $select->getSQL();
+
+        self::assertNotNull($this->getPropertyValue($select, 'sql'));
+        self::assertNotNull($this->getPropertyValue($select->where, 'sql'));
+        self::assertNotNull($this->getPropertyValue($select->where->searchCondition, 'sql'));
+        self::assertNotNull($this->getPropertyValue($predicateSet, 'sql'));
+        self::assertNotNull($this->getPropertyValue($predicate1, 'sql'));
+        self::assertNotNull($this->getPropertyValue($predicate2, 'sql'));
+
+        $predicateSet->and()->gt('id', 24);
+
+        // parents get cleared
+        self::assertNull($this->getPropertyValue($select, 'sql'));
+        self::assertNull($this->getPropertyValue($select->where, 'sql'));
+        self::assertNull($this->getPropertyValue($select->where->searchCondition, 'sql'));
+        self::assertNull($this->getPropertyValue($predicateSet, 'sql'));
+        // siblings do not
+        self::assertNotNull($this->getPropertyValue($predicate1, 'sql'));
+        self::assertNotNull($this->getPropertyValue($predicate2, 'sql'));
+    }
+
     public function testThatCloningAlsoClonesClauses()
     {
         $select0 = new Select('*', 'product', 'p');
