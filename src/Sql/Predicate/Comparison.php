@@ -43,11 +43,6 @@ class Comparison extends Predicate
     protected $value;
 
     /**
-     * @var int custom index counter
-     */
-    protected static $index = 0;
-
-    /**
      * @param string|Alias|Identifier|Literal $identifier
      * @param string $operator
      * @param scalar|Literal|Identifier|Alias|null $value
@@ -103,7 +98,7 @@ class Comparison extends Predicate
             return $this->sql;
         }
 
-        $this->resetParams();
+        $this->params = null; // reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
@@ -136,7 +131,7 @@ class Comparison extends Predicate
         ) {
             $param = $this->value->getSQL($driver);
         } else {
-            $param = $params->add($this->value, null, $this->getParamName($operator));
+            $param = $params->create($this->value, null, $this->getParamName($operator));
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";

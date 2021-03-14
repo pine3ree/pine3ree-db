@@ -76,28 +76,15 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
         return $this->searchCondition->getParams();
     }
 
-    public function getParamsValues(): array
-    {
-        return $this->searchCondition->getParamsValues();
-    }
-
-    public function getParamsTypes(): array
-    {
-        return $this->searchCondition->getParamsTypes();
-    }
-
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql) && empty($params)) {
+        if (isset($this->sql) && $params === null) {
             return $this->sql;
         }
 
         if ($this->searchCondition->isEmpty()) {
             return $this->sql = '';
         }
-
-        // No need to reset the parameters here, this is forwarded to the composed
-        // predicate-set
 
         $predicates_sql = $this->searchCondition->getSQL($driver ?? Driver::ansi(), $params);
         // @codeCoverageIgnoreStart
@@ -111,8 +98,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
             $predicates_sql = "({$predicates_sql})";
         }
 
-        $this->sql = "{$this->getName()} {$predicates_sql}";
-        return $this->sql;
+        return $this->sql = "{$this->getName()} {$predicates_sql}";
     }
 
     /**

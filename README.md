@@ -1,8 +1,7 @@
 # P3\Db
 
-A tiny PDO database abstraction layer - WIP
+A tiny PDO database abstraction layer - WIP (ver. 2.x)
 
 ## TODO
 
 - Separate tests into unit-testing and integration tests. Add integration tests
-- Move to SQL-building methods using a params-collector instance (ver.2.x)

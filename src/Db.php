@@ -342,13 +342,15 @@ class Db
      * @param string $table
      * @param string $column
      * @param mixed $value
+     * @param string|array $order
      * @return array|null
      */
-    public function fetchOneBy(string $table, string $column, $value): ?array
+    public function fetchOneBy(string $table, string $column, $value, $order = null): ?array
     {
         return $this->fetchOne(
             $table,
-            new Predicate\Comparison($column, '=', $value)
+            new Predicate\Comparison($column, '=', $value),
+            $order
         );
     }
 
@@ -498,24 +500,26 @@ class Db
      * prepared/binded PDOStatement
      *
      * @param SqlStatement $sqlStatement
-     * @param bool $bindValues Bind statement parameters values (via PDOStatement::bindValue())?
+     * @param bool $bind_values Bind the statement parameters values (via PDOStatement::bindValue())?
      * @return PDOStatement|false
      */
-    public function prepare(SqlStatement $sqlStatement, bool $bindValues = false)
+    public function prepare(SqlStatement $sqlStatement, bool $bind_values = false)
     {
-        $stmt = $this->pdo()->prepare($sqlStatement->getSQL(
+        $stmt = $this->pdo()->prepare($sql = $sqlStatement->getSQL(
             $this->driver ?? $this->getDriver(true)
         ));
 
-        if ($bindValues && $stmt instanceof PDOStatement) {
+        if ($bind_values && $stmt instanceof PDOStatement) {
             $params = $sqlStatement->getParams();
-            $values = $params->getValues();
-            $ptypes = $params->getTypes();
-            foreach ($values as $marker => $value) {
+            if (empty($params)) {
+                return $stmt;
+            }
+            $types = $params->getTypes();
+            foreach ($params->getValues() as $index => $value) {
                 $stmt->bindValue(
-                    $marker, // string marker (:name)
+                    $index, // string marker (:name) or 1-indexed position
                     $value,
-                    $ptypes[$marker] ?? $this->getParamType($value)
+                    $types[$index] ?? $this->getParamType($value)
                 );
             }
         }

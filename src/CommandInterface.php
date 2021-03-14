@@ -48,20 +48,4 @@ interface CommandInterface
      * @return Params|null
      */
     public function getParams(): ?Params;
-
-    /**
-     * Return the indexed parameters of the composed SQL statement available after
-     * compiling the sql string
-     *
-     * @return array
-     */
-    public function getParamsValues(): array;
-
-    /**
-     * Return the indexed parameters types of the composed SQL statement, available
-     * after compiling the sql string
-     *
-     * @return array
-     */
-    public function getParamsTypes(): array;
 }

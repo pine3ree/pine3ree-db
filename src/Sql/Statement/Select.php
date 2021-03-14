@@ -39,7 +39,6 @@ use function is_array;
 use function is_numeric;
 use function is_object;
 use function is_string;
-use function max;
 use function preg_quote;
 use function preg_replace;
 use function rtrim;
@@ -790,7 +789,7 @@ class Select extends Statement
         // Default implementation working for MySQL, PostgreSQL and Sqlite
         // PostgreSQL also supports OFFSET without LIMIT
         if (isset($this->limit)) {
-            $limit = $params->add($this->limit, PDO::PARAM_INT, 'limit');
+            $limit = $params->create($this->limit, PDO::PARAM_INT, 'limit');
             $sql = Sql::LIMIT . " {$limit}";
         }
 
@@ -798,7 +797,7 @@ class Select extends Statement
             if (!isset($sql)) {
                 $sql = Sql::LIMIT . " " . PHP_INT_MAX;
             }
-            $offset = $params->add($this->offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->create($this->offset, PDO::PARAM_INT, 'offset');
             $sql .= " " . Sql::OFFSET . " {$offset}";
         }
 
@@ -896,9 +895,11 @@ class Select extends Statement
 
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql) && empty($params)) {
+        if (isset($this->sql) && $params === null) {
             return $this->sql;
         }
+
+        $this->params = null; // reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
@@ -927,8 +928,6 @@ class Select extends Statement
      */
     protected function generateSQL(DriverInterface $driver, Params $params): string
     {
-        $this->resetParams();
-
         $space = isset($this->parent) ? " " : "\n";
 
         $base_sql = $this->getBaseSQL($driver, $params, $space);

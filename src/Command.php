@@ -68,32 +68,16 @@ abstract class Command implements CommandInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @see Sql\Element::getParamsTypes()
-     */
-    public function getParamsValues(): array
-    {
-        return $this->sqlStatement->getParamsValues();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see Sql\Element::getParamsTypes()
-     */
-    public function getParamsTypes(): array
-    {
-        return $this->sqlStatement->getParamsTypes();
-    }
-
-    /**
      * Prepare the sql-statement
      *
-     * @param bool $bindValues
+     * @see Db::prepare()
+     *
+     * @param bool $bind_values
      * @return PDOStatement|false
      */
-    protected function prepare(bool $bindValues = false)
+    protected function prepare(bool $bind_values = false)
     {
-        return $this->db->prepare($this->sqlStatement, $bindValues);
+        return $this->db->prepare($this->sqlStatement, $bind_values);
     }
 
     public function __get(string $name)

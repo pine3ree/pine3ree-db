@@ -35,7 +35,7 @@ use function strtoupper;
  */
 class Oci extends Driver implements
     SelectColumnsSqlProvider,
-//    SelectSqlDecorator,
+    SelectSqlDecorator,
     SelectDecorator,
     LimitSqlProvider
 {
@@ -207,7 +207,7 @@ class Oci extends Driver implements
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
             $select_sql = $this->generateSelectSQL($select, $params);
-            $limit = $params->add($limit, PDO::PARAM_INT, 'limit');
+            $limit = $params->create($limit, PDO::PARAM_INT, 'limit');
 
             return "SELECT * FROM ({$select_sql}) WHERE ROWNUM <= {$limit}";
         }
@@ -221,11 +221,11 @@ class Oci extends Driver implements
                 . " FROM ({$select_sql}) {$qtb}";
 
             if (isset($limit)) {
-                $limit = $params->add($limit + $offset, PDO::PARAM_INT, 'limit');
+                $limit = $params->create($limit + $offset, PDO::PARAM_INT, 'limit');
                 $select_sql .= " WHERE ROWNUM <= {$limit}";
             }
 
-            $offset = $params->add($offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->create($offset, PDO::PARAM_INT, 'offset');
 
             return "SELECT * FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
         }

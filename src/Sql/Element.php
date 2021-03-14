@@ -8,32 +8,28 @@
 namespace P3\Db\Sql;
 
 use P3\Db\Exception\InvalidArgumentException;
+use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql\Alias;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\ElementInterface;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\ElementInterface;
 use P3\Db\Sql\Params;
-use PDO;
 use ReflectionClass;
-use P3\Db\Exception\RuntimeException;
 
 use function get_class;
 use function gettype;
-use function is_bool;
-use function is_int;
-use function is_null;
 use function is_object;
 use function is_scalar;
 use function is_string;
 use function sprintf;
-use function strtolower;
 use function trim;
 
 /**
  * This abstract class represents a generic SQL element and is the ancestor
  * of all the other sql-related classes.
  *
+ * @property-read Params|null $params The parameters collector, if any
  * @property-read ElementInterface|null $parent The parent element, if any
 */
 abstract class Element implements ElementInterface
@@ -56,7 +52,7 @@ abstract class Element implements ElementInterface
     protected $parent;
 
     /**
-     * The cached base-name of this element's class derived using reflection
+     * The cached base-name of this element's class obtained using reflection
      *
      * @var string
      */
@@ -65,33 +61,9 @@ abstract class Element implements ElementInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function getSQL(DriverInterface $driver = null, Params $params = null): string;
-
-    /**
-     * Remove the cached SQL string
-     */
-    protected function clearSQL()
+    public function hasParams(): ?bool
     {
-        $this->sql = null;
-        $this->params = null;
-        if ($this->parent instanceof self) {
-            $this->parent->clearSQL();
-        }
-    }
-
-    public function __clone()
-    {
-        $this->parent = null;
-        $this->sql = null;
-        $this->params = null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function hasParams(): bool
-    {
-        return isset($this->params) ? !$this->params->isEmpty() : false;
+        return isset($this->params) ? !$this->params->isEmpty() : null;
     }
 
     /**
@@ -100,22 +72,6 @@ abstract class Element implements ElementInterface
     public function getParams(): ?Params
     {
         return $this->params;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getParamsValues(): array
-    {
-        return isset($this->params) ? $this->params->getValues() : [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getParamsTypes(): array
-    {
-        return isset($this->params) ? $this->params->getTypes() : [];
     }
 
     /**
@@ -149,15 +105,20 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * Parameters and types must be reset before computing the element's SQL string
+     * Get the class basename
+     *
+     * @return string
      */
-    protected function resetParams()
+    protected function getShortName(): string
     {
-        $this->params = null;
+        return $this->shortName ?? (
+            $this->shortName = (new ReflectionClass($this))->getShortName()
+        );
     }
 
     /**
-     * Create a SQL representation (either actual string or marker) for a given value
+     * Create a SQL representation (either the actual sql-string or a sql-marker)
+     * for a given value
      *
      * @param mixed $value
      * @param int|null $param_type Optional PDO::PARAM_* constant
@@ -168,7 +129,7 @@ abstract class Element implements ElementInterface
     {
         return $value instanceof Literal
             ? $value->getSQL()
-            : $params->add($value, $param_type, $name);
+            : $params->create($value, $param_type, $name);
     }
 
     /**
@@ -273,10 +234,39 @@ abstract class Element implements ElementInterface
         return '' === ($sql = trim($sql));
     }
 
+    /**
+     * Remove the cached SQL string and the collected parameters from this element
+     * and all its parent elements
+     */
+    protected function clearSQL()
+    {
+        $this->sql = null;
+        $this->params = null;
+        if ($this->parent instanceof self) {
+            $this->parent->clearSQL();
+        }
+    }
+
+    /**
+     * - detach the clone from the orginal element's parent
+     * - clear the internal sql cache, if any
+     * - remove any previously collected params
+     */
+    public function __clone()
+    {
+        $this->parent = null;
+        $this->sql = null;
+        $this->params = null;
+    }
+
     public function __get(string $name)
     {
         if ('parent' === $name) {
             return $this->parent;
+        };
+
+        if ('params' === $name) {
+            return $this->params;
         };
 
         throw new RuntimeException(sprintf(

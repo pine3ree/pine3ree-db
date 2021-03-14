@@ -243,6 +243,7 @@ class Set extends Predicate implements IteratorAggregate
             }
         }
 
+        // attache the predicat to this set
         $predicate->parent = $this;
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
@@ -522,7 +523,7 @@ class Set extends Predicate implements IteratorAggregate
             return $this->sql = '';
         }
 
-        //$this->resetParams();
+        $this->params = null; // reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());

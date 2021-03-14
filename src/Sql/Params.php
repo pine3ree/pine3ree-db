@@ -31,12 +31,12 @@ class Params
      *
      * @var int
      */
-    protected $mode;
+    private $mode;
 
     /**
      * @var array<string, mixed> A collection of marker-indexed sql-statement parameters
      */
-    protected $values = [];
+    private $values = [];
 
     /**
      * A collection of marker-indexed types for sql-statement parameters
@@ -44,21 +44,21 @@ class Params
      *
      * @var array<string, int>
      */
-    protected $types = [];
+    private $types = [];
 
     /**
      * The parameter counter
      *
      * @var int
      */
-    protected $count = 0;
+    private $count = 0;
 
     /**
      * An array of named-parameter indexes categorized by hinted names
      *
      * @var array<string, int>
      */
-    protected $index = [];
+    private $index = [];
 
     /**
      * Check if there are any parameters after compiling the sql string
@@ -93,16 +93,18 @@ class Params
     }
 
     /**
-     * Add a parameter to the collection creating a unique SQL-string marker for it
+     * Add a parameter to the collection creating and returning either a unique
+     * SQL-string marker if in named-parameters mode or the common '?' positional
+     * marker.
      *
      * @param mixed $value The parameter value
-     * @param int|null $type The optional pre-determined parameter value type
+     * @param int|null $type The optional pre-determined parameter's value type
      *      chosen among the PDO::PARAM_* constants
      * @param string|null $name An optional seed/hint for the parameter name
      *
      * @return string
      */
-    public function add($value, int $type = null, string $name = null): string
+    public function create($value, int $type = null, string $name = null): string
     {
         if ($this->mode === self::MODE_NAMED) {
             $name = $name ?: 'param';
@@ -111,7 +113,7 @@ class Params
             return $marker;
         }
 
-        $index = $this->count += 1;
+        $index = $this->count += 1; // PDO positional params are 1-indexed
         $this->setParam($index, $value, $type);
         return '?';
     }

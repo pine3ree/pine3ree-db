@@ -104,9 +104,11 @@ class Is extends Predicate
 
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql) && empty($params)) {
+        if (isset($this->sql) && $params === null) {
             return $this->sql;
         }
+
+        $this->params = null; // reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());

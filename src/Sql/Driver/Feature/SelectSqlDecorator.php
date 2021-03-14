@@ -19,12 +19,12 @@ interface SelectSqlDecorator
      * Generate and decorate a select SQL when needed, for instance when providing
      * support for non-standard SQL features such as limit/offset.
      *
-     * Even if it's not required, as we are using named parameter markers, the
-     * original sql select string is generated internally to maintan the correct
-     * ordering of imported parameters
+     * The original sql select string MUST be generated internally to maintan
+     * the correct parameters ordering
      *
-     * @param Select $select
-     * @return string
+     * @param Select $select The SQL select statement object
+     * @param Params $params The parameters collector
+     * @return string The decorated SQL-string
      */
     public function decorateSelectSQL(Select $select, Params $params): string;
 }

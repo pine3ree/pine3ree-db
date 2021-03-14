@@ -43,13 +43,13 @@ class PgSql extends Driver implements LimitSqlProvider
 
         $sqls = [];
         if (isset($limit)) {
-            $limit = $params->add($limit, PDO::PARAM_INT, 'limit');
+            $limit = $params->create($limit, PDO::PARAM_INT, 'limit');
             $sqls[] = Sql::LIMIT . " {$limit}";
         }
 
         $offset = (int)$offset;
         if ($offset > 0) {
-            $offset = $params->add($offset, PDO::PARAM_INT, 'offset');
+            $offset = $params->create($offset, PDO::PARAM_INT, 'offset');
             $sqls[] = Sql::OFFSET . " {$offset}";
         }
 

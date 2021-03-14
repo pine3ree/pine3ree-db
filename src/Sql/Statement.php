@@ -21,11 +21,6 @@ abstract class Statement extends Element
      */
     protected $sqls = [];
 
-    /**
-     * @var int custom index counter
-     */
-    protected static $index = 0;
-
     protected static function assertValidValue($value, string $type = '')
     {
         parent::assertValidValue($value, "{$type}statement ");
