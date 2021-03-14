@@ -82,9 +82,9 @@ class Params
     }
 
     /**
-     * Return the parameters values types indexed by their sql markers
+     * Return the parameters values types indexed by their sql markers or the 1-indexed
+     * position depending on this element's collecting mode
      *
-     * @param bool $returnPdoConstNames Return pdo constants names instead of their values
      * @return array<string, int>
      */
     public function getTypes(): array

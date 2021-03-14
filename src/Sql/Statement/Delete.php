@@ -70,7 +70,7 @@ class Delete extends Statement
 
         $table = $driver->quoteIdentifier($this->table);
 
-        $where_sql = $this->getWhereSQL($driver);
+        $where_sql = $this->getWhereSQL($driver, $params);
         if (self::isEmptySQL($where_sql)) {
             throw new RuntimeException(
                 "DELETE queries without conditions are not allowed!"

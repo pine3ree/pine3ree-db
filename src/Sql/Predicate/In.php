@@ -102,7 +102,7 @@ class In extends Predicate
         $operator = static::$not ? Sql::NOT_IN : Sql::IN;
 
         if ($this->valueList instanceof Select) {
-            $select_sql = $this->valueList->getSQL($params, $driver);
+            $select_sql = $this->valueList->getSQL($driver, $params);
             return $this->sql = "{$identifier} {$operator} ({$select_sql})";
         }
 

@@ -352,17 +352,17 @@ class Insert extends Statement
         // INSERT...VALUES
         $sqls = [];
         foreach ($this->values as $values) {
-            $sqls[] = $this->getRowValuesSQL($values, $driver);
+            $sqls[] = $this->getRowValuesSQL($values, $driver, $params);
         }
 
         return implode(", ", $sqls);
     }
 
-    private function getRowValuesSQL(array $values, DriverInterface $driver): string
+    private function getRowValuesSQL(array $values, DriverInterface $driver, Params $params): string
     {
         $sqls = [];
         foreach ($values as $value) {
-            $sqls[] = $this->getValueSQL($value, null, 'val');
+            $sqls[] = $this->getValueSQL($params, $value, null, 'val');
         }
 
         return "(" . implode(", ", $sqls) . ")";
