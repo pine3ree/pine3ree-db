@@ -67,7 +67,7 @@ class Params
      */
     public function isEmpty(): bool
     {
-        return empty($this->values);
+        return $this->count === 0;
     }
 
     /**
@@ -106,6 +106,8 @@ class Params
      */
     public function create($value, int $type = null, string $name = null): string
     {
+        $this->count += 1;
+
         if ($this->mode === self::MODE_NAMED) {
             $name = $name ?: 'param';
             $marker = ":{$name}{$this->getNextIndex($name)}";
@@ -113,8 +115,8 @@ class Params
             return $marker;
         }
 
-        $index = $this->count += 1; // PDO positional params are 1-indexed
-        $this->setParam($index, $value, $type);
+        // PDO positional parameters are 1-indexed so we use the parameter counter
+        $this->setParam($this->count, $value, $type);
         return '?';
     }
 
