@@ -226,7 +226,9 @@ class Select extends Statement
     {
         if (is_string($column) && '' !== $column = trim($column)) {
             return;
-        } elseif ($column instanceof Literal
+        }
+
+        if ($column instanceof Literal
             || $column instanceof Expression
             || $column instanceof self
         ) {
