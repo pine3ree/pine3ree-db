@@ -66,7 +66,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
         return $this->searchCondition->getIterator();
     }
 
-    public function hasParams(): ?bool
+    public function hasParams(): bool
     {
         return $this->searchCondition->hasParams();
     }
