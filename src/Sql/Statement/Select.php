@@ -278,7 +278,7 @@ class Select extends Statement
         }
 
         // we can only cache when there are no parameters to import, start with
-        // true and set it ti false when meeting parametric column
+        // true and set it to false when meeting parametric column
         $cache = true;
 
         // overridden by driver?
