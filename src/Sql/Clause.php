@@ -8,7 +8,6 @@
 namespace P3\Db\Sql;
 
 use P3\Db\Sql\Element;
-use P3\Db\Exception\RuntimeException;
 
 use function preg_replace;
 use function strtoupper;
