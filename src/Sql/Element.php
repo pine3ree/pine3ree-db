@@ -54,9 +54,9 @@ abstract class Element implements ElementInterface
     /**
      * {@inheritDoc}
      */
-    public function hasParams(): ?bool
+    public function hasParams(): bool
     {
-        return isset($this->params) ? !$this->params->isEmpty() : null;
+        return isset($this->params) && !$this->params->isEmpty();
     }
 
     /**
@@ -106,6 +106,7 @@ abstract class Element implements ElementInterface
     protected function getShortName(): string
     {
         static $shortName = null;
+
         return $shortName ?? (
             $shortName = (new ReflectionClass($this))->getShortName()
         );

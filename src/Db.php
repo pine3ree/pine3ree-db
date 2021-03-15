@@ -509,15 +509,15 @@ class Db
             $this->driver ?? $this->getDriver(true)
         ));
 
-        if ($bind_values && $stmt instanceof PDOStatement) {
+        if ($bind_values
+            && $stmt instanceof PDOStatement
+            && $sqlStatement->hasParams()
+        ) {
             $params = $sqlStatement->getParams();
-            if (empty($params)) {
-                return $stmt;
-            }
             $types = $params->getTypes();
             foreach ($params->getValues() as $index => $value) {
                 $stmt->bindValue(
-                    $index, // string marker (:name) or 1-indexed position
+                    $index, // unique string marker (:name) or 1-indexed position
                     $value,
                     $types[$index] ?? $this->getParamType($value)
                 );

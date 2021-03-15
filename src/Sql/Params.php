@@ -18,14 +18,6 @@ use function is_null;
  */
 class Params
 {
-    public const MODE_NAMED = 1;
-    public const MODE_POSITIONAL = 2;
-
-    public function __construct(int $mode = self::MODE_NAMED)
-    {
-        $this->mode = $mode === self::MODE_POSITIONAL ? $mode : self::MODE_NAMED;
-    }
-
     /**
      * The parameters indexing mode, either named (default) or positional
      *
@@ -59,6 +51,14 @@ class Params
      * @var array<string, int>
      */
     private $index = [];
+
+    public const MODE_NAMED = 1;
+    public const MODE_POSITIONAL = 2;
+
+    public function __construct(int $mode = self::MODE_NAMED)
+    {
+        $this->mode = $mode === self::MODE_POSITIONAL ? $mode : self::MODE_NAMED;
+    }
 
     /**
      * Check if there are any parameters after compiling the sql string

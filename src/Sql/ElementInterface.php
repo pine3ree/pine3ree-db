@@ -45,11 +45,12 @@ interface ElementInterface
     /**
      * Check if there is any parameter, after the SQL string has been compiled
      *
-     * This method returns null if getSQL() has not been called or if this is not
-     * a top level element or if a parameter collector instance was provided in
-     * the getSQL() call
+     * This method returns false if getSQL() has not been called or if this is not
+     * a top level element or if an external parameter collector instance was
+     * provided in the getSQL() call or finally if the internal parameter collector
+     * is actually empty
      */
-    public function hasParams(): ?bool;
+    public function hasParams(): bool;
 
     /**
      * Return the parameters collector created for this element after compiling
