@@ -74,7 +74,7 @@ class Params
      * Return the parameters values created after compiling the sql string, indexed
      * by their sql markers
      *
-     * @return array<string, mixed>
+     * @return array<string|int, mixed>
      */
     public function getValues(): array
     {
@@ -85,7 +85,7 @@ class Params
      * Return the parameters values types indexed by their sql markers or the 1-indexed
      * position depending on this element's collecting mode
      *
-     * @return array<string, int>
+     * @return array<string|int, int>
      */
     public function getTypes(): array
     {

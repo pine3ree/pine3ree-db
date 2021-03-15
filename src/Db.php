@@ -505,7 +505,7 @@ class Db
      */
     public function prepare(SqlStatement $sqlStatement, bool $bind_values = false)
     {
-        $stmt = $this->pdo()->prepare($sql = $sqlStatement->getSQL(
+        $stmt = $this->pdo()->prepare($sqlStatement->getSQL(
             $this->driver ?? $this->getDriver(true)
         ));
 
