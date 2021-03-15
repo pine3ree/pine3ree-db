@@ -292,7 +292,7 @@ class Db
 
     private function createDriverFromName(string $driver_name, PDO $pdo = null): Driver
     {
-        $driver_fqcn = self::DRIVER_CLASS[$driver_name] ?? null;
+        $driver_fqcn = Driver::SUPPORTED[$driver_name] ?? null;
         if (empty($driver_fqcn) || !is_subclass_of($driver_fqcn, Driver::class, true)) {
             return Driver::ansi();
         }
