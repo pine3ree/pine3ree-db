@@ -80,18 +80,7 @@ class Db
     private $pdoIsInitialized = false;
 
     /**
-     * @const array<string, string> An pdo-driver-name to sql-driver-class map
-     */
-    private const DRIVER_CLASS = [
-        'mysql'  => Driver\MySql::class,
-        'sqlite' => Driver\Sqlite::class,
-        'pgsql'  => Driver\PgSql::class,
-        'oci'    => Driver\Oci::class,
-        'sqlsrv' => Driver\SqlSrv::class,
-    ];
-
-    /**
-     * @param string|PDO $dsnOrPdo
+     * @param string|PDO $dsnOrPdo A valid pdo dsn string or an existing pdo connection instance
      * @param string $username
      * @param string $password
      * @param array $options
@@ -143,15 +132,6 @@ class Db
                 $this->options[PDO::ATTR_CASE] = PDO::CASE_LOWER;
                 break;
         }
-    }
-
-    /**
-     * @param string $driver The PDO driver name ('mysql', 'sqlite', ...)
-     * @return bool
-     */
-    public static function supportsDriver(string $driver): bool
-    {
-        return !empty(self::DRIVER_CLASS[$driver]);
     }
 
     public function isConnected(): bool

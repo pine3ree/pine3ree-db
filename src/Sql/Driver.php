@@ -91,6 +91,19 @@ abstract class Driver implements DriverInterface
     protected static $rm = [];
 
     /**
+     *  A map of supported pdo-driver-name to sql-driver-class
+     *
+     * @const array<string, string>
+     */
+    public const SUPPORTED = [
+        'mysql'  => Driver\MySql::class,
+        'sqlite' => Driver\Sqlite::class,
+        'pgsql'  => Driver\PgSql::class,
+        'oci'    => Driver\Oci::class,
+        'sqlsrv' => Driver\SqlSrv::class,
+    ];
+
+    /**
      * @param PDO|null $pdo the database connection, if any
      * @param string $ql left-quote char
      * @param string $qr right-quote char
@@ -123,6 +136,15 @@ abstract class Driver implements DriverInterface
                 "invalid {$type}-quoting char `{$qc}` provided!"
             );
         }
+    }
+
+    /**
+     * @param string $driver The PDO driver name ('mysql', 'sqlite', ...)
+     * @return bool
+     */
+    public static function isSupported(string $driver): bool
+    {
+        return !empty(self::SUPPORTED[$driver]);
     }
 
     public function getName(): string

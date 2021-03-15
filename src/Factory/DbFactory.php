@@ -9,6 +9,7 @@ namespace P3\Db\Factory;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Db;
+use P3\Db\Sql\Driver;
 use Psr\Container\ContainerInterface;
 use P3\Db\Exception\RuntimeException;
 
@@ -70,7 +71,7 @@ class DbFactory
                 "Missing PDO `dsn` or `driver` name!"
             );
         }
-        if (!Db::supportsDriver($driver)) {
+        if (!Driver::isSupported($driver)) {
             throw new InvalidArgumentException(
                 "Unsupported or invalid PDO driver type `{$driver}`!"
             );
