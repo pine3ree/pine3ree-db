@@ -17,7 +17,7 @@ use P3\Db\Sql\Element;
 abstract class Statement extends Element
 {
     /**
-     * @var string[] Cached parts of the final sql statement
+     * @var string[] Cached parameter-less parts of the final sql statement
      */
     protected $sqls = [];
 
@@ -32,17 +32,11 @@ abstract class Statement extends Element
      */
     protected function clearPartialSQL(string $part = null)
     {
-        parent::clearSQL();
+        $this->clearSQL();
         if (isset($part)) {
             unset($this->sqls[$part]);
         } else {
             $this->sqls = [];
         }
-    }
-
-    public function __clone()
-    {
-        parent::__clone();
-        $this->sqls = [];
     }
 }
