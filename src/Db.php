@@ -17,7 +17,6 @@ use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Literal;
-use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement as SqlStatement;
 use P3\Db\Sql\Statement\Select as SqlSelect;
