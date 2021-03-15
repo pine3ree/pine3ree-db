@@ -26,32 +26,30 @@ abstract class Clause extends Element
     protected static $name;
 
     /**
-     * @var string WHERE|HAVING|ON|JOIN Resolved name(+modifiers) cached value
-     */
-    protected $__name;
-
-    /**
      * Return the SQL name for the clause (uppercase class-basename) including
      * optional modifiers
      *
+     * @staticvar string $name WHERE|HAVING|ON|JOIN Resolved name(+modifiers) cached value
      * @return string
      */
     protected function getName(): string
     {
+        static $name = null;
+
         // use the statically defined name if set
         if (isset(static::$name)) {
             return static::$name;
         }
 
         // use the cached name value if set
-        if (isset($this->__name)) {
-            return $this->__name;
+        if (isset($name)) {
+            return $name;
         }
 
         $name = preg_replace('/([a-z])([A-Z])/', '$1 $2', $this->getShortName());
-        $this->__name = strtoupper($name);
+        $name = strtoupper($name);
 
-        return $this->__name;
+        return $name;
     }
 
     public function __get(string $name)

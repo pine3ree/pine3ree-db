@@ -52,13 +52,6 @@ abstract class Element implements ElementInterface
     protected $parent;
 
     /**
-     * The cached base-name of this element's class obtained using reflection
-     *
-     * @var string
-     */
-    protected $shortName;
-
-    /**
      * {@inheritDoc}
      */
     public function hasParams(): ?bool
@@ -107,12 +100,14 @@ abstract class Element implements ElementInterface
     /**
      * Get the class basename
      *
+     * @staticvar string $shortName The cached base-name of this element's class obtained using reflection
      * @return string
      */
     protected function getShortName(): string
     {
-        return $this->shortName ?? (
-            $this->shortName = (new ReflectionClass($this))->getShortName()
+        static $shortName = null;
+        return $shortName ?? (
+            $shortName = (new ReflectionClass($this))->getShortName()
         );
     }
 
