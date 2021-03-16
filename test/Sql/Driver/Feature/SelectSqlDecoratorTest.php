@@ -10,6 +10,7 @@ namespace P3\DbTest\Sql\Driver\Feature;
 
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
@@ -30,14 +31,14 @@ class SelectSqlDecoratorTest extends TestCase
     {
         return new class () extends Driver\Ansi implements SelectSqlDecorator
         {
-            public function decorateSelectSQL(Select $select): string
+            public function decorateSelectSQL(Select $select, Params $params): string
             {
-                return "[[" . $this->generateSelectSQL($select) . "]]";
+                return "[[" . $this->generateSelectSQL($select, $params) . "]]";
             }
         };
     }
 
-    public function testThatSelectsSqlIsDecorated()
+    public function testThatSelectSqlIsDecorated()
     {
         $driver = $this->createDriverInstance(10);
         $select = new Select('*', 'product');

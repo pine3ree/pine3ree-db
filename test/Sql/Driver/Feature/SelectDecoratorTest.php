@@ -10,6 +10,7 @@ namespace P3\DbTest\Sql\Driver\Feature;
 
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\SelectDecorator;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +39,7 @@ class SelectDecoratorTest extends TestCase
                 $this->limit = $limit;
             }
 
-            public function decorateSelect(Select $select): Select
+            public function decorateSelect(Select $select, Params $params): Select
             {
                 return $select->limit($this->limit);
             }
