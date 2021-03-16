@@ -207,6 +207,6 @@ class DriverTest extends TestCase
         self::assertSame('driver', $driver->name);
 
         $this->expectException(RuntimeException::class);
-        $driver->nonexistentProperty;
+        $driver->nonExistentProperty;
     }
 }
