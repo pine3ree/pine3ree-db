@@ -9,6 +9,7 @@
 namespace P3\DbTest\Sql\Driver;
 
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Exception\RuntimeException;
@@ -68,30 +69,32 @@ class SqlSrvTest extends TestCase
     public function testGetLimitSQL()
     {
         $select = new Select();
-        self::assertSame('', $this->driver->getLimitSQL($select));
+        $params = new Params();
+
+        self::assertSame('', $this->driver->getLimitSQL($select, $params));
 
         $select = new Select();
         $select->from('product')->orderBy('price');
         $select->limit(10);
         self::assertStringMatchesFormat(
-            "OFFSET 0 ROWS FETCH FIRST :fetch%x ROWS ONLY",
-            $this->driver->getLimitSQL($select)
+            "OFFSET 0 ROWS%wFETCH FIRST :fetch%d ROWS ONLY",
+            $this->driver->getLimitSQL($select, $params)
         );
 
         $select = new Select();
         $select->from('product')->orderBy('price');
         $select->limit(10)->offset(100);
         self::assertStringMatchesFormat(
-            "OFFSET :offset%x ROWS FETCH NEXT :fetch%x ROWS ONLY",
-            $this->driver->getLimitSQL($select)
+            "OFFSET :offset%d ROWS%wFETCH NEXT :fetch%d ROWS ONLY",
+            $this->driver->getLimitSQL($select, $params)
         );
 
         $select = new Select();
         $select->orderBy('price');
         $select->offset(100);
         self::assertStringMatchesFormat(
-            "OFFSET :offset%x ROWS",
-            $this->driver->getLimitSQL($select)
+            "OFFSET :offset%d ROWS",
+            $this->driver->getLimitSQL($select, $params)
         );
     }
 
