@@ -68,6 +68,7 @@ class DbFactoryTest extends TestCase
     {
         $this->container = $this->prophesize(ContainerInterface::class);
         $this->container->has('config')->willReturn(true);
+        $this->container = $this->container->reveal();
 
         $this->factory = new DbFactory();
     }
@@ -80,7 +81,9 @@ class DbFactoryTest extends TestCase
 
     public function testFactoryWithDsnProvidedInConfig()
     {
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'pdo' => [
@@ -91,20 +94,21 @@ class DbFactoryTest extends TestCase
                 ]
             );
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
 
         self::assertInstanceOf(Db::class, $db);
     }
 
     public function testFactoryWithFullDbConfig()
     {
-        $this->container
+        $container = clone $this->container;
+        $container->getProphecy()
             ->get('config')
             ->willReturn([
                 'db' => self::DB_CONFIG,
             ]);
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
         self::assertInstanceOf(Db::class, $db);
     }
 
@@ -113,14 +117,16 @@ class DbFactoryTest extends TestCase
         $dbConfig = self::DB_CONFIG;
         unset($dbConfig['driver']);
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                 ]
             );
 
         $this->expectException(InvalidArgumentException::class);
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
     }
 
     public function testThatMissingDriverConfigKeyRaisesException()
@@ -128,7 +134,9 @@ class DbFactoryTest extends TestCase
         $dbConfig = self::DB_CONFIG;
         unset($dbConfig['driver']);
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => $dbConfig,
@@ -136,7 +144,7 @@ class DbFactoryTest extends TestCase
             );
 
         $this->expectException(InvalidArgumentException::class);
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
     }
 
     public function testThatUnsupportedDriverConfigKeyRaisesException()
@@ -144,7 +152,9 @@ class DbFactoryTest extends TestCase
         $dbConfig = self::DB_CONFIG;
         $dbConfig['driver'] = 'myfancydbdriver';
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => $dbConfig,
@@ -152,7 +162,7 @@ class DbFactoryTest extends TestCase
             );
 
         $this->expectException(InvalidArgumentException::class);
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
     }
 
     public function testThatMissingDatabaseConfigKeyRaisesException()
@@ -160,7 +170,9 @@ class DbFactoryTest extends TestCase
         $dbConfig = self::DB_CONFIG;
         unset($dbConfig['database'], $dbConfig['dbname']);
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => $dbConfig,
@@ -168,7 +180,7 @@ class DbFactoryTest extends TestCase
             );
 
         $this->expectException(InvalidArgumentException::class);
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
     }
 
     public function testWithMysqlDriverAndUnixSocketConfigKey()
@@ -176,14 +188,16 @@ class DbFactoryTest extends TestCase
         $dbConfig = self::DB_CONFIG;
         $dbConfig['unix_socket'] = '/var/run/mysql.sock';
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => $dbConfig,
                 ]
             );
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
         self::assertInstanceOf(Db::class, $db);
     }
 
@@ -192,14 +206,16 @@ class DbFactoryTest extends TestCase
         $dbConfig = self::DB_CONFIG;
         $dbConfig['driver'] = 'pgsql';
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => $dbConfig,
                 ]
             );
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
         self::assertInstanceOf(Db::class, $db);
     }
 
@@ -209,14 +225,16 @@ class DbFactoryTest extends TestCase
         $dbConfig['driver'] = 'sqlite';
         $dbConfig['dbname'] = ':memory:';
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => $dbConfig,
                 ]
             );
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
         self::assertInstanceOf(Db::class, $db);
     }
 
@@ -225,40 +243,46 @@ class DbFactoryTest extends TestCase
         $dbConfig = self::DB_CONFIG;
         $dbConfig['driver'] = 'oci';
 
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => $dbConfig,
                 ]
             );
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
         self::assertInstanceOf(Db::class, $db);
     }
 
     public function testWithSqlsrvDriverConfigKey()
     {
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'db' => self::SQLSRV_CONFIG,
                 ]
             );
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($this->container);
         self::assertInstanceOf(Db::class, $db);
     }
 
     public function testWithPdoConfigKey()
     {
-        $this->container->get('config')
+        $container = clone $this->container;
+        $container->getProphecy()
+            ->get('config')
             ->willReturn(
                 [
                     'pdo' => self::PDO_CONFIG,
                 ]
             );
 
-        $db = ($this->factory)($this->container->reveal());
+        $db = ($this->factory)($container);
         self::assertInstanceOf(Db::class, $db);
     }
 }

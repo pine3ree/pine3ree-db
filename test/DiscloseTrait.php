@@ -8,7 +8,7 @@
 
 namespace P3\DbTest;
 
-use P3\Db\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use ReflectionClassConstant;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -31,6 +31,31 @@ trait DiscloseTrait
      * @throws InvalidArgumentException
      */
     protected function invokeMethod($objectOrClass, string $methodName, ...$args)
+    {
+        self::assertValidObjectOrClass($objectOrClass);
+
+        $class = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
+
+        $method = new ReflectionMethod($class, $methodName);
+        $method->setAccessible(true);
+
+        if ($method->isStatic()) {
+            $object = null;
+        } else {
+            self::assertValidObject($object = $objectOrClass);
+        }
+
+        return $method->invokeArgs($object, $args);
+    }
+
+    /**
+     * @param object|string $objectOrClass
+     * @param string $methodName
+     * @param array $args
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    protected function invokeMethodArgs($objectOrClass, string $methodName, array $args = [])
     {
         self::assertValidObjectOrClass($objectOrClass);
 

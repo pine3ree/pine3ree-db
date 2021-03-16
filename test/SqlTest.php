@@ -9,14 +9,15 @@
 namespace P3\DbTest;
 
 use P3\Db\Exception\InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use P3\Db\Sql;
 use P3\Db\Sql\Expression;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Delete;
 use P3\Db\Sql\Statement\Insert;
 use P3\Db\Sql\Statement\Select;
 use P3\Db\Sql\Statement\Update;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SqlTest
@@ -146,14 +147,16 @@ class SqlTest extends TestCase
 
     public function testCreateExpression()
     {
-        $expression = Sql::expression("SUM(price) >= {minPrice}", [
+        $expr1 = Sql::expression("SUM(price) >= {minPrice}", [
             'minPrice' => 123.45,
         ]);
-        self::assertStringStartsWith('SUM(price) >= :expr', $expression->getSQL());
+        self::assertSame('SUM(price) >= :expr1', $expr1->getSQL());
+        self::assertSame('SUM(price) >= ?', $expr1->getSQL(null, new Params(Params::MODE_POSITIONAL)));
 
-        $expr = Sql::expr("SUM(price) <= {maxPrice}", [
+        $expr2 = Sql::expr("SUM(price) <= {maxPrice}", [
             'maxPrice' => 543.21,
         ]);
-        self::assertStringStartsWith('SUM(price) <= :expr', $expr->getSQL());
+        self::assertSame('SUM(price) <= :expr1', $expr2->getSQL());
+        self::assertSame('SUM(price) <= ?', $expr2->getSQL(null, new Params(Params::MODE_POSITIONAL)));
     }
 }

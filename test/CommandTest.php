@@ -9,125 +9,135 @@
 namespace P3\DbTest;
 
 //use PDO;
+
+
 use P3\Db\Command;
 use P3\Db\Db;
 use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement;
+use P3\DbTest\DiscloseTrait;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
 
 class CommandTest extends TestCase
 {
+    use DiscloseTrait;
+
     /** @var Command */
     private $command;
 
     /** @var Db */
     private $db;
 
-    /** @var Driver\Mysql */
+    /** @var DriverInterface */
     private $driver;
 
-    /** @var Statement\Select */
+    /** @var Statement */
     private $sqlStatement;
-
-    /** @var PDO */
-    private $pdo;
 
     public function setUp(): void
     {
-        $this->pdo = $this->prophesize(PDO::class);
-        $this->db = $this->prophesize(Db::class);
+        $this->driver = $this->prophesize(DriverInterface::class);
+        $this->driver = $this->driver->reveal();
 
-        $this->sqlStatement = $this->getMockForAbstractClass(
-            Statement::class,
-            []
-        );
+        $this->sqlStatement = $this->prophesize(Statement::class);
         $this->sqlStatement
-            ->method('getSQL')
-            ->will($this->returnValue(
-                "SELECT * FROM user WHERE id = :eq1"
-            ));
+            ->getSQL($this->driver)
+            ->willReturn("SELECT * FROM user WHERE id = 42");
+        $this->sqlStatement
+            ->getParams()
+            ->willReturn($this->prophesize(Params::class)->reveal());
 
-        $this->driver = $this->prophesize(Driver\MySql::class);
+        $this->sqlStatement = $this->sqlStatement->reveal();
 
+        $pdoStatement = $this->prophesize(PDOStatement::class)->reveal();
+
+        $this->db = $this->prophesize(Db::class);
         $this->db
             ->getDriver(true)
-            ->willReturn(new Driver\MySql($this->pdo->reveal()));
-
+            ->willReturn($this->driver);
         $this->db
             ->prepare($this->sqlStatement, true)
-            ->willReturn($this->prophesize(PDOStatement::class)->reveal());
+            ->willReturn($pdoStatement);
+        $this->db
+            ->prepare($this->sqlStatement, false)
+            ->willReturn($pdoStatement);
+
+        $this->db = $this->db->reveal();
 
         $this->command = $this->getMockForAbstractClass(
             Command::class,
-            [$this->db->reveal(), $this->sqlStatement]
+            [$this->db, $this->sqlStatement]
         );
-
-        $pdoStatement = $this->prophesize(PDOStatement::class);
-
-        $this->command
-            ->method('execute')
-            ->will($this->returnValue($pdoStatement->reveal()));
     }
 
     public function tearDown()
     {
-        $this->command = null;
-        $this->sqlStatement = null;
-        $this->db = null;
-        $this->pdo = null;
-        $this->driver = null;
     }
 
-    public function testGetSqlStatement()
+    public function testGetSqlStatementReturnsThePassedInStatement()
     {
-        $command = clone $this->command;
-        $sqlStatement = $command->sqlStatement;
-        self::assertSame($sqlStatement, $command->getSqlStatement());
+        self::assertSame($this->sqlStatement, $this->command->getSqlStatement());
     }
 
     public function testGetSqlIsForwardedToSqlStatement()
     {
-        $command = clone $this->command;
-        $sqlStatement = $command->sqlStatement;
-        self::assertSame($sqlStatement->getSQL(), $command->getSQL());
+        $command = $this->command;
+        $sqlStatement = $this->sqlStatement;
+
+        $sqlStatement->getProphecy()->getSQL($this->driver)->shouldBeCalled();
+        $command_sql = $command->getSQL();
+
+        self::assertSame($sqlStatement->getSQL($this->driver), $command_sql);
+
+        self::assertSame("SELECT * FROM user WHERE id = 42", $command->getSQL());
     }
 
     public function testGetParamsIsForwardedToSqlStatement()
     {
-        $command = clone $this->command;
+        $command = $this->command;
         $sqlStatement = $command->sqlStatement;
         self::assertSame($sqlStatement->getParams(), $command->getParams());
     }
 
-    public function testGetParamsTypesIsForwardedToSqlStatement()
+    public function testPrepare()
     {
-        $command = clone $this->command;
-        $sqlStatement = $command->sqlStatement;
-        self::assertSame($sqlStatement->getParamsTypes(), $command->getParamsTypes());
-    }
+        self::assertInstanceOf(
+            PDOStatement::class,
+            $this->invokeMethod($this->command, 'prepare', true)
+        );
+        self::assertInstanceOf(
+            PDOStatement::class,
+            $this->invokeMethod($this->command, 'prepare', false)
+        );
 
-    public function testExecute()
-    {
-        $command = clone $this->command;
-        self::assertInstanceOf(PDOStatement::class, $command->execute());
+        self::assertSame(
+            $this->db->prepare($this->sqlStatement, true),
+            $this->invokeMethod($this->command, 'prepare', true)
+        );
+        self::assertSame(
+            $this->db->prepare($this->sqlStatement, false),
+            $this->invokeMethod($this->command, 'prepare', false)
+        );
     }
 
     public function testMagicGetter()
     {
-        self::assertTrue(
-            $this->command->sqlStatement === $this->command->__get('sqlStatement')
-        );
+        $command = $this->command;
+        self::assertSame($command->getSqlStatement(), $command->sqlStatement);
 
         $this->expectException(RuntimeException::class);
-        $this->command->nonexistentProp;
+        $command->nonExistentProperty;
     }
 
-    public function testClone()
+    public function testThatCloningAlsoClonesTheCOmposedSqlStatement()
     {
         $command = clone $this->command;
-        self::assertFalse($command->sqlStatement === $this->command->sqlStatement);
+        self::assertEquals($command->sqlStatement, $this->command->sqlStatement);
+        self::assertNotSame($command->sqlStatement, $this->command->sqlStatement);
     }
 }

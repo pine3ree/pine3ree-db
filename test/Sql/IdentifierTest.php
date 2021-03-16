@@ -30,7 +30,7 @@ class IdentifierTest extends TestCase
     public function testIdentifierConstructorWithInvalidIdentifierRaisesException($identifier)
     {
         $this->expectException(InvalidArgumentException::class);
-        $identifierObj = new Identifier($identifier);
+        new Identifier($identifier);
     }
 
     /**
@@ -56,7 +56,7 @@ class IdentifierTest extends TestCase
     public function testInvalidIdentifierRaisesException(string $identifier)
     {
         $this->expectException(InvalidArgumentException::class);
-        $identifierObj = new Identifier($identifier);
+        new Identifier($identifier);
     }
 
     public function provideInvalidIdentifiers(): array

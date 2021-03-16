@@ -13,6 +13,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
+use P3\Db\Sql\Params;
 use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -41,9 +42,7 @@ class ElementTest extends TestCase
             /** @var array */
             private $values_types;
 
-            protected static $index = 0;
-
-            protected const MAX_INDEX = 99;
+            protected $count = 0;
 
             public function __construct(array $values = [])
             {
@@ -52,38 +51,33 @@ class ElementTest extends TestCase
                 }
             }
 
-            public static function getMaxIndex(): int
-            {
-                return static::MAX_INDEX;
-            }
-
             public function addValue($value, int $type = null)
             {
-                $idx = "v:" . count($this->values);
-                $this->values[$idx] = $value;
+                $this->count += 1;
+                $index = "v:{$this->count}";
+                $this->values[$index] = $value;
                 if (isset($type)) {
-                    $this->values_types[$idx] = $type;
+                    $this->values_types[$index] = $type;
                 }
             }
 
-            public function getSQL(DriverInterface $driver = null): string
+            public function getSQL(DriverInterface $driver = null, Params $params = null): string
             {
                 if (isset($this->sql)) {
                     return $this->sql;
                 }
 
                 $driver = $driver ?? Driver::ansi();
+                $params = $params ?? ($this->params = new Params());
 
-                $sqls = [];
-
-                $sqls[] = "ELEMENT";
+                $sqls = ["ELEMENT"];
 
                 if (!empty($this->values)) {
                     $sqls[] = "[";
                     $values_sqls = [];
-                    foreach ($this->values as $idx => $value) {
-                        $type = $this->values_types[$idx] ?? null;
-                        $values_sqls[] = $this->getValueSQL($value, $type, 'param');
+                    foreach ($this->values as $index => $value) {
+                        $type = $this->values_types[$index] ?? null;
+                        $values_sqls[] = $this->getValueSQL($params, $value, $type, 'value');
                     }
                     $sqls[] = implode(", ", $values_sqls);
                     $sqls[] = "]";
@@ -92,18 +86,6 @@ class ElementTest extends TestCase
                 return $this->sql = implode("", $sqls);
             }
         };
-    }
-
-    /**
-     * @dataProvider provideUnsupportedOperators
-     */
-    public function testImportParametersBeforeSqlRaisesException()
-    {
-        $element1 = $this->createInstance();
-        $element2 = $this->createInstance([1, 2]);
-
-        $this->expectException(RuntimeException::class);
-        $this->invokeMethod($element1, 'importParams', $element2);
     }
 
     /**
@@ -129,28 +111,54 @@ class ElementTest extends TestCase
         ];
     }
 
-    public function provideUnsupportedOperators(): array
+    /**
+     * @dataProvider provideValidIdentifiers
+     */
+    public function testAssertValidIdentifierReturnsNullIfValid($identifier)
+    {
+        self::assertNull(
+            $this->invokeMethodArgs(Element::class, 'assertValidIdentifier', [&$identifier, ''])
+        );
+    }
+
+    public function provideValidIdentifiers(): array
     {
         return [
-            ['+'],
-            ['?'],
-            ['1'],
-            ['N-O-T'],
-            ['I-s'],
-            ['*'],
+            ['t0.id'],
+            [new Sql\Identifier('cart.product_id')],
+            [new Sql\Alias('my.Alias')],
+            [new Sql\Literal('unit_price * quantity')],
         ];
     }
 
-    public function testGetNextIndex()
+    /**
+     * @dataProvider provideInvalidIdentifiers
+     */
+    public function testAssertValidIdentifierRaisesExceptionIfNotSupported($identifier)
     {
-        $element = $this->createInstance();
-        $maxIndex = $element->getMaxIndex();
-        for ($i = 0; $i < $maxIndex; $i += 1) {
-            self::assertSame($i + 1, $this->invokeMethod($element, 'getNextIndex'));
-        }
+        $this->expectException(InvalidArgumentException::class);
+        $this->invokeMethodArgs(Element::class, 'assertValidIdentifier', [&$identifier, '']);
+    }
 
-        // test that the index is reset after reaching its max limit
-        self::assertSame(1, $this->invokeMethod($element, 'getNextIndex'));
+    /**
+     * @dataProvider provideInvalidIdentifiers
+     */
+    public function testAssertValidIdentifierRaisesExceptionWithCustomizedMessage($identifier)
+    {
+        $messagePart = is_string($identifier)
+            ? 'A string identifier cannot be empty'
+            : 'A sql-element identifier must be either';
+
+        $this->expectExceptionMessage($messagePart);
+        $this->invokeMethodArgs(Element::class, 'assertValidIdentifier', [&$identifier, 'sql-element ']);
+    }
+
+    public function provideInvalidIdentifiers(): array
+    {
+        $invalid = $this->provideUnsupportedIdentifiers();
+        $invalid[] = [' '];
+
+        return $invalid;
     }
 
     /**
@@ -200,11 +208,16 @@ class ElementTest extends TestCase
         $element = $this->createInstance();
         $parent = $this->createInstance();
 
+        self::assertNull($element->getParent());
+
         $element->setParent($parent);
         self::assertTrue($element->hasParent());
+        self::assertNotNull($element->getParent());
+        self::assertInstanceOf(Sql\ElementInterface::class, $element->getParent());
 
         $clone = clone $element;
         self::assertFalse($clone->hasParent());
+        self::assertNull($clone->getParent());
     }
 
     public function testClearParentSql()
@@ -231,6 +244,8 @@ class ElementTest extends TestCase
         $values = [null, 1, true, 1.23, 'A'];
         $element = $this->createInstance($values);
 
+        self::assertFalse($element->hasParams());
+
         $element->addValue('B', PDO::PARAM_LOB);
         $element->addValue('THHGTTG', 42);
 
@@ -239,14 +254,19 @@ class ElementTest extends TestCase
 
         // trigger parameters building
         $sql = $element->getSQL();
+        self::assertTrue($element->hasParams());
+        $params = $element->getParams();
+
+        self::assertNotNull($params);
+        self::assertInstanceOf(Params::class, $params);
 
         self::assertSame(
             $values,
-            array_values($element->getParams())
+            array_values($params->getValues())
         );
 
-        foreach ($element->getParams() as $key => $param_value) {
-            self::assertStringMatchesFormat(':param%x', $key);
+        foreach (array_keys($params->getValues()) as $index) {
+            self::assertStringMatchesFormat(':value%d', $index);
         }
 
         self::assertSame(
@@ -259,22 +279,26 @@ class ElementTest extends TestCase
                 PDO::PARAM_LOB,
                 42
             ],
-            array_values($element->getParamsTypes())
+            array_values($params->getTypes())
         );
 
-        foreach ($element->getParamsTypes() as $key => $param_type) {
-            self::assertStringMatchesFormat(':param%x', $key);
+        foreach (array_keys($params->getTypes()) as $index) {
+            self::assertStringMatchesFormat(':value%d', $index);
         }
     }
 
-    public function testGetSql()
+    public function testGetSqlWithoutValues()
     {
         $element = $this->createInstance();
 
         self::assertSame('ELEMENT', $element->getSQL());
-        self::assertSame([], $element->getParams());
-        self::assertSame([], $element->getParamsTypes());
+        self::assertEquals(new Params(), $params = $element->getParams());
+        self::assertSame([], $params->getValues());
+        self::assertSame([], $params->getTypes());
+    }
 
+    public function testGetSqlWithValues()
+    {
         $values = [null, 1, true, 1.23, 'A'];
         $element = $this->createInstance($values);
 
@@ -285,8 +309,116 @@ class ElementTest extends TestCase
         $values[] = 'THHGTTG';
 
         self::assertStringMatchesFormat(
-            'ELEMENT[:param%x, :param%x, :param%x, :param%x, :param%x, :param%x, :param%x]',
+            'ELEMENT[:value%d, :value%d, :value%d, :value%d, :value%d, :value%d, :value%d]',
             $sql = $element->getSQL()
         );
+    }
+
+    public function testGetValueSQL()
+    {
+        $element = $this->createInstance();
+        $params = new Params(Params::MODE_POSITIONAL);
+        $literal_str = "TRUE IS NOT FALSE";
+        $literal = new Sql\Literal($literal_str);
+        $value_sql = $this->invokeMethod($element, 'getValueSQL', $params, $literal);
+        self::assertSame($literal_str, $value_sql);
+
+        $element = $this->createInstance();
+        $params = new Params(Params::MODE_POSITIONAL);
+        $value_sql = $this->invokeMethod($element, 'getValueSQL', $params, 123);
+        self::assertSame('?', $value_sql);
+
+        $element = $this->createInstance();
+        $params = new Params(Params::MODE_NAMED);
+        $value_sql = $this->invokeMethod($element, 'getValueSQL', $params, 123);
+        self::assertSame(':param1', $value_sql);
+
+        $element = $this->createInstance();
+        $params = new Params(Params::MODE_NAMED);
+        $value_sql = $this->invokeMethod($element, 'getValueSQL', $params, 123, PDO::PARAM_INT, 'value');
+        self::assertSame(':value1', $value_sql);
+    }
+
+    public function testGetIdentifierSQL()
+    {
+        $element = $this->createInstance();
+
+        $driver = Driver::ansi();
+
+        $column = 'cart.product_id';
+        $identifier_sql = $this->invokeMethod($element, 'getIdentifierSQL', $column, $driver);
+        self::assertSame('"cart"."product_id"', $identifier_sql);
+
+        $identifier = new Sql\Identifier($column);
+        $identifier_sql = $this->invokeMethod($element, 'getIdentifierSQL', $identifier, $driver);
+        self::assertSame('"cart"."product_id"', $identifier_sql);
+
+        $alias_str = 'my.Alias';
+        $alias = new Sql\Alias($alias_str);
+        $identifier_sql = $this->invokeMethod($element, 'getIdentifierSQL', $alias, $driver);
+        self::assertSame('"my.Alias"', $identifier_sql);
+
+        $literal_str = "CONCAT(`name`, ' ' , `surname`)";
+        $literal = new Sql\Literal($literal_str);
+        $identifier_sql = $this->invokeMethod($element, 'getIdentifierSQL', $literal, $driver);
+        self::assertSame($literal_str, $identifier_sql);
+    }
+
+    public function testAssertValidValue()
+    {
+        self::assertNull($this->invokeMethod(Element::class, 'assertValidValue', null));
+        self::assertNull($this->invokeMethod(Element::class, 'assertValidValue', true));
+        self::assertNull($this->invokeMethod(Element::class, 'assertValidValue', false));
+        self::assertNull($this->invokeMethod(Element::class, 'assertValidValue', 123));
+        self::assertNull($this->invokeMethod(Element::class, 'assertValidValue', 1.23));
+        self::assertNull($this->invokeMethod(Element::class, 'assertValidValue', 'ABC'));
+        self::assertNull($this->invokeMethod(Element::class, 'assertValidValue', new Sql\Literal('TRUE')));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->invokeMethod(Element::class, 'assertValidValue', new \stdClass());
+    }
+
+    /**
+     *
+     * @dataProvider provideSqlStrings
+     */
+    public function testIsEmptySQL($sql, $expectedSql, $expectedBool)
+    {
+        self::assertSame($expectedBool, $this->invokeMethodArgs(Element::class, 'isEmptySQL', [&$sql]));
+        self::assertSame(trim($sql), $expectedSql);
+    }
+
+    public function provideSqlStrings(): array
+    {
+        return [
+            ['', '', true],
+            [' ', '', true],
+            [' TRUE ', 'TRUE', false],
+            ["\nenabled  =  1\n", 'enabled  =  1', false],
+        ];
+    }
+
+    public function testMagicGetter()
+    {
+        $element = $this->createInstance();
+
+        self::assertNull($element->parent);
+        self::assertNull($element->params);
+
+        $parent = $this->createInstance();
+        $element->setParent($parent);
+        self::assertNotNull($element->parent);
+        self::assertSame($element->getParent(), $element->parent);
+
+        $element->getSQL();
+        self::assertNotNull($element->params);
+        self::assertSame($element->getParams(), $element->params);
+    }
+
+    public function testMagicGetterRaisesExceptionWIthUnsupportedPropertyName()
+    {
+        $element = $this->createInstance();
+        $this->expectException(RuntimeException::class);
+        $element->nonExistentProperty;
     }
 }

@@ -30,7 +30,7 @@ class AliasTest extends TestCase
     public function testAliasConstructorWithInvalidAliasRaisesException($alias)
     {
         $this->expectException(InvalidArgumentException::class);
-        $aliasObj = new Alias($alias);
+        new Alias($alias);
     }
 
     /**
@@ -56,7 +56,7 @@ class AliasTest extends TestCase
     public function testInvalidAliasRaisesException(string $alias)
     {
         $this->expectException(InvalidArgumentException::class);
-        $aliasObj = new Alias($alias);
+        new Alias($alias);
     }
 
     public function provideInvalidAliases(): array
@@ -77,6 +77,6 @@ class AliasTest extends TestCase
         self::assertSame($aliasArg, $aliasObj->alias);
 
         $this->expectException(RuntimeException::class);
-        $aliasObj->nonexistentProperty;
+        $aliasObj->nonExistentProperty;
     }
 }

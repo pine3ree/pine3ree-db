@@ -46,7 +46,8 @@ class ParamsTest extends TestCase
     {
         $params = new Params(Params::MODE_NAMED);
         $marker = $params->create(123, PDO::PARAM_INT);
-        self::assertStringStartsWith(':param', $marker);
+        $default_name = $this->getConstantValue(Params::class, 'DEFAULT_NAME');
+        self::assertStringStartsWith(":{$default_name}", $marker);
     }
 
     public function testThatPositionalParamsStartsAtNumberOneAndUsesQuestionMark()
@@ -54,11 +55,17 @@ class ParamsTest extends TestCase
         $params = new Params(Params::MODE_POSITIONAL);
         $marker = $params->create(123, PDO::PARAM_INT);
         $marker = $params->create(456, PDO::PARAM_INT);
-        self::assertStringStartsWith('?', $marker);
+
+        self::assertSame('?', $marker);
 
         $values = $params->getValues();
+        $types  = $params->getTypes();
+
+        self::assertArrayNotHasKey(0, $values);
+        self::assertArrayNotHasKey(0, $types);
 
         self::assertSame(1, array_keys($values)[0]);
+        self::assertSame(1, array_keys($types)[0]);
     }
 
     public function testThatCreatingParamsIncrementInternalCounter()
@@ -89,9 +96,9 @@ class ParamsTest extends TestCase
     }
 
     /**
-     * @dataProvider provideValues
+     * @dataProvider provideValuesAndExpectedTypes
      */
-    public function testThatCreatingParamsAddCorectTypesIfNoneProvided($value, $expectedPdoType)
+    public function testThatCreatingParamsAddCorrectTypesIfNoneProvided($value, $expectedPdoType)
     {
         $params = new Params(Params::MODE_POSITIONAL);
         $params->create($value);
@@ -100,7 +107,7 @@ class ParamsTest extends TestCase
         self::assertSame($expectedPdoType, $types[1]);
     }
 
-    public function provideValues(): array
+    public function provideValuesAndExpectedTypes(): array
     {
         return [
             [null, PDO::PARAM_NULL],
@@ -112,6 +119,35 @@ class ParamsTest extends TestCase
             ['ABC', PDO::PARAM_STR],
             [1.23, PDO::PARAM_STR],
             [new stdClass(), PDO::PARAM_STR],
+        ];
+    }
+
+    /**
+     * @dataProvider provideValuesAndTypes
+     */
+    public function testThatCreatingParamsUsesProvidedTypes($value, $providedPdoType)
+    {
+        $params = new Params(Params::MODE_POSITIONAL);
+        $params->create($value, $providedPdoType);
+        $types = $params->getTypes();
+
+        self::assertSame($providedPdoType, $types[1]);
+    }
+
+    public function provideValuesAndTypes(): array
+    {
+        return [
+            [null, PDO::PARAM_NULL],
+            // @see https://bugs.php.net/bug.php?id=38386
+            // @see https://bugs.php.net/bug.php?id=49255
+            [false, PDO::PARAM_INT],
+            [true, PDO::PARAM_INT],
+            [123, PDO::PARAM_INT],
+            ['ABC', PDO::PARAM_STR],
+            [random_bytes(4), PDO::PARAM_LOB],
+            [1.23, PDO::PARAM_STR],
+            [new stdClass(), PDO::PARAM_STR],
+            ['THHGTTG', 42], // invalid but should be used set anyway
         ];
     }
 
