@@ -104,8 +104,8 @@ class DeleteTest extends TestCase
 
         $delete2 = (clone $delete);
         $delete2->where->gt('id', 999);
-        self::assertStringStartsWith(
-            "DELETE FROM `user` WHERE `id` > :gt",
+        self::assertSame(
+            "DELETE FROM `user` WHERE `id` > :gt1",
             $delete2->getSql()
         );
     }

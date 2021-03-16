@@ -10,28 +10,30 @@ namespace P3\DbTest\Command;
 
 use P3\Db\Command\Select;
 use P3\Db\Db;
+use P3\Db\Exception\InvalidArgumentException;
+use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionProperty;
-use P3\Db\Exception\RuntimeException;
 use stdClass;
 
 class SelectTest extends TestCase
 {
-    /** @var Db */
+    /** @var ObjectProphecy|Db */
     private $db;
 
-    /** @var Driver\Mysql */
+    /** @var ObjectProphecy|Driver\Mysql */
     private $driver;
 
-    /** @var PDO */
+    /** @var ObjectProphecy|PDO */
     private $pdo;
 
-    /** @var PDOStatement */
+    /** @var ObjectProphecy|PDOStatement */
     private $pdoStatement;
 
     private const RESULT_ROW_1 = [
@@ -353,7 +355,7 @@ class SelectTest extends TestCase
         $select->from('user');
         $select->where->greaterThan('id', 42);
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wWHERE `id` > :gt%x",
+            "SELECT *%wFROM `user`%wWHERE `id` > :gt%d",
             $select->getSql()
         );
 
@@ -372,7 +374,7 @@ class SelectTest extends TestCase
         $select->from('user');
         $select->having->lessThan(Sql::literal("(id * 10)"), 42);
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wHAVING (id * 10) < :lt%x",
+            "SELECT *%wFROM `user`%wHAVING (id * 10) < :lt%d",
             $select->getSql()
         );
 
@@ -424,7 +426,7 @@ class SelectTest extends TestCase
         $select->from('user')->limit(10);
 
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wLIMIT :limit%x",
+            "SELECT *%wFROM `user`%wLIMIT :limit%d",
             $select->getSql()
         );
     }
@@ -435,7 +437,7 @@ class SelectTest extends TestCase
         $select->from('user')->offset(100);
 
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wLIMIT " . PHP_INT_MAX . " OFFSET :offset%x",
+            "SELECT *%wFROM `user`%wLIMIT " . PHP_INT_MAX . " OFFSET :offset%d",
             $select->getSql()
         );
     }
@@ -647,7 +649,7 @@ class SelectTest extends TestCase
         $select = $this->createSelectCommand($db);
         $select->from('user');
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $actual = is_int($fetchMode)
            ? $select->fetchOne($fetchMode, $fetchClassOrObject)

@@ -105,7 +105,7 @@ class UpdateTest extends TestCase
         $update->table('user')->set(['enabled' => true])->where("id = 42");
 
         self::assertStringMatchesFormat(
-            "UPDATE `user` SET `enabled` = :set%x WHERE id = 42",
+            "UPDATE `user` SET `enabled` = :set%d WHERE id = 42",
             $update->getSql()
         );
     }

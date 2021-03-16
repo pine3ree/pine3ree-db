@@ -107,7 +107,7 @@ class InsertTest extends TestCase
         $insert->into('user')->row(['username' => 'popeye']);
 
         self::assertStringMatchesFormat(
-            "INSERT INTO `user` (`username`) VALUES (:val%x)",
+            "INSERT INTO `user` (`username`) VALUES (:val%d)",
             $insert->getSql()
         );
     }
