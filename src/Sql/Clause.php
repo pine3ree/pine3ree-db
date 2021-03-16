@@ -54,7 +54,7 @@ abstract class Clause extends Element
     public function __get(string $name)
     {
         if ('name' === $name) {
-            return static::$name ?? $this->__name ?? $this->getName();
+            return static::$name ?? $this->getName();
         }
 
         return parent::__get($name);
