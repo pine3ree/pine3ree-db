@@ -55,6 +55,8 @@ class Params
     public const MODE_NAMED = 1;
     public const MODE_POSITIONAL = 2;
 
+    private const DEFAULT_NAME = 'param';
+
     public function __construct(int $mode = self::MODE_NAMED)
     {
         $this->mode = $mode === self::MODE_POSITIONAL ? $mode : self::MODE_NAMED;
@@ -109,7 +111,7 @@ class Params
         $this->count += 1;
 
         if ($this->mode === self::MODE_NAMED) {
-            $name = $name ?: 'param';
+            $name = $name ?: self::DEFAULT_NAME;
             $marker = ":{$name}{$this->getNextIndex($name)}";
             $this->setParam($marker, $value, $type);
             return $marker;
