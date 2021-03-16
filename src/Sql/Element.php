@@ -117,15 +117,15 @@ abstract class Element implements ElementInterface
      * for a given value
      *
      * @param mixed $value
-     * @param int|null $param_type Optional PDO::PARAM_* constant
+     * @param int|null $type Optional PDO::PARAM_* constant
      * @param string|null $name Optional parameter name seed for pdo marker generation
      * @return string
      */
-    protected function getValueSQL(Params $params, $value, int $param_type = null, string $name = null): string
+    protected function getValueSQL(Params $params, $value, int $type = null, string $name = null): string
     {
         return $value instanceof Literal
             ? $value->getSQL()
-            : $params->create($value, $param_type, $name);
+            : $params->create($value, $type, $name);
     }
 
     /**
