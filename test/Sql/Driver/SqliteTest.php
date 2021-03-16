@@ -14,8 +14,6 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Exception\RuntimeException;
 
-use function getenv;
-
 class SqliteTest extends TestCase
 {
     /** @var PDO */
@@ -26,10 +24,6 @@ class SqliteTest extends TestCase
 
     public function setUp(): void
     {
-        if (! getenv('TEST_P3_DB_SQLITE')) {
-            $this->markTestSkipped('pdo-sqlite test is not enabled!');
-        }
-
         $sqlite_dsn = "sqlite::memory:";
 
         $this->pdo = new PDO($sqlite_dsn);
