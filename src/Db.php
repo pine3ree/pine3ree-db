@@ -256,9 +256,9 @@ class Db
     /**
      * Return the SQL driver matching the PDO configuration or instance
      *
-     * @return Driver
+     * @return DriverInterface
      */
-    public function getDriver(bool $withPdo = false): Driver
+    public function getDriver(bool $withPdo = false): DriverInterface
     {
         if (isset($this->driver)) {
             return $this->driver;
