@@ -10,6 +10,8 @@ namespace P3\DbTest\Sql\Clause;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
+use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Params;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Exception\RuntimeException;
@@ -18,14 +20,8 @@ class ClauseTest extends TestCase
 {
     use DiscloseTrait;
 
-    /**
-     * @var Clause
-     */
-    protected $clause;
-
     public function setUp(): void
     {
-        $this->clause = $this->createInstance();
     }
 
     public function tearDown()
@@ -40,7 +36,7 @@ class ClauseTest extends TestCase
                 return "unnamedClause";
             }
 
-            public function getSQL(Sql\DriverInterface $driver = null): string
+            public function getSQL(DriverInterface $driver = null, Params $params = null): string
             {
                 return "[{$this->getName()}]";
             }
@@ -52,7 +48,7 @@ class ClauseTest extends TestCase
         return new class () extends Clause {
             protected static $name = "NAMED CLAUSE";
 
-            public function getSQL(Sql\DriverInterface $driver = null): string
+            public function getSQL(DriverInterface $driver = null, Params $params = null): string
             {
                 return "[{$this->getName()}]";
             }
@@ -63,7 +59,7 @@ class ClauseTest extends TestCase
     {
         $clause = $this->createInstance();
         self::assertSame('UNNAMED CLAUSE', $name = $this->invokeMethod($clause, 'getName'));
-        // cached __name prop
+        // cached $name static var
         self::assertSame($name, $this->invokeMethod($clause, 'getName'));
         self::assertSame("[UNNAMED CLAUSE]", $clause->getSQL());
     }
@@ -83,6 +79,6 @@ class ClauseTest extends TestCase
         self::assertSame('NAMED CLAUSE', $nc->name);
 
         $this->expectException(RuntimeException::class);
-        $uc->nonexistentProperty;
+        $uc->nonExistentProperty;
     }
 }
