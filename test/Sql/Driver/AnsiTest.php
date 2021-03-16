@@ -118,19 +118,21 @@ class AnsiTest extends TestCase
 
     public function testGetLimitSQL()
     {
+        $params = $this->prophesize(Sql\Params::class)->reveal();
+
         $select = new Select('*', 'product');
-        self::assertSame('', $this->driver->getLimitSQL($select));
+        self::assertSame('', $this->driver->getLimitSQL($select, $params));
 
         $select = new Select('*', 'product');
         $select->limit(10);
-        self::assertSame('[LIMIT 10]', $this->driver->getLimitSQL($select));
+        self::assertSame('[LIMIT 10]', $this->driver->getLimitSQL($select, $params));
 
         $select = new Select('*', 'product');
         $select->limit(10)->offset(100);
-        self::assertSame('[LIMIT 10 OFFSET 100]', $this->driver->getLimitSQL($select));
+        self::assertSame('[LIMIT 10 OFFSET 100]', $this->driver->getLimitSQL($select, $params));
 
         $select = new Select('*', 'product');
         $select->offset(100);
-        self::assertSame("[LIMIT " . PHP_INT_MAX .  " OFFSET 100]", $this->driver->getLimitSQL($select));
+        self::assertSame("[LIMIT " . PHP_INT_MAX .  " OFFSET 100]", $this->driver->getLimitSQL($select, $params));
     }
 }
