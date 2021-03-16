@@ -136,18 +136,29 @@ class PgSqlTest extends TestCase
     public function testGetLimitSQL()
     {
         $select = new Select();
-        self::assertSame('', $this->driver->getLimitSQL($select));
+        $params = new Sql\Params();
+
+        self::assertSame('', $this->driver->getLimitSQL($select, $params));
 
         $select = new Select();
         $select->limit(10);
-        self::assertStringMatchesFormat('LIMIT :limit%x', $this->driver->getLimitSQL($select));
+        self::assertStringMatchesFormat(
+            'LIMIT :limit%d',
+            $this->driver->getLimitSQL($select, $params)
+        );
 
         $select = new Select();
         $select->limit(10)->offset(100);
-        self::assertStringMatchesFormat('LIMIT :limit%x OFFSET :offset%x', $this->driver->getLimitSQL($select));
+        self::assertStringMatchesFormat(
+            'LIMIT :limit%d OFFSET :offset%d',
+            $this->driver->getLimitSQL($select, $params)
+        );
 
         $select = new Select();
         $select->offset(100);
-        self::assertStringMatchesFormat("OFFSET :offset%x", $this->driver->getLimitSQL($select));
+        self::assertStringMatchesFormat(
+            'OFFSET :offset%d',
+            $this->driver->getLimitSQL($select, $params)
+        );
     }
 }
