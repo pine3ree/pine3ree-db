@@ -9,47 +9,116 @@
 namespace P3\DbTest;
 
 use P3\Db\Exception\InvalidArgumentException;
+use ReflectionClassConstant;
 use ReflectionMethod;
+use ReflectionProperty;
 
+use function class_exists;
 use function get_class;
 use function is_object;
+use function is_string;
 
 /**
  * Provide method for invoking a private/protected object's method
  */
 trait DiscloseTrait
 {
-    private function invokeMethod($object, string $methodName, ...$args)
+    /**
+     * @param object|string $objectOrClass
+     * @param string $methodName
+     * @param array $args
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    protected function invokeMethod($objectOrClass, string $methodName, ...$args)
     {
-        if (!is_object($object)) {
-            throw new InvalidArgumentException(
-                'The object argument must be a php object!'
-            );
-        }
-        $method = new ReflectionMethod(get_class($object), $methodName);
+        self::assertValidObjectOrClass($objectOrClass);
+
+        $class = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
+
+        $method = new ReflectionMethod($class, $methodName);
         $method->setAccessible(true);
+
+        if ($method->isStatic()) {
+            $object = null;
+        } else {
+            self::assertValidObject($object = $objectOrClass);
+        }
 
         return $method->invokeArgs($object, $args);
     }
 
-    private function getPropertyValue($object, string $propertyName)
+    /**
+     * @param object|string $objectOrClass
+     * @param string $propertyName
+     * @return mixed
+     */
+    protected function getPropertyValue($objectOrClass, string $propertyName)
     {
-        $property = $this->getProperty($object, $propertyName);
+        self::assertValidObjectOrClass($objectOrClass);
+
+        $class = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
+
+        $property = $this->getProperty($class, $propertyName);
+
+        if ($property->isStatic()) {
+            $object = null;
+        } else {
+            self::assertValidObject($object = $objectOrClass);
+        }
 
         return $property->getValue($object);
     }
 
-    private function getProperty($object, string $propertyName)
+    /**
+     * @param object|string $objectOrClass
+     * @param string $propertyName
+     * @return ReflectionProperty
+     * @throws InvalidArgumentException
+     */
+    protected function getProperty($objectOrClass, string $propertyName): ?ReflectionProperty
+    {
+        self::assertValidObjectOrClass($objectOrClass);
+
+        $class = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
+
+        $property = new ReflectionProperty($class, $propertyName);
+        $property->setAccessible(true);
+
+        return $property;
+    }
+
+    /**
+     * @param object|string $objectOrClass
+     * @param string $constantName
+     * @return mixed
+     */
+    protected function getConstantValue($objectOrClass, string $constantName)
+    {
+        $class = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
+
+        $constant = new ReflectionClassConstant($class, $constantName);
+
+        return $constant->getValue();
+    }
+
+    private static function assertValidObject($object)
     {
         if (!is_object($object)) {
             throw new InvalidArgumentException(
                 'The object argument must be a php object!'
             );
         }
+    }
 
-        $property = new \ReflectionProperty(get_class($object), $propertyName);
-        $property->setAccessible(true);
-
-        return $property;
+    private static function assertValidObjectOrClass($objectOrClass)
+    {
+        if (!is_object($objectOrClass)
+            && (!is_string($objectOrClass) || !class_exists($objectOrClass))
+        ) {
+            throw new InvalidArgumentException(
+                'The object argument must be a php object or a valid class!'
+            );
+        }
     }
 }
