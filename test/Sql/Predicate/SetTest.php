@@ -50,8 +50,7 @@ class SetTest extends TestCase
         self::assertSame("", $predicateSet->getSQL());
         self::assertSame("AND", $predicateSet->getDefaultLogicalOperator());
         self::assertSame(null, $predicateSet->getNextLogicalOperator());
-        self::assertSame([], $predicateSet->getParams());
-        self::assertSame([], $predicateSet->getParamsTypes());
+        self::assertSame(null, $predicateSet->getParams());
     }
 
     public function testContructorWithoutPredicatesButOrLogicalOp()
@@ -80,21 +79,21 @@ class SetTest extends TestCase
         $set = new Predicate\Set(['id' => 42]);
         $predicateSet = new Predicate\Set($set);
         self::assertSame($set->getPredicates(), $predicateSet->getPredicates());
-        self::assertStringMatchesFormat('"id" = :eq%x', $sql = $predicateSet->getSQL());
+        self::assertStringMatchesFormat('"id" = :eq%d', $sql = $predicateSet->getSQL());
         self::assertSame($sql, $predicateSet->getSQL());
     }
 
     public function testContructorWithArrayPredicates()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
-        self::assertStringMatchesFormat('"id" = :eq%x', $sql = $predicateSet->getSQL());
+        self::assertStringMatchesFormat('"id" = :eq%d', $sql = $predicateSet->getSQL());
         self::assertSame($sql, $predicateSet->getSQL());
     }
 
     public function testContructorWithArrayValuePredicates()
     {
         $predicateSet = new Predicate\Set(['id' => [1, 2]]);
-        self::assertStringMatchesFormat('"id" IN (:in%x, :in%x)', $predicateSet->getSQL());
+        self::assertStringMatchesFormat('"id" IN (:in%d, :in%d)', $predicateSet->getSQL());
     }
 
     public function testContructorWithArrayWithNumericIndexPredicates()
@@ -121,14 +120,14 @@ class SetTest extends TestCase
     {
         $specs = ['id' => 42];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" = :eq%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" = :eq%d', $predicate->getSQL());
     }
 
     public function testBuildPredicateFromSpecsWithOneKeyToArrayValueElement()
     {
         $specs = ['id' => [1, 2]];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" IN (:in%x, :in%x)', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" IN (:in%d, :in%d)', $predicate->getSQL());
     }
 
     public function testBuildPredicateFromSpecsWithLogicalOperatorKeyToArrayValueElement()
@@ -157,7 +156,7 @@ class SetTest extends TestCase
         $specs = ['||', ['id', '=', 42]];
 
         $predicate = $this->buildPredicateFromSpecs($specs, $predicateSet);
-        self::assertStringMatchesFormat('"id" = :eq%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" = :eq%d', $predicate->getSQL());
         self::assertSame(Sql::OR, $predicateSet->getNextLogicalOperator());
     }
 
@@ -203,30 +202,30 @@ class SetTest extends TestCase
         $specs = ['id', '>', 42];
 
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" > :gt%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" > :gt%d', $predicate->getSQL());
     }
 
     public function testBuildPredicateFromThreeFoldSpecsAndComparisonOpOrAliasAndArrayValue()
     {
         $specs = ['id', '=', [1, 2]];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" IN (:in%x, :in%x)', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" IN (:in%d, :in%d)', $predicate->getSQL());
 
         $specs = ['id', 'in', [3, 4]];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" IN (:in%x, :in%x)', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" IN (:in%d, :in%d)', $predicate->getSQL());
 
         $specs = ['id', '!=', [5, 6]];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" NOT IN (:in%x, :in%x)', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" NOT IN (:in%d, :in%d)', $predicate->getSQL());
 
         $specs = ['id', '<>', [7, 8]];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" NOT IN (:in%x, :in%x)', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" NOT IN (:in%d, :in%d)', $predicate->getSQL());
 
         $specs = ['id', 'notIn', [9, 0]];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" NOT IN (:in%x, :in%x)', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" NOT IN (:in%d, :in%d)', $predicate->getSQL());
 
         $specs = ['id', '>', ['a', 'b']];
         $this->expectException(InvalidArgumentException::class);
@@ -237,19 +236,19 @@ class SetTest extends TestCase
     {
         $specs = ['id', Sql::BETWEEN, 24, 42];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" BETWEEN :min%x AND :max%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" BETWEEN :min%d AND :max%d', $predicate->getSQL());
 
         $specs = ['id', 'between', 24, 42];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" BETWEEN :min%x AND :max%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" BETWEEN :min%d AND :max%d', $predicate->getSQL());
 
         $specs = ['id', Sql::NOT_BETWEEN, 24, 42];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" NOT BETWEEN :min%x AND :max%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" NOT BETWEEN :min%d AND :max%d', $predicate->getSQL());
 
         $specs = ['id', 'notBetween', 24, 42];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"id" NOT BETWEEN :min%x AND :max%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"id" NOT BETWEEN :min%d AND :max%d', $predicate->getSQL());
 
         $specs = ['published', Sql::IS, true];
         $predicate = $this->buildPredicateFromSpecs($specs);
@@ -265,15 +264,15 @@ class SetTest extends TestCase
 
         $specs = ['name', Sql::LIKE, 'A%'];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"name" LIKE :like%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"name" LIKE :like%d', $predicate->getSQL());
 
         $specs = ['name', Sql::NOT_LIKE, 'A%'];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"name" NOT LIKE :like%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"name" NOT LIKE :like%d', $predicate->getSQL());
 
         $specs = ['name', 'notLike', 'A%'];
         $predicate = $this->buildPredicateFromSpecs($specs);
-        self::assertStringMatchesFormat('"name" NOT LIKE :like%x', $predicate->getSQL());
+        self::assertStringMatchesFormat('"name" NOT LIKE :like%d', $predicate->getSQL());
     }
 
     public function testBuildPredicateFromSpecsWithUnsupportedOperator()
@@ -723,42 +722,42 @@ class SetTest extends TestCase
         $c += 1;
         $fluent = $predicateSet->lessThan('id', 42);
         self::assertSame($fluent, $predicateSet);
-        self::assertStringMatchesFormat('"id" < :lt%x', $predicateSet->getSQL());
+        self::assertStringMatchesFormat('"id" < :lt%d', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
         self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->lt('other_id', 42);
         self::assertSame($fluent, $predicateSet);
-        self::assertStringMatchesFormat('%s "other_id" < :lt%x', $predicateSet->getSQL());
+        self::assertStringMatchesFormat('%s "other_id" < :lt%d', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
         self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->lessThanEqual('id', 42);
         self::assertSame($fluent, $predicateSet);
-        self::assertStringMatchesFormat('%s "id" <= :lte%x', $predicateSet->getSQL());
+        self::assertStringMatchesFormat('%s "id" <= :lte%d', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
         self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->lte('other_id', 42);
         self::assertSame($fluent, $predicateSet);
-        self::assertStringMatchesFormat('%s "other_id" <= :lte%x', $predicateSet->getSQL());
+        self::assertStringMatchesFormat('%s "other_id" <= :lte%d', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
         self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->greaterThanEqual('id', 42);
         self::assertSame($fluent, $predicateSet);
-        self::assertStringMatchesFormat('%s "id" >= :gte%x', $predicateSet->getSQL());
+        self::assertStringMatchesFormat('%s "id" >= :gte%d', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
         self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
 
         $c += 1;
         $fluent = $predicateSet->gte('other_id', 42);
         self::assertSame($fluent, $predicateSet);
-        self::assertStringMatchesFormat('%s "other_id" >= :gte%x', $predicateSet->getSQL());
+        self::assertStringMatchesFormat('%s "other_id" >= :gte%d', $predicateSet->getSQL());
         self::assertCount($c, $predicateSet->getPredicates());
         self::assertInstanceOf(Predicate\Comparison::class, array_values($predicateSet->getPredicates())[$c - 1]);
     }
