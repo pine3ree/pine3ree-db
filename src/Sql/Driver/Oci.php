@@ -311,7 +311,7 @@ class Oci extends Driver implements
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof Select) {
                 $column_sql = $column->getSQL($this, $params);
-                $cache = false;
+                $cache = $cache && $column instanceof Expression && 0 === count($column->substitutions);
             } else {
                 // @codeCoverageIgnoreStart
                 // should be unreacheable due to table-column validity assertion

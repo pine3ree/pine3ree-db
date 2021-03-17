@@ -315,7 +315,7 @@ class Select extends Statement
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof self) {
                 $column_sql = $column->getSQL($driver, $params);
-                $cache = false;
+                $cache = $cache && $column instanceof Expression && 0 === count($column->substitutions);
             } else {
                 // @codeCoverageIgnoreStart
                 // should be unreacheable
