@@ -9,8 +9,8 @@
 namespace P3\DbTest\Sql\Statement;
 
 use P3\Db\Exception\InvalidArgumentException;
-//use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Insert;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
@@ -158,8 +158,8 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
             . " VALUES"
-            . " (:val%x, :val%x),"
-            . " (:val%x, :val%x)",
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d)",
             $insert->getSQL($this->driver)
         );
     }
@@ -183,8 +183,8 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
             . " VALUES"
-            . " (:val%x, :val%x),"
-            . " (:val%x, :val%x)",
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d)",
             $insert->getSQL($this->driver)
         );
 
@@ -198,7 +198,7 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
             . " VALUES"
-            . " (:val%x, :val%x)",
+            . " (:val%d, :val%d)",
             $insert->getSQL($this->driver)
         );
     }
@@ -276,8 +276,8 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`, `enabled`)"
             . " VALUES"
-            . " (:val%x, :val%x, :val%x),"
-            . " (:val%x, :val%x, :val%x)",
+            . " (:val%d, :val%d, :val%d),"
+            . " (:val%d, :val%d, :val%d)",
             $sql = $insert->getSQL($this->driver)
         );
 
@@ -289,9 +289,9 @@ class InsertTest extends TestCase
             "INSERT INTO `product`"
             . " (`price`, `stock`, `enabled`)"
             . " VALUES"
-            . " (:val%x, :val%x, :val%x),"
-            . " (:val%x, :val%x, :val%x),"
-            . " (:val%x, :val%x, :val%x)",
+            . " (:val%d, :val%d, :val%d),"
+            . " (:val%d, :val%d, :val%d),"
+            . " (:val%d, :val%d, :val%d)",
             $sql = $insert->getSQL($this->driver)
         );
     }
@@ -333,7 +333,7 @@ class InsertTest extends TestCase
 
         self::assertSame(
             $values_sql = "SELECT `id`, `price`, `stock` FROM `store2_product` WHERE enabled IS TRUE",
-            $this->invokeMethod($insert, 'getValuesSQL', $this->driver)
+            $this->invokeMethod($insert, 'getValuesSQL', $this->driver, new Params())
         );
 
         self::assertSame(
@@ -349,7 +349,7 @@ class InsertTest extends TestCase
         $insert->values([111.11, 11, true]);
         $insert->values([222.22, 22, true]);
 
-        self::assertSame('', $this->invokeMethod($insert, 'getColumnsSQL', $this->driver));
+        self::assertSame('', $this->invokeMethod($insert, 'getColumnsSQL', $this->driver, new Params()));
     }
 
     public function testThatCloningAlsoClonesSelectFrom()

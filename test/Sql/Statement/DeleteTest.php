@@ -8,7 +8,6 @@
 
 namespace P3\DbTest\Sql\Statement;
 
-use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement\Delete;
@@ -76,7 +75,7 @@ class DeleteTest extends TestCase
         $delete->where->lt('price', 0.25);
 
         self::assertStringMatchesFormat(
-            "DELETE FROM `product` WHERE `id` > :gt%x AND `price` < :lt%x",
+            "DELETE FROM `product` WHERE `id` > :gt%d AND `price` < :lt%d",
             $delete->getSQL($this->driver)
         );
     }

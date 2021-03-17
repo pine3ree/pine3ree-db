@@ -71,7 +71,7 @@ class UpdateTest extends TestCase
         $update->where("price < 0.1");
 
         self::assertStringMatchesFormat(
-            "UPDATE `product` SET `enabled` = :set%x WHERE price < 0.1",
+            "UPDATE `product` SET `enabled` = :set%d WHERE price < 0.1",
             $sql = $update->getSQL($this->driver)
         );
 
@@ -83,7 +83,7 @@ class UpdateTest extends TestCase
         $update->where->lt('price', 0.1);
 
         self::assertStringMatchesFormat(
-            "UPDATE `product` SET `enabled` = :set%x WHERE `price` < :lt%x",
+            "UPDATE `product` SET `enabled` = :set%d WHERE `price` < :lt%d",
             $update->getSQL($this->driver)
         );
     }

@@ -67,7 +67,7 @@ class SelectTest extends TestCase
             ],
             [
                 new Expression("CONCAT('ABC', {str})", ['str' => 'DEF']),
-                "CONCAT('ABC', :expr%x)",
+                "CONCAT('ABC', :expr%d)",
             ],
             [
                 [
@@ -102,7 +102,10 @@ class SelectTest extends TestCase
         $select->columns([]);
         $select->from('customer', 'c');
 
-        self::assertStringMatchesFormat("SELECT `c`.*%wFROM `customer` `c`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat(
+            "SELECT `c`.*%wFROM `customer` `c`",
+            $select->getSQL($this->driver)
+        );
 
         $select = new Select();
         $select->columns([
@@ -111,7 +114,10 @@ class SelectTest extends TestCase
         ]);
         $select->from('customer', 'c');
 
-        self::assertStringMatchesFormat("SELECT `c`.`id`, `c`.`name`%wFROM `customer` `c`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat(
+            "SELECT `c`.`id`, `c`.`name`%wFROM `customer` `c`",
+            $select->getSQL($this->driver)
+        );
     }
 
     /**
@@ -122,7 +128,10 @@ class SelectTest extends TestCase
         $select = new Select(null, 'product');
         $select->column($column, $alias);
 
-        self::assertStringMatchesFormat("SELECT {$column_sql}%wFROM `product`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat(
+            "SELECT {$column_sql}%wFROM `product`",
+            $select->getSQL($this->driver)
+        );
     }
 
     public function provideColumn(): array
@@ -136,7 +145,7 @@ class SelectTest extends TestCase
             [
                 new Expression("SUM(unit_price) + {tax}", ['tax' => 5.00]),
                 'totalPrice',
-                "SUM(unit_price) + :expr%x AS `totalPrice`",
+                "SUM(unit_price) + :expr%d AS `totalPrice`",
             ],
         ];
     }
@@ -279,13 +288,16 @@ class SelectTest extends TestCase
     {
         $subSelect = (new Select())->from('cart');
         $select = (new Select())->from($subSelect, 'c');
-        self::assertStringMatchesFormat("SELECT `c`.*%wFROM (SELECT *%wFROM `cart`) `c`", $select->getSQL($this->driver));
+        self::assertStringMatchesFormat(
+            "SELECT `c`.*%wFROM (SELECT *%wFROM `cart`) `c`",
+            $select->getSQL($this->driver)
+        );
 
         $subSelect = (new Select())->from('cart_product', 'cp');
         $subSelect->where->gt('cp.price', 0);
         $select = (new Select())->from($subSelect, 'p');
         self::assertStringMatchesFormat(
-            "SELECT `p`.*%wFROM (SELECT `cp`.*%wFROM `cart_product` `cp`%wWHERE `cp`.`price` > :gt%x) `p`",
+            "SELECT `p`.*%wFROM (SELECT `cp`.*%wFROM `cart_product` `cp`%wWHERE `cp`.`price` > :gt%d) `p`",
             $select->getSQL($this->driver)
         );
     }
@@ -317,12 +329,12 @@ class SelectTest extends TestCase
     {
         $select = (new Select())->from('user')->limit(10);
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wLIMIT :limit%x",
+            "SELECT *%wFROM `user`%wLIMIT :limit%d",
             $select->getSQL($this->driver)
         );
 
-        $params = $select->getParams();
-        self::assertSame(10, current($params) ?? null);
+        $params_values = $select->getParams()->getValues();
+        self::assertSame(10, current($params_values) ?? null);
     }
 
     public function testSelectWithNegativeOrNullLimitShouldDisableLimit()
@@ -343,19 +355,19 @@ class SelectTest extends TestCase
             $select->getSQL($this->driver)
         );
 
-        self::assertCount(0, $select->getParams());
+        self::assertCount(0, $select->getParams()->getValues());
     }
 
     public function testSelectWithOffset()
     {
         $select = (new Select())->from('user')->offset(100);
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wLIMIT " . PHP_INT_MAX . " OFFSET :offset%x",
+            "SELECT *%wFROM `user`%wLIMIT " . PHP_INT_MAX . " OFFSET :offset%d",
             $select->getSQL($this->driver)
         );
 
-        $params = $select->getParams();
-        self::assertSame(100, current($params) ?? null);
+        $params_values = $select->getParams()->getValues();
+        self::assertSame(100, current($params_values) ?? null);
     }
 
     public function testSelectZeroOrNullOrNegativeOffsetIsDiscarded()
@@ -384,13 +396,13 @@ class SelectTest extends TestCase
         $select = (new Select())->from('user')->limit(10)->offset(100);
 
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wLIMIT :limit%x OFFSET :offset%x",
+            "SELECT *%wFROM `user`%wLIMIT :limit%d OFFSET :offset%d",
             $select->getSQL($this->driver)
         );
 
-        $params = $select->getParams();
-        self::assertSame(10, current($params) ?? null);
-        self::assertSame(100, next($params) ?? null);
+        $params_values = $select->getParams()->getValues();
+        self::assertSame(10, current($params_values) ?? null);
+        self::assertSame(100, next($params_values) ?? null);
     }
 
     public function testAnsiDriverDoesNotSupportLimitAndOffset()
@@ -401,7 +413,7 @@ class SelectTest extends TestCase
             $select->getSQL(Driver::ansi())
         );
 
-        self::assertEmpty($select->getParams());
+        self::assertEmpty($select->getParams()->getValues());
     }
 
     /**
@@ -484,7 +496,7 @@ class SelectTest extends TestCase
         self::assertStringMatchesFormat(
             "SELECT `p`.*"
             . "%wFROM `product` `p`"
-            . "%wWHERE `price` > :gt%x",
+            . "%wWHERE `price` > :gt%d",
             $select->getSQL($this->driver)
         );
     }
@@ -502,7 +514,7 @@ class SelectTest extends TestCase
             "SELECT SUM(stock) AS `totByCategory`"
             . "%wFROM `product` `p`"
             . "%wGROUP BY `category_id`"
-            . "%wHAVING `totByCategory` > :gt%x",
+            . "%wHAVING `totByCategory` > :gt%d",
             $select->getSQL($this->driver)
         );
     }
@@ -513,7 +525,9 @@ class SelectTest extends TestCase
         $select = (new Select(['*', "c.*"]))->from('order', 'o');
         $select->leftJoin('customer', 'c', "c.id = o.customer_id");
         self::assertStringMatchesFormat(
-            "SELECT `o`.*, `c`.*%wFROM `order` `o`%wLEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
+            "SELECT `o`.*, `c`.*"
+            . "%wFROM `order` `o`"
+            . "%wLEFT JOIN `customer` `c` ON (`c`.id = `o`.customer_id)",
             $select->getSQL($this->driver)
         );
 
@@ -521,7 +535,9 @@ class SelectTest extends TestCase
         $select = (new Select())->from('user', 'u');
         $select->leftJoin('customer', 'c', new Sql\Predicate\Literal("USING (customer_id)"));
         self::assertStringMatchesFormat(
-            "SELECT `u`.*%wFROM `user` `u`%wLEFT JOIN `customer` `c` USING (customer_id)",
+            "SELECT `u`.*"
+            . "%wFROM `user` `u`"
+            . "%wLEFT JOIN `customer` `c` USING (customer_id)",
             $select->getSQL($this->driver)
         );
 
@@ -638,6 +654,13 @@ class SelectTest extends TestCase
         $select = new Select(['fullPrice' => new Expression('price * (1 + vat_rate/100)')], 'product', 'p');
         $sql = $select->getSQL();
         self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // expression with params
+        $select = new Select([
+            'fullPrice' => new Expression('price * (1 + {vat_rate}/100)', ['vat_rate' => 20.0])
+        ], 'product', 'p');
+        $sql = $select->getSQL();
+        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select, 'sqls'));
     }
 
     public function testUncacheableColumnsSql()
