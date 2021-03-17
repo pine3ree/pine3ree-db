@@ -56,7 +56,8 @@ use const PHP_INT_MAX;
  * @property-read string|null $table The db table to select from if already set
  * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
- * @property-read string[]|Literal[]|Expression[]|self[]|array<string, string|Literal|Expression|self> $columns The columns to be returned
+ * @property-read string[]|Literal[]|Expression[]|self[]|array<string, string|Literal|Expression|self> $columns
+ *      The columns to be returned
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any

@@ -444,6 +444,7 @@ EOIS
     {
         $db = new Db(self::DSN);
 
+        // @codingStandardsIgnoreStart
         self::assertSame(PDO::PARAM_NULL, $this->invokeMethod($db, 'getParamType', null));
         self::assertSame(PDO::PARAM_INT,  $this->invokeMethod($db, 'getParamType', 42));
         self::assertSame(PDO::PARAM_INT,  $this->invokeMethod($db, 'getParamType', true));
@@ -451,6 +452,7 @@ EOIS
         self::assertSame(PDO::PARAM_STR,  $this->invokeMethod($db, 'getParamType', 'ABC'));
         self::assertSame(PDO::PARAM_STR,  $this->invokeMethod($db, 'getParamType', [1, 2, 3]));
         self::assertSame(PDO::PARAM_STR,  $this->invokeMethod($db, 'getParamType', new stdClass()));
+        // @codingStandardsIgnoreEnd
     }
 
     public function testExecCall()

@@ -8,17 +8,17 @@
 
 namespace P3\DbTest\Command\Traits;
 
-use PDOStatement;
-use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Command\Traits\Writer as WriterTrait;
 use P3\DbTest\DiscloseTrait;
+use PDO;
+use PDOStatement;
 use PHPUnit\Framework\TestCase;
-use P3\Db\Exception\RuntimeException;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class WriterTest extends TestCase
 {
     use DiscloseTrait;
+
     /** @var ObjectProphecy|PDO */
     private $pdo;
 

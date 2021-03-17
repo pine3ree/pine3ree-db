@@ -109,6 +109,5 @@ class Delete extends Statement
             $this->where = clone $this->where;
             $this->where->parent = $this;
         }
-
     }
 }
