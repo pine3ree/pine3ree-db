@@ -189,6 +189,19 @@ class DriverTest extends TestCase
         $driver->quoteValue($str);
     }
 
+    public function testQuoteStringValueWithConnectionUsesPdoQuote()
+    {
+        $str = 'UNQUOTED';
+
+        $pdo = $this->prophesize(PDO::class);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->willReturn('fake');
+        $pdo->quote($str, PDO::PARAM_STR)->willReturn('QUOTED');
+
+        $driver = $this->createInstance($pdo->reveal());
+
+        self::assertSame('QUOTED', $driver->quoteValue($str));
+    }
+
     public function testThatNonExistentElementMethodCallRaisesExceptionAndGetsCached()
     {
         $driver = $this->createInstance();
