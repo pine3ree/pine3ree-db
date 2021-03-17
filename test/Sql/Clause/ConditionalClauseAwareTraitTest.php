@@ -12,6 +12,7 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Clause\ConditionalClause;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Params;
 use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Exception\RuntimeException;
@@ -29,23 +30,6 @@ class ConditionalClauseAwareTraitTest extends TestCase
     {
     }
 
-    private function createInstance()
-    {
-        $condClauseAware = $this->getMockForTrait(
-            ConditionalClauseAwareTrait::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['importParams']
-        );
-
-        $condClauseAware->expects($this->any())->method('importParams')->willReturn(null);
-
-        return $condClauseAware;
-    }
-
     private function createClauseInstance()
     {
         return $this->getMockForAbstractClass(
@@ -61,7 +45,7 @@ class ConditionalClauseAwareTraitTest extends TestCase
 
     public function testUsingInvalidConditionalClauseClassRisesException()
     {
-        $condClauseAware = $this->createInstance();
+        $condClauseAware = $this->getMockForTrait(ConditionalClauseAwareTrait::class);
 
         $this->expectException(InvalidArgumentException::class);
         $this->invokeMethod($condClauseAware, 'setConditionalClause', 'myClause', stdClass::class, []);
@@ -69,8 +53,7 @@ class ConditionalClauseAwareTraitTest extends TestCase
 
     public function testSetConditionalClause()
     {
-        $condClauseAware = $this->createInstance();
-
+        $condClauseAware = $this->getMockForTrait(ConditionalClauseAwareTrait::class);
         $myClause = $this->createClauseInstance();
 
         $this->invokeMethod($condClauseAware, 'setConditionalClause', 'myClause', 'MyClauseFQCN', $myClause);
@@ -79,13 +62,17 @@ class ConditionalClauseAwareTraitTest extends TestCase
 
         self::assertSame(
             "MY CLAUSE FQCN TRUE IS TRUE",
-            $this->invokeMethod($condClauseAware, 'getConditionalClauseSQL', 'myClause', Driver::ansi())
+            $this->invokeMethodArgs($condClauseAware, 'getConditionalClauseSQL', [
+                'myClause',
+                Driver::ansi(),
+                new Params(),
+            ])
         );
     }
 
     public function testSetConditionalClauseWithArray()
     {
-        $condClauseAware = $this->createInstance();
+        $condClauseAware = $this->getMockForTrait(ConditionalClauseAwareTrait::class);
 
         $this->invokeMethod($condClauseAware, 'setConditionalClause', 'myClause', 'MyClauseFQCN', [
             '||' => [
@@ -96,14 +83,17 @@ class ConditionalClauseAwareTraitTest extends TestCase
 
         self::assertSame(
             "MY CLAUSE FQCN TRUE IS TRUE OR FALSE IS FALSE",
-            $this->invokeMethod($condClauseAware, 'getConditionalClauseSQL', 'myClause', Driver::ansi())
+            $this->invokeMethodArgs($condClauseAware, 'getConditionalClauseSQL', [
+                'myClause',
+                Driver::ansi(),
+                new Params(),
+            ])
         );
     }
 
     public function testInvalidClausePropertyRaisesException()
     {
-        $condClauseAware = $this->createInstance();
-
+        $condClauseAware = $this->getMockForTrait(ConditionalClauseAwareTrait::class);
         $myClause = $this->createClauseInstance();
 
         $this->invokeMethod($condClauseAware, 'setConditionalClause', 'myClause', 'MyClauseFQCN', $myClause);
@@ -111,6 +101,10 @@ class ConditionalClauseAwareTraitTest extends TestCase
         $condClauseAware->myClause = new stdClass();
 
         $this->expectException(RuntimeException::class);
-        $this->invokeMethod($condClauseAware, 'getConditionalClauseSQL', 'myClause', Driver::ansi());
+        $this->invokeMethodArgs($condClauseAware, 'getConditionalClauseSQL', [
+            'myClause',
+            Driver::ansi(),
+            new Params(),
+        ]);
     }
 }

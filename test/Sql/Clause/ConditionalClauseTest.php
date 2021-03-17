@@ -61,8 +61,18 @@ class ConditionalClauseTest extends TestCase
         // trigger use cached value
         self::assertSame($sql, $conditionalClause->getSQL());
 
-        self::assertSame(array_values($specs), array_values($conditionalClause->getParams()));
-        self::assertSame([PDO::PARAM_INT, PDO::PARAM_STR], array_values($conditionalClause->getParamsTypes()));
+        self::assertTrue($conditionalClause->hasParams());
+        self::assertTrue($conditionalClause->getSearchCondition()->hasParams());
+
+        $params = $conditionalClause->getParams();
+
+        self::assertSame($conditionalClause->getSearchCondition()->getParams(), $params);
+
+        $params_values = $params->getValues();
+        $params_types = $params->getTypes();
+
+        self::assertSame(array_values($specs), array_values($params_values));
+        self::assertSame([PDO::PARAM_INT, PDO::PARAM_STR], array_values($params_types));
     }
 
     public function testAddPredicateClearsCompiledSql()
@@ -182,6 +192,6 @@ class ConditionalClauseTest extends TestCase
         );
 
         $this->expectException(RuntimeException::class);
-        $conditionalClause->nonexistentProperty;
+        $conditionalClause->nonExistentProperty;
     }
 }
