@@ -886,6 +886,22 @@ class SelectTest extends TestCase
         self::assertSame($select2, $column2->parent);
     }
 
+    public function testNestingLevelCalculator()
+    {
+        $select0 = new Select();
+        $select0->from('product', 'p0');
+        self::assertSame(0, $this->invokeMethod($select0, 'getNestingLevel'));
+
+        $select1 = new Select('*', $select0, 'p1');
+        self::assertSame(1, $this->invokeMethod($select0, 'getNestingLevel'));
+
+        $select2 = new Select('*', $select1, 'p2');
+        self::assertSame(2, $this->invokeMethod($select0, 'getNestingLevel'));
+
+        $select3 = new Select('*', $select2, 'p3');
+        self::assertSame(3, $this->invokeMethod($select0, 'getNestingLevel'));
+    }
+
     public function testMagicGetter()
     {
         $select = new Select('*', 'product', 'p');
