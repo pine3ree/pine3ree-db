@@ -247,7 +247,7 @@ class Select extends Statement
         ));
     }
 
-    public function count($identifier, string $alias = null): self
+    public function count($identifier = Sql::ASTERISK, string $alias = null): self
     {
         return $this->aggregate(Sql::COUNT, $identifier, $alias);
     }

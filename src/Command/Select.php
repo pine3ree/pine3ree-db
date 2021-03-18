@@ -102,7 +102,7 @@ class Select extends Command implements ReaderInterface
      * @see SqlSelect::count()
      * @return $this
      */
-    public function count($identifier, string $alias = null): self
+    public function count($identifier = Sql::ASTERISK, string $alias = null): self
     {
         $this->sqlStatement->count($identifier, $alias);
         return $this;
