@@ -57,8 +57,8 @@ use const PHP_INT_MAX;
  * @property-read string|null $table The db table to select from if already set
  * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
- * @property-read string[]|Literal[]|Expression[]|self[]|array<string, string|Literal|Expression|self> $columns
- *      The columns to be returned
+ * @property-read string[]|Identifier[]|Literal[]|Expression[]|self[] $columns The columns to be returned
+ * @psalm-property-read array<string, string|Identifier|Literal|Expression|self> $columns
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any
@@ -80,7 +80,8 @@ class Select extends Statement
     protected $quantifier;
 
     /**
-     * @var string[]|Literal[]|Expression[]|self[]|array<string, string|Literal|Expression|self>
+     * @var string[]|Identifier[]|Literal[]|Expression[]|self[]
+     * @psalm-var array<string|int, string|Identifier|Literal|Expression|self>
      */
     protected $columns = [];
 
@@ -118,8 +119,8 @@ class Select extends Statement
     protected $intersect;
 
     /**
-     * @param string[]|string|Literal[]|Literal|self|self[] $columns One or
-     *      many column names, Literal expressions or sub-select statements
+     * @param null|string[]|string|Literal[]|Literal|Identifier[]|Identifier|self[]|self $columns
+     *      One or many column names, Identifiers, Literals, Expressions or sub-select statements
      * @param string|self|null $from A db-table name or a sub-select statement
      * @param string|null $alias
      */
@@ -945,8 +946,8 @@ class Select extends Statement
      * same order of appearance in the final sql statement string
      *
      * @param DriverInterface $driver
-     * @param $params $params
-     * @param string $sep
+     * @param Params $params
+     * @param string|null $sep
      * @return string
      */
     protected function generateSQL(DriverInterface $driver, Params $params, string $sep = null): string

@@ -16,6 +16,7 @@ use P3\Db\Sql;
 use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\Where;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 use PDO;
@@ -53,7 +54,8 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @param Db $db
-     * @param string|string[]|Literal|Literal[]|SqlSelect|SqlSelect[] $columns
+     * @param string[]|string|Literal[]|Literal|Identifier[]|Identifier|self|self[] $columns
+     *      One or many column names, Literal expressions or sub-select statements
      * @param string|SqlSelect|null $from The db-table name or a sub-select statement
      * @param string|null $alias
      */
