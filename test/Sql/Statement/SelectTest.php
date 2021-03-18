@@ -60,7 +60,11 @@ class SelectTest extends TestCase
             [null, "*"],
             [[], "*"],
             ['*', "*"],
-            ['', "*"],
+            [
+                new Identifier('t1.column_2'),
+                '`t1`.`column_2`',
+            ],
+            ['1', "1"], // numeric string are converted to Literals
             [
                 new Literal("COUNT(*)"),
                 "COUNT(*)",
@@ -141,12 +145,14 @@ class SelectTest extends TestCase
             ['unit_price', 'unitPrice', "`unit_price` AS `unitPrice`"],
             ['p.unit_price', 'unitPrice', "`p`.`unit_price` AS `unitPrice`"],
             ['`p`.`unit_price`', 'unitPrice', "`p`.`unit_price` AS `unitPrice`"],
+            [new Identifier('p.vat_rate'), 'vatRate', "`p`.`vat_rate` AS `vatRate`"],
             [new Literal("SUM(unit_price)"), 'totalPrice', "SUM(unit_price) AS `totalPrice`"],
             [
                 new Expression("SUM(unit_price) + {tax}", ['tax' => 5.00]),
                 'totalPrice',
                 "SUM(unit_price) + :expr%d AS `totalPrice`",
             ],
+            ['1', 'numberOne', "1 AS `numberOne`"],
         ];
     }
 
@@ -208,6 +214,58 @@ class SelectTest extends TestCase
         self::assertSame($select2, $sc2->parent);
 
         self::assertNotEquals($sc1, $sc2);
+    }
+
+    public function testAggregateMethods()
+    {
+        $select = new Select();
+        $select->count()->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT COUNT(*)%wFROM "product"',
+            $select->getSql()
+        );
+
+        $select = new Select();
+        $select->count('id')->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT COUNT(id)%wFROM "product"',
+            $select->getSql()
+        );
+
+        $select = new Select();
+        $select->sum('price')->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT SUM(price)%wFROM "product"',
+            $select->getSql()
+        );
+
+        $select = new Select();
+        $select->min('price')->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT MIN(price)%wFROM "product"',
+            $select->getSql()
+        );
+
+        $select = new Select();
+        $select->max('price')->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT MAX(price)%wFROM "product"',
+            $select->getSql()
+        );
+
+        $select = new Select();
+        $select->avg('price')->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT AVG(price)%wFROM "product"',
+            $select->getSql()
+        );
+
+        $select = new Select();
+        $select->aggregate('SOMEFUNCTION', 'price')->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT SOMEFUNCTION(price)%wFROM "product"',
+            $select->getSql()
+        );
     }
 
     public function testSelectWithoutFromRaisesExceptionOnGetSQL()

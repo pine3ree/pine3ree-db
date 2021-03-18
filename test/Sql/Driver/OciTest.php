@@ -170,14 +170,18 @@ class OciTest extends TestCase
         $select->from('cart_product', 'cp');
         $select->columns([
             'product_name',
+            'vatRate' => Sql::identifier('product.vat_rate'),
             'totPrice' => Sql::literal("(unit_price * quantity)"),
             'totVat' => Sql::expr("((unit_price * quantity / 100) * {vat_rate})", ['vat_rate' => 22]),
+            'fortyTwo' => '42',
         ]);
 
         self::assertStringMatchesFormat(
             '"cp".product_name AS "product_name",'
+            . ' product.vat_rate AS "vatRate",'
             . ' (unit_price * quantity) AS "totPrice",'
-            . ' ((unit_price * quantity / 100) * :expr%d) AS "totVat"',
+            . ' ((unit_price * quantity / 100) * :expr%d) AS "totVat",'
+            . ' 42 AS "fortyTwo"',
             $this->driver->getSelectColumnsSQL($select, new Params())
         );
     }

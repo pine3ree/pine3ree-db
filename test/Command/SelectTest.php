@@ -254,6 +254,20 @@ class SelectTest extends TestCase
     public function testAggregateMethods()
     {
         $select = $this->createSelectCommand($db);
+        $select->count()->from('product');
+        self::assertStringMatchesFormat(
+            "SELECT COUNT(*)%wFROM `product`",
+            $select->getSql()
+        );
+
+        $select = $this->createSelectCommand($db);
+        $select->count('id')->from('product');
+        self::assertStringMatchesFormat(
+            "SELECT COUNT(id)%wFROM `product`",
+            $select->getSql()
+        );
+
+        $select = $this->createSelectCommand($db);
         $select->sum('price')->from('product');
         self::assertStringMatchesFormat(
             "SELECT SUM(price)%wFROM `product`",
