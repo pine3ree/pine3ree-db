@@ -11,6 +11,8 @@ namespace P3\DbTest\Sql\Driver;
 use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
+use P3\Db\Sql\Driver\Feature\SelectDecorator;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
@@ -261,6 +263,12 @@ class OciTest extends TestCase
         $select->offset(10);
         self::assertStringMatchesFormat(
             "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s) WHERE %s > :offset%d",
+            $this->driver->decorateSelectSQL($select, new Params())
+        );
+
+        $select = clone $selectPrototype;
+        self::assertSame(
+            $select->getSQL($this->driver, new Params()),
             $this->driver->decorateSelectSQL($select, new Params())
         );
     }
