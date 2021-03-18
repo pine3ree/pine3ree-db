@@ -246,7 +246,7 @@ class OciTest extends TestCase
         $select->limit(10);
         self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
         self::assertStringMatchesFormat(
-            "SELECT * FROM ({$sql}) WHERE ROWNUM <= :limit%d",
+            "SELECT * FROM (%w{$sql}%w)%wWHERE ROWNUM <= :limit%d",
             $this->driver->decorateSelectSQL($select, new Params())
         );
 
@@ -254,22 +254,29 @@ class OciTest extends TestCase
         $select->limit(10)->offset(10);
         self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
         self::assertStringMatchesFormat(
-            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s WHERE ROWNUM <= :limit%d) WHERE %s > :offset%d",
-            //$select->getSQL($this->driver)
+            "SELECT * FROM ("
+            . "%wSELECT %s.*, ROWNUM AS %s"
+            . "%wFROM (%w{$sql}%w) %s"
+            . "%wWHERE ROWNUM <= :limit%d%w)"
+            . "%wWHERE %s > :offset%d",
             $this->driver->decorateSelectSQL($select, new Params())
         );
 
         $select = clone $selectPrototype;
         $select->offset(10);
         self::assertStringMatchesFormat(
-            "SELECT * FROM (SELECT %s.*, ROWNUM AS %s FROM ({$sql}) %s) WHERE %s > :offset%d",
+            "SELECT * FROM ("
+            . "%wSELECT %s.*, ROWNUM AS %s"
+            . "%wFROM (%w{$sql}%w) %s"
+            . "%w)%w"
+            . "%wWHERE %s > :offset%d",
             $this->driver->decorateSelectSQL($select, new Params())
         );
 
         $select = clone $selectPrototype;
         self::assertSame(
-            $select->getSQL($this->driver, new Params()),
-            $this->driver->decorateSelectSQL($select, new Params())
+            $select->getSQL($this->driver, new Params(), " "),
+            $this->driver->decorateSelectSQL($select, new Params(), " ")
         );
     }
 
@@ -287,7 +294,7 @@ class OciTest extends TestCase
         $wrapper = $this->driver->decorateSelect($select, new Params());
         self::assertStringMatchesFormat(
             "SELECT %A*%wFROM (%w{$sql}%w)%A%wWHERE ROWNUM <= :lte%d",
-            $this->invokeMethod($wrapper, 'generateSQL', $this->driver, new Params())
+            $this->invokeMethod($wrapper, 'generateSQL', $this->driver, new Params(), " ")
         );
 
         $select = clone $selectPrototype;

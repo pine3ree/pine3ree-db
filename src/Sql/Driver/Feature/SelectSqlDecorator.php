@@ -24,7 +24,8 @@ interface SelectSqlDecorator
      *
      * @param Select $select The SQL select statement object
      * @param Params $params The parameters collector
+     * @param string $sep An optional custome non-empty separator string (space/new-line, ...)
      * @return string The decorated SQL-string
      */
-    public function decorateSelectSQL(Select $select, Params $params): string;
+    public function decorateSelectSQL(Select $select, Params $params, string $sep = null): string;
 }

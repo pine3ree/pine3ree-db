@@ -31,9 +31,9 @@ class SelectSqlDecoratorTest extends TestCase
     {
         return new class () extends Driver\Ansi implements SelectSqlDecorator
         {
-            public function decorateSelectSQL(Select $select, Params $params): string
+            public function decorateSelectSQL(Select $select, Params $params, string $sep = null): string
             {
-                return "[[" . $this->generateSelectSQL($select, $params) . "]]";
+                return "[[" . $this->generateSelectSQL($select, $params, $sep) . "]]";
             }
         };
     }

@@ -201,37 +201,45 @@ class Oci extends Driver implements
         return implode('.', $segments);
     }
 
-    public function decorateSelectSQL(Select $select, Params $params): string
+    public function decorateSelectSQL(Select $select, Params $params, string $sep = null): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;
 
+        $sep0 = $sep ?: " ";
+        if ($sep[0] === "\n") {
+            $sep1 = "{$sep0}    ";
+            $sep2 = "{$sep0}        ";
+        } else {
+            $sep1 = $sep2 = $sep0;
+        }
+
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
-            $select_sql = $this->generateSelectSQL($select, $params);
+            $select_sql = $this->generateSelectSQL($select, $params, $sep0);
             $limit = $params->create($limit, PDO::PARAM_INT, 'limit');
 
-            return "SELECT * FROM ({$select_sql}) WHERE ROWNUM <= {$limit}";
+            return "SELECT * FROM ({$sep1}{$select_sql}{$sep0}){$sep}WHERE ROWNUM <= {$limit}";
         }
 
         if (isset($offset) && $offset > 0) {
             $qtb = $this->quoteAlias(self::TB);
             $qrn = $this->quoteAlias(self::RN);
 
-            $select_sql = $this->generateSelectSQL($select, $params);
+            $select_sql = $this->generateSelectSQL($select, $params, $sep2);
             $select_sql = "SELECT {$qtb}.*, ROWNUM AS {$qrn}"
-                . " FROM ({$select_sql}) {$qtb}";
+                . " FROM ({$sep2}{$select_sql}{$sep1}) {$qtb}";
 
             if (isset($limit)) {
                 $limit = $params->create($limit + $offset, PDO::PARAM_INT, 'limit');
-                $select_sql .= " WHERE ROWNUM <= {$limit}";
+                $select_sql .= "{$sep1}WHERE ROWNUM <= {$limit}";
             }
 
             $offset = $params->create($offset, PDO::PARAM_INT, 'offset');
 
-            return "SELECT * FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
+            return "SELECT * FROM ({$sep1}{$select_sql}{$sep0}){$sep0}WHERE {$qrn} > {$offset}";
         }
 
-        return $this->generateSelectSQL($select, $params);
+        return $this->generateSelectSQL($select, $params, $sep);
     }
 
     public function decorateSelect(Select $select, Params $params): Select
@@ -343,7 +351,12 @@ class Oci extends Driver implements
         return trim(implode(", ", $sqls));
     }
 
-    public function getLimitSQL(Select $select, Params $params, string $sep = " "): string
+    /**
+     * For OCI we need to alter the original select
+     *
+     * {@inheritDoc}
+     */
+    public function getLimitSQL(Select $select, Params $params, string $sep = null): string
     {
         return '';
     }

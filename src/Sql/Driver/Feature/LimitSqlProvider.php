@@ -18,5 +18,13 @@ use P3\Db\Sql\Statement\Select;
  */
 interface LimitSqlProvider
 {
-    public function getLimitSQL(Select $select, Params $params, string $sep = " "): string;
+    /**
+     * Create/mimic a custom LIMIT/OFFSET clause for given Select statement
+     *
+     * @param Select $select
+     * @param Params $params
+     * @param string|null $sep
+     * @return string
+     */
+    public function getLimitSQL(Select $select, Params $params, string $sep = null): string;
 }

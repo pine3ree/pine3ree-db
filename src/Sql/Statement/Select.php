@@ -43,6 +43,7 @@ use function preg_quote;
 use function preg_replace;
 use function rtrim;
 use function sprintf;
+use function str_repeat;
 use function str_replace;
 use function strpos;
 use function strtoupper;
@@ -580,7 +581,7 @@ class Select extends Statement
         );
     }
 
-    private function getJoinSQL(DriverInterface $driver, Params $params, string $sep = " "): string
+    private function getJoinSQL(DriverInterface $driver, Params $params, string $sep): string
     {
         if (empty($this->joins)) {
             return '';
@@ -793,7 +794,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getLimitSQL(DriverInterface $driver, Params $params, string $sep = " "): string
+    private function getLimitSQL(DriverInterface $driver, Params $params, string $sep = null): string
     {
         if (!isset($this->limit) && (int)$this->offset === 0) {
             return '';
@@ -883,7 +884,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, string $sep = " "): string
+    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, string $sep): string
     {
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver, $params);
@@ -922,8 +923,10 @@ class Select extends Statement
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
 
+        $sep = $sep ?: (isset($this->parent) ? " " : "\n");
+
         if ($driver instanceof SelectSqlDecorator) {
-            return $this->sql = $driver->decorateSelectSQL($this, $params);
+            return $this->sql = $driver->decorateSelectSQL($this, $params, $sep);
         }
 
         if ($driver instanceof SelectDecorator) {
@@ -942,11 +945,13 @@ class Select extends Statement
      * same order of appearance in the final sql statement string
      *
      * @param DriverInterface $driver
+     * @param $params $params
+     * @param string $sep
      * @return string
      */
     protected function generateSQL(DriverInterface $driver, Params $params, string $sep = null): string
     {
-        $sep = $sep ?? (isset($this->parent) ? " " : "\n");
+        $sep = $sep ?: " ";
 
         $base_sql = $this->getBaseSQL($driver, $params, $sep);
         $clauses_sql = $this->getClausesSQL($driver, $params, $sep);
@@ -1012,7 +1017,7 @@ class Select extends Statement
         return preg_replace($search, $replace, $sql);
     }
 
-    private function getBaseSQL(DriverInterface $driver, Params $params, string $sep = " "): string
+    private function getBaseSQL(DriverInterface $driver, Params $params, string $sep): string
     {
         $select = Sql::SELECT;
         if (!empty($this->quantifier)) {
@@ -1025,7 +1030,7 @@ class Select extends Statement
         return trim("{$select} {$columns}{$sep}{$from}");
     }
 
-    private function getClausesSQL(DriverInterface $driver, Params $params, string $sep = " "): string
+    private function getClausesSQL(DriverInterface $driver, Params $params, string $sep): string
     {
         $sqls = [];
 

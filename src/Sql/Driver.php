@@ -291,9 +291,9 @@ abstract class Driver implements DriverInterface
         return self::$ansi ?? self::$ansi = new Ansi();
     }
 
-    protected function generateSelectSQL(Select $select, Params $params): string
+    protected function generateSelectSQL(Select $select, Params $params, string $sep = null): string
     {
-        return $this->call($select, 'generateSQL', $this, $params);
+        return $this->call($select, 'generateSQL', $this, $params, $sep ?: " ");
     }
 
     /**

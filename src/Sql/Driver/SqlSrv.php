@@ -26,7 +26,15 @@ class SqlSrv extends Driver implements LimitSqlProvider
         parent::__construct($pdo, '[', ']', "'");
     }
 
-    public function getLimitSQL(Select $select, Params $params, string $sep = " "): string
+    /**
+     * For mssql the limit clause is achieved via OFFSET...FETCH clauses for
+     * the ORDER BY clause.
+     *
+     * {@inheritDoc}
+     *
+     * @throws RuntimeException
+     */
+    public function getLimitSQL(Select $select, Params $params, string $sep = null): string
     {
         $limit  = $select->limit;
         $offset = max(0, (int)$select->offset);
