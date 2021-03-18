@@ -92,6 +92,10 @@ class Select extends Command implements ReaderInterface
         return $this;
     }
 
+    /**
+     * @see SqlSelect::column()
+     * @return $this
+     */
     public function column($column, string $alias = null): self
     {
         $this->sqlStatement->column($column, $alias);
