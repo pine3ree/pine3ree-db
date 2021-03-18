@@ -39,6 +39,11 @@ class Join extends Clause
 
     protected static $name = Sql::JOIN;
 
+    /**
+     * @var string The resolved name cache
+     */
+    protected $__name;
+
     /** @var string */
     private $type;
 
