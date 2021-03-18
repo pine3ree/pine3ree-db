@@ -399,7 +399,7 @@ class Db
      * @param string $identifier The count indentifier ('*', '1')
      * @return int
      */
-    public function count(string $table, $where = null, string $identifier = '*'): int
+    public function count(string $table, $where = null, string $identifier = Sql::ASTERISK): int
     {
         $select = $this->select()->count($identifier)->from($table);
         if (isset($where)) {
