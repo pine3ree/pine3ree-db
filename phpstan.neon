@@ -10,4 +10,3 @@ parameters:
         - '#Access to an undefined property object\:\:\$parent#'
         - '#Oci\:\:quoteIdentifier\(\) expects string\, string\|null given#'
         - '#Calling method getValues\(\) on possibly null value of type P3\Db\Sql\Params|null#'
-        - '#Calling method getTypes\(\) on possibly null value of type P3\Db\Sql\Params|null#'
