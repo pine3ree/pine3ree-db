@@ -347,7 +347,7 @@ class SelectTest extends TestCase
         $subSelect = (new Select())->from('cart');
         $select = (new Select())->from($subSelect, 'c');
         self::assertStringMatchesFormat(
-            "SELECT `c`.*%wFROM (SELECT *%wFROM `cart`) `c`",
+            "SELECT `c`.*%wFROM (%wSELECT *%wFROM `cart`%w) `c`",
             $select->getSQL($this->driver)
         );
 
@@ -355,7 +355,11 @@ class SelectTest extends TestCase
         $subSelect->where->gt('cp.price', 0);
         $select = (new Select())->from($subSelect, 'p');
         self::assertStringMatchesFormat(
-            "SELECT `p`.*%wFROM (SELECT `cp`.*%wFROM `cart_product` `cp`%wWHERE `cp`.`price` > :gt%d) `p`",
+            "SELECT `p`.*%wFROM ("
+            . "%wSELECT `cp`.*"
+            . "%wFROM `cart_product` `cp`"
+            . "%wWHERE `cp`.`price` > :gt%d"
+            . "%w) `p`",
             $select->getSQL($this->driver)
         );
     }

@@ -464,7 +464,7 @@ class SelectTest extends TestCase
         $select->union($union)->from('user');
 
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wUNION (SELECT *%wFROM `session`)",
+            "SELECT *%wFROM `user`%wUNION%wSELECT *%wFROM `session`",
             $select->getSql()
         );
     }
@@ -477,7 +477,7 @@ class SelectTest extends TestCase
         $select->intersect($intersect)->from('user');
 
         self::assertStringMatchesFormat(
-            "SELECT *%wFROM `user`%wINTERSECT (SELECT *%wFROM `session`)",
+            "SELECT *%wFROM `user`%wINTERSECT%wSELECT *%wFROM `session`",
             $select->getSql()
         );
     }

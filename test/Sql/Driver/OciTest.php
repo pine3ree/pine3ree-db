@@ -278,7 +278,7 @@ class OciTest extends TestCase
         self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
         $wrapper = $this->driver->decorateSelect($select, new Params());
         self::assertStringMatchesFormat(
-            "SELECT %A*%wFROM ({$sql})%A%wWHERE ROWNUM <= :lte%d",
+            "SELECT %A*%wFROM (%w{$sql}%w)%A%wWHERE ROWNUM <= :lte%d",
             $this->invokeMethod($wrapper, 'generateSQL', $this->driver, new Params())
         );
 
@@ -291,7 +291,7 @@ class OciTest extends TestCase
             . "%wFROM"
             . "%w("
                 . "%wSELECT %A*, ROWNUM AS %s"
-                . "%wFROM ({$sql})%A"
+                . "%wFROM (%w{$sql}%w)%A"
                 . "%wWHERE ROWNUM <= :lte%d"
             . "%w)%A"
             . "%wWHERE %s > :gt%d",
@@ -303,7 +303,7 @@ class OciTest extends TestCase
         self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
         $wrapper = $this->driver->decorateSelect($select, new Params());
         self::assertStringMatchesFormat(
-            "SELECT %A*%wFROM%w(SELECT %A*, ROWNUM AS %s%wFROM ({$sql})%A)%A%wWHERE %s > :gt%d",
+            "SELECT %A*%wFROM%w(%wSELECT %A*, ROWNUM AS %s%wFROM (%w{$sql}%w)%A)%A%wWHERE %s > :gt%d",
             $this->invokeMethod($wrapper, 'generateSQL', $this->driver, new Params())
         );
     }
