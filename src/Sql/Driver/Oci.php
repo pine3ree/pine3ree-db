@@ -215,10 +215,10 @@ class Oci extends Driver implements
         }
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
-            $select_sql = $this->generateSelectSQL($select, $params, $sep0);
+            $select_sql = $this->generateSelectSQL($select, $params, $sep1);
             $limit = $params->create($limit, PDO::PARAM_INT, 'limit');
 
-            return "SELECT * FROM ({$sep1}{$select_sql}{$sep0}){$sep}WHERE ROWNUM <= {$limit}";
+            return "SELECT * FROM ({$sep1}{$select_sql}{$sep0}){$sep0}WHERE ROWNUM <= {$limit}";
         }
 
         if (isset($offset) && $offset > 0) {
