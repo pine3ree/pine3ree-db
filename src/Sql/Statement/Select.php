@@ -448,7 +448,7 @@ class Select extends Statement
         }
     }
 
-    private function getFromSQL(DriverInterface $driver, Params $params): string
+    private function getFromSQL(DriverInterface $driver, Params $params, string $sep = null): string
     {
         if (empty($this->from) && empty($this->table)) {
             throw new RuntimeException(
@@ -456,11 +456,15 @@ class Select extends Statement
             );
         }
 
+        $sep = $sep ?: " ";
+
         if ($this->from instanceof self) {
-            $level = $this->from->getNestingLevel();
-            $isep = "\n" . str_repeat(" ", 4 * $level);
-            $osep = "\n" . str_repeat(" ", 4 * ($level - 1));
-            $from = "({$isep}" . $this->from->getSQL($driver, $params, $isep) . "{$osep})";
+            if ($sep[0] === "\n") {
+                $sep1 = "{$sep}    ";
+                $from = "({$sep1}" . $this->from->getSQL($driver, $params, $sep1) . "{$sep})";
+            } else {
+                $from = "(" . $this->from->getSQL($driver, $params, $sep) . ")";
+            }
         } else {
             $from = $driver->quoteIdentifier($this->table);
         }
@@ -1026,7 +1030,7 @@ class Select extends Statement
         }
 
         $columns = $this->getColumnsSQL($driver, $params);
-        $from = $this->getFromSQL($driver, $params);
+        $from = $this->getFromSQL($driver, $params, $sep);
 
         return trim("{$select} {$columns}{$sep}{$from}");
     }
