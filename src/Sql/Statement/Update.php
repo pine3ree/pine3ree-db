@@ -70,7 +70,9 @@ class Update extends Statement
     /**
      * Set new value(s) for column(s)
      *
-     * @param string|array<string, scalar|null|string|Literal> $column_or_row
+     * @param string|array|mixed[] $column_or_row
+     *      A single column or a set of column:value pairs
+     * @psalm-param string|array<string, scalar|null|string|Literal> $column_or_row
      *      A single column or a set of column:value pairs
      * @param mixed $value The value for a single column
      * @return $this

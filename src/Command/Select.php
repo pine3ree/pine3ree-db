@@ -38,7 +38,8 @@ use function is_array;
  * @property-read Join[] $joins An array of Join clauses if any
  * @property-read array[] $groupBy An array of GROUP BY identifiers
  * @property-read Having $having The Having clause, built on-first-access if null
- * @property-read array<string, string>|string[] $orderBy An array of ORDER BY identifier to sort-direction pairs
+ * @property-read string[] $orderBy An array of ORDER BY identifier to sort-direction pairs
+ * @psalm-property-read array<string, string> $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
@@ -369,7 +370,8 @@ class Select extends Command implements ReaderInterface
      * @param int $fetch_mode The PDO fetch style
      * @param mixed $fetch_argument Different meaning depending on the value of the fetch_style parameter
      * @param array $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS
-     * @return array<string|int, mixed>[]
+     * @return array[]
+     * @psalm-return array<string|int, mixed>[]
      * @throws RuntimeException
      */
     public function fetchAll(

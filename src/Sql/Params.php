@@ -26,7 +26,8 @@ class Params
     private $mode;
 
     /**
-     * @var array<string, mixed> A collection of marker-indexed sql-statement parameters
+     * @var array|mixed[] A collection of marker-indexed sql-statement parameters
+     * @psalm-var array<string, mixed> A collection of marker-indexed sql-statement parameters
      */
     private $values = [];
 
@@ -34,7 +35,8 @@ class Params
      * A collection of marker-indexed types for sql-statement parameters
      * Types are expressed using PDO::PARAM_* constants
      *
-     * @var array<string, int>
+     * @var int[]
+     * @psalm-var array<string, int>
      */
     private $types = [];
 
@@ -48,7 +50,8 @@ class Params
     /**
      * An array of named-parameter indexes categorized by hinted names
      *
-     * @var array<string, int>
+     * @var int[]
+     * @psalm-var array<string, int>
      */
     private $index = [];
 
@@ -76,7 +79,8 @@ class Params
      * Return the parameters values created after compiling the sql string, indexed
      * by their sql markers
      *
-     * @return array<string|int, mixed>
+     * @return array|mixed[]
+     * @psalm-return array<string|int, mixed>
      */
     public function getValues(): array
     {
@@ -87,7 +91,8 @@ class Params
      * Return the parameters values types indexed by their sql markers or the 1-indexed
      * position depending on this element's collecting mode
      *
-     * @return array<string|int, int>
+     * @return int[]
+     * @psalm-return array<string|int, int>
      */
     public function getTypes(): array
     {
