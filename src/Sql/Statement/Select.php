@@ -577,7 +577,7 @@ class Select extends Statement
         );
     }
 
-    private function getJoinSQL(DriverInterface $driver, Params $params, string $space = " "): string
+    private function getJoinSQL(DriverInterface $driver, Params $params, string $sep = " "): string
     {
         if (empty($this->joins)) {
             return '';
@@ -595,7 +595,7 @@ class Select extends Statement
             $sqls[] = $join_sql;
         }
 
-        return trim(implode($space, $sqls));
+        return trim(implode($sep, $sqls));
     }
 
     /**
@@ -943,12 +943,12 @@ class Select extends Statement
      */
     protected function generateSQL(DriverInterface $driver, Params $params): string
     {
-        $space = isset($this->parent) ? " " : "\n";
+        $sep = isset($this->parent) ? " " : "\n";
 
-        $base_sql = $this->getBaseSQL($driver, $params, $space);
-        $clauses_sql = $this->getClausesSQL($driver, $params, $space);
+        $base_sql = $this->getBaseSQL($driver, $params, $sep);
+        $clauses_sql = $this->getClausesSQL($driver, $params, $sep);
 
-        $sql = rtrim("{$base_sql}{$space}{$clauses_sql}");
+        $sql = rtrim("{$base_sql}{$sep}{$clauses_sql}");
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
@@ -1009,7 +1009,7 @@ class Select extends Statement
         return preg_replace($search, $replace, $sql);
     }
 
-    private function getBaseSQL(DriverInterface $driver, Params $params, string $space = " "): string
+    private function getBaseSQL(DriverInterface $driver, Params $params, string $sep = " "): string
     {
         $select = Sql::SELECT;
         if (!empty($this->quantifier)) {
@@ -1019,14 +1019,14 @@ class Select extends Statement
         $columns = $this->getColumnsSQL($driver, $params);
         $from = $this->getFromSQL($driver, $params);
 
-        return trim("{$select} {$columns}{$space}{$from}");
+        return trim("{$select} {$columns}{$sep}{$from}");
     }
 
-    private function getClausesSQL(DriverInterface $driver, Params $params, string $space = " "): string
+    private function getClausesSQL(DriverInterface $driver, Params $params, string $sep = " "): string
     {
         $sqls = [];
 
-        $sqls[] = $this->getJoinSQL($driver, $params, $space);
+        $sqls[] = $this->getJoinSQL($driver, $params, $sep);
         $sqls[] = $this->getWhereSQL($driver, $params);
         $sqls[] = $this->getGroupBySQL($driver);
         $sqls[] = $this->getHavingSQL($driver, $params);
@@ -1040,7 +1040,7 @@ class Select extends Statement
             }
         }
 
-        return implode($space, $sqls);
+        return implode($sep, $sqls);
     }
 
     public function __get(string $name)
