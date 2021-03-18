@@ -242,6 +242,7 @@ class Sql
     public const ESCAPE = 'ESCAPE';
     public const COALESCE = 'COALESCE';
     // AGGREGATE FUNCTIONS
+    public const COUNT = 'COUNT';
     public const SUM = 'SUM';
     public const MIN = 'MIN';
     public const MAX = 'MAX';

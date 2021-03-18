@@ -247,6 +247,11 @@ class Select extends Statement
         ));
     }
 
+    public function count($identifier, string $alias = null): self
+    {
+        return $this->aggregate(Sql::COUNT, $identifier, $alias);
+    }
+
     public function sum($identifier, string $alias = null): self
     {
         return $this->aggregate(Sql::SUM, $identifier, $alias);

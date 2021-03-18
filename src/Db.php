@@ -310,7 +310,7 @@ class Db
      * @param string|null $alias The db-table alias
      * @return Select
      */
-    public function select($columns = Sql::ASTERISK, $from = null, string $alias = null): Select
+    public function select($columns = null, $from = null, string $alias = null): Select
     {
         return new Select($this, $columns, $from, $alias);
     }
@@ -401,7 +401,7 @@ class Db
      */
     public function count(string $table, $where = null, string $identifier = '*'): int
     {
-        $select = $this->select(new Literal("COUNT({$identifier})"), $table);
+        $select = $this->select()->count($identifier)->from($table);
         if (isset($where)) {
             $select->where($where);
         }
