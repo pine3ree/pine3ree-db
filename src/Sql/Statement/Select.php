@@ -189,7 +189,7 @@ class Select extends Statement
     /**
      * Add a column to the select list
      *
-     * @param string|Literal|Expression|Select $column
+     * @param string|Identifier|Literal|Expression|Select $column
      * @param string $alias
      * @return $this Provides a fluent interface
      * @throws RuntimeException
@@ -226,10 +226,14 @@ class Select extends Statement
     private static function assertValidColumn(&$column, $key = null)
     {
         if (is_string($column) && '' !== $column = trim($column)) {
+            if (is_numeric($column)) {
+                $column = new Literal($column);
+            }
             return;
         }
 
-        if ($column instanceof Literal
+        if ($column instanceof Identifier
+            || $column instanceof Literal
             || $column instanceof Expression
             || $column instanceof self
         ) {
@@ -239,7 +243,8 @@ class Select extends Statement
         throw new InvalidArgumentException(sprintf(
             "A table column must be"
             . " a non empty string,"
-            . " a non empty Expression or Literal expression or "
+            . " an Identifier,"
+            . " a non empty Expression or Literal expression or"
             . " a Select statement,"
             . " `%s` provided%s!",
             is_object($column) ? get_class($column) : gettype($column),
@@ -317,6 +322,8 @@ class Select extends Statement
                 $column_sql = $driver->quoteIdentifier(
                     $this->normalizeColumn($column, $driver, $add_tb_prefix)
                 );
+            } elseif ($column instanceof Identifier) {
+                $column_sql = $column->getSQL($driver);
             } elseif ($column instanceof Literal) {
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof self) {

@@ -15,6 +15,7 @@ use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
 use P3\Db\Sql\Driver\Feature\SelectDecorator;
 use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use P3\Db\Sql\Expression;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
@@ -307,6 +308,8 @@ class Oci extends Driver implements
                 } else {
                     $column_sql = $this->quoteIdentifier($column);
                 }
+            } elseif ($column instanceof Identifier) {
+                $column_sql = $column->getSQL($this);
             } elseif ($column instanceof Literal) {
                 $column_sql = $column->getSQL();
             } elseif ($column instanceof Expression || $column instanceof Select) {
