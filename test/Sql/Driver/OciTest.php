@@ -246,7 +246,7 @@ class OciTest extends TestCase
         $select->limit(10);
         self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
         self::assertStringMatchesFormat(
-            "SELECT * FROM (%w{$sql}%w)%wWHERE ROWNUM <= :limit%d",
+            "SELECT * FROM (%w{$sql}%w)%wWHERE ROWNUM <= :rownum%d",
             $this->driver->decorateSelectSQL($select, new Params())
         );
 
@@ -257,7 +257,7 @@ class OciTest extends TestCase
             "SELECT * FROM ("
             . "%wSELECT %s.*, ROWNUM AS %s"
             . "%wFROM (%w{$sql}%w) %s"
-            . "%wWHERE ROWNUM <= :limit%d%w)"
+            . "%wWHERE ROWNUM <= :rownum%d%w)"
             . "%wWHERE %s > :offset%d",
             $this->driver->decorateSelectSQL($select, new Params())
         );
