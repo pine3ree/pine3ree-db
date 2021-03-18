@@ -32,7 +32,7 @@ class PgSql extends Driver implements LimitSqlProvider
      * @param Select $select
      * @return string
      */
-    public function getLimitSQL(Select $select, Params $params): string
+    public function getLimitSQL(Select $select, Params $params, string $sep = " "): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;

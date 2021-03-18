@@ -343,7 +343,7 @@ class Oci extends Driver implements
         return trim(implode(", ", $sqls));
     }
 
-    public function getLimitSQL(Select $select, Params $params): string
+    public function getLimitSQL(Select $select, Params $params, string $sep = " "): string
     {
         return '';
     }

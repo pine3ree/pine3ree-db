@@ -18,5 +18,5 @@ use P3\Db\Sql\Statement\Select;
  */
 interface LimitSqlProvider
 {
-    public function getLimitSQL(Select $select, Params $params): string;
+    public function getLimitSQL(Select $select, Params $params, string $sep = " "): string;
 }

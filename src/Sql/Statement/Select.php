@@ -455,7 +455,10 @@ class Select extends Statement
         }
 
         if ($this->from instanceof self) {
-            $from = "(" . $this->from->getSQL($driver, $params) . ")";
+            $level = $this->from->getNestingLevel();
+            $isep = "\n" . str_repeat(" ", 4 * $level);
+            $osep = "\n" . str_repeat(" ", 4 * ($level - 1));
+            $from = "({$isep}" . $this->from->getSQL($driver, $params, $isep) . "{$osep})";
         } else {
             $from = $driver->quoteIdentifier($this->table);
         }
@@ -790,7 +793,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getLimitSQL(DriverInterface $driver, Params $params): string
+    private function getLimitSQL(DriverInterface $driver, Params $params, string $sep = " "): string
     {
         if (!isset($this->limit) && (int)$this->offset === 0) {
             return '';
@@ -798,7 +801,7 @@ class Select extends Statement
 
         // computed by driver?
         if ($driver instanceof LimitSqlProvider) {
-            return $driver->getLimitSQL($this, $params);
+            return $driver->getLimitSQL($this, $params, $sep);
         }
 
         // Default implementation working for MySQL, PostgreSQL and Sqlite
@@ -880,7 +883,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params): string
+    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, string $sep = " "): string
     {
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver, $params);
@@ -891,7 +894,7 @@ class Select extends Statement
                 // @codeCoverageIgnoreEnd
             }
             //$this->importParams($this->union);
-            return ($this->union_all === true ? Sql::UNION_ALL : Sql::UNION) . " ({$union_sql})";
+            return ($this->union_all === true ? Sql::UNION_ALL : Sql::UNION) . "{$sep}{$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
@@ -902,13 +905,13 @@ class Select extends Statement
                 return '';
                 // @codeCoverageIgnoreEnd
             }
-            return Sql::INTERSECT . " ({$intersect_sql})";
+            return Sql::INTERSECT . "{$sep}{$intersect_sql}";
         }
 
         return '';
     }
 
-    public function getSQL(DriverInterface $driver = null, Params $params = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null, string $sep = null): string
     {
         if (isset($this->sql) && $params === null) {
             return $this->sql;
@@ -925,11 +928,11 @@ class Select extends Statement
 
         if ($driver instanceof SelectDecorator) {
             $select = $driver->decorateSelect($this, $params);
-            return $this->sql = $select->generateSQL($driver, $params);
+            return $this->sql = $select->generateSQL($driver, $params, $sep);
         }
 
         // generate and cache a fresh sql string
-        return $this->sql = $this->generateSQL($driver, $params);
+        return $this->sql = $this->generateSQL($driver, $params, $sep);
     }
 
     /**
@@ -941,9 +944,9 @@ class Select extends Statement
      * @param DriverInterface $driver
      * @return string
      */
-    protected function generateSQL(DriverInterface $driver, Params $params): string
+    protected function generateSQL(DriverInterface $driver, Params $params, string $sep = null): string
     {
-        $sep = isset($this->parent) ? " " : "\n";
+        $sep = $sep ?? (isset($this->parent) ? " " : "\n");
 
         $base_sql = $this->getBaseSQL($driver, $params, $sep);
         $clauses_sql = $this->getClausesSQL($driver, $params, $sep);
@@ -1030,9 +1033,9 @@ class Select extends Statement
         $sqls[] = $this->getWhereSQL($driver, $params);
         $sqls[] = $this->getGroupBySQL($driver);
         $sqls[] = $this->getHavingSQL($driver, $params);
-        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params);
+        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params, $sep);
         $sqls[] = $this->getOrderBySQL($driver);
-        $sqls[] = $this->getLimitSQL($driver, $params);
+        $sqls[] = $this->getLimitSQL($driver, $params, $sep);
 
         foreach ($sqls as $index => $sql) {
             if (self::isEmptySQL($sql)) {
@@ -1041,6 +1044,18 @@ class Select extends Statement
         }
 
         return implode($sep, $sqls);
+    }
+
+    private function getNestingLevel(): int
+    {
+        $level = 0;
+        $element = $this;
+        while (null !== $element->parent && $element->parent instanceof self) {
+            $element = $element->parent;
+            $level += 1;
+        }
+
+        return $level;
     }
 
     public function __get(string $name)

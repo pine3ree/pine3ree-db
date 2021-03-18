@@ -26,7 +26,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
         parent::__construct($pdo, '[', ']', "'");
     }
 
-    public function getLimitSQL(Select $select, Params $params): string
+    public function getLimitSQL(Select $select, Params $params, string $sep = " "): string
     {
         $limit  = $select->limit;
         $offset = max(0, (int)$select->offset);
@@ -61,13 +61,11 @@ class SqlSrv extends Driver implements LimitSqlProvider
             );
         }
 
-        $space = $select->hasParent() ? " " : "\n";
-
         $fetch = $params->create($limit, PDO::PARAM_INT, 'fetch');
         $fetch_sql = $offset === 0
-            ? "{$space}FETCH FIRST {$fetch} ROWS ONLY"
-            : "{$space}FETCH NEXT {$fetch} ROWS ONLY";
+            ? "FETCH FIRST {$fetch} ROWS ONLY"
+            : "FETCH NEXT {$fetch} ROWS ONLY";
 
-        return "{$offset_sql} {$fetch_sql}";
+        return "{$offset_sql}{$sep}{$fetch_sql}";
     }
 }
