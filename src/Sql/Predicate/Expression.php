@@ -31,7 +31,7 @@ use function trim;
  * This class represents a sql expression predicate with parameter markers
  *
  * @property-read string $expression The expression string itself
- * @property-read string $substitutions The placeholder substitutions
+ * @property-read array $substitutions The placeholder substitutions
  */
 class Expression extends Predicate
 {
