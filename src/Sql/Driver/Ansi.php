@@ -41,7 +41,7 @@ class Ansi extends Driver implements LimitSqlProvider
      *
      * {@inheritDoc}
      */
-    public function getLimitSQL(Select $select, Params $params, string $sep = null): string
+    public function getLimitSQL(Select $select, Params $params): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;

@@ -34,7 +34,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
      *
      * @throws RuntimeException
      */
-    public function getLimitSQL(Select $select, Params $params, string $sep = null): string
+    public function getLimitSQL(Select $select, Params $params): string
     {
         $limit  = $select->limit;
         $offset = max(0, (int)$select->offset);
@@ -74,6 +74,6 @@ class SqlSrv extends Driver implements LimitSqlProvider
             ? "FETCH FIRST {$fetch} ROWS ONLY"
             : "FETCH NEXT {$fetch} ROWS ONLY";
 
-        return "{$offset_sql}{$sep}{$fetch_sql}";
+        return "{$offset_sql} {$fetch_sql}";
     }
 }

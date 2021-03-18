@@ -23,8 +23,7 @@ interface LimitSqlProvider
      *
      * @param Select $select
      * @param Params $params
-     * @param string|null $sep
      * @return string
      */
-    public function getLimitSQL(Select $select, Params $params, string $sep = null): string;
+    public function getLimitSQL(Select $select, Params $params): string;
 }

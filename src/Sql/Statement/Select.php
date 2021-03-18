@@ -448,7 +448,7 @@ class Select extends Statement
         }
     }
 
-    private function getFromSQL(DriverInterface $driver, Params $params, string $sep = null): string
+    private function getFromSQL(DriverInterface $driver, Params $params): string
     {
         if (empty($this->from) && empty($this->table)) {
             throw new RuntimeException(
@@ -456,15 +456,8 @@ class Select extends Statement
             );
         }
 
-        $sep = $sep ?: " ";
-
         if ($this->from instanceof self) {
-            if ($sep[0] === "\n") {
-                $sep1 = "{$sep}    ";
-                $from = "({$sep1}" . $this->from->getSQL($driver, $params, $sep1) . "{$sep})";
-            } else {
-                $from = "(" . $this->from->getSQL($driver, $params, $sep) . ")";
-            }
+            $from = "(" . $this->from->getSQL($driver, $params) . ")";
         } else {
             $from = $driver->quoteIdentifier($this->table);
         }
@@ -586,7 +579,7 @@ class Select extends Statement
         );
     }
 
-    private function getJoinSQL(DriverInterface $driver, Params $params, string $sep): string
+    private function getJoinSQL(DriverInterface $driver, Params $params): string
     {
         if (empty($this->joins)) {
             return '';
@@ -604,7 +597,7 @@ class Select extends Statement
             $sqls[] = $join_sql;
         }
 
-        return trim(implode($sep, $sqls));
+        return trim(implode(" ", $sqls));
     }
 
     /**
@@ -799,7 +792,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getLimitSQL(DriverInterface $driver, Params $params, string $sep = null): string
+    private function getLimitSQL(DriverInterface $driver, Params $params): string
     {
         if (!isset($this->limit) && (int)$this->offset === 0) {
             return '';
@@ -807,7 +800,7 @@ class Select extends Statement
 
         // computed by driver?
         if ($driver instanceof LimitSqlProvider) {
-            return $driver->getLimitSQL($this, $params, $sep);
+            return $driver->getLimitSQL($this, $params);
         }
 
         // Default implementation working for MySQL, PostgreSQL and Sqlite
@@ -889,7 +882,7 @@ class Select extends Statement
         return $this;
     }
 
-    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, string $sep): string
+    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params): string
     {
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver, $params);
@@ -900,7 +893,7 @@ class Select extends Statement
                 // @codeCoverageIgnoreEnd
             }
             //$this->importParams($this->union);
-            return ($this->union_all === true ? Sql::UNION_ALL : Sql::UNION) . "{$sep}{$union_sql}";
+            return ($this->union_all === true ? Sql::UNION_ALL : Sql::UNION) . " {$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
@@ -911,13 +904,13 @@ class Select extends Statement
                 return '';
                 // @codeCoverageIgnoreEnd
             }
-            return Sql::INTERSECT . "{$sep}{$intersect_sql}";
+            return Sql::INTERSECT . " {$intersect_sql}";
         }
 
         return '';
     }
 
-    public function getSQL(DriverInterface $driver = null, Params $params = null, string $sep = null): string
+    public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
         if (isset($this->sql) && $params === null) {
             return $this->sql;
@@ -928,19 +921,17 @@ class Select extends Statement
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
 
-        $sep = $sep ?: (isset($this->parent) ? " " : "\n");
-
         if ($driver instanceof SelectSqlDecorator) {
-            return $this->sql = $driver->decorateSelectSQL($this, $params, $sep);
+            return $this->sql = $driver->decorateSelectSQL($this, $params);
         }
 
         if ($driver instanceof SelectDecorator) {
             $select = $driver->decorateSelect($this, $params);
-            return $this->sql = $select->generateSQL($driver, $params, $sep);
+            return $this->sql = $select->generateSQL($driver, $params);
         }
 
         // generate and cache a fresh sql string
-        return $this->sql = $this->generateSQL($driver, $params, $sep);
+        return $this->sql = $this->generateSQL($driver, $params);
     }
 
     /**
@@ -951,17 +942,14 @@ class Select extends Statement
      *
      * @param DriverInterface $driver
      * @param Params $params
-     * @param string|null $sep
      * @return string
      */
-    protected function generateSQL(DriverInterface $driver, Params $params, string $sep = null): string
+    protected function generateSQL(DriverInterface $driver, Params $params): string
     {
-        $sep = $sep ?: " ";
+        $base_sql = $this->getBaseSQL($driver, $params);
+        $clauses_sql = $this->getClausesSQL($driver, $params);
 
-        $base_sql = $this->getBaseSQL($driver, $params, $sep);
-        $clauses_sql = $this->getClausesSQL($driver, $params, $sep);
-
-        $sql = rtrim("{$base_sql}{$sep}{$clauses_sql}");
+        $sql = rtrim("{$base_sql} {$clauses_sql}");
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
@@ -1022,7 +1010,7 @@ class Select extends Statement
         return preg_replace($search, $replace, $sql);
     }
 
-    private function getBaseSQL(DriverInterface $driver, Params $params, string $sep): string
+    private function getBaseSQL(DriverInterface $driver, Params $params): string
     {
         $select = Sql::SELECT;
         if (!empty($this->quantifier)) {
@@ -1030,22 +1018,22 @@ class Select extends Statement
         }
 
         $columns = $this->getColumnsSQL($driver, $params);
-        $from = $this->getFromSQL($driver, $params, $sep);
+        $from = $this->getFromSQL($driver, $params);
 
-        return trim("{$select} {$columns}{$sep}{$from}");
+        return trim("{$select} {$columns} {$from}");
     }
 
-    private function getClausesSQL(DriverInterface $driver, Params $params, string $sep): string
+    private function getClausesSQL(DriverInterface $driver, Params $params): string
     {
         $sqls = [];
 
-        $sqls[] = $this->getJoinSQL($driver, $params, $sep);
+        $sqls[] = $this->getJoinSQL($driver, $params);
         $sqls[] = $this->getWhereSQL($driver, $params);
         $sqls[] = $this->getGroupBySQL($driver);
         $sqls[] = $this->getHavingSQL($driver, $params);
-        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params, $sep);
+        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params);
         $sqls[] = $this->getOrderBySQL($driver);
-        $sqls[] = $this->getLimitSQL($driver, $params, $sep);
+        $sqls[] = $this->getLimitSQL($driver, $params);
 
         foreach ($sqls as $index => $sql) {
             if (self::isEmptySQL($sql)) {
@@ -1053,7 +1041,7 @@ class Select extends Statement
             }
         }
 
-        return implode($sep, $sqls);
+        return implode(" ", $sqls);
     }
 
     private function getNestingLevel(): int
