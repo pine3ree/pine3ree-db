@@ -459,10 +459,8 @@ class Select extends Statement
         if ($this->from instanceof self) {
             if ($pretty) {
                 $nl = "\n";
-                $this_level = $this->getNestingLevel();
-                $from_level = $this_level + 1;
-                $this_indent = str_repeat(" ", $this_level * 4);
-                $from_indent = str_repeat(" ", $from_level * 4);
+                $this_indent = str_repeat(" ", $this->getNestingLevel() * 4);
+                $from_indent = $this_indent . str_repeat(" ", 4);
             } else {
                 $nl = $this_indent = $from_indent = "";
             }
