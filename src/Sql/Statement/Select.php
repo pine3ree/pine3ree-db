@@ -1018,15 +1018,15 @@ class Select extends Statement
         }
 
         $columns = $this->getColumnsSQL($driver, $params);
-        $from = $this->getFromSQL($driver, $params);
 
-        return trim("{$select} {$columns} {$from}");
+        return trim("{$select} {$columns}");
     }
 
     private function getClausesSQL(DriverInterface $driver, Params $params): string
     {
         $sqls = [];
 
+        $sqls[] = $this->getFromSQL($driver, $params);
         $sqls[] = $this->getJoinSQL($driver, $params);
         $sqls[] = $this->getWhereSQL($driver, $params);
         $sqls[] = $this->getGroupBySQL($driver);
