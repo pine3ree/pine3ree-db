@@ -39,19 +39,6 @@ function expression(string $expression, array $substitutions = []): Expression
 }
 
 /**
- * @see Expression
- * @see Sql::expr()
- *
- * @param string $expression
- * @param array $substitutions
- * @return Expression
- */
-function expr(string $expression, array $substitutions = []): Expression
-{
-    return new Expression($expression, $substitutions);
-}
-
-/**
  * @see Identifier
  * @see Sql::identifier()
  *

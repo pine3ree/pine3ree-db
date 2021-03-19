@@ -51,12 +51,6 @@ class FunctionsTest extends TestCase
         ]);
         self::assertInstanceOf(Expression::class, $expression);
         self::assertStringStartsWith('SUM(price) >= :expr', $expression->getSQL());
-
-        $expr = expr("SUM(price) <= {maxPrice}", [
-            'maxPrice' => 543.21,
-        ]);
-        self::assertInstanceOf(Expression::class, $expr);
-        self::assertStringStartsWith('SUM(price) <= :expr', $expr->getSQL());
     }
 
     public function testCreateInvalidIdentifierRaisesException()
