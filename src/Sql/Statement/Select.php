@@ -981,9 +981,6 @@ class Select extends Statement
             "{$select} {$this->getColumnsSQL($driver, $params)}",
         ];
 
-        $sep = $pretty ? "\n" : " ";
-        $indent = $pretty ? str_repeat(" ", $this->getNestingLevel() * 4) : "";
-
         $sqls[] = $this->getFromSQL($driver, $params, $pretty);
         $sqls[] = $this->getJoinSQL($driver, $params);
         $sqls[] = $this->getWhereSQL($driver, $params);
@@ -998,6 +995,9 @@ class Select extends Statement
                 unset($sqls[$i]);
             }
         }
+
+        $sep = $pretty ? "\n" : " ";
+        $indent = $pretty ? str_repeat(" ", $this->getNestingLevel() * 4) : "";
 
         $sql = implode("{$sep}{$indent}", $sqls);
 
