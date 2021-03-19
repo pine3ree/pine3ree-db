@@ -893,26 +893,20 @@ class Select extends Statement
 
     private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
     {
-        if (!isset($this->union) && !isset($this->intersect)) {
-            return '';
-        }
-
-        $sep = $pretty ? "\n" . str_repeat(" ", ($this->getNestingLevel() + 1) * 4) : " ";
-
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver, $params, $pretty);
             $union = $this->union_all === true ? Sql::UNION_ALL : Sql::UNION;
+            $sep = $pretty ? "\n" . str_repeat(" ", $this->union->getNestingLevel() * 4) : " ";
             return "{$union}{$sep}{$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
             $intersect_sql = $this->intersect->getSQL($driver, $params, $pretty);
+            $sep = $pretty ? "\n" . str_repeat(" ", $this->intersect->getNestingLevel() * 4) : " ";
             return Sql::INTERSECT . "{$sep}{$intersect_sql}";
         }
 
-        // @codeCoverageIgnoreStart
         return '';
-        // @codeCoverageIgnoreEnd
     }
 
     /**
