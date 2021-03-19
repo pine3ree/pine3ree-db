@@ -324,7 +324,7 @@ abstract class Driver implements DriverInterface
 
         if (false === $method) {
             throw new RuntimeException(
-                "Call to undefined method method `{$methodName}`!"
+                "Call to undefined method `{$methodName}`!"
             );
         }
 
