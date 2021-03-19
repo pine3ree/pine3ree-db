@@ -1041,9 +1041,9 @@ class Select extends Statement
     private function getNestingLevel(): int
     {
         $level = 0;
-        $element = $this;
-        while ($element->parent instanceof self) {
-            $element = $element->parent;
+        $select = $this;
+        while ($select->parent instanceof self) {
+            $select = $select->parent;
             $level += 1;
         }
 
