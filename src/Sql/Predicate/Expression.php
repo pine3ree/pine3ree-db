@@ -21,10 +21,10 @@ use function get_class;
 use function gettype;
 use function is_object;
 use function is_scalar;
-use function preg_quote;
-use function preg_replace;
 use function sprintf;
+use function strlen;
 use function strpos;
+use function substr_replace;
 use function trim;
 
 /**
@@ -118,12 +118,13 @@ class Expression extends Predicate
         $sql = $this->expression;
         foreach ($this->substitutions as $name => $value) {
             $search = "{{$name}}";
-            while (strpos($sql, $search) !== false) {
-                $sql = preg_replace(
-                    '/' . preg_quote($search) . '/',
-                    $this->getSubstitutionValueSQL($driver, $params, $value, null, 'expr'),
+            $length = strlen($search);
+            while (false !== $pos = strpos($sql, $search)) {
+                $sql = substr_replace(
                     $sql,
-                    1
+                    $this->getSubstitutionValueSQL($driver, $params, $value, null, 'expr'),
+                    $pos,
+                    $length
                 );
             }
         }
