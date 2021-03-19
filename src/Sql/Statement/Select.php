@@ -460,7 +460,7 @@ class Select extends Statement
             if ($pretty) {
                 $nl = "\n";
                 $this_indent = str_repeat(" ", $this->getNestingLevel() * 4);
-                $from_indent = $this_indent . str_repeat(" ", 4);
+                $from_indent = str_repeat(" ", $this->from->getNestingLevel() * 4);
             } else {
                 $nl = $this_indent = $from_indent = "";
             }
