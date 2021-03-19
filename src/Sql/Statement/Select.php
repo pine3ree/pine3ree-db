@@ -466,8 +466,9 @@ class Select extends Statement
             } else {
                 $nl = $this_indent = $from_indent = "";
             }
-
-            $from = "({$nl}{$from_indent}" . $this->from->getSQL($driver, $params, $pretty) . "{$nl}{$this_indent})";
+            $from = "({$nl}{$from_indent}"
+                . $this->from->getSQL($driver, $params, $pretty)
+                . "{$nl}{$this_indent})";
         } else {
             $from = $driver->quoteIdentifier($this->table);
         }
