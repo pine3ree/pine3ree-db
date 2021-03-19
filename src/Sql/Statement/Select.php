@@ -1048,7 +1048,7 @@ class Select extends Statement
     {
         $level = 0;
         $element = $this;
-        while (null !== $element->parent && $element->parent instanceof self) {
+        while ($element->parent instanceof self) {
             $element = $element->parent;
             $level += 1;
         }
