@@ -897,31 +897,17 @@ class Select extends Statement
             return '';
         }
 
-        $sep = $pretty ? "\n" : " ";
-        $indent = $pretty ? str_repeat(" ", ($this->getNestingLevel() + 1) * 4) : "";
+        $sep = $pretty ? "\n" . str_repeat(" ", ($this->getNestingLevel() + 1) * 4) : " ";
 
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver, $params, $pretty);
-            if (self::isEmptySQL($union_sql)) {
-                // @codeCoverageIgnoreStart
-                // unreacheable code
-                return '';
-                // @codeCoverageIgnoreEnd
-            }
-            //$this->importParams($this->union);
             $union = $this->union_all === true ? Sql::UNION_ALL : Sql::UNION;
-            return "{$union}{$sep}{$indent}{$union_sql}";
+            return "{$union}{$sep}{$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
             $intersect_sql = $this->intersect->getSQL($driver, $params, $pretty);
-            if (self::isEmptySQL($intersect_sql)) {
-                // @codeCoverageIgnoreStart
-                // unreacheable code
-                return '';
-                // @codeCoverageIgnoreEnd
-            }
-            return Sql::INTERSECT . "{$sep}{$indent}{$intersect_sql}";
+            return Sql::INTERSECT . "{$sep}{$intersect_sql}";
         }
 
         // @codeCoverageIgnoreStart
@@ -995,10 +981,8 @@ class Select extends Statement
             }
         }
 
-        $sep = $pretty ? "\n" : " ";
-        $indent = $pretty ? str_repeat(" ", $this->getNestingLevel() * 4) : "";
-
-        $sql = implode("{$sep}{$indent}", $sqls);
+        $sep = $pretty ? "\n" . str_repeat(" ", $this->getNestingLevel() * 4) : " ";
+        $sql = implode($sep, $sqls);
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
