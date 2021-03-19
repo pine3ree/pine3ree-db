@@ -201,7 +201,7 @@ class Oci extends Driver implements
         return implode('.', $segments);
     }
 
-    public function decorateSelectSQL(Select $select, Params $params): string
+    public function decorateSelectSQL(Select $select, Params $params, bool $pretty = false): string
     {
         $limit  = $select->limit;
         $offset = $select->offset;
@@ -231,7 +231,8 @@ class Oci extends Driver implements
             return "SELECT * FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
         }
 
-        return $this->generateSelectSQL($select, $params);
+        // return pretty format only if undecorated
+        return $this->generateSelectSQL($select, $params, $pretty);
     }
 
     public function decorateSelect(Select $select, Params $params): Select

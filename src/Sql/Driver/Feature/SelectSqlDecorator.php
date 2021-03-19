@@ -24,7 +24,8 @@ interface SelectSqlDecorator
      *
      * @param Select $select The SQL select statement object
      * @param Params $params The parameters collector
+     * @param bool $pretty output a nicely formatted SQL string
      * @return string The decorated SQL-string
      */
-    public function decorateSelectSQL(Select $select, Params $params): string;
+    public function decorateSelectSQL(Select $select, Params $params, bool $pretty = false): string;
 }

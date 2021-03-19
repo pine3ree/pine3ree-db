@@ -448,7 +448,7 @@ class Select extends Statement
         }
     }
 
-    private function getFromSQL(DriverInterface $driver, Params $params): string
+    private function getFromSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
     {
         if (empty($this->from) && empty($this->table)) {
             throw new RuntimeException(
@@ -457,7 +457,17 @@ class Select extends Statement
         }
 
         if ($this->from instanceof self) {
-            $from = "(" . $this->from->getSQL($driver, $params) . ")";
+            if ($pretty) {
+                $nl = "\n";
+                $this_level = $this->getNestingLevel();
+                $from_level = $this_level + 1;
+                $this_indent = str_repeat(" ", $this_level * 4);
+                $from_indent = str_repeat(" ", $from_level * 4);
+            } else {
+                $nl = $this_indent = $from_indent = "";
+            }
+
+            $from = "({$nl}{$from_indent}" . $this->from->getSQL($driver, $params, $pretty) . "{$nl}{$this_indent})";
         } else {
             $from = $driver->quoteIdentifier($this->table);
         }
@@ -882,10 +892,17 @@ class Select extends Statement
         return $this;
     }
 
-    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params): string
+    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
     {
+        if (!isset($this->union) && !isset($this->intersect)) {
+            return '';
+        }
+
+        $sep = $pretty ? "\n" : " ";
+        $indent = $pretty ? str_repeat(" ", ($this->getNestingLevel() + 1) * 4) : "";
+
         if ($this->union instanceof self) {
-            $union_sql = $this->union->getSQL($driver, $params);
+            $union_sql = $this->union->getSQL($driver, $params, $pretty);
             if (self::isEmptySQL($union_sql)) {
                 // @codeCoverageIgnoreStart
                 // unreacheable code
@@ -893,24 +910,32 @@ class Select extends Statement
                 // @codeCoverageIgnoreEnd
             }
             //$this->importParams($this->union);
-            return ($this->union_all === true ? Sql::UNION_ALL : Sql::UNION) . " {$union_sql}";
+            $union = $this->union_all === true ? Sql::UNION_ALL : Sql::UNION;
+            return "{$union}{$sep}{$indent}{$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
-            $intersect_sql = $this->intersect->getSQL($driver, $params);
+            $intersect_sql = $this->intersect->getSQL($driver, $params, $pretty);
             if (self::isEmptySQL($intersect_sql)) {
                 // @codeCoverageIgnoreStart
                 // unreacheable code
                 return '';
                 // @codeCoverageIgnoreEnd
             }
-            return Sql::INTERSECT . " {$intersect_sql}";
+            return Sql::INTERSECT . "{$sep}{$indent}{$intersect_sql}";
         }
 
+        // @codeCoverageIgnoreStart
         return '';
+        // @codeCoverageIgnoreEnd
     }
 
-    public function getSQL(DriverInterface $driver = null, Params $params = null): string
+    /**
+     * {@inheritDoc}
+     *
+     * @param bool $pretty Return a nicely formatted sql string?
+     */
+    public function getSQL(DriverInterface $driver = null, Params $params = null, bool $pretty = false): string
     {
         if (isset($this->sql) && $params === null) {
             return $this->sql;
@@ -922,16 +947,17 @@ class Select extends Statement
         $params = $params ?? ($this->params = new Params());
 
         if ($driver instanceof SelectSqlDecorator) {
-            return $this->sql = $driver->decorateSelectSQL($this, $params);
+            return $this->sql = $driver->decorateSelectSQL($this, $params, $pretty);
         }
 
         if ($driver instanceof SelectDecorator) {
             $select = $driver->decorateSelect($this, $params);
-            return $this->sql = $select->generateSQL($driver, $params);
+            $select->parent = $this->parent;
+            return $this->sql = $select->generateSQL($driver, $params, $pretty);
         }
 
         // generate and cache a fresh sql string
-        return $this->sql = $this->generateSQL($driver, $params);
+        return $this->sql = $this->generateSQL($driver, $params, $pretty);
     }
 
     /**
@@ -944,7 +970,7 @@ class Select extends Statement
      * @param Params $params
      * @return string
      */
-    protected function generateSQL(DriverInterface $driver, Params $params): string
+    protected function generateSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
     {
         $select = Sql::SELECT;
         if (!empty($this->quantifier)) {
@@ -955,12 +981,15 @@ class Select extends Statement
             "{$select} {$this->getColumnsSQL($driver, $params)}",
         ];
 
-        $sqls[] = $this->getFromSQL($driver, $params);
+        $sep = $pretty ? "\n" : " ";
+        $indent = $pretty ? str_repeat(" ", $this->getNestingLevel() * 4) : "";
+
+        $sqls[] = $this->getFromSQL($driver, $params, $pretty);
         $sqls[] = $this->getJoinSQL($driver, $params);
         $sqls[] = $this->getWhereSQL($driver, $params);
         $sqls[] = $this->getGroupBySQL($driver);
         $sqls[] = $this->getHavingSQL($driver, $params);
-        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params);
+        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params, $pretty);
         $sqls[] = $this->getOrderBySQL($driver);
         $sqls[] = $this->getLimitSQL($driver, $params);
 
@@ -970,7 +999,7 @@ class Select extends Statement
             }
         }
 
-        $sql = implode(" ", $sqls);
+        $sql = implode("{$sep}{$indent}", $sqls);
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
