@@ -930,8 +930,9 @@ class Select extends Statement
         }
 
         if ($driver instanceof SelectDecorator) {
+            $parent = $this->parent; // this parent may change by decorator
             $select = $driver->decorateSelect($this, $params);
-            $select->parent = $this->parent;
+            $select->parent = $parent;
             return $this->sql = $select->generateSQL($driver, $params, $pretty);
         }
 
