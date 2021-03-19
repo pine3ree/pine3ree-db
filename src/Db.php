@@ -115,7 +115,7 @@ class Db
 
         $this->charset = $options['charset'] ?? self::DEFAULT_CHARSET;
         $this->options = $options ?? [];
-        $this->updateOptions();
+        $this->decorateOptions();
     }
 
     public function __destruct()
@@ -123,7 +123,7 @@ class Db
         $this->pdo = null;
     }
 
-    private function updateOptions(): void
+    private function decorateOptions(): void
     {
         $driver_name = explode(':', $this->dsn)[0];
         switch ($driver_name) {
