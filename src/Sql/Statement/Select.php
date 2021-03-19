@@ -946,10 +946,31 @@ class Select extends Statement
      */
     protected function generateSQL(DriverInterface $driver, Params $params): string
     {
-        $base_sql = $this->getBaseSQL($driver, $params);
-        $clauses_sql = $this->getClausesSQL($driver, $params);
+        $select = Sql::SELECT;
+        if (!empty($this->quantifier)) {
+            $select .= " {$this->quantifier}";
+        }
 
-        $sql = rtrim("{$base_sql} {$clauses_sql}");
+        $sqls = [
+            "{$select} {$this->getColumnsSQL($driver, $params)}",
+        ];
+
+        $sqls[] = $this->getFromSQL($driver, $params);
+        $sqls[] = $this->getJoinSQL($driver, $params);
+        $sqls[] = $this->getWhereSQL($driver, $params);
+        $sqls[] = $this->getGroupBySQL($driver);
+        $sqls[] = $this->getHavingSQL($driver, $params);
+        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params);
+        $sqls[] = $this->getOrderBySQL($driver);
+        $sqls[] = $this->getLimitSQL($driver, $params);
+
+        foreach ($sqls as $i => $sql) {
+            if (self::isEmptySQL($sql)) {
+                unset($sqls[$i]);
+            }
+        }
+
+        $sql = implode(" ", $sqls);
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
@@ -1008,40 +1029,6 @@ class Select extends Statement
         }
 
         return preg_replace($search, $replace, $sql);
-    }
-
-    private function getBaseSQL(DriverInterface $driver, Params $params): string
-    {
-        $select = Sql::SELECT;
-        if (!empty($this->quantifier)) {
-            $select .= " {$this->quantifier}";
-        }
-
-        $columns = $this->getColumnsSQL($driver, $params);
-
-        return trim("{$select} {$columns}");
-    }
-
-    private function getClausesSQL(DriverInterface $driver, Params $params): string
-    {
-        $sqls = [];
-
-        $sqls[] = $this->getFromSQL($driver, $params);
-        $sqls[] = $this->getJoinSQL($driver, $params);
-        $sqls[] = $this->getWhereSQL($driver, $params);
-        $sqls[] = $this->getGroupBySQL($driver);
-        $sqls[] = $this->getHavingSQL($driver, $params);
-        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params);
-        $sqls[] = $this->getOrderBySQL($driver);
-        $sqls[] = $this->getLimitSQL($driver, $params);
-
-        foreach ($sqls as $index => $sql) {
-            if (self::isEmptySQL($sql)) {
-                unset($sqls[$index]);
-            }
-        }
-
-        return implode(" ", $sqls);
     }
 
     private function getNestingLevel(): int
