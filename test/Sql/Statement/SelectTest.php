@@ -233,6 +233,13 @@ class SelectTest extends TestCase
         );
 
         $select = new Select();
+        $select->count('1')->from('product');
+        self::assertStringMatchesFormat(
+            'SELECT COUNT(1)%wFROM "product"',
+            $select->getSql()
+        );
+
+        $select = new Select();
         $select->sum('price')->from('product');
         self::assertStringMatchesFormat(
             'SELECT SUM(price)%wFROM "product"',
