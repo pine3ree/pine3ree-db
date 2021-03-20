@@ -459,14 +459,13 @@ class Select extends Statement
         if ($this->from instanceof self) {
             if ($pretty) {
                 $nl = "\n";
-                $this_indent = str_repeat(" ", $this->getNestingLevel() * 4);
-                $from_indent = str_repeat(" ", $this->from->getNestingLevel() * 4);
+                $indent = str_repeat(" ", $this->getNestingLevel() * 4);
             } else {
-                $nl = $this_indent = $from_indent = "";
+                $nl = $indent = "";
             }
-            $from = "({$nl}{$from_indent}"
+            $from = "({$nl}"
                 . $this->from->getSQL($driver, $params, $pretty)
-                . "{$nl}{$this_indent})";
+                . "{$nl}{$indent})";
         } else {
             $from = $driver->quoteIdentifier($this->table);
         }
@@ -893,16 +892,16 @@ class Select extends Statement
 
     private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
     {
+        $sep = $pretty ? "\n" : " ";
+
         if ($this->union instanceof self) {
             $union_sql = $this->union->getSQL($driver, $params, $pretty);
             $union = $this->union_all === true ? Sql::UNION_ALL : Sql::UNION;
-            $sep = $pretty ? "\n" . str_repeat(" ", $this->union->getNestingLevel() * 4) : " ";
             return "{$union}{$sep}{$union_sql}";
         }
 
         if ($this->intersect instanceof self) {
             $intersect_sql = $this->intersect->getSQL($driver, $params, $pretty);
-            $sep = $pretty ? "\n" . str_repeat(" ", $this->intersect->getNestingLevel() * 4) : " ";
             return Sql::INTERSECT . "{$sep}{$intersect_sql}";
         }
 
@@ -976,8 +975,12 @@ class Select extends Statement
             }
         }
 
-        $sep = $pretty ? "\n" . str_repeat(" ", $this->getNestingLevel() * 4) : " ";
-        $sql = implode($sep, $sqls);
+        if ($pretty) {
+            $indent = str_repeat(" ", $this->getNestingLevel() * 4);
+            $sql = $indent . implode("\n{$indent}", $sqls);
+        } else {
+            $sql = implode(" ", $sqls);
+        }
 
         // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
