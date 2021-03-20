@@ -328,9 +328,12 @@ class Select extends Statement
                 $column_sql = $column->getSQL($driver);
             } elseif ($column instanceof Literal) {
                 $column_sql = $column->getSQL();
-            } elseif ($column instanceof Expression || $column instanceof self) {
+            } elseif ($column instanceof Expression) {
                 $column_sql = $column->getSQL($driver, $params);
-                $cache = $cache && $column instanceof Expression && 0 === count($column->substitutions);
+                $cache = $cache && 0 === count($column->substitutions);
+            } elseif ($column instanceof self) {
+                $column_sql = $column->getSQL($driver, $params);
+                $cache = false;
             } else {
                 // @codeCoverageIgnoreStart
                 // should be unreacheable
