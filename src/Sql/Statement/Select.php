@@ -369,7 +369,7 @@ class Select extends Statement
      * @param bool $add_tb_prefix Add table prefix?
      * @return string
      */
-    public function normalizeColumn(string $column, DriverInterface $driver, bool $add_tb_prefix = false): string
+    protected function normalizeColumn(string $column, DriverInterface $driver, bool $add_tb_prefix = false): string
     {
         // unquote the column first
         $column = str_replace([$driver->ql, $driver->qr], '', $column);
