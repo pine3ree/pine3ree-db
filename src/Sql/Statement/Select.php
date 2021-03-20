@@ -982,9 +982,7 @@ class Select extends Statement
             $sql = implode(" ", $sqls);
         }
 
-        // quote any unquoted table name prefix
         $sql = $this->quoteTableNames($sql, $driver);
-        // quote any unquoted table alias prefix
         $sql = $this->quoteTableAliases($sql, $driver);
 
         return $sql;
