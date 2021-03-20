@@ -80,13 +80,19 @@ abstract class Command implements CommandInterface
         return $this->db->prepare($this->sqlStatement, $bind_values);
     }
 
+    /**
+     * Magic getter proxy to the composed sql-statement object
+     *
+     * @param string $name
+     * @return SqlStatement|mixed
+     */
     public function __get(string $name)
     {
         if ('sqlStatement' === $name) {
             return $this->sqlStatement;
         }
 
-        return $this->sqlStatement->{$name} ?? null;
+        return $this->sqlStatement->__get($name);
     }
 
     public function __clone()
