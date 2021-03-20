@@ -11,8 +11,9 @@ namespace P3\DbTest\Sql\Driver;
 use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
-use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
-use P3\Db\Sql\Driver\Feature\SelectDecorator;
+use P3\Db\Sql\Expression;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
@@ -224,6 +225,46 @@ class OciTest extends TestCase
             . ' "c".user_id AS "userId"',
             $this->driver->getSelectColumnsSQL($select, new Params())
         );
+    }
+
+    public function testCacheableColumnsSql()
+    {
+        // simple string column =  sql-asterisk
+        $select = new Select([], 'product', 'p');
+        $sql = $select->getSQL($this->driver);
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // simple string columns
+        $select = new Select(['id', 'name', 'price', 'vat_rate'], 'product', 'p');
+        $sql = $select->getSQL($this->driver);
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // identifier
+        $select = new Select(new Identifier('p.price'), 'product', 'p');
+        $sql = $select->getSQL($this->driver);
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // literal
+        $select = new Select(['fullPrice' => new Literal('price * (1 + vat_rate/100)')], 'product', 'p');
+        $sql = $select->getSQL($this->driver);
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // expression without params
+        $select = new Select(['fullPrice' => new Expression('price * (1 + vat_rate/100)')], 'product', 'p');
+        $sql = $select->getSQL($this->driver);
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // expression with params
+        $select = new Select([
+            'fullPrice' => new Expression('price * (1 + {vat_rate}/100)', ['vat_rate' => 20.0])
+        ], 'product', 'p');
+        $sql = $select->getSQL($this->driver);
+        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // select
+        $select = new Select(['stock' => new Select('quantity', 'product_stock', 'ps')], 'product', 'p');
+        $sql = $select->getSQL($this->driver);
+        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select, 'sqls'));
     }
 
     public function testGetLimitSQL()

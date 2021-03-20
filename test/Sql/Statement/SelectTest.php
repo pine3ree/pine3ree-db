@@ -714,6 +714,11 @@ class SelectTest extends TestCase
         $sql = $select->getSQL();
         self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
 
+        // identifier
+        $select = new Select(new Identifier('p.price'), 'product', 'p');
+        $sql = $select->getSQL();
+        self::assertArrayHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
         // literal
         $select = new Select(['fullPrice' => new Literal('price * (1 + vat_rate/100)')], 'product', 'p');
         $sql = $select->getSQL();
@@ -728,6 +733,11 @@ class SelectTest extends TestCase
         $select = new Select([
             'fullPrice' => new Expression('price * (1 + {vat_rate}/100)', ['vat_rate' => 20.0])
         ], 'product', 'p');
+        $sql = $select->getSQL();
+        self::assertArrayNotHasKey('columns', $this->getPropertyValue($select, 'sqls'));
+
+        // select
+        $select = new Select(['stock' => new Select('quantity', 'product_stock', 'ps')], 'product', 'p');
         $sql = $select->getSQL();
         self::assertArrayNotHasKey('columns', $this->getPropertyValue($select, 'sqls'));
     }
