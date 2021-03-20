@@ -80,20 +80,21 @@ class Db
     private $pdoIsInitialized = false;
 
     /**
-     * @param string|PDO $dsnOrPdo A valid pdo dsn string or an existing pdo connection instance
-     * @param string $username
-     * @param string $password
-     * @param array $options
+     * @param string|PDO $dsn_or_pdo A valid pdo dsn string or an existing pdo connection instance
+     * @param string|null $username PDO connection username
+     * @param string|null $password PDO connection password
+     * @param array|null $options PDO connection options
+     * @param string|null $pdoClass An optional PDO subclass to use when creating a new connection
      */
     public function __construct(
-        $dsnOrPdo,
+        $dsn_or_pdo,
         string $username = null,
         string $password = null,
         array $options = null,
         string $pdoClass = null
     ) {
-        if (is_string($dsnOrPdo)) {
-            $this->dsn      = $dsnOrPdo;
+        if (is_string($dsn_or_pdo)) {
+            $this->dsn      = $dsn_or_pdo;
             $this->username = $username;
             $this->password = $password;
             if (isset($pdoClass)) {
@@ -104,12 +105,12 @@ class Db
                 }
                 $this->pdoClass = $pdoClass;
             }
-        } elseif ($dsnOrPdo instanceof PDO) {
-            $this->pdo = $dsnOrPdo;
+        } elseif ($dsn_or_pdo instanceof PDO) {
+            $this->pdo = $dsn_or_pdo;
         } else {
             throw new InvalidArgumentException(sprintf(
-                '$dsnOrPdo must be either a dns string or a PDO instance, `%s` provided!',
-                is_object($dsnOrPdo) ? get_class($dsnOrPdo) : gettype($dsnOrPdo)
+                '$dsn_or_pdo must be either a dns string or a PDO instance, `%s` provided!',
+                is_object($dsn_or_pdo) ? get_class($dsn_or_pdo) : gettype($dsn_or_pdo)
             ));
         }
 
@@ -255,15 +256,16 @@ class Db
     /**
      * Return the SQL driver matching the PDO configuration or instance
      *
+     * @param bool $with_pdo Return a driver instance with am active connection?
      * @return DriverInterface
      */
-    public function getDriver(bool $withPdo = false): DriverInterface
+    public function getDriver(bool $with_pdo = false): DriverInterface
     {
         if (isset($this->driver)) {
             return $this->driver;
         }
 
-        $pdo = $withPdo ? $this->pdo() : $this->pdo;
+        $pdo = $with_pdo ? $this->pdo() : $this->pdo;
 
         if (isset($pdo)) {
             // inject and reuse the pdo-less instance, if any, with the active
