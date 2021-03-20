@@ -415,10 +415,25 @@ class ElementTest extends TestCase
         self::assertSame($element->getParams(), $element->params);
     }
 
-    public function testMagicGetterRaisesExceptionWIthUnsupportedPropertyName()
+    public function testMagicGetterRaisesExceptionWithUnsupportedPropertyName()
     {
         $element = $this->createInstance();
         $this->expectException(RuntimeException::class);
         $element->nonExistentProperty;
+    }
+
+    public function testMagicIsset()
+    {
+        $element = $this->createInstance();
+
+        self::assertFalse(isset($element->parent));
+        self::assertFalse(isset($element->params));
+
+        $parent = $this->createInstance();
+        $element->setParent($parent);
+        self::assertTrue(isset($element->parent));
+
+        $element->getSQL();
+        self::assertTrue(isset($element->params));
     }
 }
