@@ -53,7 +53,7 @@ class In extends Predicate
         $this->identifier = $identifier;
 
         if ($valueList instanceof Select) {
-            if ($valueList->parent !== null && $valueList->parent !== $this) {
+            if ($valueList->parentIsNot($this)) {
                 $valueList = clone $valueList;
             }
             $valueList->parent = $this;

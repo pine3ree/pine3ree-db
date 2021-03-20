@@ -52,11 +52,7 @@ abstract class CompareTo extends Predicate
         $this->identifier = $identifier;
         $this->operator = $operator;
 
-        if ($select->parent !== null && $select->parent !== $this) {
-            $select = clone $select;
-        }
-
-        $this->select = $select;
+        $this->select = $select->parentIsNot($this) ? clone $select : $select;
         $this->select->parent = $this;
     }
 

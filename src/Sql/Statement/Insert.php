@@ -264,13 +264,8 @@ class Insert extends Statement
      */
     public function select(Select $select): self
     {
-        if ($select->parent !== null && $select->parent !== $this) {
-            $select = clone $select;
-        }
-
-        $select->parent = $this;
-
-        $this->select = $select;
+        $this->select = $select->parentIsNot($this) ? clone $select : $select;
+        $this->select->parent = $this;
         $this->values = [];
 
         $this->clearSQL();

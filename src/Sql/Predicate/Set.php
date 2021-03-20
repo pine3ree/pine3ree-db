@@ -224,7 +224,7 @@ class Set extends Predicate implements IteratorAggregate
         }
 
         if ($predicate instanceof Predicate) {
-            if ($predicate->parent !== null && $predicate->parent !== $this) {
+            if ($predicate->parentIsNot($this)) {
                 $predicate = clone $predicate;
             }
         } else {

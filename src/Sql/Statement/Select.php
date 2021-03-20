@@ -208,7 +208,7 @@ class Select extends Statement
                     "A sql select statement cannot add itself as a column!"
                 );
             }
-            if ($column->parent !== null && $column->parent !== $this) {
+            if ($column->parentIsNot($this)) {
                 $column = clone $column;
             }
             $column->parent = $this;
@@ -407,10 +407,7 @@ class Select extends Statement
                     "A sql select statement cannot add itself as a FROM clause!"
                 );
             }
-            if ($from->parent !== null && $from->parent !== $this) {
-                $from = clone $from;
-            }
-            $this->from = $from;
+            $this->from = $from->parentIsNot($this) ? clone $from : $from;
             $this->from->parent = $this;
         } else {
             $this->setTable($from);
@@ -489,7 +486,7 @@ class Select extends Statement
      */
     public function addJoin(Join $join): self
     {
-        if ($join->parent !== null && $join->parent !== $this) {
+        if ($join->parentIsNot($this)) {
             $join = clone $join;
         }
 
@@ -851,7 +848,7 @@ class Select extends Statement
         if (!empty($orderBy)) {
             $select = clone $select;
             $select->orderBy = [];
-        } elseif ($select->parent !== null && $select->parent !== $this) {
+        } elseif ($select->parentIsNot($this)) {
             $select = clone $select;
         }
 
@@ -882,7 +879,7 @@ class Select extends Statement
         if (!empty($orderBy)) {
             $select = clone $select;
             $select->orderBy = [];
-        } elseif ($select->parent !== null && $select->parent !== $this) {
+        } elseif ($select->parentIsNot($this)) {
             $select = clone $select;
         }
 

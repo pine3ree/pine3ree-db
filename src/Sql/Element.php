@@ -98,6 +98,17 @@ abstract class Element implements ElementInterface
     }
 
     /**
+     * Return true if element has a parent different from the given element
+     *
+     * @param ElementInterface $parent
+     * @return bool
+     */
+    protected function parentIsNot(ElementInterface $parent): bool
+    {
+        return isset($this->parent) && $this->parent !== $parent;
+    }
+
+    /**
      * Get the class basename
      *
      * @staticvar string $shortName The cached base-name of this element's class obtained using reflection
