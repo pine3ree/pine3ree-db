@@ -271,4 +271,9 @@ abstract class Element implements ElementInterface
             static::class
         ));
     }
+
+    public function __isset(string $name): bool
+    {
+        return isset($this->{$name});
+    }
 }
