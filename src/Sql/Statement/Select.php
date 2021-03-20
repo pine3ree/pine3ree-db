@@ -895,8 +895,8 @@ class Select extends Statement
         $sep = $pretty ? "\n" : " ";
 
         if ($this->union instanceof self) {
-            $union_sql = $this->union->getSQL($driver, $params, $pretty);
             $union = $this->union_all === true ? Sql::UNION_ALL : Sql::UNION;
+            $union_sql = $this->union->getSQL($driver, $params, $pretty);
             return "{$union}{$sep}{$union_sql}";
         }
 
