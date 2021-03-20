@@ -153,7 +153,6 @@ class Db
         $this->pdo = null;
     }
 
-
     private function reconnect(): void
     {
         if (empty($this->dsn)) {
