@@ -59,12 +59,9 @@ CREATE TABLE "product" (
   "updated_at" text(19) COLLATE 'NOCASE' NOT NULL DEFAULT '0000-00-00 00:00:00'
 )
 EOCS;
-        $this->db->beginTransaction();
         $this->db->exec($createTableSQL);
         $this->db->exec("UPDATE sqlite_sequence SET seq = 1 WHERE name = 'product'");
-        $this->db->commit();
 
-        $this->db->beginTransaction();
         for ($i = 1; $i < 10; $i += 1) {
             $price = mt_rand(10000, 100000) / 1000;
             $published = mt_rand(0, 1);
@@ -76,7 +73,6 @@ VALUES ('product-{$i}', '{$price}', '22', '{$published}', '{$created_at}', '{$up
 EOIS
             );
         }
-        $this->db->commit();
     }
 
     public function tearDown()
@@ -483,27 +479,97 @@ EOIS
         }
     }
 
-    public function testTransactionMethodsForwardingCalls()
+    public function testTransactionMethodsWithoutPdoConnections()
+    {
+        $db = new Db('sqlite::memory');
+        self::assertFalse($db->inTransaction());
+        self::assertFalse($db->commit());
+        self::assertFalse($db->rollBack());
+    }
+
+    public function testTransactionMethods()
     {
         $pdo = $this->prophesize(PDO::class);
         $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
 
         $db = new Db($pdo->reveal());
 
-        $methods = [
-            'beginTransaction',
-            'inTransaction',
-            'commit',
-            'rollBack',
-        ];
+        $pdo->inTransaction()->shouldBeCalled()->willReturn(false);
+        $pdo->beginTransaction()->shouldBeCalled()->willReturn(true);
+        self::assertTrue($db->beginTransaction());
+        self::assertTrue($db->inTransaction());
+        self::assertSame(1, $this->getPropertyValue($db, 'transactionLevel'));
 
-        foreach ($methods as $method) {
-            foreach ([false, true] as $bool) {
-                $pdo->{$method}()->shouldBeCalled()->willReturn($bool);
-                $assertMethod = 'assert' . ($bool ? 'True' : 'False');
-                self::$assertMethod($db->{$method}());
-            }
-        }
+        self::assertFalse($db->beginTransaction());
+        self::assertSame(2, $this->getPropertyValue($db, 'transactionLevel'));
+
+        self::assertFalse($db->beginTransaction());
+        self::assertSame(3, $this->getPropertyValue($db, 'transactionLevel'));
+
+        $pdo->commit()->shouldNotBeCalled();
+        self::assertFalse($db->commit());
+        self::assertSame(2, $this->getPropertyValue($db, 'transactionLevel'));
+
+        $pdo->commit()->shouldNotBeCalled();
+        self::assertFalse($db->commit());
+        self::assertSame(1, $this->getPropertyValue($db, 'transactionLevel'));
+
+        $pdo->inTransaction()->shouldBeCalled()->willReturn(true);
+        $pdo->commit()->shouldBeCalled()->willReturn(true);
+        self::assertTrue($db->commit());
+        self::assertSame(0, $this->getPropertyValue($db, 'transactionLevel'));
+
+        $pdo->inTransaction()->shouldBeCalled()->willReturn(false);
+        $pdo->beginTransaction()->shouldBeCalled()->willReturn(true);
+        self::assertTrue($db->beginTransaction());
+        self::assertFalse($db->beginTransaction());
+        self::assertSame(2, $this->getPropertyValue($db, 'transactionLevel'));
+
+        $pdo->rollBack()->shouldNotBeCalled();
+        self::assertFalse($db->rollBack());
+        self::assertSame(1, $this->getPropertyValue($db, 'transactionLevel'));
+        self::assertTrue($this->getPropertyValue($db, 'inRollBack'));
+
+        $pdo->rollBack()->shouldBeCalled()->willReturn(true);
+        self::assertTrue($db->rollBack());
+        self::assertSame(0, $this->getPropertyValue($db, 'transactionLevel'));
+        self::assertFalse($this->getPropertyValue($db, 'inRollBack'));
+    }
+
+    public function testBeginTransactionRaisesExceptionIfPdoAlreadyDid()
+    {
+        $pdo = $this->prophesize(PDO::class);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
+
+        $db = new Db($pdo->reveal());
+        $pdo->inTransaction()->shouldBeCalled()->willReturn(true);
+        $pdo->beginTransaction()->shouldNotBeCalled();
+
+        $this->expectException(RuntimeException::class);
+        $db->beginTransaction();
+    }
+
+    public function testCommitRaisesExceptionIfInRollBackState()
+    {
+        $pdo = $this->prophesize(PDO::class);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
+
+        $db = new Db($pdo->reveal());
+
+        $pdo->inTransaction()->shouldBeCalled()->willReturn(false);
+        $pdo->beginTransaction()->shouldBeCalled()->willReturn(true);
+        self::assertTrue($db->beginTransaction());
+        self::assertFalse($db->beginTransaction());
+        self::assertSame(2, $this->getPropertyValue($db, 'transactionLevel'));
+
+        $pdo->rollBack()->shouldNotBeCalled();
+        self::assertFalse($db->rollBack());
+        self::assertSame(1, $this->getPropertyValue($db, 'transactionLevel'));
+        self::assertTrue($this->getPropertyValue($db, 'inRollBack'));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Cannot commit: the db connection is in rollBack state!");
+        $db->commit();
     }
 
     public function testQuotingMethods()

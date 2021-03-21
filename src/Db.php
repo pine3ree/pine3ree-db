@@ -79,6 +79,12 @@ class Db
      */
     private $pdoIsInitialized = false;
 
+    /** @var int */
+    private $transactionLevel = 0;
+
+    /** @var bool */
+    private $inRollBack = false;
+
     /**
      * @param string|PDO $dsn_or_pdo A valid pdo dsn string or an existing pdo connection instance
      * @param string|null $username PDO connection username
@@ -146,12 +152,16 @@ class Db
             $this->pdoIsInitialized = false;
             $this->pdo = $this->createPDO();
             $this->initializePDO();
+            $this->transactionLevel = 0;
+            $this->inRollBack = false;
         }
     }
 
     private function disconnect(): void
     {
         $this->pdo = null;
+        $this->transactionLevel = 0;
+        $this->inRollBack = false;
     }
 
     private function reconnect(): void
@@ -570,24 +580,124 @@ class Db
         return null;
     }
 
+    /**
+     * Try to actually start a PDO transaction or just increase the transaction
+     * nesting level counter
+     *
+     * Returns true if actually starting a pdo transaction
+     *
+     * @return bool
+     * @throws RuntimeException If a transaction was already initiated but not by
+     *      this Db instance
+     */
     public function beginTransaction(): bool
     {
-        return $this->pdo()->beginTransaction();
+        if ($this->transactionLevel === 0) {
+            $pdo = $this->pdo();
+            if ($pdo->inTransaction()) {
+                throw new RuntimeException(
+                    "The PDO connection is already in a transactional state!"
+                );
+            }
+            $result = $pdo->beginTransaction();
+            if ($result) {
+                $this->transactionLevel = 1;
+            }
+            return $result;
+        }
+
+        $this->transactionLevel += 1;
+        return false;
     }
 
+    /**
+     * Check if a pdo-transaction has been actually started by this Db instance
+     * with the same pdo-connectin at some point and has not been yet committed
+     * or rolled-back.
+     *
+     * This does not check the actual transaction status of the pdo connection that could
+     * have been initiated autonomally via the pdo instance itself.
+     *
+     * @return bool
+     */
     public function inTransaction(): bool
     {
-        return $this->pdo()->inTransaction();
+        if (!$this->isConnected()) {
+            return false;
+        }
+
+        return $this->transactionLevel > 0;
     }
 
+    /**
+     * Try to commit any pending operations or just go one level up from a nested
+     * state.
+     *
+     * This will also commit any pending operations in transactions initiated via
+     * the pdo instance.
+     *
+     * Returns true if we are at the first transaction nesting level and the commit
+     * operation is supported by the pdo-driver in use and if it succeeds.
+     *
+     * @return bool
+     */
     public function commit(): bool
     {
-        return $this->pdo()->commit();
+        if (!$this->isConnected()) {
+            return false;
+        }
+
+        if ($this->inRollBack) {
+            throw new RuntimeException(
+                "Cannot commit: the db connection is in rollBack state!"
+            );
+        }
+
+        if ($this->transactionLevel === 1) {
+            $pdo = $this->pdo();
+            $result = $pdo->inTransaction() ? $pdo->commit() : false;
+            $this->transactionLevel = 0; // decrement after the commit() call
+            return $result;
+        }
+
+        if ($this->transactionLevel > 0) {
+            $this->transactionLevel -= 1;
+        }
+
+        return false;
     }
 
+    /**
+     * Try to rollback any pending operations or just set the db connection to
+     * a rollback state or go one level up from a nested state.
+     *
+     * This will also have the effect of discarding any pending operations in
+     * transactions initiated via the pdo instance.
+     *
+     * Returns true if we are at the first transaction nesting level and the rollback
+     * operation is supported by the pdo driver in use and if it succeeds.
+     *
+     * @return bool
+     */
     public function rollBack(): bool
     {
-        return $this->pdo()->rollBack();
+        if (!$this->isConnected()) {
+            return false;
+        }
+
+        if ($this->transactionLevel === 1) {
+            $this->transactionLevel = 0;
+            $this->inRollBack = false;
+            return $this->pdo()->rollBack();
+        }
+
+        if ($this->transactionLevel > 0) {
+            $this->transactionLevel -= 1;
+            // mark the nested transaction for rollback
+            $this->inRollBack = true;
+        }
+
+        return false;
     }
 
     /**
