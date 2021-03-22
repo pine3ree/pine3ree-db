@@ -86,7 +86,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
             return $this->sql;
         }
 
-        $this->driver = $driver;
+        $this->driver = $driver; // set last used driver argument
 
         $predicates_sql = $this->searchCondition->getSQL($driver ?? Driver::ansi(), $params);
         if (static::$useParenthesis) {

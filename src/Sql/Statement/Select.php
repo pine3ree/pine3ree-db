@@ -919,7 +919,7 @@ class Select extends Statement
             return $this->sql;
         }
 
-        $this->driver = $driver;
+        $this->driver = $driver; // set last used driver argument
         $this->params = null; // reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
