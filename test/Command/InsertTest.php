@@ -57,6 +57,9 @@ class InsertTest extends TestCase
         $db->prepare($insert->getSqlStatement(), true)
             ->willReturn($this->pdoStatement->reveal());
 
+        $db->prepare($insert->getSqlStatement(), true, null)
+            ->willReturn($this->pdoStatement->reveal());
+
         return $insert;
     }
 

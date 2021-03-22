@@ -64,7 +64,13 @@ class CommandTest extends TestCase
             ->prepare($this->sqlStatement, true)
             ->willReturn($pdoStatement);
         $this->db
+            ->prepare($this->sqlStatement, true, null)
+            ->willReturn($pdoStatement);
+        $this->db
             ->prepare($this->sqlStatement, false)
+            ->willReturn($pdoStatement);
+        $this->db
+            ->prepare($this->sqlStatement, false, null)
             ->willReturn($pdoStatement);
 
         $this->db = $this->db->reveal();

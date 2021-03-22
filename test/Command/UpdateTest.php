@@ -61,6 +61,9 @@ class UpdateTest extends TestCase
         $db->prepare($update->getSqlStatement(), true)
             ->willReturn($this->pdoStatement->reveal());
 
+        $db->prepare($update->getSqlStatement(), true, null)
+            ->willReturn($this->pdoStatement->reveal());
+
         $dbMock = $db->reveal();
 
         return $update;

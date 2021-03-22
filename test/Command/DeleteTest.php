@@ -57,6 +57,9 @@ class DeleteTest extends TestCase
         $db->prepare($delete->getSqlStatement(), true)
             ->willReturn($this->pdoStatement->reveal());
 
+        $db->prepare($delete->getSqlStatement(), true, null)
+            ->willReturn($this->pdoStatement->reveal());
+
         return $delete;
     }
 

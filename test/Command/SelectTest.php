@@ -182,6 +182,9 @@ class SelectTest extends TestCase
         $db->prepare($select->sqlStatement, true)
             ->willReturn($this->pdoStatement->reveal());
 
+        $db->prepare($select->sqlStatement, true, null)
+            ->willReturn($this->pdoStatement->reveal());
+
         $dbMock = $db->reveal();
 
         return $select;
