@@ -774,6 +774,7 @@ class SelectTest extends TestCase
         self::assertArrayNotHasKey('columns', $this->getPropertyValue($select1, 'sqls'));
 
         self::assertSame($sql, $select1->getSQL());
+        self::assertSame($sql, $select1->getSQL());
 
         self::assertArrayHasKey('group', $this->getPropertyValue($select1, 'sqls'));
         $this->invokeMethod($select1, 'clearPartialSQL', 'group');
