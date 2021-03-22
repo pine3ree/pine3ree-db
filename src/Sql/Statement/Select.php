@@ -915,10 +915,11 @@ class Select extends Statement
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null, bool $pretty = false): string
     {
-        if (isset($this->sql) && $params === null) {
+        if (isset($this->sql) && $driver === $this->driver && $params === null) {
             return $this->sql;
         }
 
+        $this->driver = $driver;
         $this->params = null; // reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();

@@ -52,6 +52,11 @@ abstract class Element implements ElementInterface
     protected $parent;
 
     /**
+     * @var DriverInterface|null The last driver argument used in this element getSQL() call
+     */
+    protected $driver;
+
+    /**
      * {@inheritDoc}
      */
     public function hasParams(): bool
@@ -249,6 +254,7 @@ abstract class Element implements ElementInterface
     {
         $this->sql = null;
         $this->params = null;
+        $this->driver = null;
         if ($this->parent instanceof self) {
             $this->parent->clearSQL();
         }
@@ -263,6 +269,7 @@ abstract class Element implements ElementInterface
     {
         $this->parent = null;
         $this->sql = null;
+        $this->driver = null;
         $this->params = null;
     }
 

@@ -78,13 +78,15 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql) && $params === null) {
-            return $this->sql;
-        }
-
         if ($this->searchCondition->isEmpty()) {
             return $this->sql = '';
         }
+
+        if (isset($this->sql) && $driver === $this->driver && $params === null) {
+            return $this->sql;
+        }
+
+        $this->driver = $driver;
 
         $predicates_sql = $this->searchCondition->getSQL($driver ?? Driver::ansi(), $params);
         // @codeCoverageIgnoreStart

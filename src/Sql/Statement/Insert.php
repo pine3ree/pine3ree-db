@@ -275,7 +275,7 @@ class Insert extends Statement
 
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql) && $params === null) {
+        if (isset($this->sql) && $driver === $this->driver && $params === null) {
             return $this->sql;
         }
 
@@ -291,6 +291,7 @@ class Insert extends Statement
             );
         }
 
+        $this->driver = $driver; // set last used driver argument
         $this->params = null; // reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
