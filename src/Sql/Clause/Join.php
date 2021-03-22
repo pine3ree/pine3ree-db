@@ -14,11 +14,13 @@ use P3\Db\Sql\Clause\ConditionalClauseAwareTrait ;
 use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Predicate\Literal;
 use P3\Db\Sql\TableAwareTrait;
 
+use function rtrim;
 use function trim;
 
 /**
@@ -28,7 +30,7 @@ use function trim;
  * @property-read string $type The join type
  * @property-read string $table The joined-table
  * @property-read string|null $alias The joined-table alias, if any
- * @property-read On|Literal|null $specification The ON-specification, if any
+ * @property-read On|Literal|Identifier|null $specification The ON-specification, if any
  * @property-read On|null $on The ON-clause (current or new instance) if the specification
  *      is not already set to a Literal
  */
@@ -50,14 +52,17 @@ class Join extends Clause
     /** @var string|null */
     private $alias;
 
-    /** @var On|Literal|null */
+    /** @var On|Literal|Identifier|null */
     private $specification;
 
     /**
      * @param string $type The join type
      * @param string $table The joined table name
      * @param string|null $alias The joined table alias, if any
-     * @param On|Predicate|Predicate\Set|array|string|Literal $specification
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     *      The JOIN specification in form of a On conditional clause, an argument for
+     *      builfing it, a Literal predicate used as it is or and Identifier translated into
+     *      a USING clause.
      */
     public function __construct(string $type, string $table, string $alias = null, $specification = null)
     {
@@ -71,6 +76,8 @@ class Join extends Clause
 
         if (!empty($specification)) {
             if ($specification instanceof Literal) {
+                $this->specification = $specification;
+            } elseif ($specification instanceof Identifier) {
                 $this->specification = $specification;
             } else {
                 $this->setConditionalClause('specification', On::class, $specification);
@@ -112,14 +119,16 @@ class Join extends Clause
 
         $params = $params ?? ($this->params = new Params());
 
-        $specification = '';
+        $specification_sql = '';
         if ($this->specification instanceof Literal) {
-            $specification = $this->specification->getSQL();
+            $specification_sql = $this->specification->getSQL();
+        } elseif ($this->specification instanceof Identifier) {
+            $specification_sql = "USING(" . $this->specification->getSQL($driver) . ")";
         } elseif ($this->specification instanceof On) {
-            $specification = $this->getConditionalClauseSQL('specification', $driver, $params);
+            $specification_sql = $this->getConditionalClauseSQL('specification', $driver, $params);
         }
 
-        $this->sql = trim("{$join} {$table} {$specification}");
+        $this->sql = rtrim("{$join} {$table} {$specification_sql}");
         return $this->sql;
     }
 

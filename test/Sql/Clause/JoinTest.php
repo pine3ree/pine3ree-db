@@ -65,6 +65,16 @@ class JoinTest extends TestCase
         self::assertNull($join->on);
     }
 
+    public function testGetSqlWithIdentifierSpecification()
+    {
+        $using = new Sql\Identifier("p.category_id");
+        $join = new Join(Sql::JOIN_LEFT, 'category', 'c', $using);
+
+        self::assertSame('LEFT JOIN "category" "c" USING("p"."category_id")', $sql = $join->getSQL());
+        self::assertSame($sql, $join->getSQL());
+        self::assertNull($join->on);
+    }
+
     public function testGetSqlWithOnAddedLater()
     {
         $on = new On();
