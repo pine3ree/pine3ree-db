@@ -481,7 +481,7 @@ EOIS
 
     public function testTransactionMethodsWithoutPdoConnections()
     {
-        $db = new Db('sqlite::memory');
+        $db = new Db(self::DSN);
         self::assertNull($this->getPropertyValue($db, 'pdo'));
         self::assertFalse($db->inTransaction());
         self::assertFalse($db->commit());
