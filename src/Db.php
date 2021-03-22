@@ -693,7 +693,7 @@ class Db
 
         if ($this->transactionLevel > 0) {
             $this->transactionLevel -= 1;
-            // mark the nested transaction for rollback
+            // mark the whole transaction stack for rollback
             $this->inRollBack = true;
         }
 

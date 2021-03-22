@@ -482,6 +482,17 @@ EOIS
     public function testTransactionMethodsWithoutPdoConnections()
     {
         $db = new Db('sqlite::memory');
+        self::assertNull($this->getPropertyValue($db, 'pdo'));
+        self::assertFalse($db->inTransaction());
+        self::assertFalse($db->commit());
+        self::assertFalse($db->rollBack());
+        self::assertNull($this->getPropertyValue($db, 'pdo'));
+    }
+
+    public function testTransactionMethodsWithoutBeginningTransaction()
+    {
+        $pdo = $this->prophesize(PDO::class);
+        $db = new Db($pdo->reveal());
         self::assertFalse($db->inTransaction());
         self::assertFalse($db->commit());
         self::assertFalse($db->rollBack());
