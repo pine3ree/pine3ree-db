@@ -17,6 +17,8 @@ use P3\Db\Sql\Statement as SqlStatement;
  * returns the result of its execution
  *
  * @property-read SqlStatement $sqlStatement
+ * @property-read string $sql The last prepared sql statement stringor the current
+ *      sql-statement instance compiled sql string
  */
 abstract class Command implements CommandInterface
 {
@@ -29,6 +31,11 @@ abstract class Command implements CommandInterface
      * @var SqlStatement
      */
     protected $sqlStatement;
+
+    /**
+     * @var string
+     */
+    protected $sql;
 
     /**
      * @var Params
@@ -51,11 +58,14 @@ abstract class Command implements CommandInterface
     }
 
     /**
-     * @see Sql\Element::getSQL()
+     * Get the last prepared sql string or the compiled sql string for the current
+     * state of the sql-statement instance
+     *
+     * @return string
      */
     public function getSQL(): string
     {
-        return $this->sqlStatement->getSQL($this->db->getDriver(true));
+        return $this->sql ?? $this->sqlStatement->getSQL($this->db->getDriver(true));
     }
 
     /**
@@ -70,6 +80,8 @@ abstract class Command implements CommandInterface
     /**
      * Prepare the sql-statement
      *
+     * As a side effect the prepared sql string is assigned to the `sql` property
+     *
      * @see Db::prepare()
      *
      * @param bool $bind_values
@@ -77,7 +89,7 @@ abstract class Command implements CommandInterface
      */
     protected function prepare(bool $bind_values = false)
     {
-        return $this->db->prepare($this->sqlStatement, $bind_values);
+        return $this->db->prepare($this->sqlStatement, $bind_values, $this->sql);
     }
 
     /**
@@ -90,6 +102,10 @@ abstract class Command implements CommandInterface
     {
         if ('sqlStatement' === $name) {
             return $this->sqlStatement;
+        }
+
+        if ('sql' === $name) {
+            return $this->getSQL();
         }
 
         return $this->sqlStatement->__get($name);

@@ -14,12 +14,10 @@ namespace P3\DbTest;
 use P3\Db\Command;
 use P3\Db\Db;
 use P3\Db\Exception\RuntimeException;
-use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Statement;
 use P3\DbTest\DiscloseTrait;
-use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
 
@@ -135,6 +133,10 @@ class CommandTest extends TestCase
     {
         $command = $this->command;
         self::assertSame($command->getSqlStatement(), $command->sqlStatement);
+
+        self::assertSame($command->getSQL(), $command->sql);
+        $this->invokeMethod($command, 'prepare', true);
+        self::assertSame($command->getSqlStatement()->getSQL($this->driver), $command->sql);
 
         $this->expectException(RuntimeException::class);
         $command->nonExistentProperty;

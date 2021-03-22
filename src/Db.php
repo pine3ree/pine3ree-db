@@ -492,11 +492,12 @@ class Db
      *
      * @param SqlStatement $sqlStatement
      * @param bool $bind_values Bind the statement parameters values (via PDOStatement::bindValue())?
+     * @param string|null &$sql If provided it will be filled with the actual sql statement string being prepared
      * @return PDOStatement|false
      */
-    public function prepare(SqlStatement $sqlStatement, bool $bind_values = false)
+    public function prepare(SqlStatement $sqlStatement, bool $bind_values = false, string &$sql = null)
     {
-        $stmt = $this->pdo()->prepare($sqlStatement->getSQL(
+        $stmt = $this->pdo()->prepare($sql = $sqlStatement->getSQL(
             $this->driver ?? $this->getDriver(true)
         ));
 
