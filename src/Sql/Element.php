@@ -269,8 +269,8 @@ abstract class Element implements ElementInterface
     {
         $this->parent = null;
         $this->sql = null;
-        $this->driver = null;
         $this->params = null;
+        $this->driver = null;
     }
 
     public function __get(string $name)
