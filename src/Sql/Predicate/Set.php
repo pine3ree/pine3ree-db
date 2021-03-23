@@ -140,7 +140,7 @@ class Set extends Predicate implements IteratorAggregate
      *  [
      *      'enabled' => true, // `enabled` = 1
      *      ['id', 'IN', [1, 2, 3, null]], // `id` AND IN ('1', '2', '3') OR `id` IS NULL
-     *      new Predicate\Like('email', '%gmail.com'), // AND `email LIKE '%gmail.com'`
+     *      new Predicate\Like('email', '%example.com'), // AND `email LIKE '%example.com'`
      *      ['||', ['id', '>', 1]], // OR `id` > 1
      *      // add a nested group with OR as default logical operator
      *      ['||' => [ // AND (
