@@ -43,7 +43,7 @@ use function is_array;
  * @property-read int|null $limit The Having clause if any
  * @property-read int|null $offset The Having clause if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
- * @property-read bool|null $union_all Is it a UNION ALL clause?
+ * @property-read bool|null $unionAll Is it a UNION ALL clause?
  * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
  */
 class Select extends Command implements ReaderInterface

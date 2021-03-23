@@ -68,7 +68,7 @@ use const PHP_INT_MAX;
  * @property-read int|null $limit The LIMIT clause value if any
  * @property-read int|null $offset The OFFSET clause value if any
  * @property-read self|null $union The sql-select statement for the UNION clause, if any
- * @property-read bool|null $union_all Is it a UNION ALL clause?
+ * @property-read bool|null $unionAll Is it a UNION ALL clause?
  * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
  */
 class Select extends Statement
@@ -113,10 +113,13 @@ class Select extends Statement
     protected $union;
 
     /** @var bool|null */
-    protected $union_all;
+    protected $unionAll;
 
     /** @var self|null */
     protected $intersect;
+
+    /** @var bool */
+    protected $driver_unchanged = true;
 
     /**
      * @param null|string[]|string|Literal[]|Literal|Identifier[]|Identifier|self[]|self $columns
@@ -286,7 +289,7 @@ class Select extends Statement
 
     private function getColumnsSQL(DriverInterface $driver, Params $params): string
     {
-        if (isset($this->sqls['columns'])) {
+        if (isset($this->sqls['columns']) && $this->driver_unchanged) {
             return $this->sqls['columns'];
         }
 
@@ -645,7 +648,7 @@ class Select extends Statement
         }
 
         // partial caching is possibile as there are no params to import here
-        if (isset($this->sqls['group'])) {
+        if (isset($this->sqls['group']) && $this->driver_unchanged) {
             return $this->sqls['group'];
         }
 
@@ -746,7 +749,7 @@ class Select extends Statement
         }
 
         // partial caching is possibile as there are no params to import here
-        if (isset($this->sqls['order'])) {
+        if (isset($this->sqls['order']) && $this->driver_unchanged) {
             return $this->sqls['order'];
         }
 
@@ -853,7 +856,7 @@ class Select extends Statement
 
         $this->union = $select;
         $this->union->parent = $this;
-        $this->union_all = $all;
+        $this->unionAll = $all;
 
         $this->clearSQL();
 
@@ -895,7 +898,7 @@ class Select extends Statement
         $sep = $pretty ? "\n" : " ";
 
         if ($this->union instanceof self) {
-            $union = $this->union_all === true ? Sql::UNION_ALL : Sql::UNION;
+            $union = $this->unionAll === true ? Sql::UNION_ALL : Sql::UNION;
             $union_sql = $this->union->getSQL($driver, $params, $pretty);
             return "{$union}{$sep}{$union_sql}";
         }
@@ -915,7 +918,10 @@ class Select extends Statement
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null, bool $pretty = false): string
     {
-        if (isset($this->sql) && $driver === $this->driver && $params === null) {
+        if (isset($this->sql)
+            && $this->driver_unchanged = $driver === $this->driver
+            && $params === null
+        ) {
             return $this->sql;
         }
 
@@ -930,7 +936,7 @@ class Select extends Statement
         }
 
         if ($driver instanceof SelectDecorator) {
-            $parent = $this->parent; // this parent may change by decorator
+            $parent = $this->parent; // this parent may be changed by the decorator
             $select = $driver->decorateSelect($this, $params);
             $select->parent = $parent;
             return $this->sql = $select->generateSQL($driver, $params, $pretty);
@@ -1111,8 +1117,8 @@ class Select extends Statement
         if ('union' === $name) {
             return $this->union;
         }
-        if ('union_all' === $name) {
-            return $this->union_all;
+        if ('unionAll' === $name) {
+            return $this->unionAll;
         }
 
         if ('intersect' === $name) {

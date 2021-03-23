@@ -195,7 +195,7 @@ class SelectTest extends TestCase
         $select->column($select, 'itself');
     }
 
-    public function testThatAddingSelctColumnSetTheParent()
+    public function testThatAddingSelectColumnSetTheParent()
     {
         $select0 = new Select(null, 'category');
 
@@ -326,7 +326,7 @@ class SelectTest extends TestCase
         self::assertStringMatchesFormat("SELECT `p`.*%wFROM `product` `p`", $select->getSQL($this->driver));
     }
 
-    public function testSelectWithJoinAndNOAliasTriggerTablePrefix()
+    public function testSelectWithJoinAndNoAliasTriggerTablePrefix()
     {
         $select = (new Select())->from('product', null);
         $select->column('*');
@@ -680,7 +680,6 @@ class SelectTest extends TestCase
         $select = new Select('*', 'product', 'p');
         $intersect = (new Select('*', 'store1_product'))->orderBy('price');
         $select->intersect($intersect);
-        $select->intersect; // triggers clear SQL cache
 
         $this->expectException(RuntimeException::class);
         $select->union(new Select('*', 'store2_product'));
@@ -802,7 +801,7 @@ class SelectTest extends TestCase
         self::assertSame($sql, $select2->getSQL());
     }
 
-    public function testThatChangsInInternalElementsClearAllParentsSqlCache()
+    public function testThatChangesInInternalElementsClearAllParentsSqlCache()
     {
         $select = new Select('*', 'product');
         $select->where->gt('id', 42);
@@ -836,6 +835,88 @@ class SelectTest extends TestCase
         // siblings do not
         self::assertNotNull($this->getPropertyValue($predicate1, 'sql'));
         self::assertNotNull($this->getPropertyValue($predicate2, 'sql'));
+    }
+
+    public function testThatCallingGetSqlWithDifferentDriversResetsTheCompiledSqlString()
+    {
+        $select = new Select(['id', 'price'], 'product', 'p');
+
+        // ansi implied
+        $sql0 = $select->getSQL();
+        self::assertSame('SELECT "p"."id", "p"."price" FROM "product" "p"', $sql0);
+        $sql1 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql1);
+        self::assertSame($sql0, $sql1);
+        $select->getSQL();
+        $sql2 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql2);
+        self::assertSame($sql1, $sql2);
+
+        // ansi
+        $sql0 = $select->getSQL($driver = Driver::ansi());
+        self::assertSame('SELECT "p"."id", "p"."price" FROM "product" "p"', $sql0);
+        $sql1 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql1);
+        self::assertSame($sql0, $sql1);
+        $select->getSQL($driver);
+        $sql2 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql2);
+        self::assertSame($sql1, $sql2);
+
+        // mysql
+        $sql0 = $select->getSQL($driver = new Driver\MySql());
+        self::assertSame('SELECT `p`.`id`, `p`.`price` FROM `product` `p`', $sql0);
+        $sql1 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql1);
+        self::assertSame($sql0, $sql1);
+        $select->getSQL($driver);
+        $sql2 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql2);
+        self::assertSame($sql1, $sql2);
+
+        // pgsql
+        $sql0 = $select->getSQL($driver = new Driver\PgSql());
+        self::assertSame('SELECT "p"."id", "p"."price" FROM "product" "p"', $sql0);
+        $sql1 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql1);
+        self::assertSame($sql0, $sql1);
+        $select->getSQL($driver);
+        $sql2 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql2);
+        self::assertSame($sql1, $sql2);
+
+        // sqlite
+        $sql0 = $select->getSQL($driver = new Driver\Sqlite());
+        self::assertSame('SELECT "p"."id", "p"."price" FROM "product" "p"', $sql0);
+        $sql1 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql1);
+        self::assertSame($sql0, $sql1);
+        $select->getSQL($driver);
+        $sql2 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql2);
+        self::assertSame($sql1, $sql2);
+
+        // sqlsrv
+        $sql0 = $select->getSQL($driver = new Driver\SqlSrv());
+        self::assertSame('SELECT [p].[id], [p].[price] FROM [product] [p]', $sql0);
+        $sql1 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql1);
+        self::assertSame($sql0, $sql1);
+        $select->getSQL($driver);
+        $sql2 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql2);
+        self::assertSame($sql1, $sql2);
+
+        // oci
+        $sql0 = $select->getSQL($driver = new Driver\Oci());
+        self::assertSame('SELECT "p".id AS "id", "p".price AS "price" FROM product "p"', $sql0);
+        $sql1 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql1);
+        self::assertSame($sql0, $sql1);
+        $select->getSQL($driver);
+        $sql2 = $this->getPropertyValue($select, 'sql');
+        self::assertNotNull($sql2);
+        self::assertSame($sql1, $sql2);
     }
 
     public function testThatCloningAlsoClonesClauses()
@@ -944,7 +1025,7 @@ class SelectTest extends TestCase
         self::assertSame(30, $select->offset);
         self::assertSame(null, $select->union);
         self::assertSame(null, $select->intersect);
-        self::assertSame(null, $select->union_all);
+        self::assertSame(null, $select->unionAll);
 
         $this->expectException(RuntimeException::class);
         $select->nonexistentProperty;
