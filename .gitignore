@@ -1,8 +1,8 @@
 /vendor/
-composer.phar
 /coverage/
+/composer.phar
 /phpunit.xml
-/nbproject/
+/clover.xml
 /.*/
 .*.php
 *.php.*
