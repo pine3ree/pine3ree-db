@@ -9,4 +9,4 @@ parameters:
         - '#Method P3\\Db\\Db\:\:fetchOne\(\) should return array\|null but returns array\|object\|null#'
         - '#Access to an undefined property object\:\:\$parent#'
         - '#Oci\:\:quoteIdentifier\(\) expects string\, string\|null given#'
-        - '#Calling method getValues\(\) on possibly null value of type P3\Db\Sql\Params|null#'
+        - '#Calling method getValues\(\) on possibly null value of type P3\\Db\\Sql\\Params\|null#'
