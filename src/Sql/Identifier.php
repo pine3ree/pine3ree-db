@@ -57,7 +57,13 @@ class Identifier extends Element
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        return $this->sql ?? $this->sql = ($driver ?? Driver::ansi())->quoteIdentifier($this->identifier);
+        if (isset($this->sql) && $driver === $this->driver) {
+            return $this->sql;
+        }
+
+        $this->driver = $driver;
+
+        return $this->sql = ($driver ?? Driver::ansi())->quoteIdentifier($this->identifier);
     }
 
     public function __get(string $name)

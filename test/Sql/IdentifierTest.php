@@ -38,7 +38,9 @@ class IdentifierTest extends TestCase
      */
     public function testIdentifier(string $identifier, string $expected)
     {
-        self::assertSame($expected, (new Identifier($identifier))->getSQL(Driver::ansi()));
+        $identifier = new Identifier($identifier);
+        self::assertSame($expected, $sql = ($identifier)->getSQL(Driver::ansi()));
+        self::assertSame($sql, $identifier->getSQL(Driver::ansi()));
     }
 
     public function provideIdentifiers(): array

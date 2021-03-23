@@ -56,7 +56,13 @@ class Alias extends Element
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        return $this->sql ?? $this->sql = ($driver ?? Driver::ansi())->quoteAlias($this->alias);
+        if (isset($this->sql) && $driver === $this->driver) {
+            return $this->sql;
+        }
+
+        $this->driver = $driver;
+
+        return $this->sql = ($driver ?? Driver::ansi())->quoteAlias($this->alias);
     }
 
     public function __get(string $name)
