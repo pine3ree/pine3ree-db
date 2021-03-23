@@ -55,7 +55,7 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @param Db $db
-     * @param string[]|string|Literal[]|Literal|Identifier[]|Identifier|self|self[] $columns
+     * @param string[]|string|Literal[]|Literal|Identifier[]|Identifier|SqlSelect|SqlSelect[] $columns
      *      One or many column names, Literal expressions or sub-select statements
      * @param string|SqlSelect|null $from The db-table name or a sub-select statement
      * @param string|null $alias
