@@ -566,7 +566,13 @@ class Db
     }
 
     /**
-     * Return the last-inserted value
+     * Return the last-inserted value for the active connection, or NULL if not
+     * connected
+     *
+     * Some drivers such as pgsql requires a sequence name
+     *
+     * In a multi-INSERT statement, the mysql/mariadb driver will return the
+     * AUTO_INCREMENT value generated for the first row inserted
      *
      * @param string $name The sequence name, if any
      * @return string|null
