@@ -58,18 +58,17 @@ abstract class Command implements CommandInterface
     }
 
     /**
-     * Get the last prepared sql string or the compiled sql string for the current
-     * state of the sql-statement instance
+     * Get the compiled sql string for the current state of the sql-statement
+     * instance using the current database driver
      *
      * @return string
      */
     public function getSQL(): string
     {
-        return $this->sql ?? $this->sqlStatement->getSQL($this->db->getDriver(true));
+        return $this->sqlStatement->getSQL($this->db->getDriver(true));
     }
 
     /**
-     * {@inheritDoc}
      * @see Sql\Element::getParams()
      */
     public function getParams(): ?Params
@@ -89,7 +88,7 @@ abstract class Command implements CommandInterface
      */
     protected function prepare(bool $bind_values = false)
     {
-        return $this->db->prepare($this->sqlStatement, $bind_values, $this->sql);
+        return $this->db->prepare($this->sqlStatement, $bind_values);
     }
 
     /**
