@@ -188,7 +188,8 @@ class Db
         }
 
         if ($instantiate) {
-            return $this->pdo();
+            $this->connect();
+            return $this->pdo;
         }
 
         return null;
