@@ -834,10 +834,10 @@ class Set extends Predicate implements IteratorAggregate
     {
         $defaultLogicalOperator = self::COMB[strtoupper($defaultLogicalOperator)] ?? Sql::AND;
 
-        $nestedPredicateSet = new self([], $defaultLogicalOperator);
-        $this->addPredicate($nestedPredicateSet);
+        $group = new self([], $defaultLogicalOperator);
+        $this->addPredicate($group);
 
-        return $nestedPredicateSet;
+        return $group;
     }
 
     /**
