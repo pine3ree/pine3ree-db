@@ -139,3 +139,22 @@ parameter values along with their pdo-param types and sets named markers in thei
 into the sql string. The paramater collector can be retrieved by `getParams()` either from
 the sql-statement object or the wrapping command. A internal collector will be created
 only if not passed-in as the 2nd argument of the `getSQL()` call.
+
+### Db::select($columns = null, $from = null, string $alias = null): P3\Db\Command\Select
+
+```php
+//...
+$select = $db->select(); // generic Select command
+$select = $db->select('*', 'product', 'p');
+// equivalent to
+$select = $db->select('**')->from('product', 'p'); // SELECT * FROM "product" "p"
+$select->where->lte('price', 1000.00); // WHERE "price" <= :lte1 (named parameter marker)
+$select->orderBy('p.price', 'ASC'); // ORDER BY "price" ASC
+//...
+$select = $db->select('*')->from('product', 'p')->orderBy('p.price'); // SELECT "p".* FROM "product" "p" ORDER BY "p"."price" ASC
+//...
+$stmt = $select->execute(); // or $select->query(), return a PDOStatement or FALSE
+//...
+$select = $db->select()->count()->from('product')->groupBy('category_id'); // SELECT COUNT(*) FROM "product" GROUP BY "category_id"
+$select = $db->select()->min('price')->from('product')->groupBy('category_id'); // SELECT MIN("price") FROM "product" GROUP BY "category_id"
+```
