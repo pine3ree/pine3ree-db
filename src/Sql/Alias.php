@@ -52,7 +52,7 @@ class Alias extends Element
     /**
      * Return a properly quoted alias
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {

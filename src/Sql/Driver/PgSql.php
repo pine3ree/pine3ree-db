@@ -29,7 +29,7 @@ class PgSql extends Driver implements LimitSqlProvider
     /**
      * PgSQL supports OFFSET without LIMIT
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLimitSQL(Select $select, Params $params): string
     {

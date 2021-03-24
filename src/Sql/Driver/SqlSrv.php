@@ -30,7 +30,7 @@ class SqlSrv extends Driver implements LimitSqlProvider
      * For mssql the limit clause is achieved via OFFSET...FETCH clauses for
      * the ORDER BY clause.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @throws RuntimeException
      */

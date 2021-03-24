@@ -160,7 +160,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function quoteIdentifier(string $identifier): string
     {
@@ -190,7 +190,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function quoteAlias(string $alias): string
     {
@@ -201,7 +201,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function quoteValue($value): string
     {

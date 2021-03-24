@@ -912,7 +912,7 @@ class Select extends Statement
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @param bool $pretty Return a nicely formatted sql string?
      */

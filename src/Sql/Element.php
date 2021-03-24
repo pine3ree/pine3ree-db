@@ -57,7 +57,7 @@ abstract class Element implements ElementInterface
     protected $driver;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasParams(): bool
     {
@@ -65,7 +65,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getParams(): ?Params
     {
@@ -73,7 +73,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasParent(): bool
     {
@@ -81,7 +81,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getParent(): ?ElementInterface
     {
@@ -89,7 +89,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setParent(ElementInterface $parent): void
     {

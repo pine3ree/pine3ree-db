@@ -80,7 +80,7 @@ class In extends Predicate
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * If one of the values is NULL then add an IS NULL clause
      *

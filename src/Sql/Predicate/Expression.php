@@ -97,7 +97,7 @@ class Expression extends Predicate
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {

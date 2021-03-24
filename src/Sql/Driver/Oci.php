@@ -171,7 +171,7 @@ class Oci extends Driver implements
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Quoting Oracle identifiers may introduce errors as Oracle creates uppercase
      * table and column names if not quoted themself on creation.
@@ -350,7 +350,7 @@ class Oci extends Driver implements
     /**
      * For OCI we need to alter the original select
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLimitSQL(Select $select, Params $params): string
     {
