@@ -140,21 +140,114 @@ into the sql string. The paramater collector can be retrieved by `getParams()` e
 the sql-statement object or the wrapping command. A internal collector will be created
 only if not passed-in as the 2nd argument of the `getSQL()` call.
 
-### Db::select($columns = null, $from = null, string $alias = null): P3\Db\Command\Select
+### Db::select()
+
+Create a select command instance, which is a reader-command, whose method `execute()`
+is forwarded to the reader-command method `query()`:
 
 ```php
 //...
 $select = $db->select(); // generic Select command
+
 $select = $db->select('*', 'product', 'p');
 // equivalent to
 $select = $db->select('**')->from('product', 'p'); // SELECT * FROM "product" "p"
+
+// add where condition and order-by clause
 $select->where->lte('price', 1000.00); // WHERE "price" <= :lte1 (named parameter marker)
 $select->orderBy('p.price', 'ASC'); // ORDER BY "price" ASC
-//...
-$select = $db->select('*')->from('product', 'p')->orderBy('p.price'); // SELECT "p".* FROM "product" "p" ORDER BY "p"."price" ASC
-//...
-$stmt = $select->execute(); // or $select->query(), return a PDOStatement or FALSE
-//...
-$select = $db->select()->count()->from('product')->groupBy('category_id'); // SELECT COUNT(*) FROM "product" GROUP BY "category_id"
-$select = $db->select()->min('price')->from('product')->groupBy('category_id'); // SELECT MIN("price") FROM "product" GROUP BY "category_id"
+
+// SELECT "p".* FROM "product" "p" ORDER BY "p"."price" ASC
+$select = $db->select('*')->from('product', 'p')->orderBy('p.price');
+
+$stmt = $select->execute(); // or $select->query(), returns a PDOStatement or FALSE
+
+// SELECT COUNT(*) FROM "product" GROUP BY "category_id"
+$select = $db->select()->count()->from('product')->groupBy('category_id');
+// SELECT MIN("price") FROM "product" GROUP BY "category_id"
+$select = $db->select()->min('price')->from('product')->groupBy('category_id');
 ```
+
+### Db::insert()
+
+Create and optionally execute an insert command instance, which is a writer-command.
+
+Writer commands (Insert, Update, Delete) method `execute()` is forwarded to the
+writer-command method `exec()`.
+
+```php
+// INSERT INTO "product" ("name", "price") VALUES (:val1, :val2)
+$insert = $db->insert()
+    ->into('product')
+    ->row([
+	    'name' => 'product-1',
+    	'price' => 100.00,
+	]);
+
+// equivalent to
+$insert = $db->insert()
+    ->into('product')
+    ->columns(['name', 'price'])
+    ->values(['product-1', 100.00]);
+
+$result = $insert->execute() // or $insert->exec(), returns TRUE or FALSE for single row insert
+```
+
+Insert and execute shortcut call, when both arguments (`$table` and `$row`/`$rows`)
+are provided:
+
+```php
+$result = $db->insert('product', [
+    'name' => 'product-111',
+    'price' => 111.11,
+]); // returns TRUE or FALSE for single insert
+```
+
+Insert many rows:
+
+```php
+// INSERT INTO "product" ("name", "price") VALUES (:val1, :val2), (:val3, :val4)
+$num_inserted = $db->insert('product', [
+    [
+        'name' => 'product-111',
+        'price' => 111.11,
+    ],
+    [
+        'name' => 'product-222',
+        'price' => 222.22,
+    ],
+]); // returns integer or FALSE
+
+// equivalent to
+$num_inserted = $db->insert()
+    ->into('product')
+    ->columns(['name', 'price'])
+    ->values([
+        'product-111',
+        111.11,
+    ])
+    ->values([
+        'product-222',
+        222.22,
+    ])->execute(); // or exec()
+
+// and to
+$num_inserted = $db->insert()
+    ->into('product')
+    ->columns(['name', 'price'])
+    ->multipleValues([
+        [
+            'product-111',
+            111.11,
+        ],
+        [
+            'product-222',
+            222.22,
+        ],
+    ])->execute();
+```
+
+
+
+
+
