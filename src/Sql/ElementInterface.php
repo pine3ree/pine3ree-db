@@ -61,16 +61,22 @@ interface ElementInterface
      * This method returns null if getSQL() has not been called or if this is not
      * a top level element or if a parameter collector instance was provided in
      * the getSQL() call.
+     *
+     * @return Params|null
      */
     public function getParams(): ?Params;
 
     /**
      * Check if element has a parent.
+     *
+     * @return bool
      */
     public function hasParent(): bool;
 
     /**
      * Return the parent element, if any.
+     *
+     * @return ElementInterface|null
      */
     public function getParent(): ?ElementInterface;
 
@@ -79,6 +85,7 @@ interface ElementInterface
      *
      * Raises exception if parent is already set.
      *
+     * @return void
      * @throws RuntimeException
      */
     public function setParent(ElementInterface $parent): void;

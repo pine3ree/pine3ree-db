@@ -18,7 +18,7 @@ use function trim;
 use function preg_match;
 
 /**
- * This class represents a sql alias
+ * This class abstracts a SQL fragment used as an alias
  *
  * @property-read string $alias The original unquoted alias
  */

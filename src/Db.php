@@ -539,9 +539,11 @@ class Db
      * Proxy to PDO::query()
      *
      * @see PDO::query()
-     * @param string $sql The sql-statement
-     * @return PDOStatement|false Execute the statement and returns either a
-     *      PDO prepared statement or false on failure
+     * @param string $sql The sql-statement string
+     * @return PDOStatement|false Execute the statement and returns either an
+     *      already executed traversable PDOStatement object or false on failure.
+     *      The PDO statement object can be iterated over to fetch the result-set
+     *      rows, if any.
      */
     public function query(string $sql)
     {

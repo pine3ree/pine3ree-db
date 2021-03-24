@@ -35,12 +35,16 @@ use function trim;
 abstract class Element implements ElementInterface
 {
     /**
-     * @var string|null The rendered SQL statement string with optional parameter markers
+     * The rendered SQL statement string with optional parameter markers
+     *
+     * @var string|null
      */
     protected $sql;
 
     /**
-     * @var Params|null The element's parameters collector, if any
+     * The element's parameters collector, if any
+     *
+     * @var Params|null
      */
     protected $params;
 
@@ -52,7 +56,9 @@ abstract class Element implements ElementInterface
     protected $parent;
 
     /**
-     * @var DriverInterface|null The last driver argument used in this element getSQL() call
+     * The last driver argument used in this element getSQL() call
+     *
+     * @var DriverInterface|null
      */
     protected $driver;
 
@@ -203,6 +209,16 @@ abstract class Element implements ElementInterface
         ));
     }
 
+    /**
+     * Make sure the value can be used as a SQL value.
+     *
+     * Only scalar, null and sql-literal values are supported.
+     *
+     * @param mixed $value
+     * @param string $type A string identifier for the exception message
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected static function assertValidValue($value, string $type = '')
     {
         if (is_scalar($value) || null === $value || $value instanceof Literal) {
@@ -221,7 +237,7 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * Check that the given SQL is a non-emty string
+     * Check that the given SQL is a non-empty string
      *
      * @param string $sql
      * @return bool
@@ -246,9 +262,8 @@ abstract class Element implements ElementInterface
     }
 
     /**
-     * - detach the clone from the orginal element's parent
-     * - clear the internal sql cache, if any
-     * - remove any previously collected params
+     * Detach the clone from the orginal element's parent, clear the internal
+     * sql cache, if any, and emove any previously collected params.
      */
     public function __clone()
     {

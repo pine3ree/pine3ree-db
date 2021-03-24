@@ -67,7 +67,7 @@ class Insert extends Statement
     /**
      * Add the IGNORE flag
      *
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function ignore(): self
     {
@@ -78,7 +78,7 @@ class Insert extends Statement
     /**
      * Set the target INTO clause table name
      *
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function into(string $table): self
     {
@@ -90,7 +90,7 @@ class Insert extends Statement
      * Define the INSERT columns, this will also clear any defined values
      *
      * @param array $columns
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function columns(array $columns): self
     {
@@ -104,7 +104,14 @@ class Insert extends Statement
         return $this;
     }
 
-    private static function assertValidColumns(array $columns)
+    /**
+     * Make sure the specified columns are valid column types
+     *
+     * @param array $columns
+     * @throws RuntimeException
+     * @return void
+     */
+    private static function assertValidColumns(array $columns): void
     {
         if (empty($columns)) {
             throw new RuntimeException(
@@ -123,11 +130,12 @@ class Insert extends Statement
     }
 
     /**
-     * Add a single row-values list to the INSERT statement
+     * Add a single-row set of values to the INSERT statement, optionally removing
+     * existing values
      *
      * @param array $values
-     * @param bool $reset Reset the values for a single insert
-     * @return $this Provides a fluent interface
+     * @param bool $reset Discard any previously added set of values?
+     * @return $this Fluent interface
      * @throws RuntimeException
      */
     public function values(array $values, bool $reset = false): self
@@ -155,11 +163,12 @@ class Insert extends Statement
     }
 
     /**
-     * Set the values of the records to be INSERTed
+     * Add multiple-rows sets of values to the INSERT statement, optionally removing
+     * existing values
      *
      * @param array[] $multiple_values
-     * @param bool $reset Reset the values for a single insert
-     * @return $this Provides a fluent interface
+     * @param bool $reset Discard any previously added set of values?
+     * @return $this Fluent interface
      */
     public function multipleValues(array $multiple_values, bool $reset = false): self
     {
@@ -197,10 +206,11 @@ class Insert extends Statement
     }
 
     /**
-     * Set the rows to be INSERTed
+     * Set the rows(columns-to-values) to be INSERTed, dicarding any existing
+     * set of values
      *
      * @param array[] $rows An array of new records
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function rows(array $rows): self
     {
@@ -218,11 +228,11 @@ class Insert extends Statement
     }
 
     /**
-     * Add a row to the INSERT statement
+     * Add a row(columns-to-values) to the INSERT statement
      *
      * @param array $row The record to insert
      * @param bool $reset Reset columns and values for a single insert
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      * @throws RuntimeException
      */
     public function row(array $row, bool $reset = false): self
@@ -260,7 +270,7 @@ class Insert extends Statement
      * Set the values of the records to be INSERTed
      *
      * @param Select $select The select from statement used as source
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function select(Select $select): self
     {
