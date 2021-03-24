@@ -69,11 +69,11 @@ class Db
     /** @var DriverInterface A connection-aware sql-driver instance*/
     private $driver;
 
-    /** @var DriverInterface A connection-less sql-driver instance*/
+    /** @var DriverInterface A connection-less sql-driver instance */
     private $_driver;
 
     /**
-     * @var bool Has the pdo instance been pdoIsInitialized?
+     * @var bool Has the pdo instance been initialized?
      */
     private $pdoIsInitialized = false;
 
