@@ -12,7 +12,7 @@ use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Params;
 
 /**
- * Represents a generic SQL element.
+ * Abstracts a generic SQL element.
  *
  * A sql element provides the sql string it represents with the help of a sql driver.
  *
@@ -27,63 +27,58 @@ use P3\Db\Sql\Params;
  * not a top level element.
  *
  * For top-level elements (full sql statements) an internal parameter collector
- * will be created if none is provided when triggering the xompilation of the sql string
+ * will be created if none is provided when triggering the xompilation of the sql string.
  */
 interface ElementInterface
 {
     /**
-     * Compile and return the parametrized SQL-string for this element
+     * Compile and return the parametrized SQL-string for this element.
      *
      * This method must call each inner element getSQL() method passing down the
-     * sql-driver and the parameter collector being used
+     * sql-driver and the parameter collector being used.
      *
-     * @param DriverInterface $driver The sql driver used for identifier quoting and SQL customization,
-     *      if none is provided a default Ansi driver instance will be used
-     * @param Params $params An optional parameter collector. If not set a new internal instance will created
+     * @param DriverInterface $driver The sql driver used for identifier quoting and SQL
+     *      customization. If none is provided a default Ansi driver instance will be used.
+     * @param Params $params An optional parameter collector. If none is provided a new
+     *      internal instance will created.
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string;
 
     /**
-     * Check if there is any parameter, after the SQL string has been compiled
+     * Check if there is any parameter, after the SQL string has been compiled.
      *
      * This method returns false if getSQL() has not been called or if this is not
      * a top level element or if an external parameter collector instance was
      * provided in the getSQL() call or finally if the internal parameter collector
-     * is actually empty
+     * is actually empty.
      */
     public function hasParams(): bool;
 
     /**
      * Return the parameters collector created for this element after compiling
-     * the sql string
+     * the sql string.
      *
      * This method returns null if getSQL() has not been called or if this is not
      * a top level element or if a parameter collector instance was provided in
-     * the getSQL() call
-     *
-     * @return Params|null
+     * the getSQL() call.
      */
     public function getParams(): ?Params;
 
     /**
-     * Check if element has a parent
-     *
-     * @return bool
+     * Check if element has a parent.
      */
     public function hasParent(): bool;
 
     /**
-     * Return the parent element, if any
-     *
-     * @return ElementInterface|null
+     * Return the parent element, if any.
      */
     public function getParent(): ?ElementInterface;
 
     /**
-     * Set the parent element
-     * Raises exception if parent is already set.
+     * Set the parent element.
      *
-     * @return void
+     * Raises exception if parent is already set.
+     * 
      * @throws RuntimeException
      */
     public function setParent(ElementInterface $parent): void;
