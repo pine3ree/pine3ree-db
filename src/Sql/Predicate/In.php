@@ -80,11 +80,7 @@ class In extends Predicate
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * If one of the values is NULL then add an IS NULL clause
-     *
-     * @return string
+     * If one of the values is NULL then add an OR/AND IS NULL clause
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {

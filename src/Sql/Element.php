@@ -56,41 +56,26 @@ abstract class Element implements ElementInterface
      */
     protected $driver;
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasParams(): bool
     {
         return isset($this->params) && !$this->params->isEmpty();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParams(): ?Params
     {
         return $this->params;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasParent(): bool
     {
         return $this->parent instanceof ElementInterface;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?ElementInterface
     {
         return $this->parent;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setParent(ElementInterface $parent): void
     {
         if ($this->parent instanceof ElementInterface && $this->parent !== $parent) {

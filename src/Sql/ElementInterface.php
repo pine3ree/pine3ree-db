@@ -32,13 +32,14 @@ use P3\Db\Sql\Params;
 interface ElementInterface
 {
     /**
-     * Build and return the parametrized SQL-string
+     * Compile and return the parametrized SQL-string for this element
      *
      * This method must call each inner element getSQL() method passing down the
-     * sql-driver and the parameter collector being used its
+     * sql-driver and the parameter collector being used
      *
-     * @param DriverInterface $driver
-     * @param Params $params An optional parameter collector. If not set a new instance will created.
+     * @param DriverInterface $driver The sql driver used for identifier quoting and SQL customization,
+     *      if none is provided a default Ansi driver instance will be used
+     * @param Params $params An optional parameter collector. If not set a new internal instance will created
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string;
 

@@ -159,9 +159,6 @@ abstract class Driver implements DriverInterface
         $this->pdo = $pdo;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function quoteIdentifier(string $identifier): string
     {
         if ($identifier === '*' || $this->isQuoted($identifier)) {
@@ -189,9 +186,6 @@ abstract class Driver implements DriverInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function quoteAlias(string $alias): string
     {
         $ql = $this->ql;
@@ -200,9 +194,6 @@ abstract class Driver implements DriverInterface
         return $ql . ltrim(rtrim($alias, $qr), $ql) . $qr;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function quoteValue($value): string
     {
         if (null === $value) {

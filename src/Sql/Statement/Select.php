@@ -912,7 +912,7 @@ class Select extends Statement
     }
 
     /**
-     * {@inheritdoc}
+     * @see Sql\ElementInterface::getSQL()
      *
      * @param bool $pretty Return a nicely formatted sql string?
      */

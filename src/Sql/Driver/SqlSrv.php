@@ -30,8 +30,6 @@ class SqlSrv extends Driver implements LimitSqlProvider
      * For mssql the limit clause is achieved via OFFSET...FETCH clauses for
      * the ORDER BY clause.
      *
-     * {@inheritdoc}
-     *
      * @throws RuntimeException
      */
     public function getLimitSQL(Select $select, Params $params): string

@@ -96,9 +96,6 @@ class Expression extends Predicate
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
         if (isset($this->sql) && $driver === $this->driver && $params === null) {
