@@ -39,7 +39,7 @@ $mostExpensiveProduct = $db->fetchOne('product', null, ['price' => 'DESC']);
 
 ```
 
-## Constructor parameters
+## Constructor arguments
 
 `P3\Db` supports the same constructor arguments as the `\PDO` class.
 
@@ -69,7 +69,7 @@ class Db
 The first argument can also be an existing PDO instance itself, that will be used
 as the composed pdo connection.
 
-## Factory configuration options
+## Factory configuration parameters
 
 Factory configuration retrieved from the container should return an array like the
 one below:
