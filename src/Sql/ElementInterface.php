@@ -78,7 +78,7 @@ interface ElementInterface
      * Set the parent element.
      *
      * Raises exception if parent is already set.
-     * 
+     *
      * @throws RuntimeException
      */
     public function setParent(ElementInterface $parent): void;
