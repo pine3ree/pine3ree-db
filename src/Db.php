@@ -37,8 +37,6 @@ use function is_subclass_of;
 use function reset;
 use function sprintf;
 
-use const PHP_INT_MAX;
-
 /**
  * Class Db
  */
@@ -393,9 +391,6 @@ class Db
             $select->limit($limit);
         }
         if (isset($offset) && $offset > 0) {
-            if (!isset($limit)) {
-                $select->limit(PHP_INT_MAX);
-            }
             $select->offset($offset);
         }
 
