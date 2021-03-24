@@ -145,7 +145,7 @@ class ConditionalClauseTest extends TestCase
     {
         $conditionalClause = $this->createInstance(['id' => 42]);
 
-        $nestedSet = $conditionalClause->openGroup();
+        $nestedSet = $conditionalClause->beginGroup();
 
         self::assertInstanceOf(Set::class, $nestedSet);
         self::assertSame([], $nestedSet->getPredicates());
@@ -156,15 +156,15 @@ class ConditionalClauseTest extends TestCase
     {
         $conditionalClause = $this->createInstance(['id' => 42]);
 
-        $nestedSet = $conditionalClause->openGroup(Sql::OR);
+        $nestedSet = $conditionalClause->beginGroup(Sql::OR);
         self::assertSame(Sql::OR, $nestedSet->getDefaultLogicalOperator());
     }
 
     public function testCloseNestedSet()
     {
         $conditionalClause = $this->createInstance(['id' => 42]);
-        $nestedSet = $conditionalClause->openGroup();
-        $parent = $nestedSet->closeGroup();
+        $nestedSet = $conditionalClause->beginGroup();
+        $parent = $nestedSet->endGroup();
 
         self::assertSame($parent, $conditionalClause->getSearchCondition());
     }

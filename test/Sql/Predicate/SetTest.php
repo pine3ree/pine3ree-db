@@ -778,7 +778,7 @@ class SetTest extends TestCase
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
 
-        $nestedSet = $predicateSet->openGroup();
+        $nestedSet = $predicateSet->beginGroup();
 
         self::assertInstanceOf(Predicate\Set::class, $nestedSet);
         self::assertSame($predicateSet, $nestedSet->parent);
@@ -791,15 +791,15 @@ class SetTest extends TestCase
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
 
-        $nestedSet = $predicateSet->openGroup(Sql::OR);
+        $nestedSet = $predicateSet->beginGroup(Sql::OR);
         self::assertSame(Sql::OR, $nestedSet->getDefaultLogicalOperator());
     }
 
     public function testCloseGroup()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
-        $nestedSet = $predicateSet->openGroup();
-        $parent = $nestedSet->closeGroup();
+        $nestedSet = $predicateSet->beginGroup();
+        $parent = $nestedSet->endGroup();
 
         self::assertSame($predicateSet, $parent);
     }
@@ -818,8 +818,8 @@ class SetTest extends TestCase
     public function testThatNestedSetChangesClearParentSql()
     {
         $predicateSet = new Predicate\Set(['id' => 42]);
-        $nestedSet = $predicateSet->openGroup();
-        $unnest = $nestedSet->closeGroup();
+        $nestedSet = $predicateSet->beginGroup();
+        $unnest = $nestedSet->endGroup();
 
         $predicateSet->getSQL();
 
@@ -831,10 +831,10 @@ class SetTest extends TestCase
     public function testCloseUnnestedSetRaisesException()
     {
         $predicateSet = new Predicate\Set();
-        $nestedSet = $predicateSet->openGroup();
+        $nestedSet = $predicateSet->beginGroup();
 
         $this->expectException(RuntimeException::class);
-        $nestedSet->closeGroup()->closeGroup();
+        $nestedSet->endGroup()->endGroup();
     }
 
     public function testTraversable()

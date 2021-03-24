@@ -830,7 +830,7 @@ class Set extends Predicate implements IteratorAggregate
      *
      * @return self Return the new nested predicate-set instance
      */
-    public function openGroup(string $defaultLogicalOperator = Sql::AND): self
+    public function beginGroup(string $defaultLogicalOperator = Sql::AND): self
     {
         $defaultLogicalOperator = self::COMB[strtoupper($defaultLogicalOperator)] ?? Sql::AND;
 
@@ -846,7 +846,7 @@ class Set extends Predicate implements IteratorAggregate
      * @return self Return the parent predicate-set instance
      * @throws RuntimeException
      */
-    public function closeGroup(): self
+    public function endGroup(): self
     {
         if ($this->parent instanceof self) {
             return $this->parent;
@@ -868,7 +868,7 @@ class Set extends Predicate implements IteratorAggregate
      */
     public function group(Closure $group, string $defaultLogicalOperator = Sql::AND): self
     {
-        $nestedPredicateSet = $this->openGroup($defaultLogicalOperator);
+        $nestedPredicateSet = $this->beginGroup($defaultLogicalOperator);
         $group($nestedPredicateSet);
 
         return $this;

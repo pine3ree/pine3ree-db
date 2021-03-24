@@ -417,9 +417,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      *
      * @return Predicate\Set
      */
-    public function openGroup(string $defaultLogicalOperator = Sql::AND): Predicate\Set
+    public function beginGroup(string $defaultLogicalOperator = Sql::AND): Predicate\Set
     {
-        return $this->searchCondition->openGroup($defaultLogicalOperator);
+        return $this->searchCondition->beginGroup($defaultLogicalOperator);
     }
 
     /**
