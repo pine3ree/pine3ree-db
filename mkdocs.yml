@@ -1,0 +1,9 @@
+docs_dir: docs
+site_dir: html/guide
+site_name: p3-db
+site_description: "A tiny PDO database abstraction layer"
+nav:
+    - "Home": index.md
+    - "Db": db.md
+repo_url: 'https://github.com/pine3ree/p3-db'
+theme: readthedocs
