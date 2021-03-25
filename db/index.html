@@ -1,93 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        
-        
-        <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>P3\Db - p3-db</title>
-        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
-        <link href="../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="../css/highlight.css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Db - p3-db</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-        <script src="../js/jquery-1.10.2.min.js"></script>
-        <script src="../js/bootstrap-3.0.3.min.js"></script>
-        <script src="../js/highlight.pack.js"></script> 
-    </head>
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Db";
+    var mkdocs_page_input_path = "db.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
 
-    <body>
+<body class="wy-body-for-nav" role="document">
 
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
+  <div class="wy-grid-for-nav">
 
-        <!-- Collapsed navigation -->
-        <div class="navbar-header">
-            <!-- Expander button -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="..">p3-db</a>
-        </div>
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> p3-db</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
 
-        <!-- Expanded navigation -->
-        <div class="navbar-collapse collapse">
-                <!-- Main navigation -->
-                <ul class="nav navbar-nav">
-                    <li >
-                        <a href="..">p3-db</a>
-                    </li>
-                    <li class="active">
-                        <a href="./">P3\Db</a>
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
                     </li>
                 </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                        <i class="fa fa-search"></i> Search
-                    </a>
-                </li>
-                    <li >
-                        <a rel="next" href="..">
-                            <i class="fa fa-arrow-left"></i> Previous
-                        </a>
-                    </li>
-                    <li class="disabled">
-                        <a rel="prev" >
-                            Next <i class="fa fa-arrow-right"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/pine3ree/p3-db/edit/master/docs/db.md"><i class="fa fa-github"></i> Edit on GitHub</a>
-                    </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-        <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#p3db">P3\Db</a></li>
-            <li><a href="#quick-start">Quick start</a></li>
-            <li><a href="#crud-commands">CRUD commands</a></li>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Db</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick start</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#constructor-arguments">Constructor arguments</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#factory-configuration-parameters">Factory configuration parameters</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#crud-commands">CRUD commands</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dbselect">Db::select()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dbinsert">Db::insert()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dbupdate">Db::update()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dbdelete">Db::delete()</a>
+    </li>
+        </ul>
+    </li>
     </ul>
-</div></div>
-                <div class="col-md-9" role="main">
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
 
-<h1 id="p3db">P3\Db</h1>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">p3-db</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Db</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/pine3ree/p3-db/edit/master/docs/db.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="p3db">P3\Db</h1>
 <h2 id="quick-start">Quick start</h2>
 <pre><code class="php">use P3\Db;
 use P3\Db\Factory\DbFactory;
@@ -106,13 +131,26 @@ $db = new Db('my-db-dsn', 'my-db-username', 'my-db-password');
 $factory = new DbFactory();
 $db = $factory($container);
 
-// fetch all rows from the &quot;product&quot; table
+// Simple proxy method to \PDO::query() returning a traversable PDOStatement or
+// false if query execution fails
+$stmt = $db-&gt;query('SELECT * FROM product WHERE price &lt; 100.0 AND id &lt; 100');
+
+// Simple proxy method to \PDO::exec(), returns the number of affected rows, or
+// false if execution fails
+$affected = $db-&gt;exec('UPDATE product SET published = FALSE WHERE stock &lt;= 0');
+</code></pre>
+
+<p>Other examples:</p>
+<pre><code class="php">// fetch all rows from the &quot;product&quot; table
+// fetchAll(string $table, $where = null, $order = null, int $limit = null, int $offset = null): array
 $products = $db-&gt;fetchAll('product');
 
 // fetch the product row with column id = 42
+// fetchOneBy(string $table, string $column, $value, $order = null): ?array
 $product = $db-&gt;fetchOneBy('product', 'id', 42);
 
 // same row using `fetchOne()` with condition
+// fetchOne(string $table, $where = null, $order = null): ?array
 $product = $db-&gt;fetchOne('product', ['id' =&gt; 42]);
 
 $fiftyExpensiveProducts = $db-&gt;fetchAll('product', [
@@ -122,7 +160,6 @@ $fiftyExpensiveProducts = $db-&gt;fetchAll('product', [
 $tenMostExpensiveProducts = $db-&gt;fetchAll('product', null, ['price' =&gt; 'DESC'], 10);
 
 $mostExpensiveProduct = $db-&gt;fetchOne('product', null, ['price' =&gt; 'DESC']);
-
 </code></pre>
 
 <h3 id="constructor-arguments">Constructor arguments</h3>
@@ -211,31 +248,56 @@ parameter values along with their pdo-param types and sets named markers in thei
 into the sql string. The paramater collector can be retrieved by <code>getParams()</code> either from
 the sql-statement object or the wrapping command. A internal collector will be created
 only if not passed-in as the 2nd argument of the <code>getSQL()</code> call.</p>
+<p>All database command classes implement the <code>execute()</code> method.</p>
+<ul>
+<li>For writer-commands (Insert|Update|Delete) <code>execute()</code> will call the writer
+  method <code>Writer::exec()</code> and will return either the number of rows affected or
+  <code>false</code> on failure.</li>
+<li>For reader-commands (Select) <code>execute()</code> will call the reader method <code>Reader::query()</code>
+  and will return either a traversable <code>\PDOStatement</code> result-set object or <code>false</code>
+  on failure.</li>
+</ul>
 <h3 id="dbselect">Db::select()</h3>
-<p>Create a select command instance, which is a reader-command, whose method <code>execute()</code>
-is forwarded to the reader-command method <code>query()</code>:</p>
-<pre><code class="php">$select = $db-&gt;select(); // generic Select command
+<p>Create a <code>P3\Db\Command\Select</code> reader command instance</p>
+<pre><code class="php">use P3\Db;
+use P3\Db\Sql;
 
-// SELECT * FROM &quot;product&quot; &quot;p&quot;
+/** @var Db $db */
+
+$select = $db-&gt;select(); // create a generic empty Select command instance
+
+// SELECT * FROM &quot;product&quot;
+$select = $db-&gt;select('*', 'product');
+$select = $db-&gt;select('*')-&gt;from('product');
+$select = $db-&gt;select(null, 'product');
+$select = $db-&gt;select()-&gt;from('product');
+
+// use table alias: SELECT * FROM &quot;product&quot; &quot;p&quot;
 $select = $db-&gt;select('*', 'product', 'p');
-// equivalent to
 $select = $db-&gt;select('*')-&gt;from('product', 'p');
-// and to
 $select = $db-&gt;select()-&gt;from('product', 'p');
 
  // SELECT &quot;p&quot;.&quot;price&quot;, &quot;p&quot;.&quot;vat_rate&quot; AS &quot;vatRate&quot; FROM &quot;product&quot; &quot;p&quot;
 $select = $db-&gt;select(['price', 'vat_rate' =&gt; 'vatRate'])-&gt;from('product', 'p');
 
-// add where condition and order-by clause
+// add where condition LessThanEqual and order-by clause
 $select-&gt;where-&gt;lte('price', 1000.0); // WHERE &quot;price&quot; &lt;= :lte1 (named parameter marker)
-$select-&gt;orderBy('p.price', 'ASC'); // ORDER BY &quot;price&quot; ASC
 
-// SELECT &quot;p&quot;.* FROM &quot;product&quot; &quot;p&quot; ORDER BY &quot;p&quot;.&quot;price&quot; ASC
-$select = $db-&gt;select('*')-&gt;from('product', 'p')-&gt;orderBy('p.price');
+// ORDER BY &quot;p&quot;.&quot;price&quot; ASC
+$select-&gt;orderBy('p.price', 'ASC');
+$select-&gt;orderBy('p.price', Sql::ASC);
 
-$stmt = $select-&gt;execute(); // or $select-&gt;query(), returns a PDOStatement or FALSE
+// ORDER BY &quot;price&quot; ASC, &quot;vat_rate&quot; DESC
+$select-&gt;orderBy([
+    'price' =&gt; Sql::ASC, // or just 'price' =&gt; 'ASC'
+    'vat_rate' =&gt; Sql::DESC, // or just 'vat_rate' =&gt; 'DESC'
+]);
 
-// SELECT &quot;category_id&quot; AS &quot;catId&quot;, COUNT(*) AS &quot;numProducts&quot;
+$stmt = $select-&gt;execute(); // or $select-&gt;query(), returns a \PDOStatement instance or FALSE
+
+// SELECT
+//    &quot;category_id&quot; AS &quot;catId&quot;,
+//    COUNT(*) AS &quot;numProducts&quot;
 // FROM &quot;product&quot; WHERE &quot;price&quot; &gt; :gt1
 // GROUP BY &quot;category_id&quot;
 // HAVING &quot;numProducts&quot; &gt;= :gte1
@@ -244,18 +306,20 @@ $select = $db-&gt;select()
     -&gt;count('*', 'numProducts')
     -&gt;from('product');
     -&gt;where-&gt;gte('price', 10.0);
-// using $select-&gt;where or $select-&gt;having changes the scope and the fluent method
-// chain is broken
+// using $select-&gt;where or $select-&gt;having changes the scope and the fluent interface
+// method chain is broken
+
+// add a GROUP BY
+// GROUP BY &quot;category_id&quot; HAVING &quot;numProducts&quot; &lt; :lte1
 $select-&gt;groupBy('category_id')
-    -&gt;having-&gt;gt('numProducts', 5);
+    -&gt;having-&gt;lte('numProducts', 5);
+
 // SELECT MIN(&quot;price&quot;) FROM &quot;product&quot; GROUP BY &quot;category_id&quot;
 $select = $db-&gt;select()-&gt;min('price')-&gt;from('product')-&gt;groupBy('category_id');
 </code></pre>
 
 <h3 id="dbinsert">Db::insert()</h3>
-<p>Create and optionally execute an insert command instance, which is a writer-command.</p>
-<p>Writer commands (Insert, Update, Delete) method <code>execute()</code> is forwarded to the
-writer-command method <code>exec()</code>.</p>
+<p>Create and optionally execute an <code>P3\Db\Command\Insert</code> writer command instance.</p>
 <pre><code class="php">// INSERT INTO &quot;product&quot; (&quot;name&quot;, &quot;price&quot;) VALUES (:val1, :val2)
 $insert = $db-&gt;insert()
     -&gt;into('product')
@@ -273,7 +337,7 @@ $insert = $db-&gt;insert()
 $result = $insert-&gt;execute() // or $insert-&gt;exec(), returns TRUE or FALSE for single row insert
 </code></pre>
 
-<p>Insert and execute shortcut call, when both arguments (<code>$table</code> and <code>$row</code>/<code>$rows</code>)
+<p><strong>Insert and execute</strong> shortcut call, when both arguments (<code>$table</code> and <code>$row</code>/<code>$rows</code>)
 are provided:</p>
 <pre><code class="php">$result = $db-&gt;insert('product', [
     'name' =&gt; 'product-111',
@@ -295,9 +359,23 @@ $num_inserted = $db-&gt;insert('product', [
         'name' =&gt; 'product-222',
         'price' =&gt; 222.22,
     ],
-]); // returns integer or FALSE
+]); // returns integer or FALSE for multi-rows inserts
 
 // equivalent to
+$num_inserted = $db-&gt;insert()
+    -&gt;into('product')
+    -&gt;rows([
+        [
+            'name' =&gt; 'product-111',
+            'price' =&gt; 111.11,
+        ],
+        [
+            'name' =&gt; 'product-222',
+            'price' =&gt; 222.22,
+        ],
+    ])-&gt;execute(); // or exec()
+
+// and to
 $num_inserted = $db-&gt;insert()
     -&gt;into('product')
     -&gt;columns(['name', 'price'])
@@ -324,82 +402,109 @@ $num_inserted = $db-&gt;insert()
             222.22,
         ],
     ])-&gt;execute();
-</code></pre></div>
-        </div>
+</code></pre>
 
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>var base_url = '..';</script>
-        <script src="../js/base.js"></script>
-        <script src="../search/require.js"></script>
-        <script src="../search/search.js"></script>
+<p>By default <code>Insert::values(array $values, bool $reset = false)</code> and
+<code>Insert::row(array $row, bool $reset = false)</code> will add new inset values to
+existing ones. This can be changed by setting the 2nd
+argument to <code>true</code>:</p>
+<pre><code class="php">$insert = $db-&gt;insert('product');
 
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+$insert-&gt;row(['price' =&gt; 111.11, 'stock' =&gt; 111]); // adds 1 set of values
+$insert-&gt;row(['price' =&gt; 222.22, 'stock' =&gt; 222]); // adds 1 set of values
+// columns &quot;price&quot; and &quot;stock&quot; are alredy specified by previuous row() calls
+$insert-&gt;values([333.33, 333]); // adds 1 set of values
+
+$insert-&gt;execute(); // this will try to insert 3 rows
+
+$insert-&gt;values([444.44, 444]); // adds another set of values
+$insert-&gt;execute(); // this will try to insert 4 rows
+
+ // adds 1 set of values after removing the old ones
+$insert-&gt;row(['price' =&gt; 555.55, 'stock' =&gt; 555], true);
+$insert-&gt;execute(); // this will try to insert 1 row
+
+</code></pre>
+
+<p>The opposite happens for <code>Insert::rows(array $rows, bool $reset = true)</code> and
+<code>Insert::multipleValues(array $values, bool $reset = true)</code>. These methods calls
+will insert the exact rows/values provided unless the 2nd argument is set to <code>false</code>.</p>
+<h3 id="dbupdate">Db::update()</h3>
+<p>The <code>P3\Db\Command\Update</code> command abstracts an INSERT operation</p>
+<p>A non empty condition/predicate is required, otherwise an exception is thrown.</p>
+<p>Examples:</p>
+<pre><code class="php">// UPDATE &quot;product&quot; SET &quot;published&quot; = :set1 WHERE stock &gt; 0
+$update = $db-&gt;update()-&gt;table('product')-&gt;set('published', true)-&gt;where('stock &gt; 0');
+$update = $db-&gt;update('product')-&gt;set('published', true)-&gt;where('stock &gt; 0');
+$affected = $update-&gt;execute(); // or exec()
+
+// immediate command execution
+// UPDATE &quot;product&quot; SET &quot;published&quot; = :set1 WHERE TRUE, we use the condition &quot;TRUE&quot; to update all records
+$affected = $db-&gt;update('product', ['published' =&gt; true], 'TRUE');
+</code></pre>
+
+<h3 id="dbdelete">Db::delete()</h3>
+<p>The <code>P3\Db\Command\Delete</code> command abstracts a SQL DELETE operation</p>
+<p>A non empty condition/predicate is required, otherwise an exception is thrown.</p>
+<p>Examples:</p>
+<pre><code class="php">// DELETE FROM &quot;product&quot; WHERE stock &lt;= 0
+$delete = $db-&gt;delete()-&gt;from('product')-&gt;where('stock &lt;= 0');
+$delete = $db-&gt;delete('product')-&gt;where('stock &lt;= 0');
+$affected = $delete-&gt;execute(); // or exec()
+
+// immediate command execution
+// DELETE FROM &quot;product&quot; WHERE stock &lt;= 0
+$affected = $db-&gt;delete('product', 'stock &lt;= 0');
+</code></pre>
+              
             </div>
-            <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
-                <form role="form">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
     </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td><kbd>&larr;</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td><kbd>&rarr;</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
         </div>
-    </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/pine3ree/p3-db/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
 </div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
 
-
-    </body>
+</body>
 </html>
