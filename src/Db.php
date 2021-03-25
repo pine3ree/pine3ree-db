@@ -725,6 +725,6 @@ class Db
      */
     public function quoteValue($value): string
     {
-        return ($this->driver ?? $this->getDriver(false))->quoteValue($value);
+        return ($this->driver ?? $this->getDriver(true))->quoteValue($value);
     }
 }
