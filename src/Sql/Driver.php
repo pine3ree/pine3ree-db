@@ -57,27 +57,37 @@ abstract class Driver implements DriverInterface
     protected $pdo;
 
     /**
+     * The driver pdo name
+     *
      * @var string
      */
     protected $name;
 
     /**
-     * @var string The left quote char for identifiers/aliases, default is ANSI '"'
+     * The left quote char for identifiers/aliases, default is ANSI '"'
+     *
+     * @var string
      */
     protected $ql;
 
     /**
-     * @var string The right quote char for identifiers/aliases, default is ANSI '"'
+     * The right quote char for identifiers/aliases, default is ANSI '"'
+     *
+     * @var string
      */
     protected $qr;
 
     /**
-     * @var string The quote char for values, default is single-quote char "'"
+     * The quote char for values, default is single-quote char "'"
+     *
+     * @var string
      */
     protected $qv;
 
     /**
-     * @var self The basic singleton ansi driver instance
+     * The basic singleton ansi driver instance
+     *
+     * @var self
      */
     private static $ansi;
 

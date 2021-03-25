@@ -38,7 +38,7 @@ $expr = Sql::expression('(price * {vat_rate})', [
     'vat_rate' => 20.0,
 ]); // sql-string: (price * :expr1)
 // Using shorter method name `expr`
-// sql-string: CONCAT(:expr1, '', "surname")
+// sql-string: CONCAT(:expr1, ' ', "surname")
 $expr = Sql::expr('CONCAT({title}, ' ', "surname")', ['title' => 'sir']);
 
 // Create parameter-less sql Literal expression elements:
@@ -56,10 +56,10 @@ All the factory methods above can be replaced with constructor calls with the sa
 To make code more coincise a few importable functions are provided:
 
 ```php
-use P3\Db\Sql\alias as ali;
-use P3\Db\Sql\expression as exp;
-use P3\Db\Sql\identifier as idn;
-use P3\Db\Sql\literal as lit;
+use function P3\Db\Sql\alias as ali;
+use function P3\Db\Sql\expression as exp;
+use function P3\Db\Sql\identifier as idn;
+use function P3\Db\Sql\literal as lit;
 
 $column  = idn('p.category_id');
 $alias   = ali('t0');
