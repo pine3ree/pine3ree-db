@@ -459,6 +459,8 @@ $num_deleted = $db-&gt;delete('product', 'stock &lt;= 0');
 </code></pre>
 
 <h3 id="sql-driver-proxy-helper-methods">Sql driver proxy helper methods</h3>
+<p>The following methods are simple proxies to methods implemented in the
+<code>P3\Db\Sql\DriverInterface</code> class of the current dbal's sql-driver instance.</p>
 <ul>
 <li><code>Db::quoteIdentifier(string $identifier)</code> quotes given column/table SQL identifier</li>
 <li><code>Db::quoteAlias(string $alias)</code> quotes given SQL aliase</li>
