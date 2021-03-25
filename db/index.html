@@ -72,6 +72,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dbdelete">Db::delete()</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sql-driver-proxy-helper-methods">Sql driver proxy helper methods</a>
+    </li>
         </ul>
     </li>
     </ul>
@@ -450,12 +452,19 @@ $affected = $db-&gt;update('product', ['published' =&gt; true], 'TRUE');
 <pre><code class="php">// DELETE FROM &quot;product&quot; WHERE stock &lt;= 0
 $delete = $db-&gt;delete()-&gt;from('product')-&gt;where('stock &lt;= 0');
 $delete = $db-&gt;delete('product')-&gt;where('stock &lt;= 0');
-$affected = $delete-&gt;execute(); // or exec()
+$num_deleted = $delete-&gt;execute(); // or exec()
 
 // immediate command execution
 // DELETE FROM &quot;product&quot; WHERE stock &lt;= 0
-$affected = $db-&gt;delete('product', 'stock &lt;= 0');
+$num_deleted = $db-&gt;delete('product', 'stock &lt;= 0');
 </code></pre>
+
+<h3 id="sql-driver-proxy-helper-methods">Sql driver proxy helper methods</h3>
+<ul>
+<li><code>Db::quoteIdentifier(string $identifier)</code> quotes given column/table SQL identifier</li>
+<li><code>Db::quoteAlias(string $alias)</code> quotes given SQL aliase</li>
+<li><code>Db::quoteValue(null|scalar $value)</code> perform type-casting and quotes - when required - the given value</li>
+</ul>
               
             </div>
           </div>
