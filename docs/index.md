@@ -15,7 +15,7 @@ The sql-command building operations are forwarded to the composed sql abstractio
 while the sql statement preparation, parameter binding and command execution are
 performed by the composed DBAL instance.
 
-# Installation
+## Installation
 
 p3-db DBAL requires php >= 7.1 and can be installed via composer
 
@@ -25,3 +25,15 @@ $ composer require pine3ree/p3-db
 
 The package does not provide any stable version yet, so `"minimum-stability": "dev"`
 setting is required in your `composer.json` file.
+
+## Features
+
+The library's code is splitted into two main sections/namespaces:
+
+- a `Sql` section in which sql generation of full statements or smaller sfragments
+  is abstracted
+
+- a `Command` section which offers objects that actually send the sql statements
+  to the database server by means ot the composed connection and retrieve the results of
+  such operations such as row/record set for DQL statements and of number of
+  affected rows for DML statements.

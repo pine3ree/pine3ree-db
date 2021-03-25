@@ -158,13 +158,16 @@ only if not passed-in as the 2nd argument of the `getSQL()` call.
 
 All database command classes implement the `execute()` method.
 
-- For writer-commands (Insert|Update|Delete) `execute()` will call the writer
+- For writer-DML-commands (Insert|Update|Delete) `execute()` will call the writer
   method `Writer::exec()` and will return either the number of rows affected or
   `false` on failure.
-- For reader-commands (Select) `execute()` will call the reader method `Reader::query()`
-  and will return either a traversable `\PDOStatement` result-set object or `false`
-  on failure.
+- For reader-DQL-commands (Select) `execute()` will call the reader method
+  `Reader::query()` and will return either a traversable `\PDOStatement`
+  result-set object or `false` on failure.
 
+Unless otherwise stated in all the examples' compiled sql-strings identifiers
+and aliases will be quoted according to an implied `Ansi` driver, i.e. using
+double quotes `"`.
 
 ### Db::select()
 
@@ -229,6 +232,7 @@ $select->groupBy('category_id')
 // SELECT MIN("price") FROM "product" GROUP BY "category_id"
 $select = $db->select()->min('price')->from('product')->groupBy('category_id');
 ```
+
 
 ### Db::insert()
 
@@ -344,7 +348,6 @@ $insert->execute(); // this will try to insert 4 rows
  // adds 1 set of values after removing the old ones
 $insert->row(['price' => 555.55, 'stock' => 555], true);
 $insert->execute(); // this will try to insert 1 row
-
 ```
 
 The opposite happens for `Insert::rows(array $rows, bool $reset = true)` and
@@ -371,6 +374,7 @@ $affected = $update->execute(); // or exec()
 $affected = $db->update('product', ['published' => true], 'TRUE');
 ```
 
+
 ### Db::delete()
 
 The `P3\Db\Command\Delete` command abstracts a SQL DELETE operation
@@ -378,15 +382,23 @@ The `P3\Db\Command\Delete` command abstracts a SQL DELETE operation
 A non empty condition/predicate is required, otherwise an exception is thrown.
 
 Examples:
-
 ```php
 // DELETE FROM "product" WHERE stock <= 0
 $delete = $db->delete()->from('product')->where('stock <= 0');
 $delete = $db->delete('product')->where('stock <= 0');
-$affected = $delete->execute(); // or exec()
+$num_deleted = $delete->execute(); // or exec()
 
 // immediate command execution
 // DELETE FROM "product" WHERE stock <= 0
-$affected = $db->delete('product', 'stock <= 0');
+$num_deleted = $db->delete('product', 'stock <= 0');
 ```
 
+
+### Sql driver proxy helper methods
+
+The following methods are simple proxies to methods implemented in the
+`P3\Db\Sql\DriverInterface` class of the current dbal's sql-driver instance.
+
+- `Db::quoteIdentifier(string $identifier)` quotes given column/table SQL identifier
+- `Db::quoteAlias(string $alias)` quotes given SQL aliase
+- `Db::quoteValue(null|scalar $value)` perform type-casting and quotes - when required - the given value
