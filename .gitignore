@@ -1,0 +1,9 @@
+/vendor/
+/coverage/
+/html/
+/composer.phar
+/phpunit.xml
+/clover.xml
+/.*/
+.*.php
+*.php.*
