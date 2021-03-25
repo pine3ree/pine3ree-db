@@ -109,6 +109,43 @@ class InsertTest extends TestCase
         self::assertSame([array_values($row)], $insert->values);
     }
 
+    public function testInsertRowsResetParam()
+    {
+        $insert = new Insert();
+        $insert->into('product');
+
+        $row1 = ['price' => 111.11, 'stock' => 111];
+        $row2 = ['price' => 222.22, 'stock' => 222];
+        $row3 = ['price' => 333.33, 'stock' => 333];
+        $row4 = ['price' => 444.44, 'stock' => 444];
+        $row5 = ['price' => 555.55, 'stock' => 555];
+
+        $insert->rows([$row1, $row2, $row3]);
+        $insert->rows([$row4, $row5]); // this will reset previous 4 sets of values
+        self::assertStringMatchesFormat(
+            "INSERT INTO `product`"
+            . " (`price`, `stock`)"
+            . " VALUES"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d)",
+            $insert->getSQL($this->driver)
+        );
+
+        $insert->rows([$row1, $row2, $row3]);
+        $insert->rows([$row4, $row5], false); // this will not reset previous 4 sets of values
+        self::assertStringMatchesFormat(
+            "INSERT INTO `product`"
+            . " (`price`, `stock`)"
+            . " VALUES"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d)",
+            $insert->getSQL($this->driver)
+        );
+    }
+
     public function testInsertRowsWithDifferentColumnsRaisesException()
     {
         $insert = new Insert();
@@ -164,7 +201,7 @@ class InsertTest extends TestCase
         );
     }
 
-    public function testInsertMultipleValuesWithReset()
+    public function testInsertMultipleValuesResetParam()
     {
         $insert = new Insert();
         $insert->into('product');
@@ -172,10 +209,30 @@ class InsertTest extends TestCase
 
         $insert->multipleValues([
             [111.11, 111],
-        ]);
-        $insert->multipleValues([
             [222.22, 222],
         ]);
+        $insert->multipleValues([
+            [333.33, 333],
+            [444.44, 444],
+        ], false);
+
+        self::assertCount(4, $insert->values);
+
+        self::assertStringMatchesFormat(
+            "INSERT INTO `product`"
+            . " (`price`, `stock`)"
+            . " VALUES"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d),"
+            . " (:val%d, :val%d)",
+            $insert->getSQL($this->driver)
+        );
+
+        $insert->multipleValues([
+            [555.55, 555],
+            [666.66, 666],
+        ], true);
 
         self::assertCount(2, $insert->values);
 
@@ -184,20 +241,6 @@ class InsertTest extends TestCase
             . " (`price`, `stock`)"
             . " VALUES"
             . " (:val%d, :val%d),"
-            . " (:val%d, :val%d)",
-            $insert->getSQL($this->driver)
-        );
-
-        $insert->multipleValues([
-            [333.33, 333],
-        ], true);
-
-        self::assertCount(1, $insert->values);
-
-        self::assertStringMatchesFormat(
-            "INSERT INTO `product`"
-            . " (`price`, `stock`)"
-            . " VALUES"
             . " (:val%d, :val%d)",
             $insert->getSQL($this->driver)
         );

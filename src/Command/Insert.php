@@ -79,7 +79,7 @@ class Insert extends Command implements WriterInterface
      * @see SqlInsert::multipleValues()
      * @return $this
      */
-    public function multipleValues(array $multiple_values, bool $reset = false)
+    public function multipleValues(array $multiple_values, bool $reset = true)
     {
         $this->sqlStatement->multipleValues($multiple_values, $reset);
         return $this;
@@ -99,7 +99,7 @@ class Insert extends Command implements WriterInterface
      * @see SqlInsert::rows()
      * @return $this
      */
-    public function rows(array $rows)
+    public function rows(array $rows, bool $reset = true)
     {
         $this->sqlStatement->rows($rows);
         return $this;

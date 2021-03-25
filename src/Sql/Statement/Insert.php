@@ -167,10 +167,10 @@ class Insert extends Statement
      * existing values
      *
      * @param array[] $multiple_values
-     * @param bool $reset Discard any previously added set of values?
+     * @param bool $reset Remove any existing set of values?
      * @return $this Fluent interface
      */
-    public function multipleValues(array $multiple_values, bool $reset = false): self
+    public function multipleValues(array $multiple_values, bool $reset = true): self
     {
         if (empty($multiple_values)) {
             throw new InvalidArgumentException(
@@ -206,17 +206,21 @@ class Insert extends Statement
     }
 
     /**
-     * Set the rows(columns-to-values) to be INSERTed, dicarding any existing
-     * set of values
+     * Set the rows(columns-to-values) to be INSERTed, optionally dicarding any
+     * existing set of values
      *
      * @param array[] $rows An array of new records
+     * @psalm-param <string: mixed>[] An array of new records
+     * @param bool $reset Remove any existing set of values?
      * @return $this Fluent interface
      */
-    public function rows(array $rows): self
+    public function rows(array $rows, bool $reset = true): self
     {
         $this->select = null;
-        $this->columns = [];
-        $this->values = [];
+        if ($reset) {
+            $this->columns = [];
+            $this->values = [];
+        }
 
         foreach ($rows as $row) {
             $this->row($row);
