@@ -220,7 +220,7 @@ $predicateSet
         -&gt;gt('price', 100.0)
         -&gt;or()
         -&gt;gt('stock', 42)
-    -&gt;endGroup() // back to the top set scope
+    -&gt;endGroup() // back to the upper-level set scope
 </code></pre>
 
 <p>Predicate sets can also be created using array specifications. This is useful when
@@ -246,7 +246,7 @@ Sql::select('*')-&gt;from('product')-&gt;where($conditions);
 </code></pre>
 
 <p>Predicate specifications may use the exact sql operator string either directly or
-preferably vis Sql class constant, or using camelCased versions such as "notLike".
+preferably via Sql class constants, or using camelCased versions such as "notLike".
 "LIKE" and "NOT LIKE" can be specified using <code>~</code> and <code>!~</code> convenience aliases
 respectively.</p>
               
