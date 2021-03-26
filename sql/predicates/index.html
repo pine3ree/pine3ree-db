@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Predicates - pine3ree/p3-db</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Predicates";
+    var mkdocs_page_input_path = "sql/predicates.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> pine3ree/p3-db</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../db/">Db</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Sql</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../elements/">Elements</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Predicates</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../clauses/">Clauses</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../statements/">Statements</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../drivers/">Drivers</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">pine3ree/p3-db</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Sql &raquo;</li>
+        
+      
+    
+    <li>Predicates</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/pine3ree/p3-db/edit/master/docs/sql/predicates.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="p3dbsqlpredicate-and-p3dbsqlpredicateset">P3\Db\Sql\Predicate and P3\Db\Sql\Predicate\Set</h1>
+<p>SQL predicates are parts of an sql-statement normally abstracting search-conditions
+inside sql clauses like WHERE, HAVING, ON. They usually resolve to a sql boolean value.</p>
+<p>They can be part of a bigger set (predicate-set) and combined together either with
+an <code>AND</code> sql logical operator or with an <code>OR</code> sql logical operator. The default
+predicate combination of a set can be decided when calling its constructor. The default
+combination is <code>AND</code>.</p>
+<p>A predicate-set may also be part of a bigger enclosing set. In this case the enclosed
+set is evaluated first and the result is combined with the other top level predicates.
+In a compiled sql-statement inner predicate sets are rendered enclosed in parenthesis.</p>
+<p>The predicate-set abstraction also provides chainable factory methods for creating
+and adding single predicates and inner sets to itself.
+These methods are proxied by conditional clause classes that composes a predicate-set
+as their search-condition.
+The default logical operator is used unless the factory method is preceeded by either
+an <code>Predicate\Set::and()</code> or a <code>Predicate\Set::or()</code> chainable method call.</p>
+<p>During sql compilation predicate identifiers are quoted as sql-identifiers. To make
+them to be quoted as aliases you must provide Alias instances instead of strings.</p>
+<p>Examples:</p>
+<pre><code class="php">use P3\Db\Sql;
+use P3\Db\Sql\Predicate;
+use P3\Db\Sql\Statement\Select;
+use function P3\Db\Sql\alias;
+
+// empty predicate-set with &quot;AND&quot; as default logical operator
+$predicateSet = new Predicate\Set();
+// add Predicate\Comparison predicates with equality operator
+$predicateSet-&gt;equal('p.vat_rate', 20.0); // &quot;p&quot;.&quot;vat_rate&quot; = :eq1
+$predicateSet-&gt;eq(alias('tot.Price'), 20.0); // AND &quot;tot.Price&quot; = :eq2
+
+$predicateSet = new Predicate\Set([], Sql::OR); // default logical operator is &quot;OR&quot;
+$predicateSet-&gt;lessThan('vat_rate', 20.0);// &quot;vat_rate&quot; &lt; :lt1
+$predicateSet-&gt;lt('price', 100.0); // OR &quot;price&quot; &lt; :lt2
+// add a Predicate\Literal predicate with an expression used as it is
+$predicateSet-&gt;and()-&gt;literal('&quot;published&quot; IS TRUE'); // AND &quot;published&quot; IS TRUE
+$predicateSet-&gt;or()-&gt;gt('stock', 10); // OR &quot;stock&quot; &gt; :gt1
+</code></pre>
+
+<p>As a convenience predicate set methods may also have a shorter and/or equivalent form:</p>
+<pre><code class="php">use P3\Db\Sql\Predicate;
+
+// creates a Predicate\Comparison with operator =
+Predicate\Set::equal($identifier, $value);
+Predicate\Set::eq($identifier, $value);
+// creates a Predicate\Comparison with operator !=
+Predicate\Set::notEqual($identifier, $value);
+Predicate\Set::neq($identifier, $value);
+// creates a Predicate\Comparison with operator &lt;&gt;
+Predicate\Set::ne($identifier, $value);
+// creates a Predicate\Comparison with operator &lt;
+Predicate\Set::lessThan($identifier, $value);
+Predicate\Set::lt($identifier, $value);
+// creates a Predicate\Comparison with operator &lt;=
+Predicate\Set::lessThanEqual($identifier, $value);
+Predicate\Set::lte($identifier, $value);
+// creates a Predicate\Comparison with operator &gt;=
+Predicate\Set::greaterThanEqual($identifier, $value);
+Predicate\Set::gte($identifier, $value);
+// creates a Predicate\Comparison with operator &gt;
+Predicate\Set::greaterThan($identifier, $value);
+Predicate\Set::gt($identifier, $value);
+
+Predicate\Set::like($identifier, $value, $escape); // Predicate\Like
+Predicate\Set::notLike($identifier, $value, $escape); // Predicate\NotLike
+
+Predicate\Set::between($identifier, $min, $max); // Predicate\Between
+Predicate\Set::notBetween($identifier, $min, $max); // Predicate\NotBetween
+
+Predicate\Set::in($identifier, array|Select $valueList); // Predicate\In
+Predicate\Set::notIn($identifier, array|Select $valueList); // Predicate\NotIn
+
+Predicate\Set::is($identifier, true|false|null|'UNKNOWN'); // Predicate\Is
+Predicate\Set::isNot($identifier, true|false|null|'UNKNOWN'); // Predicate\IsNot
+Predicate\Set::isNull($identifier); // Predicate\IsNull
+Predicate\Set::isNotNull($identifier); // Predicate\IsNotNull
+Predicate\Set::isTrue($identifier); // Predicate\IsTrue
+Predicate\Set::isFalse($identifier); // Predicate\IsFalse
+Predicate\Set::isUnknown($identifier); // Predicate\IsUnknown
+
+Predicate\Set::literal(string $literal); // Predicate\Literal
+Predicate\Set::expression(string $expr, array $susbtitutions); // Predicate\Expression
+Predicate\Set::expr(string $expr, array $susbtitutions); // Predicate\Expression
+
+Predicate\Set::exists($identifier, $operator, Select $select); // Predicate\Exists
+Predicate\Set::notExists($identifier, $operator, Select $select); // Predicate\NotExists
+
+Predicate\Set::all($identifier, $operator, Select $select); // Predicate\All
+Predicate\Set::any($identifier, $operator, Select $select); // Predicate\Any
+Predicate\Set::some($identifier, $operator, Select $select); // Predicate\Some
+</code></pre>
+
+<p>Predicate sets initialized with a string will use the string to create a literal predicate:</p>
+<pre><code class="php">use P3\Db\Sql\Predicate;
+
+// the following set will contain 1 predicate of class Predicate\Literal
+$predicateSet = new Predicate\Set('MAX(&quot;price&quot;) &lt;= 100.0'); // MAX(&quot;price&quot;) &lt;= 100.0
+</code></pre>
+
+<p>Sub sets of predicates may be created using <code>begingGroup()</code> calls:</p>
+<pre><code class="php">use P3\Db\Sql\Predicate;
+
+$predicateSet = new Predicate\Set();
+// add predicates
+
+// begin a sub set
+$predicateSet
+    -&gt;beginGroup() // entering the subset scope
+        -&gt;gt('price', 100.0)
+        -&gt;or()
+        -&gt;gt('stock', 42)
+    -&gt;endGroup() // back to the top set scope
+</code></pre>
+
+<p>Predicate sets can also be created using array specifications. This is useful when
+used in sql statement <code>where()</code>, <code>having()</code>, <code>on()</code> method calls.</p>
+<p>Examples:</p>
+<pre><code class="php">use P3\Db\Sql;
+
+$conditions = [
+    'id IS NOT NULL', // a string is converted to a literal predicate
+    ['price', '&lt;=', 100.0], // identifier, operator, value[, extra value]
+    ['date_created', 'between', '2020-01-01', '2020-12-31'],
+    ['name', 'notLike', 'A%'], // or using the `!~` alias
+    ['category_id', 'in', [11, 22, 33]],
+    'vat_rate' =&gt; 10.0, // identifier =&gt; value implies the equality operator
+    '||' =&gt; [ // creates a group with OR as default logical operator
+        // predicate-specs-1,
+        // predicate-specs-2,
+        //...
+    ]
+ ];
+
+Sql::select('*')-&gt;from('product')-&gt;where($conditions);
+</code></pre>
+
+<p>Predicate specifications may use the exact sql operator string either directly or
+preferably vis Sql class constant, or using camelCased versions such as "notLike".
+"LIKE" and "NOT LIKE" can be specified using <code>~</code> and <code>!~</code> convenience aliases
+respectively.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../clauses/" class="btn btn-neutral float-right" title="Clauses">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../elements/" class="btn btn-neutral" title="Elements"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/pine3ree/p3-db/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../elements/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../clauses/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
