@@ -214,6 +214,7 @@ $predicateSet = new Predicate\Set();
 // add predicates
 
 // begin a sub set
+// will be compiled into (&quot;price&quot; &gt; :gt1 OR &quot;stock&quot; &gt; :gt2)
 $predicateSet
     -&gt;beginGroup() // entering the subset scope
         -&gt;gt('price', 100.0)
