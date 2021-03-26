@@ -50,11 +50,24 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#features">Features</a>
+    </li>
     </ul>
                     </li>
                 </ul>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="db/">Db</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Sql</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="sql/elements/">Elements</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="sql/statements/">Statements</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="sql/drivers/">Drivers</a>
                     </li>
                 </ul>
       </div>
@@ -103,13 +116,27 @@ compose the database connection itself and a corresponding sql abstraction state
 <p>The sql-command building operations are forwarded to the composed sql abstraction layer object,
 while the sql statement preparation, parameter binding and command execution are
 performed by the composed DBAL instance.</p>
-<h1 id="installation">Installation</h1>
+<h2 id="installation">Installation</h2>
 <p>p3-db DBAL requires php &gt;= 7.1 and can be installed via composer</p>
 <pre><code class="bash">$ composer require pine3ree/p3-db
 </code></pre>
 
 <p>The package does not provide any stable version yet, so <code>"minimum-stability": "dev"</code>
 setting is required in your <code>composer.json</code> file.</p>
+<h2 id="features">Features</h2>
+<p>The library's code is splitted into two main sections/namespaces:</p>
+<ul>
+<li>
+<p>a <code>Sql</code> section in which sql generation of full statements or smaller sfragments
+  is abstracted</p>
+</li>
+<li>
+<p>a <code>Command</code> section which offers objects that actually send the sql statements
+  to the database server by means ot the composed connection and retrieve the results of
+  such operations such as row/record set for DQL statements and of number of
+  affected rows for DML statements.</p>
+</li>
+</ul>
               
             </div>
           </div>
@@ -165,5 +192,5 @@ setting is required in your <code>composer.json</code> file.</p>
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-03-25 23:02:45.122052+00:00
+Build Date UTC : 2021-03-26 14:51:58.916018+00:00
 -->

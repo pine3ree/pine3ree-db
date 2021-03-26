@@ -79,6 +79,15 @@
     </ul>
                     </li>
                 </ul>
+                <p class="caption"><span class="caption-text">Sql</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../sql/elements/">Elements</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../sql/statements/">Statements</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../sql/drivers/">Drivers</a>
+                    </li>
+                </ul>
       </div>
     </div>
     </nav>
@@ -252,13 +261,16 @@ the sql-statement object or the wrapping command. A internal collector will be c
 only if not passed-in as the 2nd argument of the <code>getSQL()</code> call.</p>
 <p>All database command classes implement the <code>execute()</code> method.</p>
 <ul>
-<li>For writer-commands (Insert|Update|Delete) <code>execute()</code> will call the writer
+<li>For writer-DML-commands (Insert|Update|Delete) <code>execute()</code> will call the writer
   method <code>Writer::exec()</code> and will return either the number of rows affected or
   <code>false</code> on failure.</li>
-<li>For reader-commands (Select) <code>execute()</code> will call the reader method <code>Reader::query()</code>
-  and will return either a traversable <code>\PDOStatement</code> result-set object or <code>false</code>
-  on failure.</li>
+<li>For reader-DQL-commands (Select) <code>execute()</code> will call the reader method
+  <code>Reader::query()</code> and will return either a traversable <code>\PDOStatement</code>
+  result-set object or <code>false</code> on failure.</li>
 </ul>
+<p>Unless otherwise stated in all the examples' compiled sql-strings identifiers
+and aliases will be quoted according to an implied <code>Ansi</code> driver, i.e. using
+double quotes <code>"</code>.</p>
 <h3 id="dbselect">Db::select()</h3>
 <p>Create a <code>P3\Db\Command\Select</code> reader command instance</p>
 <pre><code class="php">use P3\Db;
@@ -473,6 +485,8 @@ $num_deleted = $db-&gt;delete('product', 'stock &lt;= 0');
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../sql/elements/" class="btn btn-neutral float-right" title="Elements">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
       
         <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
@@ -504,6 +518,8 @@ $num_deleted = $db-&gt;delete('product', 'stock &lt;= 0');
       
         <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
       
+      
+        <span style="margin-left: 15px"><a href="../sql/elements/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
