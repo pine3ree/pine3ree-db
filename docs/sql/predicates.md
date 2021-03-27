@@ -149,11 +149,16 @@ $conditions = [
     ['category_id', 'in', [11, 22, 33]], // "category_id" IN (:in1, :in2, :in3)
     ['store_id', 'in', [1, 2, null]], // "store_id" IN (:in4, :in5) OR "store_id" IS NULL
     'vat_rate' => 10.0, // identifier => value implies the equality operator
-    '||' => [ // creates a group with OR as default logical operator
+    '||' => [ // creates a group with 'OR' as default logical operator
         // predicate-specs-1,
         // predicate-specs-2,
         //...
-    ]
+    ],
+    '&&' => [ // creates a group with 'AND' as default logical operator
+        // predicate-specs-1,
+        // predicate-specs-2,
+        //...,
+    ],
  ];
 
 Sql::select('*')->from('product')->where($conditions);
