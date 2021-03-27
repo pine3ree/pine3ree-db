@@ -2,6 +2,8 @@
 /coverage/
 /html/
 /composer.phar
+/composer.lock
+/phpstan.phar
 /phpunit.xml
 /clover.xml
 /.*/
