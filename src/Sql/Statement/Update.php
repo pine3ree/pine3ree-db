@@ -162,6 +162,9 @@ class Update extends Statement
         return Sql::UPDATE . " {$table} " . Sql::SET . " " . implode(", ", $set);
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('table' === $name) {

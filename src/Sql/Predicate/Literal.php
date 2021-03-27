@@ -11,7 +11,6 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
-use P3\Db\Exception\RuntimeException;
 
 use function trim;
 
@@ -58,14 +57,15 @@ class Literal extends Predicate
         // no-op
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('literal' === $name) {
-            return $this->sql;
+            return $this->literal;
         };
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 }

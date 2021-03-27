@@ -340,6 +340,13 @@ abstract class Driver implements DriverInterface
         return $method->invokeArgs($element, $args);
     }
 
+    /**
+     * Return a read-only internal property
+     *
+     * @param string $name
+     * @return string
+     * @throws RuntimeException
+     */
     public function __get(string $name)
     {
         if ($name === 'ql') {

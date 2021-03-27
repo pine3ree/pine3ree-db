@@ -10,9 +10,12 @@ namespace P3\Db\Sql\Clause;
 use IteratorAggregate;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
@@ -139,6 +142,11 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::all()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string $operator
+     * @param Select $select
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function all($identifier, string $operator, Select $select): Predicate\Set
     {
@@ -147,6 +155,11 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::any()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string $operator
+     * @param Select $select
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function any($identifier, string $operator, Select $select): Predicate\Set
     {
@@ -155,6 +168,11 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::some()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string $operator
+     * @param Select $select
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function some($identifier, string $operator, Select $select): Predicate\Set
     {
@@ -163,6 +181,11 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::between()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param mixed $min_value
+     * @param mixed $max_value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function between($identifier, $min_value, $max_value): Predicate\Set
     {
@@ -171,6 +194,11 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::notBetween()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param mixed $min_value
+     * @param mixed $max_value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function notBetween($identifier, $min_value, $max_value): Predicate\Set
     {
@@ -179,6 +207,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::exists()
+     *
+     * @param Select $select
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function exists(Select $select): Predicate\Set
     {
@@ -187,6 +218,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::notExists()
+     *
+     * @param Select $select
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function notExists(Select $select): Predicate\Set
     {
@@ -195,22 +229,34 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::in()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param array|Select $valueList
+     * @return Predicate\Set This clause's composed search-condition
      */
-    public function in($identifier, array $value_list): Predicate\Set
+    public function in($identifier, $valueList): Predicate\Set
     {
-        return $this->searchCondition->in($identifier, $value_list);
+        return $this->searchCondition->in($identifier, $valueList);
     }
 
     /**
      * @see Predicate\Set::notIn()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param array|Select $valueList
+     * @return Predicate\Set This clause's composed search-condition
      */
-    public function notIn($identifier, array $value_list): Predicate\Set
+    public function notIn($identifier, $valueList): Predicate\Set
     {
-        return $this->searchCondition->notIn($identifier, $value_list);
+        return $this->searchCondition->notIn($identifier, $valueList);
     }
 
     /**
      * @see Predicate\Set::is()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param bool|null|string $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function is($identifier, $value): Predicate\Set
     {
@@ -219,6 +265,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::isNot()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param bool|null|string $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function isNot($identifier, $value): Predicate\Set
     {
@@ -227,6 +277,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::isNull()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function isNull($identifier): Predicate\Set
     {
@@ -235,6 +288,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::isNotNull()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function isNotNull($identifier): Predicate\Set
     {
@@ -243,6 +299,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::isTrue()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function isTrue($identifier): Predicate\Set
     {
@@ -251,6 +310,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::isFalse()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function isFalse($identifier): Predicate\Set
     {
@@ -259,6 +321,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::isUnknown()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function isUnknown($identifier): Predicate\Set
     {
@@ -267,6 +332,9 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::isNotUnknown()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function isNotUnknown($identifier): Predicate\Set
     {
@@ -275,22 +343,36 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::like()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string|Literal $pattern
+     * @param string|null $escape
+     * @return Predicate\Set This clause's composed search-condition
      */
-    public function like($identifier, $value): Predicate\Set
+    public function like($identifier, $pattern, string $escape = null): Predicate\Set
     {
-        return $this->searchCondition->like($identifier, $value);
+        return $this->searchCondition->like($identifier, $pattern, $escape);
     }
 
     /**
      * @see Predicate\Set::notLike()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string|Literal $pattern
+     * @param string|null $escape
+     * @return Predicate\Set This clause's composed search-condition
      */
-    public function notLike($identifier, $value): Predicate\Set
+    public function notLike($identifier, $pattern, string $escape = null): Predicate\Set
     {
-        return $this->searchCondition->notLike($identifier, $value);
+        return $this->searchCondition->notLike($identifier, $pattern, $escape);
     }
 
     /**
      * @see Predicate\Set::equal()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function equal($identifier, $value): Predicate\Set
     {
@@ -299,6 +381,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::eq()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function eq($identifier, $value): Predicate\Set
     {
@@ -307,6 +393,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::notEqual()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function notEqual($identifier, $value): Predicate\Set
     {
@@ -315,6 +405,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::neq()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function neq($identifier, $value): Predicate\Set
     {
@@ -323,6 +417,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::ne()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function ne($identifier, $value): Predicate\Set
     {
@@ -331,6 +429,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::lessThan()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function lessThan($identifier, $value): Predicate\Set
     {
@@ -339,6 +441,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::lt()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function lt($identifier, $value): Predicate\Set
     {
@@ -347,6 +453,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::lessThanEqual()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function lessThanEqual($identifier, $value): Predicate\Set
     {
@@ -355,6 +465,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::lte()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function lte($identifier, $value): Predicate\Set
     {
@@ -363,6 +477,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::greaterThanEqual()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function greaterThanEqual($identifier, $value): Predicate\Set
     {
@@ -371,6 +489,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::gte()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function gte($identifier, $value): Predicate\Set
     {
@@ -379,6 +501,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::greaterThan()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function greaterThan($identifier, $value): Predicate\Set
     {
@@ -387,6 +513,10 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::gt()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function gt($identifier, $value): Predicate\Set
     {
@@ -395,6 +525,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::and()
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function and(): Predicate\Set
     {
@@ -403,6 +534,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
 
     /**
      * @see Predicate\Set::and()
+     * @return Predicate\Set This clause's composed search-condition
      */
     public function or(): Predicate\Set
     {
@@ -425,9 +557,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
     }
 
     /**
-     * Provide access to private properties
-     *
-     * @param string $name
+     * @return mixed
      */
     public function __get(string $name)
     {

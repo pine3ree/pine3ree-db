@@ -15,7 +15,6 @@ use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
-use P3\Db\Exception\RuntimeException;
 
 use function get_class;
 use function gettype;
@@ -160,6 +159,9 @@ class Expression extends Predicate
         return parent::getValueSQL($params, $value, $param_type, $name);
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('expression' === $name) {
@@ -170,8 +172,6 @@ class Expression extends Predicate
             return $this->substitutions;
         };
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 }

@@ -12,7 +12,6 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
 use P3\Db\Sql\Element;
 use P3\Db\Sql\Params;
-use P3\Db\Exception\RuntimeException;
 
 use function trim;
 use function preg_match;
@@ -66,14 +65,15 @@ class Identifier extends Element
         return $this->sql = ($driver ?? Driver::ansi())->quoteIdentifier($this->identifier);
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('identifier' === $name) {
             return $this->identifier;
         };
 
-        throw new RuntimeException(
-            "Undefined property {$name}!"
-        );
+        return parent::__get($name);
     }
 }

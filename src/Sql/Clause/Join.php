@@ -147,6 +147,9 @@ class Join extends Clause
         return $this->__name;
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('name' === $name) {

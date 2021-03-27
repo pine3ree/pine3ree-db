@@ -275,6 +275,13 @@ abstract class Element implements ElementInterface
         $this->driver = null;
     }
 
+    /**
+     * Return a property value
+     *
+     * @param string $name
+     * @return mixed
+     * @throws RuntimeException
+     */
     public function __get(string $name)
     {
         if ('parent' === $name) {

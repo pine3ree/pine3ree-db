@@ -90,6 +90,9 @@ abstract class CompareTo extends Predicate
         return $this->sql = "{$identifier} {$this->operator} {$quantifier} ({$select_sql})";
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('select' === $name) {

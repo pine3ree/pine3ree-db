@@ -82,6 +82,9 @@ class Delete extends Statement
         return $this->sql;
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('table' === $name) {

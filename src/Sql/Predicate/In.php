@@ -137,6 +137,9 @@ class In extends Predicate
         return $this->sql = $sql;
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('valueList' === $name) {

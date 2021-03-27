@@ -1157,6 +1157,9 @@ class Select extends Statement
         return $level;
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('table' === $name) {

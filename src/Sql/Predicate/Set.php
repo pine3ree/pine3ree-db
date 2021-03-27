@@ -12,9 +12,12 @@ use Closure;
 use P3\Db\Exception\InvalidArgumentException;
 use IteratorAggregate;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Identifier;
+use P3\Db\Sql\Literal;
 use P3\Db\Sql\Params;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select;
@@ -260,6 +263,16 @@ class Set extends Predicate implements IteratorAggregate
         return $this;
     }
 
+    /**
+     * Try to build a Predicate instance from specs
+     *
+     * @param mixed $predicate
+     * @param bool $checkEmptyValue
+     * @param bool $throw
+     * @return Predicate|null
+     * @throws InvalidArgumentException
+     * @throws Throwable
+     */
     protected function buildPredicate($predicate, bool $checkEmptyValue = false, bool $throw = true): ?Predicate
     {
         if ($checkEmptyValue && self::isEmptyPredicate($predicate)) {
@@ -462,6 +475,11 @@ class Set extends Predicate implements IteratorAggregate
         return !is_array($predicate);
     }
 
+    /**
+     * @param mixed $predicate
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected static function assertValidPredicate($predicate)
     {
         if (is_string($predicate)
@@ -555,6 +573,12 @@ class Set extends Predicate implements IteratorAggregate
         return $this->sql = trim(implode(' ', $sqls));
     }
 
+    /**
+     * Add a sql literal predicate
+     *
+     * @param string $literal
+     * @return $this Fluent interface
+     */
     public function literal(string $literal): self
     {
         return $this->addPredicate(
@@ -562,6 +586,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql expression predicate
+     *
+     * @param string $expression
+     * @param array $substitutions
+     * @return $this Fluent interface
+     */
     public function expression(string $expression, array $substitutions = []): self
     {
         return $this->addPredicate(
@@ -570,13 +601,25 @@ class Set extends Predicate implements IteratorAggregate
     }
 
     /**
-     * @alias of self::expression()
+     * @see of self::expression()
+     *
+     * @param string $expression
+     * @param array $substitutions
+     * @return $this Fluent interface
      */
     public function expr(string $expression, array $substitutions = []): self
     {
         return $this->expression($expression, $substitutions);
     }
 
+    /**
+     * Add a sql ALL comparison predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string $operator
+     * @param Select $select
+     * @return $this Fluent interface
+     */
     public function all($identifier, string $operator, Select $select): self
     {
         return $this->addPredicate(
@@ -584,6 +627,14 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql ANY comparison predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string $operator
+     * @param Select $select
+     * @return $this Fluent interface
+     */
     public function any($identifier, string $operator, Select $select): self
     {
         return $this->addPredicate(
@@ -591,6 +642,14 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql SOME comparison predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string $operator
+     * @param Select $select
+     * @return $this Fluent interface
+     */
     public function some($identifier, string $operator, Select $select): self
     {
         return $this->addPredicate(
@@ -598,6 +657,14 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql BETWEEN predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param mixed $min_value
+     * @param mixed $max_value
+     * @return $this Fluent interface
+     */
     public function between($identifier, $min_value, $max_value): self
     {
         return $this->addPredicate(
@@ -605,6 +672,14 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a NOT BETWEEN predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param mixed $min_value
+     * @param mixed $max_value
+     * @return $this Fluent interface
+     */
     public function notBetween($identifier, $min_value, $max_value): self
     {
         return $this->addPredicate(
@@ -612,6 +687,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql EXISTS predicate
+     *
+     * @param Select $select
+     * @return $this Fluent interface
+     */
     public function exists(Select $select): self
     {
         return $this->addPredicate(
@@ -619,6 +700,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a NOT EXISTS predicate
+     *
+     * @param Select $select
+     * @return $this Fluent interface
+     */
     public function notExists(Select $select): self
     {
         return $this->addPredicate(
@@ -626,20 +713,41 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
-    public function in($identifier, array $value_list): self
+    /**
+     * Add a sql IN predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param array|Select $valueList
+     * @return $this Fluent interface
+     */
+    public function in($identifier, $valueList): self
     {
         return $this->addPredicate(
-            new Predicate\In($identifier, $value_list)
+            new Predicate\In($identifier, $valueList)
         );
     }
 
-    public function notIn($identifier, array $value_list): self
+    /**
+     * Add a NOT IN predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param array|Select $valueList
+     * @return $this Fluent interface
+     */
+    public function notIn($identifier, $valueList): self
     {
         return $this->addPredicate(
-            new Predicate\NotIn($identifier, $value_list)
+            new Predicate\NotIn($identifier, $valueList)
         );
     }
 
+    /**
+     * Add a sql IS predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param bool|null|string $value
+     * @return $this Fluent interface
+     */
     public function is($identifier, $value): self
     {
         return $this->addPredicate(
@@ -647,6 +755,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql IS NOT predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param bool|null|string $value
+     * @return $this Fluent interface
+     */
     public function isNot($identifier, $value): self
     {
         return $this->addPredicate(
@@ -654,6 +769,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql IS NULL predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return $this Fluent interface
+     */
     public function isNull($identifier): self
     {
         return $this->addPredicate(
@@ -661,6 +782,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql IS NOT NULL predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return $this Fluent interface
+     */
     public function isNotNull($identifier): self
     {
         return $this->addPredicate(
@@ -668,6 +795,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql IS TRUE predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return $this Fluent interface
+     */
     public function isTrue($identifier): self
     {
         return $this->addPredicate(
@@ -675,6 +808,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql IS FALSE predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return $this Fluent interface
+     */
     public function isFalse($identifier): self
     {
         return $this->addPredicate(
@@ -682,6 +821,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql IS UNKNOWN predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return $this Fluent interface
+     */
     public function isUnknown($identifier): self
     {
         return $this->addPredicate(
@@ -689,6 +834,12 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a sql IS NOT UNKNOWN predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @return $this Fluent interface
+     */
     public function isNotUnknown($identifier): self
     {
         return $this->addPredicate(
@@ -696,20 +847,43 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
-    public function like($identifier, $value, string $escape = null): self
+    /**
+     * Add a sql LIKE predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string|Literal $pattern
+     * @param string|null $escape
+     * @return $this Fluent interface
+     */
+    public function like($identifier, $pattern, string $escape = null): self
     {
         return $this->addPredicate(
-            new Predicate\Like($identifier, $value, $escape)
+            new Predicate\Like($identifier, $pattern, $escape)
         );
     }
 
-    public function notLike($identifier, $value, string $escape = null): self
+    /**
+     * Add a NOT LIKE predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param string|Literal $pattern
+     * @param string|null $escape
+     * @return $this Fluent interface
+     */
+    public function notLike($identifier, $pattern, string $escape = null): self
     {
         return $this->addPredicate(
-            new Predicate\NotLike($identifier, $value, $escape)
+            new Predicate\NotLike($identifier, $pattern, $escape)
         );
     }
 
+    /**
+     * Add an equal-to COMPARISON OPERATOR = predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function equal($identifier, $value): self
     {
         return $this->addPredicate(
@@ -717,6 +891,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * @see self::equal()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function eq($identifier, $value): self
     {
         return $this->addPredicate(
@@ -724,6 +905,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a not-equal-to COMPARISON OPERATOR != predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function notEqual($identifier, $value): self
     {
         return $this->addPredicate(
@@ -731,6 +919,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * @see self::equal()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function neq($identifier, $value): self
     {
         return $this->addPredicate(
@@ -738,6 +933,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a not-equal-to COMPARISON OPERATOR <> predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function ne($identifier, $value): self
     {
         return $this->addPredicate(
@@ -745,6 +947,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a less-than COMPARISON OPERATOR < predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function lessThan($identifier, $value): self
     {
         return $this->addPredicate(
@@ -752,6 +961,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * @see self::lessThan()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function lt($identifier, $value): self
     {
         return $this->addPredicate(
@@ -759,6 +975,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a less-than-or-equal-to COMPARISON OPERATOR <= predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function lessThanEqual($identifier, $value): self
     {
         return $this->addPredicate(
@@ -766,6 +989,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * @see self::lessThanEqual()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function lte($identifier, $value): self
     {
         return $this->addPredicate(
@@ -773,6 +1003,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a greater-than-or-equal-to COMPARISON OPERATOR >= predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function greaterThanEqual($identifier, $value): self
     {
         return $this->addPredicate(
@@ -780,6 +1017,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * @see self::greaterThanEqual()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function gte($identifier, $value): self
     {
         return $this->addPredicate(
@@ -787,6 +1031,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * Add a greater-than COMPARISON OPERATOR > predicate
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function greaterThan($identifier, $value): self
     {
         return $this->addPredicate(
@@ -794,6 +1045,13 @@ class Set extends Predicate implements IteratorAggregate
         );
     }
 
+    /**
+     * @see self::greaterThan()
+     *
+     * @param string|Alias|Identifier|Literal $identifier
+     * @param scalar|Literal|Identifier|Alias|null $value
+     * @return $this Fluent interface
+     */
     public function gt($identifier, $value): self
     {
         return $this->addPredicate(
@@ -804,7 +1062,7 @@ class Set extends Predicate implements IteratorAggregate
     /**
      * Set AND as the logical operator for next predicate
      *
-     * @return $this fluent interface
+     * @return $this Fluent interface
      */
     public function and(): self
     {
@@ -815,7 +1073,7 @@ class Set extends Predicate implements IteratorAggregate
     /**
      * Set AND as the logical operator for next predicate
      *
-     * @return $this fluent interface
+     * @return $this Fluent interface
      */
     public function or(): self
     {
@@ -883,6 +1141,9 @@ class Set extends Predicate implements IteratorAggregate
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if ('predicates' === $name) {
