@@ -46,6 +46,14 @@ matrix:
         - DEPS=latest
         - PHPCS=true
 
+    - php: 8.0
+      env:
+        - DEPS=lowest
+    - php: 8.0
+      env:
+        - DEPS=latest
+        - PHPCS=true
+
 before_install:
 
 install:
