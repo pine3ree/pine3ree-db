@@ -26,7 +26,7 @@ class Ansi extends Driver implements LimitSqlProvider
         parent::__construct(null, '"', '"', "'");
     }
 
-    public function setPDO(PDO $pdo)
+    public function setPDO(PDO $pdo): void
     {
         // do not use PDO for ANSI-SQL;
     }

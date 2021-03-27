@@ -164,7 +164,7 @@ abstract class Driver implements DriverInterface
         );
     }
 
-    public function setPDO(PDO $pdo)
+    public function setPDO(PDO $pdo): void
     {
         $this->pdo = $pdo;
     }

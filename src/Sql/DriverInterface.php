@@ -28,7 +28,13 @@ interface DriverInterface
      */
     public function getName(): string;
 
-    public function setPDO(PDO $pdo);
+    /**
+     * Set the pdo connection, used in quoting values of type string
+     *
+     * @param PDO $pdo
+     * @return void
+     */
+    public function setPDO(PDO $pdo): void;
 
     /**
      * Quote a string identifier representing a database table or a table column
