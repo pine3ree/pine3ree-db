@@ -17,6 +17,7 @@ parameters:
         - '#no value type specified in iterable type#'
         - '#\:\:\$table is not writable#'
         - '#\:\:\$where is not writable#'
-        - '#\:\:__get\(\) has no return typehint specified#'
         - '#Else branch is unreachable because ternary operator condition is always true#'
         - '#Parameter \#1 \$name of method PDO\:\:lastInsertId\(\) expects string, string\|null given#'
+        - '#Call to function is_object\(\) with array\|string will always evaluate to false#'
+        - '#Call to function is_string\(\) with mixed will always evaluate to false#'
