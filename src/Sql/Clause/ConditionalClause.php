@@ -8,6 +8,7 @@
 namespace P3\Db\Sql\Clause;
 
 use IteratorAggregate;
+use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;
 use P3\Db\Sql\Driver;
@@ -30,6 +31,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      */
     protected $searchCondition;
 
+    /** @var bool */
     protected static $useParenthesis = false;
 
     /**

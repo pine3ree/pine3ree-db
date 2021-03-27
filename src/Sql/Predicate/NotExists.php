@@ -15,5 +15,6 @@ use P3\Db\Sql\Statement\Select;
  */
 class NotExists extends Exists
 {
+    /** @var bool */
     protected static $not = true;
 }

@@ -462,6 +462,18 @@ class Db
             return $update;
         }
 
+        if (empty($data)) {
+            throw new InvalidArgumentException(
+                "Cannot perform an UPDATE with empty data!"
+            );
+        }
+
+        if (empty($where)) {
+            throw new InvalidArgumentException(
+                "Cannot perform an UPDATE without conditions!"
+            );
+        }
+
         return $update->set($data)->where($where)->execute();
     }
 
@@ -722,6 +734,8 @@ class Db
 
     /**
      * @see Sql\DriverInterface::quoteValue()
+     *
+     * @param mixed $value
      */
     public function quoteValue($value): string
     {

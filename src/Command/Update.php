@@ -7,11 +7,13 @@
 
 namespace P3\Db\Command;
 
+use Closure;
 use P3\Db\Db;
 use P3\Db\Command;
 use P3\Db\Command\Traits\Writer as WriterTrait;
 use P3\Db\Command\Writer as WriterInterface;
 use P3\Db\Sql\Clause\Where;
+use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Update as SqlUpdate;
 
 /**
@@ -34,7 +36,7 @@ class Update extends Command implements WriterInterface
 
     /**
      * @see SqlUpdate::table()
-     * @return $this
+     * @return $this Fluent interface
      */
     public function table(string $table): self
     {
@@ -44,7 +46,10 @@ class Update extends Command implements WriterInterface
 
     /**
      * @see SqlUpdate::set()
-     * @return $this
+     *
+     * @param string|array $column_or_row
+     * @param mixed $value
+     * @return $this Fluent interface
      */
     public function set($column_or_row, $value = null): self
     {
@@ -54,7 +59,8 @@ class Update extends Command implements WriterInterface
 
     /**
      * @see SqlUpdate::where()
-     * @return $this
+     * @param string|array|Predicate|Closure|Where $where
+     * @return $this Fluent interface
      */
     public function where($where): self
     {

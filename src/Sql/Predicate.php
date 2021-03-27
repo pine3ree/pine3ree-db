@@ -22,11 +22,20 @@ use function sprintf;
  */
 abstract class Predicate extends Element
 {
+    /**
+     * @param mixed $identifier
+     * @param string $type
+     * @return void
+     */
     protected static function assertValidIdentifier(&$identifier, string $type = '')
     {
         parent::assertValidIdentifier($identifier, "{$type}predicate ");
     }
 
+    /**
+     * @param mixed $operator
+     * @return void
+     */
     protected static function assertValidOperator($operator)
     {
         if (!is_string($operator)

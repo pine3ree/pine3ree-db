@@ -16,5 +16,7 @@ use P3\Db\Sql\Clause\ConditionalClause;
 class On extends ConditionalClause
 {
     protected static $name = Sql::ON;
+
+    /** @var bool */
     protected static $useParenthesis = true;
 }

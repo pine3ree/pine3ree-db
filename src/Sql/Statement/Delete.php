@@ -43,7 +43,7 @@ class Delete extends Statement
      * Set the db table to delete from
      *
      * @param string $table
-     * @return $this
+     * @return $this Fluent interface
      */
     public function from(string $table): self
     {

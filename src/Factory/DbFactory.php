@@ -26,6 +26,10 @@ use const FILTER_VALIDATE_BOOLEAN;
  */
 class DbFactory
 {
+    /**
+     * @var array
+     * @psalm-var array<string, mixed>
+     */
     private $params = [];
 
     public function __invoke(ContainerInterface $container): Db

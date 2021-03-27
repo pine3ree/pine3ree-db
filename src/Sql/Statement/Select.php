@@ -123,16 +123,16 @@ class Select extends Statement
     protected $driver_unchanged = true;
 
     /**
-     * @param string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
+     * @param null|string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
      *      One or many column names, Identifiers, Literals, Expressions or sub-select statements
-     * @psalm-param array<int|string, string|Expression|Identifier|Literal|self> $columns
+     * @psalm-param null|string|Expression|Identifier|Literal|self|array<int|string, string|Expression|Identifier|Literal|self> $columns
      * @param string|self|null $from A db-table name or a sub-select statement
      * @param string|null $alias
      */
     public function __construct($columns = null, $from = null, string $alias = null)
     {
         if (!empty($columns)) {
-            $this->columns($columns);
+            $this->columns(is_array($columns) ? $columns : [$columns]);
         }
         if (!empty($from)) {
             $this->from($from, $alias);
@@ -141,7 +141,7 @@ class Select extends Statement
 
     /**
      * @param string $quantifier
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function quantifier(string $quantifier): self
     {
@@ -156,7 +156,7 @@ class Select extends Statement
     /**
      * Set the DISTINCT clause
      *
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function distinct(): self
     {
@@ -171,19 +171,14 @@ class Select extends Statement
      * The array keys may be used to specify aliases for the columns names / literal
      * expressions
      *
-     * @param string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
+     * @param string[]|Expression[]|Identifier[]|Literal[]|self[] $columns
      * @psalm-param array<int|string, string|Expression|Identifier|Literal|self> $columns
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function columns($columns): self
     {
         if (empty($columns)) {
             return $this;
-        }
-
-        // was a single column provided?
-        if (!is_array($columns)) {
-            $columns = [$columns];
         }
 
         // trim column names
@@ -197,9 +192,9 @@ class Select extends Statement
     /**
      * Add a column to the select list
      *
-     * @param string|Identifier|Literal|Expression|Select $column
+     * @param string|Identifier|Literal|Expression|self $column
      * @param string $alias
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      * @throws RuntimeException
      */
     public function column($column, string $alias = null): self
@@ -542,7 +537,7 @@ class Select extends Statement
      * Add a join clause instance to this statement
      *
      * @param Join $join The join clause
-     * @return $this Provides a fluent interface
+     * @return $this Fluent interface
      */
     public function addJoin(Join $join): self
     {
@@ -720,7 +715,7 @@ class Select extends Statement
      *
      * @param string|string[]|Literal|Literal[] $groupBy
      * @param bool $replace
-     * @return $this
+     * @return $this Fluent interface
      * @throws InvalidArgumentException
      */
     public function groupBy($groupBy, bool $replace = false): self

@@ -7,11 +7,13 @@
 
 namespace P3\Db\Command;
 
+use Closure;
 use P3\Db\Db;
 use P3\Db\Command;
 use P3\Db\Command\Traits\Writer as WriterTrait;
 use P3\Db\Command\Writer as WriterInterface;
 use P3\Db\Sql\Clause\Where;
+use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Delete as SqlDelete;
 
 /**
@@ -33,7 +35,9 @@ class Delete extends Command implements WriterInterface
 
     /**
      * @see SqlDelete::from()
-     * @return $this
+     *
+     * @param string $table
+     * @return $this Fluent interface
      */
     public function from($table): self
     {
@@ -43,7 +47,9 @@ class Delete extends Command implements WriterInterface
 
     /**
      * @see SqlDelete::where()
-     * @return $this
+     *
+     * @param string|array|Predicate|Closure|Where $where
+     * @return $this Fluent interface
      */
     public function where($where): self
     {

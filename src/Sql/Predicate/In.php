@@ -62,6 +62,11 @@ class In extends Predicate
         $this->valueList = $valueList;
     }
 
+    /**
+     * @param mixed $valueList
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected static function assertValidValueList($valueList)
     {
         if (!is_array($valueList) && ! $valueList instanceof Select) {

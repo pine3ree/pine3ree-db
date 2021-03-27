@@ -17,7 +17,7 @@ trait Reader
     /**
      * Prepare, execute and return the PDO-statement or return false on failure
      *
-     * @implements P3\Db\Command\Reader::query()
+     * @see P3\Db\Command\Reader::query()
      *
      * @return PDOStatement|false
      */
@@ -32,7 +32,7 @@ trait Reader
     }
 
     /**
-     * @implements P3\Db\Command::execute()
+     * @see P3\Db\Command::execute()
      * @see self::query()
      *
      * @return PDOStatement|false

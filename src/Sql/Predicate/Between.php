@@ -31,6 +31,7 @@ class Between extends Predicate
     /** @var mixed */
     protected $maxValue;
 
+    /** @var bool */
     protected static $not = false;
 
     /**
@@ -50,6 +51,11 @@ class Between extends Predicate
         $this->maxValue = $maxValue;
     }
 
+    /**
+     * @param mixed $value
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected static function assertValidLimit($value)
     {
         $is_valid = is_scalar($value) || $value instanceof Literal;

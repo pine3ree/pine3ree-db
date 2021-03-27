@@ -27,7 +27,7 @@ class Params
 
     /**
      * @var array|mixed[] A collection of marker-indexed sql-statement parameters
-     * @psalm-var array<string, mixed> A collection of marker-indexed sql-statement parameters
+     * @psalm-var array<string|int, mixed> A collection of marker-indexed sql-statement parameters
      */
     private $values = [];
 
@@ -36,7 +36,7 @@ class Params
      * Types are expressed using PDO::PARAM_* constants
      *
      * @var int[]
-     * @psalm-var array<string, int>
+     * @psalm-var array<string|int, int>
      */
     private $types = [];
 
@@ -142,8 +142,9 @@ class Params
      * @param string|int $index
      * @param mixed $value
      * @param int $type
+     * @return void
      */
-    private function setParam($index, $value, int $type = null, string $name = null)
+    private function setParam($index, $value, int $type = null, string $name = null): void
     {
         $this->values[$index] = $value;
 

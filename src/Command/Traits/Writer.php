@@ -15,7 +15,7 @@ trait Writer
     /**
      * Execute the writer-command returning either the number of affected rows or false on error
      *
-     * @implements P3\Db\Command\Writer::exec()
+     * @see P3\Db\Command\Writer::exec()
      *
      * @return int|false
      */
@@ -30,7 +30,7 @@ trait Writer
     }
 
     /**
-     * @implements P3\Db\Command::execute()
+     * @see P3\Db\Command::execute()
      * @see self::exec()
      *
      * @return int|false

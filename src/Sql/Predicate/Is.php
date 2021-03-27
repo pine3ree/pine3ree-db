@@ -54,7 +54,7 @@ class Is extends Predicate
         } elseif (is_string($value)) {
             $this->value = self::validateAndNormalizeStringValue($value);
         } else {
-            self::throwInvalidArgumentException($value);
+            throw self::createInvalidArgumentException($value);
         }
     }
 
@@ -87,14 +87,18 @@ class Is extends Predicate
             return Sql::UNKNOWN;
         }
 
-        self::throwInvalidArgumentException($value);
+        throw self::createInvalidArgumentException($value);
         // @codeCoverageIgnoreStart
     }
     // @codeCoverageIgnoreEnd
 
-    protected static function throwInvalidArgumentException($value)
+    /**
+     * @param mixed $value
+     * @return InvalidArgumentException
+     */
+    protected static function createInvalidArgumentException($value)
     {
-        throw new InvalidArgumentException(sprintf(
+        return new InvalidArgumentException(sprintf(
             "The IS-value, must be one of:"
             . " `null`, `true`, `false` or the ci-strings 'NULL', 'TRUE', 'FALSE', 'UNKNOWN',"
             . " %s provided!",

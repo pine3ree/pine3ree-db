@@ -59,7 +59,7 @@ class Update extends Statement
      * Set the db table to update
      *
      * @param string $table
-     * @return $this
+     * @return $this Fluent interface
      */
     public function table(string $table): self
     {
@@ -75,7 +75,7 @@ class Update extends Statement
      * @psalm-param string|array<string, scalar|null|string|Literal> $column_or_row
      *      A single column or a set of column:value pairs
      * @param mixed $value The value for a single column
-     * @return $this
+     * @return $this Fluent interface
      * @throws InvalidArgumentException
      */
     public function set($column_or_row, $value = null): self

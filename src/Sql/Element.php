@@ -139,7 +139,7 @@ abstract class Element implements ElementInterface
      * Quote a generic identifier (column|alias|literal) used in predicates, group-by,
      * order-by clauses according to its type
      *
-     * @param string|Alias|Identifier|Literal $identifier
+     * @param mixed $identifier
      * @param DriverInterface $driver A SQL-driver
      * @return string
      * @throws InvalidArgumentException
@@ -250,8 +250,10 @@ abstract class Element implements ElementInterface
     /**
      * Remove the cached SQL string and the collected parameters from this element
      * and all its parent elements
+     *
+     * @return void
      */
-    protected function clearSQL()
+    protected function clearSQL(): void
     {
         $this->sql = null;
         $this->params = null;

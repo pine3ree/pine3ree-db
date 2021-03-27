@@ -7,6 +7,7 @@
 
 namespace P3\Db\Command;
 
+use Closure;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Command;
 use P3\Db\Command\Reader as ReaderInterface;
@@ -15,9 +16,12 @@ use P3\Db\Db;
 use P3\Db\Sql;
 use P3\Db\Sql\Clause\Join;
 use P3\Db\Sql\Clause\Having;
+use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Clause\Where;
+use P3\Db\Sql\Expression;
 use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
+use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement\Select as SqlSelect;
 use PDO;
 use P3\Db\Exception\RuntimeException;
@@ -55,8 +59,9 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @param Db $db
-     * @param string[]|string|Literal[]|Literal|Identifier[]|Identifier|SqlSelect|SqlSelect[] $columns
+     * @param null|string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|SqlSelect|SqlSelect[] $columns
      *      One or many column names, Literal expressions or sub-select statements
+     * @psalm-param null|string|Expression|Identifier|Literal|SqlSelect|array<int|string, string|Expression|Identifier|Literal|SqlSelect> $columns
      * @param string|SqlSelect|null $from The db-table name or a sub-select statement
      * @param string|null $alias
      */
@@ -67,7 +72,7 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::quantifier()
-     * @return $this
+     * @return $this Fluent interface
      */
     public function quantifier(string $quantifier): self
     {
@@ -77,7 +82,7 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::distinct()
-     * @return $this
+     * @return $this Fluent interface
      */
     public function distinct(): self
     {
@@ -87,7 +92,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::columns()
-     * @return $this
+     *
+     * @param string[]|Expression[]|Identifier[]|Literal[]|SqlSelect[] $columns
+     * @psalm-param array<int|string, string|Expression|Identifier|Literal|SqlSelect> $columns
+     * @return $this Fluent interface
      */
     public function columns($columns): self
     {
@@ -97,7 +105,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::column()
-     * @return $this
+     *
+     * @param string|Identifier|Literal|Expression|SqlSelect $column
+     * @param string $alias
+     * @return $this Fluent interface
      */
     public function column($column, string $alias = null): self
     {
@@ -107,7 +118,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::count()
-     * @return $this
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
      */
     public function count($identifier = Sql::ASTERISK, string $alias = null): self
     {
@@ -117,7 +131,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::sum()
-     * @return $this
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
      */
     public function sum($identifier, string $alias = null): self
     {
@@ -127,7 +144,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::min()
-     * @return $this
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
      */
     public function min(string $identifier, string $alias = null): self
     {
@@ -137,7 +157,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::max()
-     * @return $this
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
      */
     public function max(string $identifier, string $alias = null): self
     {
@@ -147,7 +170,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::avg()
-     * @return $this
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
      */
     public function avg(string $identifier, string $alias = null): self
     {
@@ -157,7 +183,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::aggregate()
-     * @return $this
+     *
+     * @param string $sqlAggregateFunc
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
      */
     public function aggregate(string $sqlAggregateFunc, string $identifier, string $alias = null): self
     {
@@ -167,7 +197,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::from()
-     * @return $this
+     *
+     * @param string|SqlSelect $from The db-table name to select from
+     * @param string|null $alias The db-table alias, if any
+     * @return $this Fluent interface
      */
     public function from($from, string $alias = null): self
     {
@@ -177,7 +210,9 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::addJoin()
-     * @return $this
+     *
+     * @param Join $join The join clause
+     * @return $this Fluent interface
      */
     public function addJoin(Join $join): self
     {
@@ -187,7 +222,12 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::join()
-     * @return $this
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @param string $type The JOIN type
+     * @return $this Fluent interface
      */
     public function join(string $table, string $alias, $specification, string $type = Sql::JOIN_AUTO): self
     {
@@ -197,7 +237,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::innerJoin()
-     * @return $this
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function innerJoin(string $table, string $alias, $specification): self
     {
@@ -207,7 +251,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::leftJoin()
-     * @return $this
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function leftJoin(string $table, string $alias, $specification): self
     {
@@ -217,7 +265,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::rightJoin()
-     * @return $this
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function rightJoin(string $table, string $alias, $specification): self
     {
@@ -227,6 +279,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::naturalJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function naturalJoin(string $table, string $alias, $specification = null): self
     {
@@ -236,6 +293,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::naturalLeftJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function naturalLeftJoin(string $table, string $alias, $specification = null): self
     {
@@ -245,6 +307,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::naturalRightJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function naturalRightJoin(string $table, string $alias, $specification = null): self
     {
@@ -254,6 +321,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::crossJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function crossJoin(string $table, string $alias, $specification = null): self
     {
@@ -263,6 +335,11 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::straightJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function straightJoin(string $table, string $alias, $specification = null): self
     {
@@ -272,7 +349,9 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::where()
-     * @return $this
+     *
+     * @param string|array|Predicate|Closure|Where $where
+     * @return $this Fluent interface
      */
     public function where($where): self
     {
@@ -282,7 +361,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::groupBy()
-     * @return $this
+     *
+     * @param string|string[]|Literal|Literal[] $groupBy
+     * @param bool $replace
+     * @return $this Fluent interface
      */
     public function groupBy($groupBy, bool $replace = false): self
     {
@@ -292,7 +374,9 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::having()
-     * @return $this
+     *
+     * @param string|array|Predicate|Closure|Having $having
+     * @return $this Fluent interface
      */
     public function having($having): self
     {
@@ -302,7 +386,10 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::orderBy()
-     * @return $this
+     *
+     * @param string|array $orderBy
+     * @param null|string|true $sortdir_or_replace Set the default sort direction or the replace flag
+     * @return $this Fluent interface
      */
     public function orderBy($orderBy, $sortdir_or_replace = null): self
     {
@@ -312,7 +399,7 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::limit()
-     * @return $this
+     * @return $this Fluent interface
      */
     public function limit(?int $limit): self
     {
@@ -322,7 +409,7 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::offset()
-     * @return $this
+     * @return $this Fluent interface
      */
     public function offset(?int $offset): self
     {
@@ -332,7 +419,7 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::union()
-     * @return $this
+     * @return $this Fluent interface
      */
     public function union(SqlSelect $select, bool $all = false): self
     {
@@ -342,7 +429,7 @@ class Select extends Command implements ReaderInterface
 
     /**
      * @see SqlSelect::intersect()
-     * @return $this
+     * @return $this Fluent interface
      */
     public function intersect(SqlSelect $select): self
     {
@@ -354,7 +441,7 @@ class Select extends Command implements ReaderInterface
      * Index the result by the given identifier
      *
      * @var string $identifier
-     * @return $this
+     * @return $this Fluent interface
      */
     public function indexBy(string $identifier): self
     {

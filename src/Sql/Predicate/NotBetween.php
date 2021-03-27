@@ -14,5 +14,6 @@ use P3\Db\Sql\Predicate\Between;
  */
 class NotBetween extends Between
 {
+    /** @var bool */
     protected static $not = true;
 }

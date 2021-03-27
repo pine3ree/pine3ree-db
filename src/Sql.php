@@ -261,9 +261,9 @@ class Sql
     /**
      * Create and return a new Select sql-statement
      *
-     * @param array|string|string[]|Literal|Literal[]|Select|Select[] $columns
-     *      An array of columns with optional key-as-alias or a single column or
-     *      the sql-asterisk
+     * @param string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|Select|Select[] $columns
+     *      One or many column names, Identifiers, Literals, Expressions or sub-select statements or the sql-asterisk
+     * @psalm-param string|array<int|string, string|Expression|Identifier|Literal|Select> $columns
      * @param string|Select|null $from The db-table name or a sub-select statement
      * @param string|null $alias The db-table alias
      * @return Select

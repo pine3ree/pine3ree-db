@@ -56,6 +56,11 @@ abstract class CompareTo extends Predicate
         $this->select->parent = $this;
     }
 
+    /**
+     * @param string $operator
+     * @return void
+     * @throws InvalidArgumentException
+     */
     private static function assertValidComparisonOperator(string $operator)
     {
         if (!isset(Sql::COMPARISON_OPERATORS[$operator])) {

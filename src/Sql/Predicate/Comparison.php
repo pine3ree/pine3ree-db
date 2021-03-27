@@ -58,6 +58,11 @@ class Comparison extends Predicate
         $this->value = $value;
     }
 
+    /**
+     * @param string $operator
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected static function assertValidComparisonOperator(string $operator)
     {
         if (!isset(Sql::COMPARISON_OPERATORS[$operator])) {
@@ -68,6 +73,11 @@ class Comparison extends Predicate
         }
     }
 
+    /**
+     * @param mixed $value
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected static function assertValidComparisonValue($value)
     {
         if (is_scalar($value)

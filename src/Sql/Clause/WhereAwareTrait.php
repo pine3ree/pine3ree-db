@@ -28,7 +28,7 @@ trait WhereAwareTrait
      * Set WHERE conditions
      *
      * @param string|array|Predicate|Closure|Where $where
-     * @return $this
+     * @return $this Fluent interface
      */
     public function where($where): self
     {

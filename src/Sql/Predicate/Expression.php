@@ -66,6 +66,12 @@ class Expression extends Predicate
         }
     }
 
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected function assertValidSubstitution(string $name, $value)
     {
         if (false === strpos($this->expression, "{{$name}}")) {
@@ -130,6 +136,16 @@ class Expression extends Predicate
         return $this->sql = $sql;
     }
 
+    /**
+     * Create a SQL marker for given substitution value
+     *
+     * @param DriverInterface $driver
+     * @param Params $params
+     * @param mixed $value
+     * @param int $param_type
+     * @param string $name
+     * @return string
+     */
     protected function getSubstitutionValueSQL(
         DriverInterface $driver,
         Params $params,

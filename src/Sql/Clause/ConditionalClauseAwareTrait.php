@@ -94,6 +94,11 @@ trait ConditionalClauseAwareTrait
         return $sql;
     }
 
+    /**
+     * @param string $fqcn
+     * @return void
+     * @throws InvalidArgumentException
+     */
     private static function assertValidConditionaClauseClass(string $fqcn)
     {
         if (!is_subclass_of($fqcn, ConditionalClause::class, true)) {
