@@ -57,20 +57,24 @@ class SelectTest extends TestCase
     public function provideColumns(): array
     {
         return [
-            [null, "*"],
             [[], "*"],
-            ['*', "*"],
             [
-                new Identifier('t1.column_2'),
+                [
+                    new Identifier('t1.column_2'),
+                ],
                 '`t1`.`column_2`',
             ],
-            ['1', "1"], // numeric string are converted to Literals
+            [['1'], "1"], // numeric string are converted to Literals
             [
-                new Literal("COUNT(*)"),
+                [
+                    new Literal("COUNT(*)"),
+                ],
                 "COUNT(*)",
             ],
             [
-                new Expression("CONCAT('ABC', {str})", ['str' => 'DEF']),
+                [
+                    new Expression("CONCAT('ABC', {str})", ['str' => 'DEF']),
+                ],
                 "CONCAT('ABC', :expr%d)",
             ],
             [
@@ -87,13 +91,13 @@ class SelectTest extends TestCase
             ],
             [
                 [
-                'first_name'
+                    'first_name'
                 ],
                 '`first_name`',
             ],
             [
                 [
-                'firstName' => 'first_name'
+                    'firstName' => 'first_name'
                 ],
                 '`first_name` AS `firstName`',
             ],

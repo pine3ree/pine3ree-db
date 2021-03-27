@@ -97,7 +97,7 @@ class Select extends Command implements ReaderInterface
      * @psalm-param array<int|string, string|Expression|Identifier|Literal|SqlSelect> $columns
      * @return $this Fluent interface
      */
-    public function columns($columns): self
+    public function columns(array $columns): self
     {
         $this->sqlStatement->columns($columns);
         return $this;

@@ -175,13 +175,8 @@ class Select extends Statement
      * @psalm-param array<int|string, string|Expression|Identifier|Literal|self> $columns
      * @return $this Fluent interface
      */
-    public function columns($columns): self
+    public function columns(array $columns): self
     {
-        if (empty($columns)) {
-            return $this;
-        }
-
-        // trim column names
         foreach ($columns as $key => $column) {
             $this->column($column, is_numeric($key) ? null : $key);
         }
