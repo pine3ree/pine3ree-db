@@ -42,7 +42,6 @@ use function is_object;
 use function is_string;
 use function preg_quote;
 use function preg_replace;
-use function rtrim;
 use function sprintf;
 use function str_repeat;
 use function str_replace;
@@ -132,7 +131,11 @@ class Select extends Statement
     public function __construct($columns = null, $from = null, string $alias = null)
     {
         if (!empty($columns)) {
-            $this->columns(is_array($columns) ? $columns : [$columns]);
+            if (is_array($columns)) {
+                $this->columns($columns);
+            } else {
+                $this->column($columns);
+            }
         }
         if (!empty($from)) {
             $this->from($from, $alias);
