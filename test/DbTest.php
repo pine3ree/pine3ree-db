@@ -411,6 +411,18 @@ EOIS
         self::assertEquals(99.99999, $row['price']);
     }
 
+    public function testUpdateWithEmptyDataRaisesException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->db->update('product', []);
+    }
+
+    public function testUpdateWithEmptyWhereRaisesException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->db->update('product', ['published' => true]);
+    }
+
     public function testDelete()
     {
         self::assertInstanceOf(Delete::class, $this->db->delete());
