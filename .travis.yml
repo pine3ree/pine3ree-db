@@ -45,6 +45,7 @@ matrix:
       env:
         - DEPS=latest
         - PHPCS=true
+        - PHPSTAN=true
 
     - php: 8.0
       env:
@@ -53,6 +54,7 @@ matrix:
       env:
         - DEPS=latest
         - PHPCS=true
+        - PHPSTAN=true
 
 before_install:
 
