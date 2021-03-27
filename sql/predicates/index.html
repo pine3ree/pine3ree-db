@@ -501,10 +501,10 @@ $conditions = [
     ['date_created', 'between', '2020-01-01', '2020-12-31'], // identifier, operator, value, extra-value
     ['name', 'LIKE', 'B%'], // using the 'LIKE' exact keyword
     ['name', 'like', 'B%'], // using the lowercase alias
-    ['name', Sql::LIKE, 'B%'], // using Sql::LIKE constant
+    ['name', Sql::LIKE, 'B%'], // using the Sql::LIKE constant
     ['name', '~', 'B%'], // using the '~' alias
     ['name', 'NOT LIKE', 'A%'], // using the 'NOT LIKE' exact keywords
-    ['name', Sql::NOT_LIKE, 'A%'], // or use Sql::NOT_LIKE constant
+    ['name', Sql::NOT_LIKE, 'A%'], // using the Sql::NOT_LIKE constant
     ['name', 'notLike', 'A%'], // using the lowercase 'notLike' alias
     ['name', '!~', 'A%'], // using the '!~' alias
     ['category_id', 'in', [11, 22, 33]], // &quot;category_id&quot; IN (:in1, :in2, :in3)
@@ -605,7 +605,7 @@ respectively.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"], "translations": {"search.config.lang": "en", "search.config.separator": "[\\s\\-]+", "search.result.more.other": "# more on this page", "search.placeholder": "Search", "search.result.none": "No matching documents", "search.config.pipeline": "trimmer, stopWordFilter", "search.result.one": "1 matching document", "search.result.term.missing": "Missing", "clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.result.placeholder": "Type to start searching", "search.result.more.one": "1 more on this page", "search.result.other": "# matching documents"}, "base": "../..", "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"version": null, "base": "../..", "translations": {"search.placeholder": "Search", "search.config.lang": "en", "search.result.placeholder": "Type to start searching", "search.config.separator": "[\\s\\-]+", "search.result.none": "No matching documents", "search.config.pipeline": "trimmer, stopWordFilter", "search.result.more.other": "# more on this page", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.result.more.one": "1 more on this page", "search.result.term.missing": "Missing"}, "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"], "search": "../../assets/javascripts/workers/search.fb4a9340.min.js"}</script>
     
     
       <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
