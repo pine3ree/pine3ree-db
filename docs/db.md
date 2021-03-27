@@ -20,6 +20,18 @@ $db = new Db('my-db-dsn', 'my-db-username', 'my-db-password');
 $factory = new DbFactory();
 $db = $factory($container);
 
+// 4. Create a dbal instance using a factory method directly from database/pdo
+// configuration array:
+$db = DbFactory::create([
+    'driver'   => 'mysql',
+    'host'     => 'localhost',
+    'port'     => 3306,
+    'database' => 'testdb',
+    'username' => 'testuser',
+    'password' => 'secret',
+    'charset'  => 'utf8',
+]);
+
 // Simple proxy method to \PDO::query() returning a traversable PDOStatement or
 // false if query execution fails
 $stmt = $db->query('SELECT * FROM product WHERE price < 100.0 AND id < 100');

@@ -58,7 +58,7 @@ class DbFactory
         );
     }
 
-    private static function buildParams(array $config = null) : array
+    private static function buildParams(array $config = null): array
     {
         if (empty($config)) {
             throw new InvalidArgumentException(
