@@ -285,4 +285,25 @@ class DbFactoryTest extends TestCase
         $db = ($this->factory)($container);
         self::assertInstanceOf(Db::class, $db);
     }
+
+    /**
+     *
+     * @dataProvider provideConfig
+     */
+    public function testCreateStaticMethod(array $config)
+    {
+        self::assertInstanceOf(Db::class, $db = DbFactory::create($config));
+    }
+
+    public function provideConfig(): array
+    {
+        return [
+            [self::PDO_CONFIG],
+            [self::DB_CONFIG],
+            [array_merge(self::DB_CONFIG, ['driver' => 'sqlite', 'dbname' => ':memory:'])],
+            [array_merge(self::DB_CONFIG, ['driver' => 'pgsql'])],
+            [array_merge(self::DB_CONFIG, ['driver' => 'oci'])],
+            [self::SQLSRV_CONFIG],
+        ];
+    }
 }

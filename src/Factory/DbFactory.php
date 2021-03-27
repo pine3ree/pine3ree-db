@@ -31,10 +31,11 @@ class DbFactory
     public function __invoke(ContainerInterface $container): Db
     {
         $config = $container->has('config') ? $container->get('config') : null;
+        $config = $config['pdo'] ?? $config['db'] ?? null;
 
         // build params only once
         if (empty($this->params)) {
-            $this->marshallParams($config);
+            $this->params = self::buildParams($config);
         }
 
         return new Db(
@@ -45,25 +46,37 @@ class DbFactory
         );
     }
 
-    private function marshallParams(array $config = null)
+    public static function create(array $config): Db
     {
-        $config = $config['pdo'] ?? $config['db'] ?? null;
+        $params = self::buildParams($config);
 
+        return new Db(
+            $params['dsn'],
+            $params['username'],
+            $params['password'],
+            $params['options']
+        );
+    }
+
+    private static function buildParams(array $config = null) : array
+    {
         if (empty($config)) {
             throw new InvalidArgumentException(
-                "Missing `PDO` configuration!"
+                "Missing `PDO` database configuration!"
             );
         }
 
         $config = array_change_key_case($config, CASE_LOWER);
 
-        $this->params['dsn']      = $config['dsn'] ?? $this->buildDSN($config);
-        $this->params['username'] = $config['username'] ?? $config['user'] ?? null;
-        $this->params['password'] = $config['password'] ?? $config['passwd'] ?? $config['pass'] ?? null;
-        $this->params['options']  = $config['options'] ?? [];
+        return [
+            'dsn'      => $config['dsn'] ?? self::buildDSN($config),
+            'username' => $config['username'] ?? $config['user'] ?? null,
+            'password' => $config['password'] ?? $config['passwd'] ?? $config['pass'] ?? null,
+            'options'  => $config['options'] ?? [],
+        ];
     }
 
-    private function buildDSN(array $config): string
+    private static function buildDSN(array $config): string
     {
         $driver = $config['driver'] ?? null;
         if (empty($driver)) {
@@ -86,15 +99,15 @@ class DbFactory
 
         switch ($driver) {
             case 'mysql':
-                return $this->buildDSNforMySql($dbname, $config);
+                return self::buildDSNforMySql($dbname, $config);
             case 'pgsql':
-                return $this->buildDSNforPgSql($dbname, $config);
+                return self::buildDSNforPgSql($dbname, $config);
             case 'sqlite':
                 return "sqlite:{$dbname}";
             case 'oci':
-                return $this->buildDSNforOci($dbname, $config);
+                return self::buildDSNforOci($dbname, $config);
             case 'sqlsrv':
-                return $this->buildDSNforSqlSrv($dbname, $config);
+                return self::buildDSNforSqlSrv($dbname, $config);
         }
 
         // @codeCoverageIgnoreStart
@@ -104,7 +117,7 @@ class DbFactory
         // @codeCoverageIgnoreEnd
     }
 
-    private function buildDSNforMySql(string $dbname, array $config): string
+    private static function buildDSNforMySql(string $dbname, array $config): string
     {
         $dsn = "mysql:dbname={$dbname}";
 
@@ -130,7 +143,7 @@ class DbFactory
         return $dsn;
     }
 
-    private function buildDSNforPgSql(string $dbname, array $config): string
+    private static function buildDSNforPgSql(string $dbname, array $config): string
     {
         $dsn = "pgsql:dbname={$dbname}";
 
@@ -147,7 +160,7 @@ class DbFactory
         return $dsn;
     }
 
-    private function buildDSNforOci(string $dbname, array $config): string
+    private static function buildDSNforOci(string $dbname, array $config): string
     {
         $host = $config['host'] ?? $config['hostname'] ?? null;
         if (!empty($host)) {
@@ -166,7 +179,7 @@ class DbFactory
         return "oci:dbname={$dbname}";
     }
 
-    private function buildDSNforSqlSrv(string $dbname, array $config): string
+    private static function buildDSNforSqlSrv(string $dbname, array $config): string
     {
         $dsn = [];
 
