@@ -1,0 +1,15 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/*
+    Created on : 27-mar-2021, 0.26.58
+    Author     : pine3ree https://github.com/pine3ree
+*/
+
+:root > * {
+    --md-code-fg-color: #f8f8f2;
+    --md-code-bg-color: #23241f;
+    --md-code-hl-keyword-color: #e6db74;
+}
