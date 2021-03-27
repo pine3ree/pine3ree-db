@@ -192,7 +192,12 @@ class Insert extends Statement
         return $this;
     }
 
-    protected static function assertValidValues($values)
+    /**
+     * @param array $values
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    protected static function assertValidValues(array $values)
     {
         if (empty($values)) {
             throw new InvalidArgumentException(

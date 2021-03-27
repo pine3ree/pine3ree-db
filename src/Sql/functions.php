@@ -31,6 +31,7 @@ function alias(string $alias): Alias
  *
  * @param string $expression
  * @param array $substitutions
+ * @psalm-param array<string, mixed> $substitutions
  * @return Expression
  */
 function expression(string $expression, array $substitutions = []): Expression

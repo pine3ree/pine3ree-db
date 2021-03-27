@@ -123,8 +123,9 @@ class Select extends Statement
     protected $driver_unchanged = true;
 
     /**
-     * @param null|string[]|string|Literal[]|Literal|Identifier[]|Identifier|self[]|self $columns
+     * @param string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
      *      One or many column names, Identifiers, Literals, Expressions or sub-select statements
+     * @psalm-param array<int|string, string|Expression|Identifier|Literal|self> $columns
      * @param string|self|null $from A db-table name or a sub-select statement
      * @param string|null $alias
      */
@@ -170,7 +171,8 @@ class Select extends Statement
      * The array keys may be used to specify aliases for the columns names / literal
      * expressions
      *
-     * @param string|string[]|Literal|Literal[]|self|self[] $columns
+     * @param string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
+     * @psalm-param array<int|string, string|Expression|Identifier|Literal|self> $columns
      * @return $this Provides a fluent interface
      */
     public function columns($columns): self
@@ -229,7 +231,13 @@ class Select extends Statement
         return $this;
     }
 
-    private static function assertValidColumn(&$column, $key = null)
+    /**
+     * @param mixed $column
+     * @param string $key
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    private static function assertValidColumn(&$column, string $key = null)
     {
         if (is_string($column) && '' !== $column = trim($column)) {
             if (is_numeric($column)) {
@@ -258,31 +266,74 @@ class Select extends Statement
         ));
     }
 
-    public function count($identifier = Sql::ASTERISK, string $alias = null): self
+    /**
+     * Add a COUNT() aggregate column
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
+     */
+    public function count(string $identifier = Sql::ASTERISK, string $alias = null): self
     {
         return $this->aggregate(Sql::COUNT, $identifier, $alias);
     }
 
-    public function sum($identifier, string $alias = null): self
+    /**
+     * Add a SUM() aggregate column
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
+     */
+    public function sum(string $identifier, string $alias = null): self
     {
         return $this->aggregate(Sql::SUM, $identifier, $alias);
     }
 
+    /**
+     * Add a MIN() aggregate column
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
+     */
     public function min(string $identifier, string $alias = null): self
     {
         return $this->aggregate(Sql::MIN, $identifier, $alias);
     }
 
+    /**
+     * Add a MAX() aggregate column
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
+     */
     public function max(string $identifier, string $alias = null): self
     {
         return $this->aggregate(Sql::MAX, $identifier, $alias);
     }
 
+    /**
+     * Add an AVG() aggregate column
+     *
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
+     */
     public function avg(string $identifier, string $alias = null): self
     {
         return $this->aggregate(Sql::AVG, $identifier, $alias);
     }
 
+    /**
+     * Add an aggregate column with the specified SQL function
+     *
+     * @param string $sqlAggregateFunc
+     * @param string $identifier
+     * @param string $alias
+     * @return $this Fluent interface
+     */
     public function aggregate(string $sqlAggregateFunc, string $identifier, string $alias = null): self
     {
         return $this->column(new Literal("{$sqlAggregateFunc}({$identifier})"), $alias);
@@ -424,6 +475,12 @@ class Select extends Statement
         return $this;
     }
 
+    /**
+     * @param string|self $from
+     * @param string $alias
+     * @return void
+     * @throws InvalidArgumentException
+     */
     private static function assertValidFrom($from, string &$alias = null)
     {
         if (is_string($alias)) {

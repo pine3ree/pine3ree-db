@@ -29,8 +29,11 @@ abstract class Statement extends Element
     /**
      * Remove cached SQL string for the given part - or all parts f no part is
      * provided - and also the full cached SQL string itself
+     *
+     * @param string $part The partial cache identifier
+     * @return void
      */
-    protected function clearPartialSQL(string $part = null)
+    protected function clearPartialSQL(string $part = null): void
     {
         $this->clearSQL();
         if (isset($part)) {
