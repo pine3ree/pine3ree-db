@@ -1065,7 +1065,7 @@ class Select extends Statement
             $replace[] = '\1' . "{$driver->quoteAlias($tb_alias)}.";
         }
 
-        return preg_replace($search, $replace, $sql);
+        return preg_replace($search, $replace, $sql) ?? $sql;
     }
 
     private function quoteTableNames(string $sql, DriverInterface $driver): string
@@ -1090,7 +1090,7 @@ class Select extends Statement
             $replace[] = '\1' . "{$driver->quoteIdentifier($tb_name)}.";
         }
 
-        return preg_replace($search, $replace, $sql);
+        return preg_replace($search, $replace, $sql) ?? $sql;
     }
 
     private function getNestingLevel(): int
