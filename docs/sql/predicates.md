@@ -136,10 +136,18 @@ use P3\Db\Sql;
 
 $conditions = [
     'id IS NOT NULL', // a string is converted to a literal predicate
-    ['price', '<=', 100.0], // identifier, operator, value[, extra value]
-    ['date_created', 'between', '2020-01-01', '2020-12-31'],
-    ['name', 'notLike', 'A%'], // or using the `!~` alias
-    ['category_id', 'in', [11, 22, 33]],
+    ['price', '<=', 100.0], // identifier, operator, value
+    ['date_created', 'between', '2020-01-01', '2020-12-31'], // identifier, operator, value, extra-value
+    ['name', 'LIKE', 'B%'], // using the 'LIKE' exact keyword
+    ['name', 'like', 'B%'], // using the lowercase alias
+    ['name', Sql::LIKE, 'B%'], // using the Sql::LIKE constant
+    ['name', '~', 'B%'], // using the '~' alias
+    ['name', 'NOT LIKE', 'A%'], // using the 'NOT LIKE' exact keywords
+    ['name', Sql::NOT_LIKE, 'A%'], // using the Sql::NOT_LIKE constant
+    ['name', 'notLike', 'A%'], // using the lowercase 'notLike' alias
+    ['name', '!~', 'A%'], // using the '!~' alias
+    ['category_id', 'in', [11, 22, 33]], // "category_id" IN (:in1, :in2, :in3)
+    ['store_id', 'in', [1, 2, null]], // "store_id" IN (:in4, :in5) OR "store_id" IS NULL
     'vat_rate' => 10.0, // identifier => value implies the equality operator
     '||' => [ // creates a group with OR as default logical operator
         // predicate-specs-1,
