@@ -510,11 +510,16 @@ $conditions = [
     ['category_id', 'in', [11, 22, 33]], // &quot;category_id&quot; IN (:in1, :in2, :in3)
     ['store_id', 'in', [1, 2, null]], // &quot;store_id&quot; IN (:in4, :in5) OR &quot;store_id&quot; IS NULL
     'vat_rate' =&gt; 10.0, // identifier =&gt; value implies the equality operator
-    '||' =&gt; [ // creates a group with OR as default logical operator
+    '||' =&gt; [ // creates a group with 'OR' as default logical operator
         // predicate-specs-1,
         // predicate-specs-2,
         //...
-    ]
+    ],
+    '&amp;&amp;' =&gt; [ // creates a group with 'AND' as default logical operator
+        // predicate-specs-1,
+        // predicate-specs-2,
+        //...,
+    ],
  ];
 
 Sql::select('*')-&gt;from('product')-&gt;where($conditions);
@@ -605,7 +610,7 @@ respectively.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"version": null, "base": "../..", "translations": {"search.placeholder": "Search", "search.config.lang": "en", "search.result.placeholder": "Type to start searching", "search.config.separator": "[\\s\\-]+", "search.result.none": "No matching documents", "search.config.pipeline": "trimmer, stopWordFilter", "search.result.more.other": "# more on this page", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.result.more.one": "1 more on this page", "search.result.term.missing": "Missing"}, "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"], "search": "../../assets/javascripts/workers/search.fb4a9340.min.js"}</script>
+    <script id="__config" type="application/json">{"translations": {"search.placeholder": "Search", "search.config.pipeline": "trimmer, stopWordFilter", "search.result.other": "# matching documents", "search.config.lang": "en", "search.result.placeholder": "Type to start searching", "search.result.more.other": "# more on this page", "search.result.one": "1 matching document", "search.result.more.one": "1 more on this page", "search.result.term.missing": "Missing", "clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.result.none": "No matching documents", "search.config.separator": "[\\s\\-]+"}, "version": null, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"]}</script>
     
     
       <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
