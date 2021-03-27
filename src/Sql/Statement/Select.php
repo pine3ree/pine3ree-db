@@ -14,6 +14,7 @@ use P3\Db\Sql\Alias;
 use P3\Db\Sql\Clause\WhereAwareTrait;
 use P3\Db\Sql\Clause\Having;
 use P3\Db\Sql\Clause\Join;
+use P3\Db\Sql\Clause\On;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
@@ -501,7 +502,13 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @param string $type The JOIN type
+     * @return $this Fluent interface
      */
     public function join(string $table, string $alias, $specification = null, string $type = Sql::JOIN_AUTO): self
     {
@@ -511,7 +518,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add an INNER JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function innerJoin(string $table, string $alias, $specification = null): self
     {
@@ -521,7 +533,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a LEFT JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function leftJoin(string $table, string $alias, $specification = null): self
     {
@@ -531,7 +548,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a RIGHT JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function rightJoin(string $table, string $alias, $specification = null): self
     {
@@ -541,7 +563,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a NATURAL JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function naturalJoin(string $table, string $alias, $specification = null): self
     {
@@ -551,7 +578,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a NATURAL LEFT JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function naturalLeftJoin(string $table, string $alias, $specification = null): self
     {
@@ -561,7 +593,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a NATURAL RIGHT JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function naturalRightJoin(string $table, string $alias, $specification = null): self
     {
@@ -571,7 +608,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a CROSS JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function crossJoin(string $table, string $alias, $specification = null): self
     {
@@ -581,7 +623,12 @@ class Select extends Statement
     }
 
     /**
-     * @see self::addJoin()
+     * Add a STRAIGHT JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
      */
     public function straightJoin(string $table, string $alias, $specification = null): self
     {
