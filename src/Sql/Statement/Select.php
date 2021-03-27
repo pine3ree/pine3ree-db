@@ -348,6 +348,7 @@ class Select extends Statement
             return $sql;
         }
 
+        $quotes = [$driver->ql, $driver->qr]; // (left+right)-quote-chars
         $add_tb_prefix = !empty($this->joins) && !empty($this->table);
 
         if (empty($this->columns)) {
@@ -367,7 +368,7 @@ class Select extends Statement
 
             if (is_string($column)) {
                 $column_sql = $driver->quoteIdentifier(
-                    $this->normalizeColumn($column, $driver, $add_tb_prefix)
+                    $this->normalizeColumn($column, $quotes, $add_tb_prefix)
                 );
             } elseif ($column instanceof Identifier) {
                 $column_sql = $column->getSQL($driver);
@@ -410,14 +411,14 @@ class Select extends Statement
      * Prepend the statement primary-table alias or name if not already present
      *
      * @param string $column
-     * @param DriverInterface $driver
+     * @param string[] $quotes The (left|right)-quote-chars
      * @param bool $add_tb_prefix Add table prefix?
      * @return string
      */
-    protected function normalizeColumn(string $column, DriverInterface $driver, bool $add_tb_prefix = false): string
+    protected function normalizeColumn(string $column, array $quotes, bool $add_tb_prefix = false): string
     {
         // unquote the column first
-        $column = str_replace([$driver->ql, $driver->qr], '', $column);
+        $column = str_replace($quotes, '', $column);
         if (false === strpos($column, '.')) {
             $prefix = $this->alias ?: (
                 $add_tb_prefix ? $this->table : null
