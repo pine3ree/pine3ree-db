@@ -1,13 +1,22 @@
-includes:
-    - vendor/phpstan/phpstan-strict-rules/rules.neon
 parameters:
     fileExtensions:
         - php
-    reportUnmatchedIgnoredErrors: true
+    checkGenericClassInNonGenericObjectType: false
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - '#Method P3\\Db\\Db\:\:pdo\(\) should return PDO but returns PDO\|null#'
         - '#Method P3\\Db\\Db\:\:fetchOne\(\) should return array\|null but returns array\|object\|null#'
         - '#Access to an undefined property object\:\:\$parent#'
-        - '#Oci\:\:quoteIdentifier\(\) expects string\, string\|null given#'
-        - '#Calling method getValues\(\) on possibly null value of type P3\\Db\\Sql\\Params\|null#'
         - '#Calling method getTypes\(\) on possibly null value of type P3\\Db\\Sql\\Params\|null#'
+        - '#Calling method getValues\(\) on possibly null value of type P3\\Db\\Sql\\Params\|null#'
+        - '#Cannot call method getTypes\(\) on P3\\Db\\Sql\\Params\|null#'
+        - '#Cannot call method getValues\(\) on P3\\Db\\Sql\\Params\|null#'
+        - '#Oci\:\:quoteIdentifier\(\) expects string\, string\|null given#'
+        - '#Strict comparison using === between string and false will always evaluate to false#'
+        - '#Parameter \#1 \$identifier of method P3\\Db\\Sql\\DriverInterface\:\:quoteIdentifier\(\) expects string, string\|null given.#'
+        - '#no value type specified in iterable type#'
+        - '#\:\:\$table is not writable#'
+        - '#\:\:\$where is not writable#'
+        - '#\:\:__get\(\) has no return typehint specified#'
+        - '#Else branch is unreachable because ternary operator condition is always true#'
+        - '#Parameter \#1 \$name of method PDO\:\:lastInsertId\(\) expects string, string\|null given#'
