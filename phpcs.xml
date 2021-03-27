@@ -2,7 +2,12 @@
 <ruleset name="P3 coding standards">
     <description>P3 coding standards for PHP</description>
 
+    <!-- Paths to check -->
+    <file>src</file>
+    <file>test</file>
+
     <!-- display progress -->
+    <arg value="s"/>
     <arg value="p"/>
     <arg name="colors"/>
 
@@ -11,15 +16,20 @@
         <exclude name="PSR12.ControlStructures.ControlStructureSpacing"/>
         <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
     </rule>
+
     <rule ref="PSR2.ControlStructures.ControlStructureSpacing"/>
+
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="ignoreComments" value="true"/>
+        </properties>
+    </rule>
+
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <properties>
             <property name="ignoreBlankLines" value="false"/>
         </properties>
     </rule>
-
-    <!-- Paths to check -->
-    <file>src</file>
-    <file>test</file>
 </ruleset>
