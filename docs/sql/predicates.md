@@ -1,4 +1,4 @@
-# P3\Db\Sql\Predicate and P3\Db\Sql\Predicate\Set
+## P3\Db\Sql\Predicate and Predicate\Set
 
 SQL predicates are parts of an sql-statement normally abstracting search-conditions
 inside sql clauses like WHERE, HAVING, ON. They usually resolve to a sql boolean value.
@@ -44,7 +44,7 @@ $predicateSet->and()->literal('"published" IS TRUE'); // AND "published" IS TRUE
 $predicateSet->or()->gt('stock', 10); // OR "stock" > :gt1
 ```
 
-As a convenience predicate set methods may also have a shorter and/or equivalent form:
+As a convenience predicate-set methods may also have a shorter and/or equivalent form:
 
 ```php
 use P3\Db\Sql\Predicate;

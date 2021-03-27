@@ -30,7 +30,7 @@ setting is required in your `composer.json` file.
 
 The library's code is splitted into two main sections/namespaces:
 
-- a `Sql` section in which sql generation of full statements or smaller sfragments
+- a `Sql` section in which sql generation of full statements or smaller fragments
   is abstracted
 
 - a `Command` section which offers objects that actually send the sql statements

@@ -3,13 +3,46 @@ site_dir: html/guide
 site_name: pine3ree/p3-db
 site_description: "A tiny PDO database abstraction layer"
 nav:
-    - "Home": index.md
-    - "Db": db.md
-    - "Sql":
-        - "Elements": sql/elements.md
-        - "Predicates": sql/predicates.md
-        - "Clauses": sql/clauses.md
-        - "Statements": sql/statements.md
-        - "Drivers": sql/drivers.md
+    - Home: index.md
+    - Db: db.md
+    - Sql:
+        - Elements: sql/elements.md
+        - Predicates: sql/predicates.md
+        - Clauses: sql/clauses.md
+        - Statements: sql/statements.md
+        - Drivers: sql/drivers.md
 repo_url: 'https://github.com/pine3ree/p3-db'
-theme: readthedocs
+
+theme:
+    name: material
+    palette:
+        primary: deep purple
+    features:
+        - navigation.instant
+        - navigation.tracking
+        - navigation.sections
+        - navigation.expand
+        - navigation.indexes
+        - navigation.top
+        - toc.integrate
+    highlightjs: true
+    hljs_style: monokai
+
+markdown_extensions:
+    - pymdownx.highlight:
+        use_pygments: false
+
+extra_css:
+    - css/code.css
+    - css/monokai-sublime.min.css
+extra_javascript:
+  - js/highlight.min.js
+  - js/hljs.js
+
+copyright: Copyright &copy; 2021 pine3ree
+
+extra:
+    social:
+        - icon: fontawesome/brands/github
+          link: https://github.com/pine3ree/p3-db
+          name: source on github

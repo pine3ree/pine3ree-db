@@ -1,4 +1,4 @@
-# P3\Db\Sql\ElementInterface
+## P3\Db\Sql\ElementInterface
 
 A sql element represents full sql statements or just part of it such as identifiers,
 aliases, predicate, clauses, etc...
@@ -12,7 +12,7 @@ Sql elements can also be organized in hierarchies (`ElementInterface::setParent(
 but an element can have only one parent. Changes to an inner element must invalidate
 any compiled sql-string that has been cached.
 
-## P3\Db\Sql
+### P3\Db\Sql
 The `Db\Sql` class offers constants for  common SQL keywords and static factory methods
 for creating complex or simple sql elements:
 
@@ -52,6 +52,8 @@ $delete = Sql::delete(); // returns a Statement\Delete instance
 ```
 
 All the factory methods above can be replaced with constructor calls with the same signature.
+
+### Factory functions
 
 To make code more coincise a few importable functions are provided:
 
