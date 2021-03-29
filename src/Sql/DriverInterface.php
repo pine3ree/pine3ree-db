@@ -53,6 +53,14 @@ interface DriverInterface
     public function quoteAlias(string $alias): string;
 
     /**
+     * Unquote an identifier or alias string
+     *
+     * @param string $identifier_or_alias The identifier or alias string to unquote
+     * @return string
+     */
+    public function unquote(string $identifier_or_alias): string;
+
+    /**
      * Quote a value, when needed, for usage in SQL expression
      *
      * Potentially dangerous: always prefer parameter binding

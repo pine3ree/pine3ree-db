@@ -112,6 +112,23 @@ class DriverTest extends TestCase
     }
 
     /**
+     * @dataProvider provideQuotedValues
+     */
+    public function testUnquote(string $quoted, string $expected)
+    {
+        self::assertSame($expected, $this->driver->unquote($quoted));
+    }
+
+    public function provideQuotedValues(): array
+    {
+        return [
+            ['`t0`', 't0'],
+            ['`t0`.`id`', 't0.id'],
+            ['`some.alias`', 'some.alias'],
+        ];
+    }
+
+    /**
      * @dataProvider provideNonStringTestValues
      */
     public function testQuoteNonStringValueWithoutConnectionWorks($value, string $expected)

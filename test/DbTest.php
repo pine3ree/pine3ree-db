@@ -22,6 +22,10 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function setlocale;
+
+use const LC_NUMERIC;
+
 class DbTest extends TestCase
 {
     use DiscloseTrait;
@@ -45,6 +49,8 @@ class DbTest extends TestCase
 
     public function setUp(): void
     {
+        setlocale(LC_NUMERIC, 'C');
+
         $this->pdo = new PDO(self::DSN);
         $this->db = new Db($this->pdo);
 
@@ -53,7 +59,7 @@ CREATE TABLE "product" (
   "id" integer NOT NULL DEFAULT '0' PRIMARY KEY AUTOINCREMENT,
   "name" text NOT NULL,
   "price" real NOT NULL DEFAULT '0.00000',
-  "tax_rate" real NOT NULL DEFAULT '0.00',
+  "tax_rate" real NOT NULL DEFAULT '0.0',
   "published" integer(1) NOT NULL DEFAULT '0',
   "created_at" text(19) COLLATE 'NOCASE' NOT NULL DEFAULT '0000-00-00 00:00:00',
   "updated_at" text(19) COLLATE 'NOCASE' NOT NULL DEFAULT '0000-00-00 00:00:00'

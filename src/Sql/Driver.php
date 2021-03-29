@@ -78,6 +78,13 @@ abstract class Driver implements DriverInterface
     protected $qr;
 
     /**
+     * The right and left quote chars combinedinto an array
+     *
+     * @var string[]
+     */
+    protected $qs;
+
+    /**
      * The quote char for values, default is single-quote char "'"
      *
      * @var string
@@ -135,6 +142,7 @@ abstract class Driver implements DriverInterface
 
         $this->ql = $ql;
         $this->qr = $qr;
+        $this->qs = [$ql, $qr];
         $this->qv = $qv;
     }
 
@@ -208,6 +216,11 @@ abstract class Driver implements DriverInterface
         $qr = $this->qr;
 
         return $ql . ltrim(rtrim($alias, $qr), $ql) . $qr;
+    }
+
+    public function unquote(string $identifier_or_alias): string
+    {
+        return str_replace($this->qs, '', $identifier_or_alias);
     }
 
     public function quoteValue($value): string
