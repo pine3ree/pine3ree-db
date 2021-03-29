@@ -99,14 +99,14 @@ class Update extends Statement
             $column = trim($column_or_row);
             if (!empty($column)) {
                 $this->set[$column] = $value;
+                return $this;
             }
-            return $this;
         }
 
         throw new InvalidArgumentException(sprintf(
             "The set() `\$column_or_row` argument must be either"
             . " a non empty string"
-            . " or an array of <column: string> => <value: scalar|null|string|Literal> pairs,"
+            . " or an array of <string, scalar|Literal|null> pairs,"
             . " `%s` provided!",
             gettype($column_or_row)
         ));
