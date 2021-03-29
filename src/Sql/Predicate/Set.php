@@ -420,6 +420,15 @@ class Set extends Predicate implements IteratorAggregate
             return new Predicate\IsNot($identifier, $value);
         }
 
+        // check maxValue for BETWEEN predicates
+        if (($count === 3 || $extra === null) && (
+            $operator === Sql::BETWEEN || $operator === Sql::NOT_BETWEEN
+        )) {
+            throw new InvalidArgumentException(
+                "Missing maxValue for `{$operator}` predicate specification!"
+            );
+        }
+
         switch ($operator) {
             case Sql::BETWEEN:
                 return new Predicate\Between($identifier, $min = $value, $max = $extra);
@@ -493,7 +502,7 @@ class Set extends Predicate implements IteratorAggregate
             "Invalid or unsupported predicate,"
             . " must be a string, a predicate or a predicate-specs array,"
             . " '%s' provided!",
-            is_string($predicate) ? $predicate : gettype($predicate)
+            is_object($predicate) ? get_class($predicate) : gettype($predicate)
         ));
     }
 

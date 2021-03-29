@@ -275,6 +275,14 @@ class SetTest extends TestCase
         self::assertStringMatchesFormat('"name" NOT LIKE :like%d', $predicate->getSQL());
     }
 
+    public function testBuildBetweenPredicateFromSpecsWith3ElementsRaisesException()
+    {
+        $specs = ['id', Sql::BETWEEN, 42];
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('/Missing maxValue for `(NOT )?BETWEEN` predicate specification/');
+        $predicate = $this->buildPredicateFromSpecs($specs);
+    }
+
     public function testBuildPredicateFromSpecsWithUnsupportedOperator()
     {
         $specs = ['id', 'UNSUPPORTED', 24, 42];
