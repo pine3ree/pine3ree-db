@@ -48,8 +48,6 @@ class SqlSrv extends Driver implements LimitSqlProvider
             );
         }
 
-        $params = $params ?? new Params();
-
         if ($offset > 0) {
             $offset = $params->create($offset, PDO::PARAM_INT, 'offset');
         }
