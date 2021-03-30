@@ -293,25 +293,19 @@
     P3\Db\Sql\ElementInterface
   </a>
   
-    <nav class="md-nav" aria-label="P3\Db\Sql\ElementInterface">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#p3dbsql" class="md-nav__link">
     P3\Db\Sql
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#factory-functions" class="md-nav__link">
     Factory functions
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -406,7 +400,7 @@ are being prepared to be sent to the database server.</p>
 <p>Sql elements can also be organized in hierarchies (<code>ElementInterface::setParent()</code>),
 but an element can have only one parent. Changes to an inner element must invalidate
 any compiled sql-string that has been cached.</p>
-<h3 id="p3dbsql">P3\Db\Sql</h3>
+<h2 id="p3dbsql">P3\Db\Sql</h2>
 <p>The <code>Db\Sql</code> class offers constants for  common SQL keywords and static factory methods
 for creating complex or simple sql elements:</p>
 <pre><code class="php">use P3\Db\Sql;
@@ -444,7 +438,7 @@ $delete = Sql::delete(); // returns a Statement\Delete instance
 </code></pre>
 
 <p>All the factory methods above can be replaced with constructor calls with the same signature.</p>
-<h3 id="factory-functions">Factory functions</h3>
+<h2 id="factory-functions">Factory functions</h2>
 <p>To make code more coincise a few importable functions are provided:</p>
 <pre><code class="php">use function P3\Db\Sql\alias as ali;
 use function P3\Db\Sql\expression as exp;
@@ -537,7 +531,7 @@ $literal = lit('(&quot;price&quot; * 20.0)');
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"translations": {"search.placeholder": "Search", "search.config.pipeline": "trimmer, stopWordFilter", "search.result.other": "# matching documents", "search.config.lang": "en", "search.result.placeholder": "Type to start searching", "search.result.more.other": "# more on this page", "search.result.one": "1 matching document", "search.result.more.one": "1 more on this page", "search.result.term.missing": "Missing", "clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.result.none": "No matching documents", "search.config.separator": "[\\s\\-]+"}, "version": null, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"]}</script>
+    <script id="__config" type="application/json">{"base": "../..", "version": null, "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"], "translations": {"clipboard.copy": "Copy to clipboard", "search.result.term.missing": "Missing", "search.config.separator": "[\\s\\-]+", "search.result.none": "No matching documents", "search.result.other": "# matching documents", "search.result.one": "1 matching document", "search.result.more.one": "1 more on this page", "search.config.pipeline": "trimmer, stopWordFilter", "search.result.more.other": "# more on this page", "search.result.placeholder": "Type to start searching", "search.config.lang": "en", "clipboard.copied": "Copied to clipboard", "search.placeholder": "Search"}, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js"}</script>
     
     
       <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
