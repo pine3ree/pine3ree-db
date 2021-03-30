@@ -6,7 +6,7 @@ identifiers, aliases, expressions, predicates and clauses. Statement are actuall
 sql-statement builders providing methods for adding the innser elements they are
 composed of.
 
-Supported statements are `Select` for DQL, and `Insert`, `Update`, `Delete` for DM,
+Supported statements are `Select` for DQL, and `Insert`, `Update`, `Delete` for DML,
 reflecting the previously examined database command classes. The sql-building methods
 used in a command instance are proxies to corresponding methods of composed
 sql-statement instance.

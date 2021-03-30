@@ -12,7 +12,7 @@ Sql elements can also be organized in hierarchies (`ElementInterface::setParent(
 but an element can have only one parent. Changes to an inner element must invalidate
 any compiled sql-string that has been cached.
 
-### P3\Db\Sql
+## P3\Db\Sql
 The `Db\Sql` class offers constants for  common SQL keywords and static factory methods
 for creating complex or simple sql elements:
 
@@ -53,18 +53,18 @@ $delete = Sql::delete(); // returns a Statement\Delete instance
 
 All the factory methods above can be replaced with constructor calls with the same signature.
 
-### Factory functions
+## Factory functions
 
 To make code more coincise a few importable functions are provided:
 
 ```php
 use function P3\Db\Sql\alias as ali;
-use function P3\Db\Sql\expression as exp;
+use function P3\Db\Sql\expression as xpr;
 use function P3\Db\Sql\identifier as idn;
 use function P3\Db\Sql\literal as lit;
 
 $column  = idn('p.category_id');
 $alias   = ali('t0');
-$expr    = exp('(price * {vat_rate})', ['vat_rate' => 20.0]);
+$expr    = xpr('(price * {vat_rate})', ['vat_rate' => 20.0]);
 $literal = lit('("price" * 20.0)');
 ```
