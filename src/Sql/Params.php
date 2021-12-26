@@ -100,6 +100,36 @@ class Params
     }
 
     /**
+     * Return the PDO constant name of parameters values types indexed by their
+     * sql markers or the 1-indexed position depending on this element's collecting mode
+     *
+     * @internal
+     *
+     * @return string[]
+     * @psalm-return array<string|int, string>
+     */
+    public function getPdoTypes(): array
+    {
+        $types = [];
+        foreach ($this->types as $key => $type) {
+            if ($type === PDO::PARAM_NULL) {
+                $pdo_const = 'PDO::PARAM_NULL';
+            } elseif ($type === PDO::PARAM_INT) {
+                $pdo_const = 'PDO::PARAM_INT';
+            } elseif ($type === PDO::PARAM_STR) {
+                $pdo_const = 'PDO::PARAM_STR';
+            } elseif ($type === PDO::PARAM_LOB) {
+                $pdo_const = 'PDO::PARAM_LOB';
+            } else {
+                $pdo_const = 'UNKNOWN';
+            }
+            $types[$key] = $pdo_const;
+        }
+
+        return $types;
+    }
+
+    /**
      * Add a parameter to the collection creating and returning either a unique
      * SQL-string marker if in named-parameters mode or the common '?' positional
      * marker.

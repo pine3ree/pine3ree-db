@@ -147,7 +147,35 @@ class ParamsTest extends TestCase
             [random_bytes(4), PDO::PARAM_LOB],
             [1.23, PDO::PARAM_STR],
             [new stdClass(), PDO::PARAM_STR],
-            ['THHGTTG', 42], // invalid but should be used set anyway
+            ['THHGTTG', 42], // invalid but should be set anyway
+        ];
+    }
+
+    /**
+     * @dataProvider provideValuesAndTypesAndExpectedPdoConstantNames
+     */
+    public function testGetPdoTypesReturnsCorrectPdoConstantNames($value, $providedType, $expectedPdoConstantName)
+    {
+        $params = new Params(Params::MODE_POSITIONAL);
+        $params->create($value, $providedType);
+        $pdo_types = $params->getPdoTypes();
+
+        self::assertSame($expectedPdoConstantName, $pdo_types[1]);
+    }
+
+    public function provideValuesAndTypesAndExpectedPdoConstantNames(): array
+    {
+        return [
+            [null, null, 'PDO::PARAM_NULL'],
+            // @see https://bugs.php.net/bug.php?id=38386
+            // @see https://bugs.php.net/bug.php?id=49255
+            [false, null, 'PDO::PARAM_INT'],
+            [true, null, 'PDO::PARAM_INT'],
+            [123, null, 'PDO::PARAM_INT'],
+            ['ABC', null, 'PDO::PARAM_STR'],
+            [1.23, null, 'PDO::PARAM_STR'],
+            [random_bytes(4), PDO::PARAM_LOB, 'PDO::PARAM_LOB'],
+            ['THHGTTG', 42, 'UNKNOWN'],
         ];
     }
 
