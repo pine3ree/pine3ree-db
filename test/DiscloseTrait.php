@@ -48,7 +48,8 @@ trait DiscloseTrait
         return $method->invokeArgs($object, $args);
     }
 
-    /**
+    /** Invoke a protected/private object/class method with given arguments array
+     *
      * @param object|string $objectOrClass
      * @param string $methodName
      * @param array $args
@@ -74,6 +75,8 @@ trait DiscloseTrait
     }
 
     /**
+     * Return the value of an object/class's private/protected property
+     *
      * @param object|string $objectOrClass
      * @param string $propertyName
      * @return mixed
@@ -96,6 +99,9 @@ trait DiscloseTrait
     }
 
     /**
+     * Return an object/class's private/protected reflection property instance and make
+     * it accessible
+     *
      * @param object|string $objectOrClass
      * @param string $propertyName
      * @return ReflectionProperty
@@ -114,6 +120,8 @@ trait DiscloseTrait
     }
 
     /**
+     * Return the value of an object/class's constant
+     *
      * @param object|string $objectOrClass
      * @param string $constantName
      * @return mixed
