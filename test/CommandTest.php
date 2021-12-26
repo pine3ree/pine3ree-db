@@ -79,7 +79,7 @@ class CommandTest extends TestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

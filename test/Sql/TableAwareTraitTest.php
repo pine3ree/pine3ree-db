@@ -22,7 +22,7 @@ class TableAwareTraitTest extends TestCase
     {
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

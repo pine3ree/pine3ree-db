@@ -32,7 +32,7 @@ class ReaderTest extends TestCase
         $this->pdoStatement->closeCursor()->willReturn(null);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

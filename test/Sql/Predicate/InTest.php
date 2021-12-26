@@ -21,7 +21,7 @@ class InTest extends TestCase
     {
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

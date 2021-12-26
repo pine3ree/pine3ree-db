@@ -47,7 +47,7 @@ class PgSqlTest extends TestCase
         $this->driver = new Driver\PgSql();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->driver = null;
         $this->pdo = null;

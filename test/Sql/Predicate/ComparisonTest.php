@@ -21,7 +21,7 @@ class ComparisonTest extends TestCase
     {
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

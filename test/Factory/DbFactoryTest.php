@@ -73,7 +73,7 @@ class DbFactoryTest extends TestCase
         $this->factory = new DbFactory();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->factory = null;
         $this->container = null;

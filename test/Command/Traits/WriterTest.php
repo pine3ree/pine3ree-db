@@ -31,7 +31,7 @@ class WriterTest extends TestCase
         $this->pdoStatement->execute()->willReturn($this->returnSelf());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

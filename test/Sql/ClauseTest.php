@@ -24,7 +24,7 @@ class ClauseTest extends TestCase
     {
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

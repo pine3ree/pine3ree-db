@@ -81,7 +81,7 @@ EOIS
         }
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->db);
         unset($this->pdo);

@@ -38,7 +38,7 @@ class DeleteTest extends TestCase
             ->willReturn($this->returnSelf());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->pdoStatement = null;
         $this->pdo = null;

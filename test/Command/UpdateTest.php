@@ -42,7 +42,7 @@ class UpdateTest extends TestCase
             ->willReturn(null);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->pdoStatement = null;
         $this->pdo = null;

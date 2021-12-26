@@ -85,7 +85,7 @@ class SelectTest extends TestCase
             ->willReturn(new Driver\MySql($this->pdo->reveal()));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->db = null;
         $this->pdo = null;

@@ -33,7 +33,7 @@ class DriverTest extends TestCase
         $this->driver = $this->createInstance();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

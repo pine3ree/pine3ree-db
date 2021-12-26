@@ -27,7 +27,7 @@ class AnsiTest extends TestCase
         $this->driver = new Driver\Ansi();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->driver = null;
     }

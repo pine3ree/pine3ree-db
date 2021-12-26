@@ -23,7 +23,7 @@ class SelectDecoratorTest extends TestCase
     {
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

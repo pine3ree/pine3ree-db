@@ -55,7 +55,7 @@ class OciTest extends TestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->driver = null;
         $this->pdo = null;

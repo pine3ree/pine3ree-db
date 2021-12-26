@@ -25,7 +25,7 @@ class ParamsTest extends TestCase
     {
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

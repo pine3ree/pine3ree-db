@@ -27,7 +27,7 @@ class DeleteTest extends TestCase
         $this->driver = new Driver\MySql();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->driver = null;
     }
