@@ -36,8 +36,8 @@ class PredicateTest extends TestCase
 
     private function createInstance($identifier, string $operator, $value): Predicate
     {
-        return new class ($identifier, $operator, $value) extends Predicate {
-
+        return new class ($identifier, $operator, $value) extends Predicate
+        {
             protected $identifier;
             protected $operator;
             protected $value;

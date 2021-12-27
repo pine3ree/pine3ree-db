@@ -34,8 +34,8 @@ class ElementTest extends TestCase
 
     private function createInstance(array $values = []): Element
     {
-        return new class ($values) extends Element {
-
+        return new class ($values) extends Element
+        {
             /** @var array */
             private $values = [];
 

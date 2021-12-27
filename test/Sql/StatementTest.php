@@ -30,8 +30,8 @@ class StatementTest extends TestCase
 
     private function createInstance(): Statement
     {
-        return new class () extends Statement {
-
+        return new class () extends Statement
+        {
             public function setPartialSQL(string $part, string $sql)
             {
                 $this->sqls[$part] = $sql;
