@@ -6,7 +6,7 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql\Clause;
+namespace P3\DbTest\Sql;
 
 use P3\Db\Sql;
 use P3\Db\Sql\Clause;

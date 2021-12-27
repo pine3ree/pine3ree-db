@@ -6,7 +6,7 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql;
+namespace P3\DbTest\Sql\Clause;
 
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
