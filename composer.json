@@ -67,7 +67,7 @@
         "phpstan": "phpstan analyze -l max -c phpstan.neon ./src",
         "test": "phpunit --colors=always",
         "check": [
-            "@cs-check",
+            "@cs",
             "@test"
         ],
         "coverage-html": "phpunit --colors=always --coverage-html coverage/html",
