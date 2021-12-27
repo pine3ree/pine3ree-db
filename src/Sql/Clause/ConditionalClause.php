@@ -183,8 +183,8 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      * @see Predicate\Set::between()
      *
      * @param string|Alias|Identifier|Literal $identifier
-     * @param mixed $min_value
-     * @param mixed $max_value
+     * @param scalar|Literal $min_value
+     * @param scalar|Literal $max_value
      * @return Predicate\Set This clause's composed search-condition
      */
     public function between($identifier, $min_value, $max_value): Predicate\Set
@@ -196,8 +196,8 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      * @see Predicate\Set::notBetween()
      *
      * @param string|Alias|Identifier|Literal $identifier
-     * @param mixed $min_value
-     * @param mixed $max_value
+     * @param scalar|Literal $min_value
+     * @param scalar|Literal $max_value
      * @return Predicate\Set This clause's composed search-condition
      */
     public function notBetween($identifier, $min_value, $max_value): Predicate\Set

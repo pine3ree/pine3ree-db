@@ -13,9 +13,11 @@ use P3\Db\Command\Insert;
 use P3\Db\Command\Select;
 use P3\Db\Command\Update;
 use P3\Db\Sql;
+use P3\Db\Sql\Alias;
 use P3\Db\Sql\Clause\Where;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\DriverInterface;
+use P3\Db\Sql\Identifier;
 use P3\Db\Sql\Literal;
 use P3\Db\Sql\Predicate;
 use P3\Db\Sql\Statement as SqlStatement;
@@ -66,10 +68,10 @@ class Db
     /** @var string */
     private $pdoClass = PDO::class;
 
-    /** @var DriverInterface A connection-aware sql-driver instance*/
+    /** @var DriverInterface|null A connection-aware sql-driver instance*/
     private $driver;
 
-    /** @var DriverInterface A connection-less sql-driver instance */
+    /** @var DriverInterface|null A connection-less sql-driver instance */
     private $_driver;
 
     /**
@@ -330,7 +332,7 @@ class Db
      *
      * @param string $table
      * @param string $column
-     * @param mixed $value
+     * @param scalar|Literal|Identifier|Alias|null $value
      * @param string|array $order
      * @return array|null
      */
@@ -576,18 +578,18 @@ class Db
     }
 
     /**
-     * Return the last-inserted value for the active connection, or NULL if not
-     * connected
+     * Return the last-inserted value for the active connection, NULL if not
+     * connected or FALSE if the PDO driver does not support this method
      *
      * Some drivers such as pgsql requires a sequence name
      *
      * In a multi-INSERT statement, the mysql/mariadb driver will return the
      * AUTO_INCREMENT value generated for the first row inserted
      *
-     * @param string $name The sequence name, if any
-     * @return string|null
+     * @param string|null $name The sequence name, if any
+     * @return string|false|null
      */
-    public function lastInsertId(string $name = null): ?string
+    public function lastInsertId(?string $name = null)
     {
         if (isset($this->pdo)) {
             return $this->pdo->lastInsertId($name);

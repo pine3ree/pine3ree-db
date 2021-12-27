@@ -59,7 +59,7 @@ abstract class Driver implements DriverInterface
     /**
      * The driver pdo name
      *
-     * @var string
+     * @var string|null
      */
     protected $name;
 
@@ -94,7 +94,7 @@ abstract class Driver implements DriverInterface
     /**
      * The basic singleton ansi driver instance
      *
-     * @var self
+     * @var self|null
      */
     private static $ansi;
 

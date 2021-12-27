@@ -20,7 +20,7 @@ use function strtoupper;
 abstract class Clause extends Element
 {
     /**
-     * @var string The SQL-clause base name: WHERE|HAVING|ON condition clauses
+     * @var string|null The SQL-clause base name: WHERE|HAVING|ON condition clauses
      */
     protected static $name;
 

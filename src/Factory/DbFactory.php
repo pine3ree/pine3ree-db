@@ -39,7 +39,7 @@ class DbFactory
 
         // build params only once
         if (empty($this->params)) {
-            $this->params = self::buildParams($config);
+            $this->params = self::buildParams(is_array($config) ? $config : null);
         }
 
         return new Db(

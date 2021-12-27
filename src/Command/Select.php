@@ -440,7 +440,7 @@ class Select extends Command implements ReaderInterface
     /**
      * Index the result by the given identifier
      *
-     * @var string $identifier
+     * @param string $identifier
      * @return $this Fluent interface
      */
     public function indexBy(string $identifier): self
@@ -598,7 +598,7 @@ class Select extends Command implements ReaderInterface
     /**
      * Fetch a column of the first row, if any, after executing the composed sql statement
      *
-     * @return null|string
+     * @return string|null
      */
     public function fetchScalar(string $identifier): ?string
     {

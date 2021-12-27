@@ -670,8 +670,8 @@ class Set extends Predicate implements IteratorAggregate
      * Add a sql BETWEEN predicate
      *
      * @param string|Alias|Identifier|Literal $identifier
-     * @param mixed $min_value
-     * @param mixed $max_value
+     * @param scalar|Literal $min_value
+     * @param scalar|Literal $max_value
      * @return $this Fluent interface
      */
     public function between($identifier, $min_value, $max_value): self
@@ -685,8 +685,8 @@ class Set extends Predicate implements IteratorAggregate
      * Add a NOT BETWEEN predicate
      *
      * @param string|Alias|Identifier|Literal $identifier
-     * @param mixed $min_value
-     * @param mixed $max_value
+     * @param scalar|Literal $min_value
+     * @param scalar|Literal $max_value
      * @return $this Fluent interface
      */
     public function notBetween($identifier, $min_value, $max_value): self

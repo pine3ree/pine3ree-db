@@ -54,7 +54,7 @@ use const PHP_INT_MAX;
  * This class represents a SELECT sql-statement expression
  *
  * @property-read string|null $table The db table to select from if already set
- * @property-read string|Null $alias The table alias if any
+ * @property-read string|null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read string[]|Identifier[]|Literal[]|Expression[]|self[] $columns The columns to be returned
  * @psalm-property-read array<string, string|Identifier|Literal|Expression|self> $columns
@@ -84,7 +84,7 @@ class Select extends Statement
      */
     protected $columns = [];
 
-    /** @var string|self */
+    /** @var string|self|null */
     protected $from;
 
     /** @var string|null */
