@@ -279,7 +279,10 @@ class SetTest extends TestCase
     {
         $specs = ['id', Sql::BETWEEN, 42];
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/Missing maxValue for `(NOT )?BETWEEN` predicate specification/');
+        $expectMessageMethod = method_exists($this, 'expectExceptionMessageMatches')
+            ? 'expectExceptionMessageMatches'
+            : 'expectExceptionMessageRegExp';
+        $this->$expectMessageMethod('/Missing maxValue for `(NOT )?BETWEEN` predicate specification/');
         $predicate = $this->buildPredicateFromSpecs($specs);
     }
 
