@@ -1,0 +1,54 @@
+# GitHub Actions for Continuos Integration tests
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+
+  build-and-test:
+
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.1']
+        composer-deps: ['--prefer-lowest', '']
+
+    runs-on: ${{ matrix.operating-system }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      # Docs: https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          composer-deps: ${{ matrix.composer-deps }}
+          coverage: xdebug
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: |
+          composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
+          composer update  ${{ matrix.composer-deps }} --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Code Style check (phpcs)
+        run: composer run-script cs
+
+      - name: Static Analysis (phpstan)
+        run: composer run-script stan
+
+      - name: Test (phpunit)
+        run: composer run-script test
+        
