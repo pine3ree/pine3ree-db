@@ -166,10 +166,10 @@ EOIS
             ->willReturn('pgsql');
 
         foreach ($options as $attr => $value) {
-            $pdo->setAttribute($attr, $value)->shouldBeCalledOnce();
+            $pdo->setAttribute($attr, $value)->shouldBeCalledTimes(1);
         }
 
-        $pdo->exec("SET NAMES 'utf8'")->shouldBeCalledOnce();
+        $pdo->exec("SET NAMES 'utf8'")->shouldBeCalledTimes(1);
 
         $db = new Db($pdo->reveal(), 'user', 'pass', [
             PDO::ATTR_TIMEOUT => 15,
@@ -448,7 +448,7 @@ EOIS
         $pdo = $this->prophesize(PDO::class);
         $db = new Db($pdo->reveal());
 
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
         $pdo->query($sql)->shouldBeCalled();
 
         $db->query($sql);
@@ -476,7 +476,7 @@ EOIS
         $pdo = $this->prophesize(PDO::class);
         $db = new Db($pdo->reveal());
 
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
         $pdo->exec($sql)->shouldBeCalled();
 
         $db->exec($sql);
@@ -519,7 +519,7 @@ EOIS
     public function testTransactionMethods()
     {
         $pdo = $this->prophesize(PDO::class);
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
 
         $db = new Db($pdo->reveal());
 
@@ -568,7 +568,7 @@ EOIS
     public function testBeginTransactionRaisesExceptionIfPdoAlreadyDid()
     {
         $pdo = $this->prophesize(PDO::class);
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
 
         $db = new Db($pdo->reveal());
         $pdo->inTransaction()->shouldBeCalled()->willReturn(true);
@@ -581,7 +581,7 @@ EOIS
     public function testCommitRaisesExceptionIfInRollBackState()
     {
         $pdo = $this->prophesize(PDO::class);
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledOnce();
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
 
         $db = new Db($pdo->reveal());
 
