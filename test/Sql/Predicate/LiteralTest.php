@@ -11,12 +11,13 @@ namespace P3\DbTest\Sql\Predicate;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql\Predicate\Literal;
 use P3\Db\Sql\Driver;
+use P3\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Exception\RuntimeException;
 
 class LiteralTest extends TestCase
 {
-    use \P3\DbTest\DiscloseTrait;
+    use DiscloseTrait;
 
     public function setUp(): void
     {

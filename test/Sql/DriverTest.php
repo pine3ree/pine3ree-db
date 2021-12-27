@@ -11,6 +11,7 @@ namespace P3\DbTest\Sql;
 use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
+use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use P3\Db\Exception\RuntimeException;
@@ -21,7 +22,7 @@ use const LC_NUMERIC;
 
 class DriverTest extends TestCase
 {
-    use \P3\DbTest\DiscloseTrait;
+    use DiscloseTrait;
 
     /**
      * @var Driver
