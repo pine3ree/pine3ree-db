@@ -272,7 +272,7 @@ EOIS
     {
         $row = $this->db->fetchOneBy('product', 'name', 'product-3');
 
-        self::assertInternalType('array', $row);
+        self::assertIsArray($row);
 
         self::assertArrayHasKey('id', $row);
         self::assertArrayHasKey('name', $row);
@@ -294,17 +294,17 @@ EOIS
     public function testFetchOne()
     {
         $row = $this->db->fetchOne('product');
-        self::assertInternalType('array', $row);
+        self::assertIsArray($row);
         self::assertSame('1', $row['id']);
         self::assertSame('product-1', $row['name']);
 
         $row = $this->db->fetchOne('product', ['id' => 2]);
-        self::assertInternalType('array', $row);
+        self::assertIsArray($row);
         self::assertSame('2', $row['id']);
         self::assertSame('product-2', $row['name']);
 
         $row = $this->db->fetchOne('product', 'id < 7', ['id' => 'DESC']);
-        self::assertInternalType('array', $row);
+        self::assertIsArray($row);
         self::assertSame('6', $row['id']);
         self::assertSame('product-6', $row['name']);
     }
@@ -315,7 +315,7 @@ EOIS
         self::assertCount(9, $rows);
 
         $row = $rows[0] ?? null;
-        self::assertInternalType('array', $row);
+        self::assertIsArray($row);
         self::assertArrayHasKey('id', $row);
         self::assertArrayHasKey('name', $row);
         self::assertArrayHasKey('price', $row);
