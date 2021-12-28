@@ -1,7 +1,10 @@
-# GitHub Actions for Continuos Integration tests
+# GitHub Actions workflow for Continuos Integration tests
 name: CI
 
 on: [push, pull_request]
+
+env:
+  COMPOSER_ARGS: '--no-interaction --no-progress --prefer-dist --optimize-autoloader'
 
 jobs:
 
@@ -31,24 +34,28 @@ jobs:
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - name: Cache composer dependencies
+      - name: Cache Composer dependencies
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}
+          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}-${{ hashFiles('../composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
+        id: composer-install
         run: |
-          composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
-          composer update  ${{ matrix.composer-deps }} --no-interaction --no-progress --prefer-dist --optimize-autoloader
+          composer install ${{ env.COMPOSER_ARGS }}
+          composer update  ${{ env.COMPOSER_ARGS }} ${{ matrix.composer-deps }}
 
       - name: Code Style check (phpcs)
-        run: composer run-script cs
+        id: phpcs
+        run: composer cs
 
       - name: Static Analysis (phpstan)
-        run: composer run-script stan
+        id: phpstan
+        run: composer stan
 
       - name: Test (phpunit)
-        run: composer run-script test
+        id: phpunit
+        run: composer test
         
