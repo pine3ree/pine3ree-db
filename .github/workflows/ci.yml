@@ -12,11 +12,11 @@ jobs:
 
     strategy:
       matrix:
-        operating-system: [ubuntu-latest]
+        operating-systems: [ubuntu-latest]
         php-versions: ['7.1', '7.2', '7.3', '7.4', '8.0']
-        composer-deps: ['--prefer-lowest', '']
+        composer-deps: ['lowest', 'latest']
 
-    runs-on: ${{ matrix.operating-system }}
+    runs-on: ${{ matrix.operating-systems }}
 
     steps:
       - name: Checkout the repository
@@ -38,14 +38,25 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}-${{ hashFiles('../composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
+          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}
+            ${{ runner.os }}-composer-${{ matrix.php-versions }}
+            ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
         id: composer-install
-        run: |
-          composer install ${{ env.COMPOSER_ARGS }}
-          composer update  ${{ env.COMPOSER_ARGS }} ${{ matrix.composer-deps }}
+        run: composer install ${{ env.COMPOSER_ARGS }}
+
+      - name: Update Composer dependencies to lowest stable
+        id: composer-update-lowest
+        if: ${{ matrix.composer-deps === 'lowest' }}
+        run: composer update ${{ env.COMPOSER_ARGS }} --prefer-lowest --prefer-stable
+
+      - name: Update Composer dependencies to latest
+        id: composer-update-latest
+        if: ${{ matrix.composer-deps === 'latest' }}
+        run: composer update ${{ env.COMPOSER_ARGS }}
 
       - name: Code Style check (phpcs)
         id: phpcs
