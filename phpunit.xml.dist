@@ -21,6 +21,7 @@
 
         <env name="TEST_P3_DB_MYSQL" value="false"/>
         <env name="TEST_P3_DB_MYSQL_HOST" value="localhost"/>
+        <env name="TEST_P3_DB_MYSQL_PORT" value="3306"/>
         <env name="TEST_P3_DB_MYSQL_DBNAME" value="p3_db_test"/>
         <env name="TEST_P3_DB_MYSQL_CHARSET" value="utf8"/>
         <env name="TEST_P3_DB_MYSQL_USERNAME" value="p3_db_testuser"/>
@@ -28,13 +29,15 @@
 
         <env name="TEST_P3_DB_PGSQL" value="false"/>
         <env name="TEST_P3_DB_PGSQL_HOST" value="localhost"/>
+        <env name="TEST_P3_DB_PGSQL_PORT" value="5432"/>
         <env name="TEST_P3_DB_PGSQL_DBNAME" value="p3_db_test"/>
-        <env name="TEST_P3_DB_PGSQL_CHARSET" value="utf8"/>
+        <env name="TEST_P3_DB_PGSQL_CHARSET" value="UTF8"/>
         <env name="TEST_P3_DB_PGSQL_USERNAME" value="p3_db_testuser"/>
         <env name="TEST_P3_DB_PGSQL_PASSWD" value="secret123"/>
 
         <env name="TEST_P3_DB_SQLSRV" value="false"/>
         <env name="TEST_P3_DB_SQLSRV_HOST" value="localhost"/>
+        <env name="TEST_P3_DB_SQLSRV_PORT" value="1433"/>
         <env name="TEST_P3_DB_SQLSRV_DBNAME" value="p3_db_test"/>
         <env name="TEST_P3_DB_SQLSRV_CHARSET" value="utf8"/>
         <env name="TEST_P3_DB_SQLSRV_USERNAME" value="p3_db_testuser"/>
@@ -42,6 +45,7 @@
 
         <env name="TEST_P3_DB_OCI8" value="false"/>
         <env name="TEST_P3_DB_OCI8_HOST" value="localhost"/>
+        <env name="TEST_P3_DB_OCI8_PORT" value="1521"/>
         <env name="TEST_P3_DB_OCI8_DBNAME" value="p3_db_test"/>
         <env name="TEST_P3_DB_OCI8_CHARSET" value="utf8"/>
         <env name="TEST_P3_DB_OCI8_USERNAME" value="p3_db_testuser"/>
