@@ -27,7 +27,7 @@
         <env name="TEST_P3_DB_MYSQL_USERNAME" value="p3_db_testuser"/>
         <env name="TEST_P3_DB_MYSQL_PASSWD" value="secret123"/>
 
-        <env name="TEST_P3_DB_PGSQL" value="false"/>
+        <env name="TEST_P3_DB_PGSQL" value="true"/>
         <env name="TEST_P3_DB_PGSQL_HOST" value="localhost"/>
         <env name="TEST_P3_DB_PGSQL_PORT" value="5432"/>
         <env name="TEST_P3_DB_PGSQL_DBNAME" value="p3_db_test"/>
