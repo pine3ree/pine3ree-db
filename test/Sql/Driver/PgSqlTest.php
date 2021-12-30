@@ -36,13 +36,15 @@ class PgSqlTest extends TestCase
         $dbname  = getenv('TEST_P3_DB_PGSQL_DBNAME');
         $charset = getenv('TEST_P3_DB_PGSQL_CHARSET');
 
-        $pgsql_dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset={$charset}";
+        $pgsql_dsn = "pgsql:host={$host};port={$port};dbname={$dbname}";
 
         $this->pdo = new PDO(
             $pgsql_dsn,
             getenv('TEST_P3_DB_PGSQL_USERNAME'),
             getenv('TEST_P3_DB_PGSQL_PASSWD')
         );
+
+        $this->pdo->query("SET NAMES '{$charset}'");
 
         $this->driver = new Driver\PgSql();
     }
