@@ -27,7 +27,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          composer-deps: ${{ matrix.composer-deps }}
           coverage: xdebug
 
       - name: Get Composer cache directory
