@@ -19,26 +19,36 @@ jobs:
 
     runs-on: ${{ matrix.operating-systems }}
 
-    # Service containers to run with this job
     services:
-      # Label used to access the service container
+
       postgres:
-        # Docker Hub image
         image: postgres:9-alpine
-        # Provide the default database, username, password for postgres
         env:
           POSTGRES_DB: p3_db_test
           POSTGRES_USER: p3_db_testuser
           POSTGRES_PASSWORD: secret123
         ports:
-          # Maps tcp port 5432 on service container to the host 5432 port
           - 5432:5432
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
-          --health-interval 6s
-          --health-timeout 3s
-          --health-retries 3
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: p3_db_test
+          MYSQL_USER: p3_db_testuser
+          MYSQL_PASSWORD: secret123
+          MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout the repository

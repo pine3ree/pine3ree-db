@@ -19,7 +19,7 @@
         <!-- integration test env vars -->
         <env name="TEST_P3_DB_SQLITE" value="true"/>
 
-        <env name="TEST_P3_DB_MYSQL" value="false"/>
+        <env name="TEST_P3_DB_MYSQL" value="true"/>
         <env name="TEST_P3_DB_MYSQL_HOST" value="localhost"/>
         <env name="TEST_P3_DB_MYSQL_PORT" value="3306"/>
         <env name="TEST_P3_DB_MYSQL_DBNAME" value="p3_db_test"/>
