@@ -25,7 +25,6 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_DATABASE: p3_db_test
-          #MYSQL_ROOT_HOST: '%'
           MYSQL_ROOT_PASSWORD: secret123
           MYSQL_HOST: '%'
           MYSQL_USER: p3_db_testuser
@@ -75,7 +74,7 @@ jobs:
         run: composer update ${{ env.COMPOSER_ARGS }}
 
       - name: Test MySQL connection
-        run: mysql --host=127.0.0.1 --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Run PHP code
         id: php
@@ -85,7 +84,7 @@ jobs:
         shell: php {0}
         run: |
           <?php
-          $pdo = new PDO('mysql:host=0.0.0.0;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
+          $pdo = new PDO('mysql:host=localhost;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
             print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
