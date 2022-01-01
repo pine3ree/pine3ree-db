@@ -40,7 +40,7 @@ jobs:
         env:
           MYSQL_DATABASE: p3_db_test
           MYSQL_ROOT_PASSWORD: secret123
-          MYSQL_HOST: localhost
+          #MYSQL_HOST: localhost
           MYSQL_USER: p3_db_testuser
           MYSQL_PASSWORD: secret123
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
@@ -62,7 +62,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: xdebug
-          extensions: pdo, pdo_mysql, pdo_pgsql, pdo_sqldrv
+          extensions: pdo, pdo_mysql, pdo_pgsql, pdo_mssql
 
       - name: Get Composer cache directory
         id: composer-cache
@@ -95,7 +95,7 @@ jobs:
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
-          MYSQL_HOST: localhost
-          MYSQL_PORT: 3306
+          #MYSQL_HOST: localhost
+          #MYSQL_PORT: 3306
         run: composer test
         
