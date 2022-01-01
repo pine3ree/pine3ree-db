@@ -87,7 +87,7 @@ jobs:
         run: composer update ${{ env.COMPOSER_ARGS }}
 
       - name: Test MySQL connection
-        run: mysql --host=mysql --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Test (phpunit)
         id: phpunit
