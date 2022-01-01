@@ -20,27 +20,13 @@ jobs:
     runs-on: ${{ matrix.operating-systems }}
 
     services:
-
-      postgres:
-        image: postgres:9-alpine
-        env:
-          POSTGRES_DB: p3_db_test
-          POSTGRES_USER: p3_db_testuser
-          POSTGRES_PASSWORD: secret123
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
       
       mysql:
         image: mysql:5.7
         env:
           MYSQL_DATABASE: p3_db_test
           MYSQL_ROOT_PASSWORD: secret123
-          #MYSQL_HOST: localhost
+          MYSQL_HOST: '127.0.0.1'
           MYSQL_USER: p3_db_testuser
           MYSQL_PASSWORD: secret123
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
@@ -62,7 +48,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: xdebug
-          extensions: pdo, pdo_mysql, pdo_pgsql, pdo_mssql
+          extensions: pdo, pdo_mysql
 
       - name: Get Composer cache directory
         id: composer-cache
@@ -72,9 +58,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}-${{ matrix.composer-deps }}-${{ hashFiles('**/composer.json') }}
           restore-keys: |
-            ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}
+            ${{ runner.os }}-composer-${{ matrix.php-versions }}-${{ matrix.composer-deps }}
             ${{ runner.os }}-composer-${{ matrix.php-versions }}
             ${{ runner.os }}-composer-
 
@@ -88,14 +74,17 @@ jobs:
         run: composer update ${{ env.COMPOSER_ARGS }}
 
       - name: Test MySQL connection
-        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+        run: mysql --host=127.0.0.1 --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
-      - name: Test (phpunit)
-        id: phpunit
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+      - name: Run PHP code
+        id: php
+        #env:
           #MYSQL_HOST: localhost
           #MYSQL_PORT: 3306
-        run: composer test
-        
+        shell: php {0}
+        run: |
+          <?php
+          $pdo = new PDO('mysql:host=127.0.0.1;dbname=p3_db_test;charset=utf8', 'p3_db_test_user', 'secret123');
+          $result = $pdo->query("SHOW DATABASES");
+          print_r($result);
+          ?>
