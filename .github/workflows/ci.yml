@@ -84,7 +84,7 @@ jobs:
         shell: php {0}
         run: |
           <?php
-          $pdo = new PDO('mysql:host=localhost;port=3306;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
+          $pdo = new PDO('mysql:host=0.0.0.0;port=3306;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
             print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
