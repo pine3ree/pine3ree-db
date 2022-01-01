@@ -98,12 +98,13 @@ jobs:
         id: phpstan
         run: composer stan
 
+      - name: Test MySQL connection
+        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+
       - name: Test (phpunit)
         id: phpunit
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
-          MYSQL_HOST: localhost
-          MYSQL_PORT: 3306
         run: composer test
         
