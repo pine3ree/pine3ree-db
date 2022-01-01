@@ -87,5 +87,7 @@ jobs:
           <?php
           $pdo = new PDO('mysql:host=0.0.0.0;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
           $stmt = $pdo->query("SHOW DATABASES");
-          if (stmt) print_r(stmt->fetchAll(\PDO::FETCH_ASSOC));
+          if ($stmt) {
+            print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
+          }
           ?>
