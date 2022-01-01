@@ -85,7 +85,7 @@ jobs:
         shell: php {0}
         run: |
           <?php
-          $pdo = new PDO('mysql:host=0.0.0.0;dbname=p3_db_test;charset=utf8', 'p3_db_test_user', 'secret123');
+          $pdo = new PDO('mysql:host=0.0.0.0;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
           $result = $pdo->query("SHOW DATABASES");
           print_r($result);
           ?>
