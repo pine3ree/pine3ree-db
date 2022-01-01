@@ -103,5 +103,7 @@ jobs:
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
+          MYSQL_HOST: localhost
+          MYSQL_PORT: 3306
         run: composer test
         
