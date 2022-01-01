@@ -40,7 +40,7 @@ jobs:
         env:
           MYSQL_DATABASE: p3_db_test
           MYSQL_ROOT_PASSWORD: secret123
-          #MYSQL_HOST: localhost
+          MYSQL_HOST: mysql
           MYSQL_USER: p3_db_testuser
           MYSQL_PASSWORD: secret123
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
@@ -87,14 +87,14 @@ jobs:
         run: composer update ${{ env.COMPOSER_ARGS }}
 
       - name: Test MySQL connection
-        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+        run: mysql --host=mysql --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Test (phpunit)
         id: phpunit
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
-#          MYSQL_HOST: localhost
-#          MYSQL_PORT: 3306
+          MYSQL_HOST: mysql
+          MYSQL_PORT: 3306
         run: composer test
         
