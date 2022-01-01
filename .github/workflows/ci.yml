@@ -40,6 +40,7 @@ jobs:
         env:
           MYSQL_DATABASE: p3_db_test
           MYSQL_ROOT_PASSWORD: secret123
+          MYSQL_HOST: '%'
           MYSQL_USER: p3_db_testuser
           MYSQL_PASSWORD: secret123
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
@@ -70,10 +71,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
-            ${{ runner.os }}-composer-${{ matrix.php-versions }}${{ matrix.composer-deps }}
-            ${{ runner.os }}-composer-${{ matrix.php-versions }}
             ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
@@ -98,8 +97,8 @@ jobs:
         id: phpstan
         run: composer stan
 
-      - name: Test MySQL connection
-        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+#      - name: Test MySQL connection
+#        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Test (phpunit)
         id: phpunit
