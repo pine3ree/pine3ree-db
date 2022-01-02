@@ -31,7 +31,7 @@ jobs:
           MYSQL_PASSWORD: secret123
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
         ports:
-          - 127.0.0.1:3306:3306
+          - 127.0.0.1:3306/tcp
         options: >-
           --health-cmd "mysqladmin ping"
           --health-interval 10s
@@ -49,17 +49,16 @@ jobs:
 
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
-        run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports[3306] }} --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
         shell: php {0}
         run: |
           <?php
+          $port = ${{ job.services.mysql.ports[3306] }}
           $pdo = new PDO(
-              "mysql:host=localhost;port=3306;charset=utf8", 
-              'p3_db_testuser', 
-              'secret123'
+              "mysql://p3_db_testuser:secret123@host=127.0.0.1;port=3306;charset=utf8"
           );
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
