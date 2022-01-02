@@ -23,6 +23,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_DATABASE: p3_db_test
+          MYSQL_ROOT_HOST: '%'
           MYSQL_ROOT_PASSWORD: secret123
           MYSQL_HOST: '%'
           MYSQL_PORT: 3306
@@ -60,8 +61,12 @@ jobs:
           <?php
           $port = getenv('MYSQL_PORT');
           echo "MYSQL_PORT = $port\n\n";
-          $pdo = new PDO("mysql:host=0.0.0.0;port={$port};dbname=p3_db_test;charset=utf8", 'p3_db_testuser', 'secret123');
-          $stmt = $pdo->query("SELECT host, user FROM mysql.user");
+          $pdo = new PDO(
+              "mysql:host=0.0.0.0;port={$port};dbname=mysql;charset=utf8", 
+              'root', 
+              'secret123'
+          );
+          $stmt = $pdo->query("SELECT `host`, `user` FROM `user`");
           if ($stmt) {
             print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
           }
