@@ -57,7 +57,7 @@ jobs:
         run: |
           <?php
           $pdo = new PDO(
-              "mysql:host=localhost;port=3306;dbname=mysql;charset=utf8", 
+              "mysql:port=3306;dbname=mysql;charset=utf8", 
               'root', 
               'secret123'
           );
