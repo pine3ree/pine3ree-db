@@ -72,27 +72,21 @@ jobs:
         run: composer update ${{ env.COMPOSER_ARGS }}
 
       - name: Test MySQL connection to "localhost"
-        id: mysql-localhost
+        id: mysql-cli-test
         run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
-      - name: Test MySQL connection to "127.0.0.1"
-        id: mysql-127-0-0-1
-        run: mysql --host=127.0.0.1 --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
-        
       - name: HOSTNAME
         run: hostname
         
       - name: Test PDO MySQL
-        id: php
+        id: php-pdo-mysql-test
         env:
-          __MYSQL_HOST: localhost
-          __MYSQL_PORT: 3306
+          MYSQL_HOST: localhost
+          MYSQL_PORT: 3306
         shell: php {0}
         run: |
           <?php
-          echo "HOSTNAME  = " . gethostname() . "\n\n";
-          echo "PHP-UNAME = " . php_uname() . "\n\n";
-          $pdo = new PDO('mysql:host=mysql;port=3306;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
+          $pdo = new PDO('mysql:host=localhost;port=3306;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
             print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
