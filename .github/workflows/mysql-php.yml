@@ -9,7 +9,6 @@ env:
 jobs:
 
   build-and-test:
-
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +19,6 @@ jobs:
     runs-on: ${{ matrix.operating-systems }}
 
     services:
-      
       mysql:
         image: mysql:5.7
         env:
@@ -39,9 +37,6 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-
       # Docs: https://github.com/shivammathur/setup-php
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -54,30 +49,10 @@ jobs:
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        id: composer-install
-        run: composer install ${{ env.COMPOSER_ARGS }}
-        
-      - name: Update Composer dependencies to latest
-        id: composer-update-latest
-        if: ${{ matrix.composer-deps == 'latest' }}
-        run: composer update ${{ env.COMPOSER_ARGS }}
-
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
         run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
-      - name: HOSTNAME
-        run: hostname
-        
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
         env:
