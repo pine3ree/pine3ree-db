@@ -58,6 +58,7 @@ jobs:
         run: |
           <?php
           $port = getenv('MYSQL_PORT');
+          echo "MYSQL_PORT = $port\n\n";
           $pdo = new PDO("mysql:host=localhost;port={$port};dbname=p3_db_test;charset=utf8", 'p3_db_testuser', 'secret123');
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
