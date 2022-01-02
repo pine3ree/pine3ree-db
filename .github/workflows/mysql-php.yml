@@ -49,7 +49,11 @@ jobs:
 
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
-        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports[3306] }} --user=${{ job.services.mysql.env.MYSQL_USER }} --password=${{ job.services.mysql.env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MYSQL_USER: ${{ job.services.mysql.env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ job.services.mysql.env.MYSQL_PASSWORD }}
+        run: mysql --host=localhost --protocol=TCP --port=${{ env.MYSQL_PORT }} --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
 
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
