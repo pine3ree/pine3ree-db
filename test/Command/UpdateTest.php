@@ -15,10 +15,25 @@ use P3\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use P3\Db\Exception\RuntimeException;
 
-class UpdateTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class UpdateTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class UpdateTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class UpdateTest extends UpdateTestBase
 {
     /** @var ObjectProphecy|PDO */
     private $pdo;

@@ -14,8 +14,23 @@ use P3\Db\Sql\Statement\Select;
 use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class AnsiTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class AnsiTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class AnsiTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class AnsiTest extends AnsiTestBase
 {
     use DiscloseTrait;
 

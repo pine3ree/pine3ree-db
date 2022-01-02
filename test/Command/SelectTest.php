@@ -18,11 +18,26 @@ use P3\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionProperty;
 use stdClass;
 
-class SelectTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class SelectTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class SelectTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class SelectTest extends SelectTestBase
 {
     /** @var ObjectProphecy|Db */
     private $db;

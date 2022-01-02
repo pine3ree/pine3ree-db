@@ -10,15 +10,30 @@ namespace P3\DbTest\Command;
 
 use P3\Db\Command\Delete;
 use P3\Db\Db;
+use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql\Driver;
 use P3\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use P3\Db\Exception\RuntimeException;
 
-class DeleteTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class DeleteTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class DeleteTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class DeleteTest extends DeleteTestBase
 {
     /** @var ObjectProphecy|PDO */
     private $pdo;

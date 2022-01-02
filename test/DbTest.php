@@ -20,13 +20,28 @@ use P3\Db\Sql\Driver;
 use P3\Db\Sql\Driver\Sqlite;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use stdClass;
 
 use function setlocale;
 
 use const LC_NUMERIC;
 
-class DbTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class DbTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class DbTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class DbTest extends DbTestBase
 {
     use DiscloseTrait;
 

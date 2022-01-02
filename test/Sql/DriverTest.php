@@ -9,18 +9,33 @@
 namespace P3\DbTest\Sql;
 
 use P3\Db\Exception\InvalidArgumentException;
+use P3\Db\Exception\RuntimeException;
 use P3\Db\Sql;
 use P3\Db\Sql\Driver;
 use P3\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use P3\Db\Exception\RuntimeException;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function setlocale;
 
 use const LC_NUMERIC;
 
-class DriverTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class DriverTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class DriverTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class DriverTest extends DriverTestBase
 {
     use DiscloseTrait;
 

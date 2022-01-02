@@ -13,9 +13,24 @@ use P3\DbTest\DiscloseTrait;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class WriterTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class WriterTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class WriterTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class WriterTest extends WriterTestBase
 {
     use DiscloseTrait;
 

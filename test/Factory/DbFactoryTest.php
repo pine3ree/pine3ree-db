@@ -12,9 +12,24 @@ use P3\Db\Exception\InvalidArgumentException;
 use P3\Db\Db;
 use P3\Db\Factory\DbFactory;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
-class DbFactoryTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class DbFactoryTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class DbFactoryTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class DbFactoryTest extends DbFactoryTestBase
 {
     /** @var ContainerInterface */
     private $container;

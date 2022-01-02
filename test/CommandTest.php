@@ -20,8 +20,23 @@ use P3\Db\Sql\Statement;
 use P3\DbTest\DiscloseTrait;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class CommandTest extends TestCase
+// @codingStandardsIgnoreStart
+if (trait_exists(ProphecyTrait::class)) {
+    class CommandTestBase extends TestCase
+    {
+       use ProphecyTrait;
+    }
+} else {
+    class CommandTestBase extends TestCase
+    {
+    }
+}
+// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreLine
+class CommandTest extends CommandTestBase
 {
     use DiscloseTrait;
 
