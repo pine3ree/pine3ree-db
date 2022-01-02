@@ -64,10 +64,10 @@ jobs:
         shell: php {0}
         run: |
           <?php
-          $dbhost = MYSQL_HOST;
-          $dbport = MYSQL_PORT;
-          $dbuser = MYSQL_USER;
-          $dbpass = MYSQL_PASSWORD;
+          $dbhost = getenv('MYSQL_HOST');
+          $dbport = getenv('MYSQL_PORT');
+          $dbuser = getenv('MYSQL_USER');
+          $dbpass = getenv('MYSQL_PASSWORD');
           $pdo = new PDO(
               "mysql://{$dbuser}:{$dbpass}@host={$dbhost};port={$dbport};charset=utf8"
           );
