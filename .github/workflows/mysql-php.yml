@@ -53,12 +53,14 @@ jobs:
 
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }};
         shell: php {0}
         run: |
           <?php
-          $port = ${{ job.services.mysql.ports[3306] }}
+          $port = MYSQL_PORT;
           $pdo = new PDO(
-              "mysql://p3_db_testuser:secret123@host=127.0.0.1;port=3306;charset=utf8"
+              "mysql://p3_db_testuser:secret123@host=127.0.0.1;port=${port};charset=utf8"
           );
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
