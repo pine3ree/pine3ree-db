@@ -76,7 +76,7 @@ jobs:
         run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Test MySQL connection to "127.0.0.1"
-        id: mysql-localhost
+        id: mysql-127-0-0-1
         run: mysql --host=127.0.0.1 --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Test MySQL connection to "/mysql"
