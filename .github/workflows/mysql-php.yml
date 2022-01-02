@@ -4,7 +4,13 @@ name: MySQL-PHP
 on: [push, pull_request]
 
 env:
-  COMPOSER_ARGS: '--no-interaction --no-progress --prefer-dist --optimize-autoloader'
+  MYSQL_DATABASE: p3_db_test
+  MYSQL_ROOT_HOST: '%'
+  MYSQL_ROOT_PASSWORD: secret123
+  MYSQL_HOST: '%'
+  MYSQL_PORT: 3306
+  MYSQL_USER: p3_db_user
+  MYSQL_PASSWORD: secret123
 
 jobs:
 
@@ -22,13 +28,13 @@ jobs:
       mysql:
         image: mysql:5.6
         env:
-          MYSQL_DATABASE: p3_db_test
-          #MYSQL_ROOT_HOST: '%'
-          MYSQL_ROOT_PASSWORD: secret123
-          MYSQL_HOST: '%'
-          MYSQL_PORT: 3306
-          MYSQL_USER: p3_db_user
-          MYSQL_PASSWORD: secret123
+          MYSQL_DATABASE: ${{ env.MYSQL_ROOT_HOST }}
+          #MYSQL_ROOT_HOST: ${{ env.MYSQL_ROOT_HOST }}
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_HOST }}
+          MYSQL_HOST: ${{ env.MYSQL_HOST }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
         ports:
           - 3306/tcp
@@ -41,11 +47,7 @@ jobs:
     steps:
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
-        env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-          MYSQL_USER: ${{ job.services.mysql.env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ job.services.mysql.env.MYSQL_PASSWORD }}
-        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports[3306] }} --user=${{ job.services.mysql.env.MYSQL_USER }} --password=${{ job.services.mysql.env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
+        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports[3306] }} --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
 
       # Docs: https://github.com/shivammathur/setup-php
       - name: Setup PHP
@@ -58,10 +60,7 @@ jobs:
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
         env:
-          MYSQL_HOST: localhost
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-          MYSQL_USER: ${{ job.services.mysql.env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ job.services.mysql.env.MYSQL_PASSWORD }}
         shell: php {0}
         run: |
           <?php
