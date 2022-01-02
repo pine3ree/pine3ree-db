@@ -60,8 +60,8 @@ jobs:
           <?php
           $port = getenv('MYSQL_PORT');
           echo "MYSQL_PORT = $port\n\n";
-          $pdo = new PDO("mysql:host=localhost;port={$port};dbname=p3_db_test;charset=utf8", 'p3_db_testuser', 'secret123');
-          $stmt = $pdo->query("SHOW DATABASES");
+          $pdo = new PDO("mysql:host=0.0.0.0;port={$port};dbname=p3_db_test;charset=utf8", 'p3_db_testuser', 'secret123');
+          $stmt = $pdo->query("SELECT host, user FROM mysql.user");
           if ($stmt) {
             print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
           }
