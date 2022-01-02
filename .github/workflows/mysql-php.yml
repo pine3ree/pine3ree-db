@@ -39,14 +39,6 @@ jobs:
           --health-retries 5
 
     steps:
-      # Docs: https://github.com/shivammathur/setup-php
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          coverage: none
-          extensions: pdo, pdo_mysql
-
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
         env:
@@ -54,6 +46,14 @@ jobs:
           MYSQL_USER: ${{ job.services.mysql.env.MYSQL_USER }}
           MYSQL_PASSWORD: ${{ job.services.mysql.env.MYSQL_PASSWORD }}
         run: mysql --host=localhost --protocol=TCP --port=${{ env.MYSQL_PORT }} --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
+
+      # Docs: https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
+          extensions: pdo, pdo_mysql
 
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
