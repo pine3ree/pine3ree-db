@@ -49,18 +49,24 @@ jobs:
 
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
-        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports[3306] }} --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports[3306] }} --user=${{ job.services.mysql.env.MYSQL_USER }} --password=${{ job.services.mysql.env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
 
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
         env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }};
+          - MYSQL_HOST: localhost
+          - MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          - MYSQL_USER: ${{ job.services.mysql.env.MYSQL_USER }}
+          - MYSQL_PASSWORD: ${{ job.services.mysql.env.MYSQL_PASSWORD }}
         shell: php {0}
         run: |
           <?php
-          $port = MYSQL_PORT;
+          $dbhost = MYSQL_HOST;
+          $dbport = MYSQL_PORT;
+          $dbuser = MYSQL_USER;
+          $dbpass = MYSQL_PASSWORD;
           $pdo = new PDO(
-              "mysql://p3_db_user:secret123@host=127.0.0.1;port=${port};charset=utf8"
+              "mysql://{$dbuser}:{$dbpass}@host={$dbhost};port={$dbport};charset=utf8"
           );
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
