@@ -78,12 +78,8 @@ jobs:
       - name: Test MySQL connection to "127.0.0.1"
         id: mysql-127-0-0-1
         run: mysql --host=127.0.0.1 --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
-
-      - name: Test MySQL connection to "/mysql"
-        id: mysql--mysql
-        run: mysql --host=/mysql --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
         
-      - name: Run PHP code
+      - name: Test PDO MySQL
         id: php
         env:
           __MYSQL_HOST: localhost
