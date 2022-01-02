@@ -79,6 +79,9 @@ jobs:
         id: mysql-127-0-0-1
         run: mysql --host=127.0.0.1 --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
         
+      - name: HOSTNAME
+        run: hostname
+        
       - name: Test PDO MySQL
         id: php
         env:
@@ -87,6 +90,8 @@ jobs:
         shell: php {0}
         run: |
           <?php
+          echo "HOSTNAME  = " . gethostname() . "\n\n";
+          echo "PHP-UNAME = " . php_uname() . "\n\n";
           $pdo = new PDO('mysql:host=/mysql;port=3306;dbname=p3_db_test;charset=utf8', 'p3_db_testuser', 'secret123');
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
