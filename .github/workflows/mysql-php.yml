@@ -23,9 +23,9 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_DATABASE: p3_db_test
-          MYSQL_ROOT_HOST: '%'
+          #MYSQL_ROOT_HOST: '%'
           MYSQL_ROOT_PASSWORD: secret123
-          MYSQL_HOST: '%'
+          MYSQL_HOST: '172.*.*.*'
           MYSQL_PORT: 3306
           MYSQL_USER: p3_db_testuser
           MYSQL_PASSWORD: secret123
@@ -57,11 +57,11 @@ jobs:
         run: |
           <?php
           $pdo = new PDO(
-              "mysql:port=3306;dbname=mysql;charset=utf8", 
-              'root', 
+              "mysql:host=localhost;port=3306;dbname=mysql;charset=utf8", 
+              'p3_db_testuser', 
               'secret123'
           );
-          $stmt = $pdo->query("SELECT `host`, `user` FROM `user`");
+          $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
             print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
           }
