@@ -20,7 +20,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:5.6
         env:
           MYSQL_DATABASE: p3_db_test
           #MYSQL_ROOT_HOST: '%'
@@ -57,7 +57,7 @@ jobs:
         run: |
           <?php
           $pdo = new PDO(
-              "mysql:host=0.0.0.0;port=3306;charset=utf8", 
+              "mysql:host=localhost;port=3306;charset=utf8", 
               'p3_db_testuser', 
               'secret123'
           );
