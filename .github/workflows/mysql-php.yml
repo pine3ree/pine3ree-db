@@ -54,10 +54,10 @@ jobs:
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
         env:
-          - MYSQL_HOST: localhost
-          - MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-          - MYSQL_USER: ${{ job.services.mysql.env.MYSQL_USER }}
-          - MYSQL_PASSWORD: ${{ job.services.mysql.env.MYSQL_PASSWORD }}
+          MYSQL_HOST: localhost
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MYSQL_USER: ${{ job.services.mysql.env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ job.services.mysql.env.MYSQL_PASSWORD }}
         shell: php {0}
         run: |
           <?php
