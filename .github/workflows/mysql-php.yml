@@ -25,7 +25,7 @@ jobs:
           MYSQL_DATABASE: p3_db_test
           #MYSQL_ROOT_HOST: '%'
           MYSQL_ROOT_PASSWORD: secret123
-          MYSQL_HOST: '172.*.*.*'
+          MYSQL_HOST: '0.0.0.0'
           MYSQL_PORT: 3306
           MYSQL_USER: p3_db_testuser
           MYSQL_PASSWORD: secret123
@@ -57,7 +57,7 @@ jobs:
         run: |
           <?php
           $pdo = new PDO(
-              "mysql:host=localhost;port=3306;dbname=mysql;charset=utf8", 
+              "mysql:host=0.0.0.0;port=3306;dbname=mysql;charset=utf8", 
               'p3_db_testuser', 
               'secret123'
           );
