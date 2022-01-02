@@ -71,15 +71,15 @@ jobs:
         if: ${{ matrix.composer-deps == 'latest' }}
         run: composer update ${{ env.COMPOSER_ARGS }}
 
-      - name: Test MySQL connection
+      - name: Test MySQL connection to "localhost"
         id: mysql-localhost
         run: mysql --host=localhost --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
-      - name: Test MySQL connection
-        id: mysql-mysql
-        run: mysql --host=mysql --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+      - name: Test MySQL connection to "127.0.0.1"
+        id: mysql-localhost
+        run: mysql --host=127.0.0.1 --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
-      - name: Test MySQL connection
+      - name: Test MySQL connection to "/mysql"
         id: mysql--mysql
         run: mysql --host=/mysql --protocol=TCP --port=3306 --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
         
