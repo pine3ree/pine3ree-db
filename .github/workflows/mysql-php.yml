@@ -9,6 +9,9 @@ env:
 jobs:
 
   build-and-test:
+    env:
+      MYSQL_PORT = 3306
+      
     strategy:
       fail-fast: false
       matrix:
@@ -25,11 +28,12 @@ jobs:
           MYSQL_DATABASE: p3_db_test
           MYSQL_ROOT_PASSWORD: secret123
           MYSQL_HOST: '%'
+          MYSQL_PORT: ${{ job.env.MYSQL_PORT }}
           MYSQL_USER: p3_db_testuser
           MYSQL_PASSWORD: secret123
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
         ports:
-          - 3306/tcp
+          - 127.0.0.1:${{ job.env.MYSQL_PORT }}:3306
         options: >-
           --health-cmd "mysqladmin ping"
           --health-interval 10s
@@ -47,13 +51,13 @@ jobs:
 
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
-        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports['3306'] }} --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
+        run: mysql --host=localhost --protocol=TCP --port=${{ job.env.MYSQL_PORT }} --user=p3_db_testuser --password=secret123 -e "SHOW DATABASES"
 
       - name: Test PDO MySQL
         id: php-pdo-mysql-test
         env:
           MYSQL_HOST: localhost
-          MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
+          MYSQL_PORT: ${{ job.env.MYSQL_PORT }}
         shell: php {0}
         run: |
           <?php
