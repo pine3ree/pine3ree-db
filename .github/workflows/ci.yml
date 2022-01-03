@@ -6,10 +6,13 @@ on: [push, pull_request]
 env:
   COMPOSER_ARGS: '--no-interaction --no-progress --prefer-dist --optimize-autoloader'
 
+  DB_NAME: p3_db_test
+  DB_USER: p3_db_user
+  DB_PASS: secret123
+
 jobs:
 
   build-and-test:
-
     strategy:
       fail-fast: false
       matrix:
@@ -21,33 +24,36 @@ jobs:
 
     services:
 
-      postgres:
-        image: postgres:9-alpine
-        env:
-          POSTGRES_DB: p3_db_test
-          POSTGRES_USER: p3_db_user
-          POSTGRES_PASSWORD: secret123
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_DATABASE: p3_db_test
+          MYSQL_ROOT_HOST: '%'
           MYSQL_ROOT_PASSWORD: secret123
           MYSQL_HOST: '%'
-          MYSQL_USER: p3_db_user
-          MYSQL_PASSWORD: secret123
+          MYSQL_DATABASE: ${{ env.DB_NAME }}
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASS }}
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
         ports:
           - 3306:3306
         options: >-
           --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      postgres:
+        image: postgres:9-alpine
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASS }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -103,7 +109,12 @@ jobs:
       - name: Test (phpunit)
         id: phpunit
         env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          TEST_P3_DB_MYSQL: true
+          TEST_P3_DB_MYSQL_HOST: 127.0.0.1
+          TEST_P3_DB_MYSQL_PORT: 3306
+          TEST_P3_DB_MYSQL_DBNAME: ${{ env.DB_NAME }}
+          TEST_P3_DB_MYSQL_CHARSET: utf8
+          TEST_P3_DB_MYSQL_USERNAME: ${{ env.DB_USER }}
+          TEST_P3_DB_MYSQL_PASSWD: ${{ env.DB_PASS }}
         run: composer test
         
