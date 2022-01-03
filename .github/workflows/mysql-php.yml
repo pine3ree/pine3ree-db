@@ -47,7 +47,7 @@ jobs:
     steps:
       - name: Test MySQL connection to "localhost"
         id: mysql-cli-test
-        run: mysql --host=localhost --protocol=TCP --port=${{ job.services.mysql.ports[3306] }} --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
+        run: mysql --host=localhost --protocol=TCP --port=${{ env.MYSQL_PORT }} --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_PASSWORD }} -e "SHOW DATABASES"
 
       # Docs: https://github.com/shivammathur/setup-php
       - name: Setup PHP
@@ -60,7 +60,7 @@ jobs:
       - name: Test MySQLi connection
         id: php-mysqli-test
         env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
         shell: php {0}
         run: |
           <?php
