@@ -75,7 +75,7 @@ jobs:
           echo 'MySQLi HOST INFO = ' . $mysqli->host_info . "\n\n";
           $result = $mysqli->query("SHOW DATABASES");
           if ($result) {
-            print_r($result->fetch_all(MYSQL_ASSOC));
+            print_r($result->fetch_all(MYSQLI_ASSOC));
           }
           ?>
           
