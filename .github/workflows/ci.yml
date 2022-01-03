@@ -27,9 +27,9 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: localhost
           MYSQL_ROOT_PASSWORD: secret123
-          MYSQL_HOST: '%'
+          MYSQL_HOST: localhost
           MYSQL_DATABASE: ${{ env.DB_NAME }}
           MYSQL_USER: ${{ env.DB_USER }}
           MYSQL_PASSWORD: ${{ env.DB_PASS }}
@@ -109,8 +109,8 @@ jobs:
       - name: Test (phpunit)
         id: phpunit
         env:
-          TEST_P3_DB_MYSQL: false
-          TEST_P3_DB_MYSQL_HOST: 127.0.0.1
+          TEST_P3_DB_MYSQL: true
+          TEST_P3_DB_MYSQL_HOST: localhost
           TEST_P3_DB_MYSQL_PORT: 3306
           TEST_P3_DB_MYSQL_DBNAME: ${{ env.DB_NAME }}
           TEST_P3_DB_MYSQL_CHARSET: utf8
