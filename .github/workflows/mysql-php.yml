@@ -28,9 +28,9 @@ jobs:
       mysql:
         image: mysql:5.6
         env:
-          MYSQL_DATABASE: ${{ env.MYSQL_ROOT_HOST }}
-          #MYSQL_ROOT_HOST: ${{ env.MYSQL_ROOT_HOST }}
-          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_HOST }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_ROOT_HOST: ${{ env.MYSQL_ROOT_HOST }}
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
           MYSQL_HOST: ${{ env.MYSQL_HOST }}
           MYSQL_PORT: ${{ env.MYSQL_PORT }}
           MYSQL_USER: ${{ env.MYSQL_USER }}
@@ -65,7 +65,7 @@ jobs:
         run: |
           <?php
           $dbhost = getenv('MYSQL_HOST');
-          $dbhost = '0.0.0.0'; //$dbhost === '%' ? '0.0.0.0' : $dbhost;
+          $dbhost = '127.0.0.1'; //$dbhost === '%' ? '0.0.0.0' : $dbhost;
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
