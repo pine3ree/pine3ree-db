@@ -65,7 +65,7 @@ jobs:
         run: |
           <?php
           $dbhost = getenv('MYSQL_HOST');
-          $dbhost = $dbhost === '%' ? '0.0.0.0' : $dbhost;
+          $dbhost = '0.0.0.0'; //$dbhost === '%' ? '0.0.0.0' : $dbhost;
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
@@ -87,7 +87,8 @@ jobs:
         run: |
           <?php
           $dbhost = getenv('MYSQL_HOST');
-          $dbhost = $dbhost === '%' ? '0.0.0.0' : $dbhost;
+          echo "$dbhost\n\n";
+          $dbhost = '0.0.0.0'; //$dbhost === '%' ? '0.0.0.0' : $dbhost;
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
