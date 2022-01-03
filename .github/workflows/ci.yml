@@ -27,9 +27,9 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: '172.*.*.*' # grant root access inside docker network
           MYSQL_ROOT_PASSWORD: secret123
-          MYSQL_HOST: '%'
+          MYSQL_HOST: localhost # The default host name used by the mysql command-line client.
           MYSQL_DATABASE: ${{ env.DB_NAME }}
           MYSQL_USER: ${{ env.DB_USER }}
           MYSQL_PASSWORD: ${{ env.DB_PASS }}
