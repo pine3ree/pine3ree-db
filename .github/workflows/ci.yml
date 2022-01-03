@@ -27,9 +27,9 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: localhost
           MYSQL_ROOT_PASSWORD: secret123
-          MYSQL_HOST: 127.0.0.1
+          MYSQL_HOST: localhost
           MYSQL_DATABASE: ${{ env.DB_NAME }}
           MYSQL_USER: ${{ env.DB_USER }}
           MYSQL_PASSWORD: ${{ env.DB_PASS }}
