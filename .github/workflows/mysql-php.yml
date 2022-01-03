@@ -69,6 +69,7 @@ jobs:
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
+          echo "MYSQL PARAMS = host=$dbhost; port=$dbport; user=$dbuser; pass=$dbhost;\n\n";
           $mysqli = new mysqli($dbhost, $dbuser, $dbpass, "", $dbport);
           $mysqli->set_charset('utf8');          
           echo 'MySQLi HOST INFO = ' . $mysqli->host_info . "\n\n";
@@ -90,6 +91,7 @@ jobs:
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
+          echo "MYSQL PARAMS = host=$dbhost; port=$dbport; user=$dbuser; pass=$dbhost;\n\n";
           $pdo = new PDO(
               "mysql://{$dbuser}:{$dbpass}@host={$dbhost};port={$dbport};charset=utf8"
           );
