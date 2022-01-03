@@ -66,7 +66,7 @@ jobs:
           <?php
           $dbhost = getenv('MYSQL_HOST');
           echo "MySQLi getenv('MYSQL_HOST') = $dbhost\n\n";
-          $dbhost = $dbhost === '%' ? 'localhost' : $dbhost;
+          $dbhost = $dbhost === '%' ? '127.0.0.1' : $dbhost;
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
@@ -89,7 +89,7 @@ jobs:
           <?php
           $dbhost = getenv('MYSQL_HOST');
           echo "PDO getenv('MYSQL_HOST') = $dbhost\n\n";
-          $dbhost = $dbhost === '%' ? 'localhost' : $dbhost;
+          $dbhost = $dbhost === '%' ? '127.0.0.1' : $dbhost;
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
