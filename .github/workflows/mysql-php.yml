@@ -57,7 +57,27 @@ jobs:
           coverage: none
           extensions: pdo, pdo_mysql
 
-      - name: Test PDO MySQL
+      - name: Test MySQLi connection
+        id: php-mysqli-test
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+        shell: php {0}
+        run: |
+          <?php
+          $dbhost = getenv('MYSQL_HOST');
+          $dbport = getenv('MYSQL_PORT');
+          $dbuser = getenv('MYSQL_USER');
+          $dbpass = getenv('MYSQL_PASSWORD');
+          $mysqli = new MySQLi($dbhost, $dbuser, $dbpass, "", $dbport);
+          $mysqli->set_charset('utf8');          
+          echo 'MySQLi HOST INFO = ' . $mysqli->host_info . "\n\n";
+          $result = $mysqli->query("SHOW DATABASES");
+          if ($result) {
+            print_r($result->fetch_all(MYSQL_ASSOC));
+          }
+          ?>
+          
+      - name: Test PDO MySQL connection
         id: php-pdo-mysql-test
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
