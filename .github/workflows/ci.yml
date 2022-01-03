@@ -109,12 +109,14 @@ jobs:
       - name: Test (phpunit)
         id: phpunit
         env:
-          TEST_P3_DB_MYSQL: true
+          TEST_P3_DB_MYSQL: false
           TEST_P3_DB_MYSQL_HOST: 127.0.0.1
           TEST_P3_DB_MYSQL_PORT: 3306
           TEST_P3_DB_MYSQL_DBNAME: ${{ env.DB_NAME }}
           TEST_P3_DB_MYSQL_CHARSET: utf8
           TEST_P3_DB_MYSQL_USERNAME: ${{ env.DB_USER }}
           TEST_P3_DB_MYSQL_PASSWD: ${{ env.DB_PASS }}
+          
+          TEST_P3_DB_PGSQL: false
         run: composer test
         
