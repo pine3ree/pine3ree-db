@@ -37,7 +37,7 @@ jobs:
           MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
           MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
         ports:
-          - 3306/tcp
+          - ${{ env.MYSQL_PORT }}:${{ env.MYSQL_PORT }}
         options: >-
           --health-cmd "mysqladmin ping"
           --health-interval 10s
