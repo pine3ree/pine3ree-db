@@ -65,6 +65,7 @@ jobs:
         run: |
           <?php
           $dbhost = getenv('MYSQL_HOST');
+          echo "MySQLi getenv('MYSQL_HOST') = $dbhost\n\n";
           $dbhost = '127.0.0.1'; //$dbhost === '%' ? '0.0.0.0' : $dbhost;
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
@@ -87,14 +88,16 @@ jobs:
         run: |
           <?php
           $dbhost = getenv('MYSQL_HOST');
-          echo "$dbhost\n\n";
+          echo "PDO getenv('MYSQL_HOST') = $dbhost\n\n";
           $dbhost = '0.0.0.0'; //$dbhost === '%' ? '0.0.0.0' : $dbhost;
           $dbport = getenv('MYSQL_PORT');
           $dbuser = getenv('MYSQL_USER');
           $dbpass = getenv('MYSQL_PASSWORD');
           echo "MYSQL PARAMS = host=$dbhost; port=$dbport; user=$dbuser; pass=$dbpass;\n\n";
           $pdo = new PDO(
-              "mysql://{$dbuser}:{$dbpass}@host={$dbhost};port={$dbport};charset=utf8"
+              "mysql:host={$dbhost};port={$dbport};charset=utf8",
+              $dbuser,
+              $dbpass
           );
           $stmt = $pdo->query("SHOW DATABASES");
           if ($stmt) {
