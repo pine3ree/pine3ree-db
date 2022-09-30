@@ -70,45 +70,46 @@ class Update extends Statement
     /**
      * Set new value(s) for column(s)
      *
-     * @param string|array|mixed[] $column_or_row
+     * @param string|array|mixed[] $column_or_set
      *      A single column or a set of column:value pairs
-     * @psalm-param string|array<string, scalar|Literal|null> $column_or_row
+     * @psalm-param string|array<string, scalar|Literal|null> $column_or_set
      *      A single column or a set of column:value pairs
      * @param mixed $value The value for a single column
      * @return $this Fluent interface
      * @throws InvalidArgumentException
      */
-    public function set($column_or_row, $value = null): self
+    public function set($column_or_set, $value = null): self
     {
-        if (is_array($column_or_row)) {
-            $row = $column_or_row;
-            foreach ($row as $column => $value) {
-                if (is_numeric($column)) {
-                    throw new InvalidArgumentException(
-                        "A column in an UPDATE query cannot be numeric!"
-                    );
-                }
+        if (is_string($column_or_set)) {
+            $column = trim($column_or_set);
+            if (is_numeric($column)) {
+                throw new InvalidArgumentException(
+                    "A column in an UPDATE statement cannot be numeric!"
+                );
             }
-            $this->set = $row;
+            if (empty($column)) {
+                throw new InvalidArgumentException(
+                    "A column in an UPDATE statement cannot be an empty string!"
+                );
+            }
+            $this->set[$column] = $value;
             return $this;
         }
 
-        if (is_string($column_or_row)
-            && !is_numeric($column_or_row)
-        ) {
-            $column = trim($column_or_row);
-            if (!empty($column)) {
-                $this->set[$column] = $value;
-                return $this;
+        if (is_array($column_or_set)) {
+            $row = $column_or_set;
+            foreach ($row as $column => $value) {
+                $this->set($column, $value);
             }
+            return $this;
         }
 
         throw new InvalidArgumentException(sprintf(
-            "The set() `\$column_or_row` argument must be either"
+            "The set() `\$column_or_set` argument must be either"
             . " a non empty string"
             . " or an array of <string, scalar|Literal|null> pairs,"
             . " `%s` provided!",
-            gettype($column_or_row)
+            gettype($column_or_set)
         ));
     }
 
