@@ -188,7 +188,7 @@ class Insert extends Statement
         }
 
         foreach ($multiple_values as $values) {
-            $this->values_list($values);
+            $this->values($values);
         }
 
         $this->clearSQL();
