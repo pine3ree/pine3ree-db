@@ -48,8 +48,11 @@ class Insert extends Statement
     /** @var string[] */
     private $columns = [];
 
+    /** @var int */
+    private $num_columns = 0;
+
     /** @var array[] */
-    private $values = [];
+    private $values_list = [];
 
     /** @var Select|null */
     private $select;
@@ -97,7 +100,8 @@ class Insert extends Statement
         self::assertValidColumns($columns);
 
         $this->columns = $columns;
-        $this->values = [];
+        $this->num_columns = count($columns);
+        $this->values_list = [];
 
         $this->clearPartialSQL('columns');
 
@@ -134,28 +138,28 @@ class Insert extends Statement
      * existing values
      *
      * @param array $values
-     * @param bool $reset Discard any previously added set of values?
+     * @param bool $add Add current set of values to existing values?
      * @return $this Fluent interface
      * @throws RuntimeException
      */
-    public function values(array $values, bool $reset = false): self
+    public function values(array $values, bool $add = false): self
     {
         self::assertValidValues($values);
 
-        if (!empty($this->columns)
-            && count($this->columns) !== count($values)
-        ) {
+        if ($this->num_columns > 0 && $this->num_columns !== count($values)) {
             throw new InvalidArgumentException(
                 "The INSERT value size does not match the defined columns!"
             );
         }
 
+        $reset = !$add;
+
         if ($reset) {
-            $this->values = [];
+            $this->values_list = [];
         }
 
         $this->select = null;
-        $this->values[] = array_values($values);
+        $this->values_list[] = array_values($values);
 
         $this->clearSQL();
 
@@ -180,11 +184,11 @@ class Insert extends Statement
 
         $this->select = null;
         if ($reset) {
-            $this->values = [];
+            $this->values_list = [];
         }
 
         foreach ($multiple_values as $values) {
-            $this->values($values);
+            $this->values_list($values);
         }
 
         $this->clearSQL();
@@ -224,7 +228,7 @@ class Insert extends Statement
         $this->select = null;
         if ($reset) {
             $this->columns = [];
-            $this->values = [];
+            $this->values_list = [];
         }
 
         foreach ($rows as $row) {
@@ -240,11 +244,11 @@ class Insert extends Statement
      * Add a row(columns-to-values) to the INSERT statement
      *
      * @param array $row The record to insert
-     * @param bool $reset Reset columns and values for a single insert
+     * @param bool $add Add row for multiple rows insertion?
      * @return $this Fluent interface
      * @throws RuntimeException
      */
-    public function row(array $row, bool $reset = false): self
+    public function row(array $row, bool $add = false): self
     {
         if (empty($row)) {
             throw new InvalidArgumentException(
@@ -252,8 +256,10 @@ class Insert extends Statement
             );
         }
 
+        $reset = !$add;
+
         if ($reset) {
-            $this->columns = $this->values = [];
+            $this->columns = $this->values_list = [];
             $this->clearPartialSQL('columns');
         }
 
@@ -268,7 +274,7 @@ class Insert extends Statement
         }
 
         $this->select = null;
-        $this->values[] = array_values($row);
+        $this->values_list[] = array_values($row);
 
         $this->clearSQL();
 
@@ -285,7 +291,7 @@ class Insert extends Statement
     {
         $this->select = $select->parentIsNot($this) ? clone $select : $select;
         $this->select->parent = $this;
-        $this->values = [];
+        $this->values_list = [];
 
         $this->clearSQL();
 
@@ -304,7 +310,7 @@ class Insert extends Statement
             );
         }
 
-        if (empty($this->values) && empty($this->select)) {
+        if (empty($this->values_list) && empty($this->select)) {
             throw new RuntimeException(
                 "The INSERT values or select statement have not been defined!"
             );
@@ -366,7 +372,7 @@ class Insert extends Statement
 
         // INSERT...VALUES
         $sqls = [];
-        foreach ($this->values as $values) {
+        foreach ($this->values_list as $values) {
             $sqls[] = $this->getRowValuesSQL($values, $driver, $params);
         }
 
@@ -401,7 +407,7 @@ class Insert extends Statement
             return $this->columns;
         }
         if ('values' === $name) {
-            return $this->values;
+            return $this->values_list;
         }
         if ('select' === $name) {
             return $this->select;
