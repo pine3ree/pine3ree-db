@@ -121,7 +121,7 @@ class InsertTest extends TestCase
         $row5 = ['price' => 555.55, 'stock' => 555];
 
         $insert->rows([$row1, $row2, $row3]);
-        $insert->rows([$row4, $row5]); // this will reset previous 4 sets of values
+        $insert->rows([$row4, $row5]); // this will reset previous 3 sets of values
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
@@ -132,7 +132,7 @@ class InsertTest extends TestCase
         );
 
         $insert->rows([$row1, $row2, $row3]);
-        $insert->rows([$row4, $row5], true); // this will not reset previous 4 sets of values
+        $insert->rows([$row4, $row5], true); // this will not reset previous 3 sets of values
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
