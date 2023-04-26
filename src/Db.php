@@ -267,7 +267,7 @@ class Db
     /**
      * Return the SQL driver matching the PDO configuration or instance
      *
-     * @param bool $with_pdo Return a driver instance with am active connection?
+     * @param bool $with_pdo Return a driver instance with an active connection?
      * @return DriverInterface
      */
     public function getDriver(bool $with_pdo = false): DriverInterface
