@@ -52,7 +52,7 @@ class Insert extends Statement
     private $num_columns = 0;
 
     /** @var array[] */
-    private $values_list = [];
+    private $values = [];
 
     /** @var Select|null */
     private $select;
@@ -101,7 +101,7 @@ class Insert extends Statement
 
         $this->columns = $columns;
         $this->num_columns = count($columns);
-        $this->values_list = [];
+        $this->values = [];
 
         $this->clearPartialSQL('columns');
 
@@ -153,13 +153,12 @@ class Insert extends Statement
         }
 
         $reset = !$add;
-
         if ($reset) {
-            $this->values_list = [];
+            $this->values = [];
         }
 
         $this->select = null;
-        $this->values_list[] = array_values($values);
+        $this->values[] = array_values($values);
 
         $this->clearSQL();
 
@@ -171,10 +170,10 @@ class Insert extends Statement
      * existing values
      *
      * @param array[] $multiple_values
-     * @param bool $reset Remove any existing set of values?
+     * @param bool $add Add current set of rows values to existing values?
      * @return $this Fluent interface
      */
-    public function multipleValues(array $multiple_values, bool $reset = true): self
+    public function multipleValues(array $multiple_values, bool $add = false): self
     {
         if (empty($multiple_values)) {
             throw new InvalidArgumentException(
@@ -183,12 +182,14 @@ class Insert extends Statement
         }
 
         $this->select = null;
+
+        $reset = !$add;
         if ($reset) {
-            $this->values_list = [];
+            $this->values = [];
         }
 
         foreach ($multiple_values as $values) {
-            $this->values($values);
+            $this->values($values, true);
         }
 
         $this->clearSQL();
@@ -220,19 +221,21 @@ class Insert extends Statement
      *
      * @param array[] $rows An array of new records
      * @psalm-param <string: mixed>[] An array of new records
-     * @param bool $reset Remove any existing set of values?
+     * @param bool $add Add current set of rows values to existing values?
      * @return $this Fluent interface
      */
-    public function rows(array $rows, bool $reset = true): self
+    public function rows(array $rows, bool $add = false): self
     {
         $this->select = null;
+
+        $reset = !$add;
         if ($reset) {
             $this->columns = [];
-            $this->values_list = [];
+            $this->values = [];
         }
 
         foreach ($rows as $row) {
-            $this->row($row);
+            $this->row($row, true);
         }
 
         $this->clearPartialSQL('columns');
@@ -257,9 +260,9 @@ class Insert extends Statement
         }
 
         $reset = !$add;
-
         if ($reset) {
-            $this->columns = $this->values_list = [];
+            $this->columns = [];
+            $this->values = [];
             $this->clearPartialSQL('columns');
         }
 
@@ -274,7 +277,7 @@ class Insert extends Statement
         }
 
         $this->select = null;
-        $this->values_list[] = array_values($row);
+        $this->values[] = array_values($row);
 
         $this->clearSQL();
 
@@ -291,7 +294,7 @@ class Insert extends Statement
     {
         $this->select = $select->parentIsNot($this) ? clone $select : $select;
         $this->select->parent = $this;
-        $this->values_list = [];
+        $this->values = [];
 
         $this->clearSQL();
 
@@ -310,7 +313,7 @@ class Insert extends Statement
             );
         }
 
-        if (empty($this->values_list) && empty($this->select)) {
+        if (empty($this->values) && empty($this->select)) {
             throw new RuntimeException(
                 "The INSERT values or select statement have not been defined!"
             );
@@ -372,7 +375,7 @@ class Insert extends Statement
 
         // INSERT...VALUES
         $sqls = [];
-        foreach ($this->values_list as $values) {
+        foreach ($this->values as $values) {
             $sqls[] = $this->getRowValuesSQL($values, $driver, $params);
         }
 
@@ -407,7 +410,7 @@ class Insert extends Statement
             return $this->columns;
         }
         if ('values' === $name) {
-            return $this->values_list;
+            return $this->values;
         }
         if ('select' === $name) {
             return $this->select;

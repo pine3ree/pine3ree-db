@@ -95,21 +95,21 @@ class InsertTest extends TestCase
         $insert->row([]);
     }
 
-    public function testInsertRowWithReset()
+    public function testInsertRowWithDefaultAddFlagFalse()
     {
         $insert = new Insert();
         $insert->into('product');
 
-        $insert->row(['price' => 123.45, 'enabled' => false]);
-        $insert->row(['price' => 123.45, 'enabled' => false]);
+        $insert->row(['price' => 1.23, 'enabled' => false]);
+        $insert->row(['price' => 4.56, 'enabled' => false], true);
 
-        $row = ['price' => 123.45, 'stock' => 67];
-        $insert->row($row, true);
+        $row = ['price' => 7.89, 'stock' => 42];
+        $insert->row($row, false);
         self::assertSame(array_keys($row), $insert->columns);
         self::assertSame([array_values($row)], $insert->values);
     }
 
-    public function testInsertRowsResetParam()
+    public function testInsertRowsAddParam()
     {
         $insert = new Insert();
         $insert->into('product');
@@ -132,7 +132,7 @@ class InsertTest extends TestCase
         );
 
         $insert->rows([$row1, $row2, $row3]);
-        $insert->rows([$row4, $row5], false); // this will not reset previous 4 sets of values
+        $insert->rows([$row4, $row5], true); // this will not reset previous 4 sets of values
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
             . " (`price`, `stock`)"
@@ -153,7 +153,7 @@ class InsertTest extends TestCase
 
         $insert->row(['price' => 123.45]);
         $this->expectException(RuntimeException::class);
-        $insert->row(['price' => 123.45, 'enabled' => false]);
+        $insert->row(['price' => 123.45, 'enabled' => false], true);
     }
 
     public function testInsertValuesWithUnmatchingColumnsRaisesException()
@@ -201,7 +201,7 @@ class InsertTest extends TestCase
         );
     }
 
-    public function testInsertMultipleValuesResetParam()
+    public function testInsertMultipleValuesAddParam()
     {
         $insert = new Insert();
         $insert->into('product');
@@ -214,7 +214,7 @@ class InsertTest extends TestCase
         $insert->multipleValues([
             [333.33, 333],
             [444.44, 444],
-        ], false);
+        ], true);
 
         self::assertCount(4, $insert->values);
 
@@ -232,7 +232,7 @@ class InsertTest extends TestCase
         $insert->multipleValues([
             [555.55, 555],
             [666.66, 666],
-        ], true);
+        ], false);
 
         self::assertCount(2, $insert->values);
 
@@ -257,9 +257,9 @@ class InsertTest extends TestCase
         $insert->columns(['price', 'stock']);
 
         $insert->values([12.34, 56]);
-        $insert->values([56.78, 90]);
+        $insert->values([56.78, 90], true);
 
-        $insert->values([11.11, 22], true);
+        $insert->values([11.11, 22]);
 
         self::assertSame([[11.11, 22]], $insert->values);
     }
@@ -313,7 +313,7 @@ class InsertTest extends TestCase
         $insert = new Insert('product');
 
         $insert->row(['price' => 111.11, 'stock' => 111, 'enabled' => true]);
-        $insert->row(['price' => 222.22, 'stock' => 222, 'enabled' => false]);
+        $insert->row(['price' => 222.22, 'stock' => 222, 'enabled' => false], true);
 
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
@@ -327,7 +327,7 @@ class InsertTest extends TestCase
         //cached sql
         self::assertSame($sql, $insert->getSQL($this->driver));
 
-        $insert->row(['price' => 333.33, 'stock' => 333, 'enabled' => true]);
+        $insert->row(['price' => 333.33, 'stock' => 333, 'enabled' => true], true);
         self::assertStringMatchesFormat(
             "INSERT INTO `product`"
             . " (`price`, `stock`, `enabled`)"
