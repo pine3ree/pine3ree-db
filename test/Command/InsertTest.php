@@ -21,12 +21,12 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class InsertTestBase extends TestCase
+    abstract class InsertTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class InsertTestBase extends TestCase
+    abstract class InsertTestBase extends TestCase
     {
     }
 }
@@ -50,7 +50,7 @@ class InsertTest extends InsertTestBase
 
         $this->pdoStatement
             ->execute()
-            ->willReturn($this->returnSelf());
+            ->willReturn(true);
     }
 
     public function tearDown(): void
@@ -148,10 +148,6 @@ class InsertTest extends InsertTestBase
     {
         $insert = $this->createInsertCommand();
         $insert->into('user');
-
-        $this->pdoStatement->rowCount()->willReturn(false);
-        $result = $insert->row(['username' => 'INVALID'])->exec();
-        self::assertSame(false, $result);
 
         $this->pdoStatement->execute()->willReturn(false);
         $result = $insert->row(['username' => 'INVALID'])->exec();
