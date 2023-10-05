@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Driver;
+namespace pine3ree\Db\Sql\Driver;
 
 use PDO;
-use P3\Db\Sql;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Statement\Select;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Driver\Feature\LimitSqlProvider;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement\Select;
 
 use const PHP_INT_MAX;
 

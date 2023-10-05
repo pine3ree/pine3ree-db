@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Predicate;
+namespace pine3ree\Db\Sql\Predicate;
 
-use P3\Db\Sql\Predicate\Is;
+use pine3ree\Db\Sql\Predicate\Is;
 
 /**
  * This class represents a sql IS NOT predicate with the SQL values NULL, TRUE,

@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Predicate;
+namespace pine3ree\Db\Sql\Predicate;
 
-use P3\Db\Sql\Predicate\Exists;
-use P3\Db\Sql\Statement\Select;
+use pine3ree\Db\Sql\Predicate\Exists;
+use pine3ree\Db\Sql\Statement\Select;
 
 /**
  * This class represents a sql NOT EXISTS condition

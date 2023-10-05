@@ -1,30 +1,30 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Command;
+namespace pine3ree\Db\Command;
 
 use Closure;
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Command;
-use P3\Db\Command\Reader as ReaderInterface;
-use P3\Db\Command\Traits\Reader as ReaderTrait;
-use P3\Db\Db;
-use P3\Db\Sql;
-use P3\Db\Sql\Clause\Join;
-use P3\Db\Sql\Clause\Having;
-use P3\Db\Sql\Clause\On;
-use P3\Db\Sql\Clause\Where;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement\Select as SqlSelect;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Command;
+use pine3ree\Db\Command\Reader as ReaderInterface;
+use pine3ree\Db\Command\Traits\Reader as ReaderTrait;
+use pine3ree\Db\Db;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Clause\Join;
+use pine3ree\Db\Sql\Clause\Having;
+use pine3ree\Db\Sql\Clause\On;
+use pine3ree\Db\Sql\Clause\Where;
+use pine3ree\Db\Sql\Expression;
+use pine3ree\Db\Sql\Identifier;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Statement\Select as SqlSelect;
 use PDO;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\RuntimeException;
 
 use function func_get_args;
 use function is_array;

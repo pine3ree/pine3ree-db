@@ -1,17 +1,17 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql\Driver;
+namespace pine3ree\DbTest\Sql\Driver;
 
-use P3\Db\Sql;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Statement\Select;
-use P3\DbTest\DiscloseTrait;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Statement\Select;
+use pine3ree\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;

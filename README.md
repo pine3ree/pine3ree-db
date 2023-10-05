@@ -1,4 +1,4 @@
-# P3\Db
+# pine3ree\Db
 
 A tiny PDO database abstraction layer very much inspired by (zend/laminas)-db - WIP (ver. 0.9.x)
 

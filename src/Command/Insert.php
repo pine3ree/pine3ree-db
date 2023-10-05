@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Command;
+namespace pine3ree\Db\Command;
 
-use P3\Db\Db;
-use P3\Db\Command;
-use P3\Db\Command\Traits\Writer as WriterTrait;
-use P3\Db\Command\Writer as WriterInterface;
-use P3\Db\Sql\Statement\Insert as SqlInsert;
-use P3\Db\Sql\Statement\Select as SqlSelect;
+use pine3ree\Db\Db;
+use pine3ree\Db\Command;
+use pine3ree\Db\Command\Traits\Writer as WriterTrait;
+use pine3ree\Db\Command\Writer as WriterInterface;
+use pine3ree\Db\Sql\Statement\Insert as SqlInsert;
+use pine3ree\Db\Sql\Statement\Select as SqlSelect;
 
 /**
  * Class Insert

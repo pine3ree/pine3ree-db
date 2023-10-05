@@ -1,4 +1,4 @@
-# P3\Db\Sql\Clause
+# pine3ree\Db\Sql\Clause
 
-#P3\Db\Sql\Clause\Join
+#pine3ree\Db\Sql\Clause\Join
 

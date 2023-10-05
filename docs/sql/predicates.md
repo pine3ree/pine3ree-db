@@ -1,4 +1,4 @@
-## P3\Db\Sql\Predicate and Predicate\Set
+## pine3ree\Db\Sql\Predicate and Predicate\Set
 
 SQL predicates are parts of an sql-statement normally abstracting search-conditions
 inside sql clauses like WHERE, HAVING, ON. They usually resolve to a sql boolean value.
@@ -25,10 +25,10 @@ them to be quoted as aliases you must provide Alias instances instead of strings
 Examples:
 
 ```php
-use P3\Db\Sql;
-use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement\Select;
-use function P3\Db\Sql\alias;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Statement\Select;
+use function pine3ree\Db\Sql\alias;
 
 // empty predicate-set with "AND" as default logical operator
 $predicateSet = new Predicate\Set();
@@ -47,7 +47,7 @@ $predicateSet->or()->gt('stock', 10); // OR "stock" > :gt1
 As a convenience predicate-set methods may also have a shorter and/or equivalent form:
 
 ```php
-use P3\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Predicate;
 
 // creates a Predicate\Comparison with operator =
 Predicate\Set::equal($identifier, $value);
@@ -102,7 +102,7 @@ Predicate\Set::some($identifier, $operator, Select $select); // Predicate\Some
 Predicate sets initialized with a string will use the string to create a literal predicate:
 
 ```php
-use P3\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Predicate;
 
 // the following set will contain 1 predicate of class Predicate\Literal
 $predicateSet = new Predicate\Set('MAX("price") <= 100.0'); // MAX("price") <= 100.0
@@ -111,7 +111,7 @@ $predicateSet = new Predicate\Set('MAX("price") <= 100.0'); // MAX("price") <= 1
 Sub sets of predicates may be created using `begingGroup()` calls:
 
 ```php
-use P3\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Predicate;
 
 $predicateSet = new Predicate\Set();
 // add predicates
@@ -132,7 +132,7 @@ used in sql statement `where()`, `having()`, `on()` method calls.
 Examples:
 
 ```php
-use P3\Db\Sql;
+use pine3ree\Db\Sql;
 
 $conditions = [
     'id IS NOT NULL', // a string is converted to a literal predicate

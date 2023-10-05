@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Predicate;
+namespace pine3ree\Db\Sql\Predicate;
 
-use P3\Db\Sql\Predicate\Like;
+use pine3ree\Db\Sql\Predicate\Like;
 
 /**
  * This class represents a sql NOT LIKE condition

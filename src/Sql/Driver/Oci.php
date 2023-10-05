@@ -1,24 +1,24 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Driver;
+namespace pine3ree\Db\Sql\Driver;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Driver\Feature\LimitSqlProvider;
-use P3\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
-use P3\Db\Sql\Driver\Feature\SelectDecorator;
-use P3\Db\Sql\Driver\Feature\SelectSqlDecorator;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Statement\Select;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Driver\Feature\LimitSqlProvider;
+use pine3ree\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
+use pine3ree\Db\Sql\Driver\Feature\SelectDecorator;
+use pine3ree\Db\Sql\Driver\Feature\SelectSqlDecorator;
+use pine3ree\Db\Sql\Expression;
+use pine3ree\Db\Sql\Identifier;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement\Select;
 use PDO;
 
 use function end;

@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Clause;
+namespace pine3ree\Db\Sql\Clause;
 
 use Closure;
-use P3\Db\Sql\Clause\Where;
-use P3\Db\Sql\Clause\ConditionalClauseAwareTrait;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Clause\Where;
+use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Predicate;
 
 /**
  * A trait for sql-statements that can include WHERE clauses

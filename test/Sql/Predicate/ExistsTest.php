@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql\Predicate;
+namespace pine3ree\DbTest\Sql\Predicate;
 
-use P3\Db\Sql;
-use P3\Db\Sql\Predicate\Exists;
-use P3\Db\Sql\Predicate\NotExists;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Predicate\Exists;
+use pine3ree\Db\Sql\Predicate\NotExists;
 use PHPUnit\Framework\TestCase;
 
 class ExistsTest extends TestCase

@@ -1,5 +1,5 @@
 {
-    "name": "pine3ree/p3-db",
+    "name": "pine3ree/pine3ree-db",
     "description": "A tiny PDO database abstraction layer",
     "type": "library",
     "keywords": [
@@ -8,9 +8,8 @@
         "pine3ree",
         "db",
         "p3",
-        "p3-db"
     ],
-    "homepage": "https://github.com/pine3ree/p3-db",
+    "homepage": "https://github.com/pine3ree/pine3ree-db",
     "readme": "README.md",
     "license": "BSD-3-Clause",
     "authors": [
@@ -21,9 +20,9 @@
         }
     ],
     "support": {
-        "docs": "https://github.com/pine3ree/p3-db/README.md",
-        "issues": "https://github.com/pine3ree/p3-db/issues",
-        "source": "https://github.com/pine3ree/p3-db"
+        "docs": "https://github.com/pine3ree/pine3ree-db/blob/9.x-dev/README.md",
+        "issues": "https://github.com/pine3ree/pine3ree-db/issues",
+        "source": "https://github.com/pine3ree/pine3ree-db"
     },
     "config": {
         "sort-packages": false
@@ -34,7 +33,7 @@
         }
     },
     "require": {
-        "php": "^7.1 || ~8.0.0",
+        "php": "^7.4 || ~8.0.0 || ~8.1.0 || ~8.2.0",
         "ext-pdo": "*",
         "ext-pcre": "*",
         "psr/container": "^1.0"
@@ -48,7 +47,7 @@
     },
     "autoload": {
         "psr-4": {
-            "P3\\Db\\": "src/"
+            "pine3ree\\Db\\": "src/"
         },
         "files": [
             "src/Sql/functions.php"
@@ -56,7 +55,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "P3\\DbTest\\": "test/"
+            "pine3ree\\DbTest\\": "test/"
         }
     },
     "scripts": {

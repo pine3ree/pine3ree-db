@@ -1,23 +1,23 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Statement;
+namespace pine3ree\Db\Sql\Statement;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Clause\WhereAwareTrait;
-use P3\Db\Sql\Clause\Where;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Statement;
-use P3\Db\Sql\TableAwareTrait;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Clause\WhereAwareTrait;
+use pine3ree\Db\Sql\Clause\Where;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement;
+use pine3ree\Db\Sql\TableAwareTrait;
+use pine3ree\Db\Exception\RuntimeException;
 
 use function gettype;
 use function implode;

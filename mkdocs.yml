@@ -1,6 +1,6 @@
 docs_dir: docs
 site_dir: html/guide
-site_name: pine3ree/p3-db
+site_name: pine3ree/pine3ree-db
 site_description: "A tiny PDO database abstraction layer"
 nav:
     - Home: index.md
@@ -11,7 +11,7 @@ nav:
         - Clauses: sql/clauses.md
         - Statements: sql/statements.md
         - Drivers: sql/drivers.md
-repo_url: 'https://github.com/pine3ree/p3-db'
+repo_url: 'https://github.com/pine3ree/pine3ree-db'
 
 theme:
     name: material
@@ -44,5 +44,5 @@ copyright: Copyright &copy; 2021 pine3ree
 extra:
     social:
         - icon: fontawesome/brands/github
-          link: https://github.com/pine3ree/p3-db
+          link: https://github.com/pine3ree/pine3ree-db
           name: source on github

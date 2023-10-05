@@ -1,20 +1,20 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db;
+namespace pine3ree\Db;
 
-use P3\Db\Sql\Alias;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Statement\Delete;
-use P3\Db\Sql\Statement\Insert;
-use P3\Db\Sql\Statement\Select;
-use P3\Db\Sql\Statement\Update;
+use pine3ree\Db\Sql\Alias;
+use pine3ree\Db\Sql\Expression;
+use pine3ree\Db\Sql\Identifier;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Statement\Delete;
+use pine3ree\Db\Sql\Statement\Insert;
+use pine3ree\Db\Sql\Statement\Select;
+use pine3ree\Db\Sql\Statement\Update;
 
 use function strtoupper;
 

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Command\Traits;
+namespace pine3ree\Db\Command\Traits;
 
 /**
  * A writer-command's execution affects persisted data
@@ -15,7 +15,7 @@ trait Writer
     /**
      * Execute the writer-command returning either the number of affected rows or false on error
      *
-     * @see P3\Db\Command\Writer::exec()
+     * @see pine3ree\Db\Command\Writer::exec()
      *
      * @return int|false
      */
@@ -30,7 +30,7 @@ trait Writer
     }
 
     /**
-     * @see P3\Db\Command::execute()
+     * @see pine3ree\Db\Command::execute()
      * @see self::exec()
      *
      * @return int|false

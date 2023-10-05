@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Command;
+namespace pine3ree\Db\Command;
 
 /**
  * A writer-command's statement execution affects persisted data

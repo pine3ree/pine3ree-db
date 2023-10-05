@@ -1,23 +1,23 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest;
+namespace pine3ree\DbTest;
 
-use P3\Db\Command\Delete;
-use P3\Db\Command\Insert;
-use P3\Db\Command\Select;
-use P3\Db\Command\Update;
-use P3\Db\Db;
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Exception\RuntimeException;
-use P3\Db\Sql;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Driver\Sqlite;
+use pine3ree\Db\Command\Delete;
+use pine3ree\Db\Command\Insert;
+use pine3ree\Db\Command\Select;
+use pine3ree\Db\Command\Update;
+use pine3ree\Db\Db;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Driver\Sqlite;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;

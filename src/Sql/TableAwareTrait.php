@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql;
+namespace pine3ree\Db\Sql;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 
 use function trim;
 

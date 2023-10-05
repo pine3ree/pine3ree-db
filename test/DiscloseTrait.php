@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest;
+namespace pine3ree\DbTest;
 
 use InvalidArgumentException;
 use ReflectionClassConstant;

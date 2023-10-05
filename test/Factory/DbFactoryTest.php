@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Factory;
+namespace pine3ree\DbTest\Factory;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Db;
-use P3\Db\Factory\DbFactory;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Db;
+use pine3ree\Db\Factory\DbFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;

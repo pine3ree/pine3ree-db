@@ -1,23 +1,23 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql;
+namespace pine3ree\DbTest\Sql;
 
 use ArrayObject;
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Alias;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Predicate;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Alias;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Identifier;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Predicate;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

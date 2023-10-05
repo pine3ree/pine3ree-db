@@ -1,17 +1,17 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql\Predicate;
+namespace pine3ree\DbTest\Sql\Predicate;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Predicate\CompareTo;
-use P3\Db\Sql\Statement\Select;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Predicate\CompareTo;
+use pine3ree\Db\Sql\Statement\Select;
 use PHPUnit\Framework\TestCase;
 
 class CompareToTest extends TestCase

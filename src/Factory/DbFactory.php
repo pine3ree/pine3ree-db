@@ -1,17 +1,17 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Factory;
+namespace pine3ree\Db\Factory;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Db;
-use P3\Db\Sql\Driver;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Db;
+use pine3ree\Db\Sql\Driver;
 use Psr\Container\ContainerInterface;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\RuntimeException;
 
 use function array_change_key_case;
 use function filter_var;

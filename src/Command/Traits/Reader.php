@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Command\Traits;
+namespace pine3ree\Db\Command\Traits;
 
 use PDOStatement;
 
@@ -17,7 +17,7 @@ trait Reader
     /**
      * Prepare, execute and return the PDO-statement or return false on failure
      *
-     * @see P3\Db\Command\Reader::query()
+     * @see pine3ree\Db\Command\Reader::query()
      *
      * @return PDOStatement|false
      */
@@ -32,7 +32,7 @@ trait Reader
     }
 
     /**
-     * @see P3\Db\Command::execute()
+     * @see pine3ree\Db\Command::execute()
      * @see self::query()
      *
      * @return PDOStatement|false

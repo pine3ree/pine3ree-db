@@ -1,22 +1,22 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest;
+namespace pine3ree\DbTest;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Statement\Delete;
-use P3\Db\Sql\Statement\Insert;
-use P3\Db\Sql\Statement\Select;
-use P3\Db\Sql\Statement\Update;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Expression;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement\Delete;
+use pine3ree\Db\Sql\Statement\Insert;
+use pine3ree\Db\Sql\Statement\Select;
+use pine3ree\Db\Sql\Statement\Update;
 use PHPUnit\Framework\TestCase;
 
 /**

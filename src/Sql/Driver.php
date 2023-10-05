@@ -1,24 +1,24 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql;
+namespace pine3ree\Db\Sql;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Driver\Ansi;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\ElementInterface;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Statement\Select;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Driver\Ansi;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\ElementInterface;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement\Select;
 use PDO;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\RuntimeException;
 
 use function addcslashes;
 use function get_class;

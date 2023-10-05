@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Driver\Feature;
+namespace pine3ree\Db\Sql\Driver\Feature;
 
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Statement\Select;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement\Select;
 
 /**
  * Interface SelectColumnsSqlProvider

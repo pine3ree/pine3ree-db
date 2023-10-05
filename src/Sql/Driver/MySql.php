@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Driver;
+namespace pine3ree\Db\Sql\Driver;
 
-use P3\Db\Sql\Driver;
+use pine3ree\Db\Sql\Driver;
 use PDO;
 
 /**

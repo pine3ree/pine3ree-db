@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db;
+namespace pine3ree\Db;
 
 use PDOStatement;
-use P3\Db\CommandInterface;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Statement as SqlStatement;
+use pine3ree\Db\CommandInterface;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement as SqlStatement;
 
 /**
  * A db-command sends a sql-statement to the composed database instance and

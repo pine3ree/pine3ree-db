@@ -1,6 +1,6 @@
-# p3-db
+# pine3ree-db
 
-`P3\Db` is a small database abstraction layer on top of the `\PDO` library.
+`pine3ree\Db` is a small database abstraction layer on top of the `\PDO` library.
 
 It provides a simple sql builder and convenience methods for common CRUD opeations.
 
@@ -17,10 +17,10 @@ performed by the composed DBAL instance.
 
 ## Installation
 
-p3-db DBAL requires php >= 7.1 and can be installed via composer
+pine3ree-db DBAL requires php >= 7.1 and can be installed via composer
 
 ```bash
-$ composer require pine3ree/p3-db
+$ composer require pine3ree/pine3ree-db
 ```
 
 The package does not provide any stable version yet, so `"minimum-stability": "dev"`

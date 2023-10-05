@@ -1,25 +1,25 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql;
+namespace pine3ree\DbTest\Sql;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql\Alias;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Literal;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql\Alias;
+use pine3ree\Db\Sql\Expression;
+use pine3ree\Db\Sql\Identifier;
+use pine3ree\Db\Sql\Literal;
 use PHPUnit\Framework\TestCase;
 
-use function P3\Db\Sql\alias;
-use function P3\Db\Sql\expr;
-use function P3\Db\Sql\expression;
-use function P3\Db\Sql\identifier;
-use function P3\Db\Sql\literal;
+use function pine3ree\Db\Sql\alias;
+use function pine3ree\Db\Sql\expr;
+use function pine3ree\Db\Sql\expression;
+use function pine3ree\Db\Sql\identifier;
+use function pine3ree\Db\Sql\literal;
 
 class FunctionsTest extends TestCase
 {

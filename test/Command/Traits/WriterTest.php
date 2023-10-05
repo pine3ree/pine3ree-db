@@ -1,15 +1,15 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Command\Traits;
+namespace pine3ree\DbTest\Command\Traits;
 
-use P3\Db\Command\Traits\Writer as WriterTrait;
-use P3\DbTest\DiscloseTrait;
+use pine3ree\Db\Command\Traits\Writer as WriterTrait;
+use pine3ree\DbTest\DiscloseTrait;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;

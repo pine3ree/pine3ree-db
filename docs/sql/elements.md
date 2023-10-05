@@ -1,4 +1,4 @@
-## P3\Db\Sql\ElementInterface
+## pine3ree\Db\Sql\ElementInterface
 
 A sql element represents full sql statements or just part of it such as identifiers,
 aliases, predicate, clauses, etc...
@@ -12,17 +12,17 @@ Sql elements can also be organized in hierarchies (`ElementInterface::setParent(
 but an element can have only one parent. Changes to an inner element must invalidate
 any compiled sql-string that has been cached.
 
-## P3\Db\Sql
+## pine3ree\Db\Sql
 The `Db\Sql` class offers constants for  common SQL keywords and static factory methods
 for creating complex or simple sql elements:
 
 ```php
-use P3\Db\Sql;
-use P3\Db\Sql\Alias;
-use P3\Db\Sql\Expression;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Statement;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Alias;
+use pine3ree\Db\Sql\Expression;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Identifier;
+use pine3ree\Db\Sql\Statement;
 
 // Create Identifier elements: dots are considered identifier separators
 $column = Sql::identifier('category_id'); // sql-string: "category_id"
@@ -58,10 +58,10 @@ All the factory methods above can be replaced with constructor calls with the sa
 To make code more coincise a few importable functions are provided:
 
 ```php
-use function P3\Db\Sql\alias as ali;
-use function P3\Db\Sql\expression as xpr;
-use function P3\Db\Sql\identifier as idn;
-use function P3\Db\Sql\literal as lit;
+use function pine3ree\Db\Sql\alias as ali;
+use function pine3ree\Db\Sql\expression as xpr;
+use function pine3ree\Db\Sql\identifier as idn;
+use function pine3ree\Db\Sql\literal as lit;
 
 $column  = idn('p.category_id');
 $alias   = ali('t0');

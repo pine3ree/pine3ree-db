@@ -1,20 +1,20 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql\Clause;
+namespace pine3ree\Db\Sql\Clause;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Clause\ConditionalClause;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\Element;
-use P3\Db\Sql\Params;
-use P3\Db\Sql\Predicate;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Clause\ConditionalClause;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Element;
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Predicate;
+use pine3ree\Db\Exception\RuntimeException;
 
 use function count;
 use function current;

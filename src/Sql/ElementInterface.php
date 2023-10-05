@@ -1,15 +1,15 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql;
+namespace pine3ree\Db\Sql;
 
-use P3\Db\Exception\RuntimeException;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\Params;
+use pine3ree\Db\Exception\RuntimeException;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Params;
 
 /**
  * Abstracts a generic SQL element.

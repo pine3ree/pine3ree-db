@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql;
+namespace pine3ree\DbTest\Sql;
 
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\Element;
-use P3\Db\Sql\Params;
-use P3\DbTest\DiscloseTrait;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Element;
+use pine3ree\Db\Sql\Params;
+use pine3ree\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use stdClass;

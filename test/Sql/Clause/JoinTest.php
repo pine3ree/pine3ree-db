@@ -1,21 +1,21 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql\Clause;
+namespace pine3ree\DbTest\Sql\Clause;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Sql;
-use P3\Db\Sql\Clause\Join;
-use P3\Db\Sql\Clause\On;
-use P3\Db\Sql\Predicate;
-use P3\DbTest\DiscloseTrait;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Clause\Join;
+use pine3ree\Db\Sql\Clause\On;
+use pine3ree\Db\Sql\Predicate;
+use pine3ree\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\RuntimeException;
 
 class JoinTest extends TestCase
 {

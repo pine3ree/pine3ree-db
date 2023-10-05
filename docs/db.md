@@ -1,10 +1,10 @@
-# P3\Db
+# pine3ree\Db
 
 ## Quick start
 
 ```php
-use P3\Db;
-use P3\Db\Factory\DbFactory;
+use pine3ree\Db;
+use pine3ree\Db\Factory\DbFactory;
 use PDO;
 
 // 1. Create a dbal instance using an existing PDO connection
@@ -67,7 +67,7 @@ $mostExpensiveProduct = $db->fetchOne('product', null, ['price' => 'DESC']);
 
 ### Constructor arguments
 
-`P3\Db` supports the same constructor arguments as the `\PDO` class.
+`pine3ree\Db` supports the same constructor arguments as the `\PDO` class.
 
 It also supports an extra argument, an optional custom PDO subclass to use in
 lazy connection instances.
@@ -138,25 +138,25 @@ Supported drivers are `mysql`, `pgsql`, `sqlite`, `sqlsrv` and `oci`.
 To start building a crud databse command you can use the following methods:
 
 ```php
-$select = $db->select(); // returns a P3\Db\Command\Select instance
-$insert = $db->insert(); // returns a P3\Db\Command\Insert instance
-$update = $db->update(); // returns a P3\Db\Command\Update instance
-$delete = $db->delete(); // returns a P3\Db\Command\Delete instance
+$select = $db->select(); // returns a pine3ree\Db\Command\Select instance
+$insert = $db->insert(); // returns a pine3ree\Db\Command\Insert instance
+$update = $db->update(); // returns a pine3ree\Db\Command\Update instance
+$delete = $db->delete(); // returns a pine3ree\Db\Command\Delete instance
 ```
 
 Database command instances provide a fluent interface for building sql statement.
-The sql build is actually perfomed by the composed sql-statement (`P3\Db\Sql\Statement`)
-instance with the help of the sql-driver (`P3\Sql\DriverInterface`) created for
+The sql build is actually perfomed by the composed sql-statement (`pine3ree\Db\Sql\Statement`)
+instance with the help of the sql-driver (`pine3ree\Sql\DriverInterface`) created for
 the current connection.
 
-The corresponding sql-statement objects ca be created with the following `P3\Db\Sql` helper
+The corresponding sql-statement objects ca be created with the following `pine3ree\Db\Sql` helper
 class static methods:
 
 ```php
-$select = Sql::select(); // returns a P3\Db\Sql\Statement\Select instance
-$insert = Sql::insert(); // returns a P3\Db\Sql\Statement\Insert instance
-$update = Sql::update(); // returns a P3\Db\Sql\Statement\Update instance
-$delete = Sql::delete(); // returns a P3\Db\Sql\Statement\Delete instance
+$select = Sql::select(); // returns a pine3ree\Db\Sql\Statement\Select instance
+$insert = Sql::insert(); // returns a pine3ree\Db\Sql\Statement\Insert instance
+$update = Sql::update(); // returns a pine3ree\Db\Sql\Statement\Update instance
+$delete = Sql::delete(); // returns a pine3ree\Db\Sql\Statement\Delete instance
 ```
 
 The `Sql\Statement` classes, as any other `Sql\Element` class, provide a `getSQL()`
@@ -183,11 +183,11 @@ double quotes `"`.
 
 ### Db::select()
 
-Create a `P3\Db\Command\Select` reader command instance
+Create a `pine3ree\Db\Command\Select` reader command instance
 
 ```php
-use P3\Db;
-use P3\Db\Sql;
+use pine3ree\Db;
+use pine3ree\Db\Sql;
 
 /** @var Db $db */
 
@@ -248,7 +248,7 @@ $select = $db->select()->min('price')->from('product')->groupBy('category_id');
 
 ### Db::insert()
 
-Create and optionally execute an `P3\Db\Command\Insert` writer command instance.
+Create and optionally execute an `pine3ree\Db\Command\Insert` writer command instance.
 
 ```php
 // INSERT INTO "product" ("name", "price") VALUES (:val1, :val2)
@@ -369,7 +369,7 @@ will insert the exact rows/values provided unless the 2nd argument is set to `fa
 
 ### Db::update()
 
-The `P3\Db\Command\Update` command abstracts an INSERT operation
+The `pine3ree\Db\Command\Update` command abstracts an INSERT operation
 
 A non empty condition/predicate is required, otherwise an exception is thrown.
 
@@ -389,7 +389,7 @@ $affected = $db->update('product', ['published' => true], 'TRUE');
 
 ### Db::delete()
 
-The `P3\Db\Command\Delete` command abstracts a SQL DELETE operation
+The `pine3ree\Db\Command\Delete` command abstracts a SQL DELETE operation
 
 A non empty condition/predicate is required, otherwise an exception is thrown.
 
@@ -409,7 +409,7 @@ $num_deleted = $db->delete('product', 'stock <= 0');
 ### Sql driver proxy helper methods
 
 The following methods are simple proxies to methods implemented in the
-`P3\Db\Sql\DriverInterface` class of the current dbal's sql-driver instance.
+`pine3ree\Db\Sql\DriverInterface` class of the current dbal's sql-driver instance.
 
 - `Db::quoteIdentifier(string $identifier)` quotes given column/table SQL identifier
 - `Db::quoteAlias(string $alias)` quotes given SQL aliase

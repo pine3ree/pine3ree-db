@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Sql\Clause;
+namespace pine3ree\DbTest\Sql\Clause;
 
-use P3\Db\Sql\Clause\Where;
-use P3\Db\Sql\Clause\WhereAwareTrait;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Params;
-use P3\DbTest\DiscloseTrait;
+use pine3ree\Db\Sql\Clause\Where;
+use pine3ree\Db\Sql\Clause\WhereAwareTrait;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Params;
+use pine3ree\DbTest\DiscloseTrait;
 use PHPUnit\Framework\TestCase;
 
 class WhereAwareTraitTest extends TestCase

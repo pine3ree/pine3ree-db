@@ -1,30 +1,30 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db;
+namespace pine3ree\Db;
 
-use P3\Db\Exception\InvalidArgumentException;
-use P3\Db\Command\Delete;
-use P3\Db\Command\Insert;
-use P3\Db\Command\Select;
-use P3\Db\Command\Update;
-use P3\Db\Sql;
-use P3\Db\Sql\Alias;
-use P3\Db\Sql\Clause\Where;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\DriverInterface;
-use P3\Db\Sql\Identifier;
-use P3\Db\Sql\Literal;
-use P3\Db\Sql\Predicate;
-use P3\Db\Sql\Statement as SqlStatement;
-use P3\Db\Sql\Statement\Select as SqlSelect;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Command\Delete;
+use pine3ree\Db\Command\Insert;
+use pine3ree\Db\Command\Select;
+use pine3ree\Db\Command\Update;
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Alias;
+use pine3ree\Db\Sql\Clause\Where;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Identifier;
+use pine3ree\Db\Sql\Literal;
+use pine3ree\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Statement as SqlStatement;
+use pine3ree\Db\Sql\Statement\Select as SqlSelect;
 use PDO;
 use PDOStatement;
-use P3\Db\Exception\RuntimeException;
+use pine3ree\Db\Exception\RuntimeException;
 
 use function explode;
 use function func_get_args;

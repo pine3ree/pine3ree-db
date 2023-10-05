@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @package     p3-db
- * @subpackage  p3-db-test
+ * @package     pine3ree-db
+ * @subpackage  pine3ree-db-test
  * @author      pine3ree https://github.com/pine3ree
  */
 
-namespace P3\DbTest\Command;
+namespace pine3ree\DbTest\Command;
 
-use P3\Db\Command\Delete;
-use P3\Db\Db;
-use P3\Db\Exception\RuntimeException;
-use P3\Db\Sql\Driver;
-use P3\Db\Sql\Statement;
+use pine3ree\Db\Command\Delete;
+use pine3ree\Db\Db;
+use pine3ree\Db\Exception\RuntimeException;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;

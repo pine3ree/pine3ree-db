@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package p3-db
+ * @package pine3ree-db
  * @author  pine3ree https://github.com/pine3ree
  */
 
-namespace P3\Db\Sql;
+namespace pine3ree\Db\Sql;
 
-use P3\Db\Sql\Element;
+use pine3ree\Db\Sql\Element;
 
 /**
  * A sql-statement object's goal is to abstract a sql statement collecting parts
