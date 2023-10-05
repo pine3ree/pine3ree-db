@@ -28,12 +28,12 @@ use function is_object;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class SelectTestBase extends TestCase
+    abstract class SelectTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class SelectTestBase extends TestCase
+    abstract class SelectTestBase extends TestCase
     {
     }
 }
@@ -89,11 +89,11 @@ class SelectTest extends SelectTestBase
 
         $this->pdoStatement
             ->execute()
-            ->willReturn($this->returnSelf());
+            ->willReturn(true);
 
         $this->pdoStatement
             ->closeCursor()
-            ->willReturn(null);
+            ->willReturn(true);
 
         $this->driver = $this->prophesize(Driver\MySql::class);
 
@@ -652,6 +652,7 @@ class SelectTest extends SelectTestBase
             || $fetchMode === (PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE)
         ) {
             $this->pdoStatement->setFetchMode($fetchMode, $fetchClassOrObject, [])->willReturn(null);
+            $this->pdoStatement->setFetchMode($fetchMode, $fetchClassOrObject, null)->willReturn(null);
             $this->pdoStatement->fetch()->willReturn($row);
         } else {
             $this->pdoStatement->fetch($fetchMode ?? PDO::FETCH_ASSOC)->willReturn($row);
