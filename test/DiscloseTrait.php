@@ -56,7 +56,7 @@ trait DiscloseTrait
      */
     protected function invokeMethodArgs($objectOrClass, string $methodName, array $args = [])
     {
-        return $this->invokeMethod($objectOrClass, ...$args);
+        return $this->invokeMethod($objectOrClass, $methodName, ...$args);
     }
 
     /**
