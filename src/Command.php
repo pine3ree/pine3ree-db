@@ -25,24 +25,24 @@ use pine3ree\Db\Sql\Statement as SqlStatement;
 abstract class Command implements CommandInterface
 {
     /**
-     * @var Db
+     * The database instance used to send the command to the database server
      */
-    protected $db;
+    protected Db $db;
 
     /**
-     * @var SqlStatement
+     * The sql statement object that builds the SQL string for this command
      */
-    protected $sqlStatement;
+    protected SqlStatement $sqlStatement;
 
     /**
      * @var string
      */
-    protected $sql;
+    protected string $sql;
 
     /**
      * @var Params
      */
-    protected $params;
+    protected ?Params $params = null;
 
     /**
      * @param Db $db The database abstraction layer
