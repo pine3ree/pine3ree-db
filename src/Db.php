@@ -5,6 +5,8 @@
  * @author  pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\Db;
 
 use pine3ree\Db\Exception\InvalidArgumentException;
@@ -129,9 +131,13 @@ class Db
 
     private function decorateOptions(): void
     {
+        if ($this->dsn === null) {
+            return;
+        }
+
         $driver_name = explode(':', $this->dsn)[0];
         switch ($driver_name) {
-            // return lowercase column-names in result set for oci-driver
+            // Return lowercase column-names in result set for oci-driver
             case 'oci':
                 $this->options[PDO::ATTR_CASE] = PDO::CASE_LOWER;
                 break;
