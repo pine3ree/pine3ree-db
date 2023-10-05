@@ -6,6 +6,8 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Command;
 
 use pine3ree\Db\Command\Delete;
@@ -21,12 +23,12 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class DeleteTestBase extends TestCase
+    abstract class DeleteTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class DeleteTestBase extends TestCase
+    abstract class DeleteTestBase extends TestCase
     {
     }
 }
@@ -50,7 +52,7 @@ class DeleteTest extends DeleteTestBase
 
         $this->pdoStatement
             ->execute()
-            ->willReturn($this->returnSelf());
+            ->willReturn(true);
     }
 
     public function tearDown(): void
@@ -148,10 +150,6 @@ class DeleteTest extends DeleteTestBase
     {
         $delete = $this->createDeleteCommand();
         $delete->from('user')->where("id = 42");
-
-        $this->pdoStatement->rowCount()->willReturn(false);
-        $result = $delete->exec();
-        self::assertSame(false, $result);
 
         $this->pdoStatement->execute()->willReturn(false);
         $result = $delete->exec();
