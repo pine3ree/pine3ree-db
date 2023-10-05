@@ -39,19 +39,16 @@ class Join extends Clause
     use TableAwareTrait;
     use ConditionalClauseAwareTrait;
 
-    /** @var string */
-    protected static $name = Sql::JOIN;
+    protected static string $name = Sql::JOIN;
 
     /**
-     * @var string|null The resolved name cache
+     * The resolved name cache
      */
-    protected $__name;
+    protected ?string $__name = null;
 
-    /** @var string */
-    private $type;
+    private string $type;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias = null;
 
     /** @var On|Literal|Identifier|null */
     private $specification;

@@ -25,8 +25,8 @@ use function preg_match;
  */
 class Alias extends Element
 {
-    /** @var string */
-    private $alias;
+    /** The original unquoted SQL alias */
+    private string $alias;
 
     protected const VALID_PATTERN = '/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/';
 

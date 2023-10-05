@@ -56,28 +56,22 @@ abstract class Driver implements DriverInterface
     /**
      * @var PDO|null
      */
-    protected $pdo;
+    protected ?PDO $pdo = null;
 
     /**
      * The driver pdo name
-     *
-     * @var string|null
      */
-    protected $name;
+    protected ?string $name = null;
 
     /**
      * The left quote char for identifiers/aliases, default is ANSI '"'
-     *
-     * @var string
      */
-    protected $ql;
+    protected string $ql;
 
     /**
      * The right quote char for identifiers/aliases, default is ANSI '"'
-     *
-     * @var string
      */
-    protected $qr;
+    protected string $qr;
 
     /**
      * The right and left quote chars combinedinto an array
@@ -88,31 +82,27 @@ abstract class Driver implements DriverInterface
 
     /**
      * The quote char for values, default is single-quote char "'"
-     *
-     * @var string
      */
-    protected $qv;
+    protected string $qv;
 
     /**
-     * The basic singleton ansi driver instance
-     *
-     * @var self|null
+     * The basic singleton ANSI driver instance
      */
-    private static $ansi;
+    private static ?Ansi $ansi = null;
 
     protected const ESCAPE_CHARLIST = "\x00\n\r\\'\"\x1a";
 
     /**
      * Reflection methods cache
      *
-     * @var array
+     * @var array|ReflectionMethod[]|<array<string, ReflectionMethod>
      */
     protected static $rm = [];
 
     /**
      *  A map of supported pdo-driver-name to sql-driver-class
      *
-     * @const array<string, string>
+     * @var array<string, string>
      */
     public const SUPPORTED = [
         'mysql'  => Driver\MySql::class,

@@ -21,8 +21,7 @@ trait WhereAwareTrait
 {
     use ConditionalClauseAwareTrait;
 
-    /** @var Where|null */
-    protected $where;
+    protected ?Where $where = null;
 
     /**
      * Set WHERE conditions

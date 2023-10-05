@@ -22,9 +22,9 @@ use function strtoupper;
 abstract class Clause extends Element
 {
     /**
-     * @var string|null The SQL-clause base name: WHERE|HAVING|ON condition clauses
+     * The SQL-clause base name: WHERE|HAVING|ON condition clauses
      */
-    protected static $name;
+    protected static string $name;
 
     /**
      * @var array|string[]|array<string, string> A cache of sql clause names

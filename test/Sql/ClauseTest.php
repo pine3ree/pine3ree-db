@@ -47,7 +47,7 @@ class ClauseTest extends TestCase
     private function createNamedInstance(): Clause
     {
         return new class () extends Clause {
-            protected static $name = "NAMED CLAUSE";
+            protected static string $name = "NAMED CLAUSE";
 
             public function getSQL(DriverInterface $driver = null, Params $params = null): string
             {

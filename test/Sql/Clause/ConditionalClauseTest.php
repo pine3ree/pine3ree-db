@@ -35,7 +35,7 @@ class ConditionalClauseTest extends TestCase
     private function createInstance($predicates = null, string $defaultLogicalOperator = null): ConditionalClause
     {
         return new class ($predicates, $defaultLogicalOperator) extends ConditionalClause {
-            protected static $name = "MY CONDITIONS ARE:";
+            protected static string $name = "MY CONDITIONS ARE:";
         };
     }
 

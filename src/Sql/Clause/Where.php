@@ -15,5 +15,5 @@ use pine3ree\Db\Sql\Clause\ConditionalClause;
  */
 class Where extends ConditionalClause
 {
-    protected static $name = Sql::WHERE;
+    protected static string $name = Sql::WHERE;
 }

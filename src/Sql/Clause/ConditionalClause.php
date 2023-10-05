@@ -29,13 +29,9 @@ use Traversable;
  */
 abstract class ConditionalClause extends Clause implements IteratorAggregate
 {
-    /**
-     * @var Predicate\Set
-     */
-    protected $searchCondition;
+    protected Predicate\Set $searchCondition;
 
-    /** @var bool */
-    protected static $useParenthesis = false;
+    protected static bool $useParenthesis = false;
 
     /**
      * @param null|Predicate[]|Predicate|Predicate\Set|array|string $predicates

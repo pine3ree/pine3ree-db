@@ -15,5 +15,5 @@ use pine3ree\Db\Sql\Clause\ConditionalClause;
  */
 class Having extends ConditionalClause
 {
-    protected static $name = Sql::HAVING;
+    protected static string $name = Sql::HAVING;
 }
