@@ -29,12 +29,12 @@ use const LC_NUMERIC;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class DbTestBase extends TestCase
+    abstract class DbTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class DbTestBase extends TestCase
+    abstract class DbTestBase extends TestCase
     {
     }
 }
