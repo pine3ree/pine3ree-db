@@ -25,6 +25,11 @@ abstract class Clause extends Element
     protected static $name;
 
     /**
+     * @var array|string[]|array<string, string> A cache of sql clause names
+     */
+    private static array $names;
+
+    /**
      * Return the SQL name for the clause (uppercase class-basename) including
      * optional modifiers
      *
@@ -33,20 +38,20 @@ abstract class Clause extends Element
      */
     protected function getName(): string
     {
-        static $name = null;
-
-        // use the statically defined name if set
+        // Use the statically defined name if set
         if (isset(static::$name)) {
             return static::$name;
         }
 
-        // use the cached name value if set
+        $name = self::$names[static::class] ?? null;
         if (isset($name)) {
             return $name;
         }
 
         $name = preg_replace('/([a-z])([A-Z])/', '$1 $2', $this->getShortName());
         $name = strtoupper($name ?? $this->getShortName());
+
+        self::$names[static::class] = $name;
 
         return $name;
     }
