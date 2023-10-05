@@ -32,18 +32,20 @@ trait DiscloseTrait
      */
     protected function invokeMethod($objectOrClass, string $methodName, ...$args)
     {
-        self::assertValidObjectOrClass($objectOrClass);
-
-        $method = new ReflectionMethod($objectOrClass, $methodName);
-        $method->setAccessible(true);
-
-        if ($method->isStatic()) {
-            $object = null;
-        } else {
-            self::assertValidObject($object = $objectOrClass);
-        }
-
-        return $method->invokeArgs($object, $args);
+        return $this->invokeMethodArgs($objectOrClass, $methodName, $args);
+//
+//        self::assertValidObjectOrClass($objectOrClass);
+//
+//        $method = new ReflectionMethod($objectOrClass, $methodName);
+//        $method->setAccessible(true);
+//
+//        if ($method->isStatic()) {
+//            $object = null;
+//        } else {
+//            self::assertValidObject($object = $objectOrClass);
+//        }
+//
+//        return $method->invokeArgs($object, $args);
     }
 
     /** Invoke a protected/private object/class method with given arguments array
@@ -56,7 +58,18 @@ trait DiscloseTrait
      */
     protected function invokeMethodArgs($objectOrClass, string $methodName, array $args = [])
     {
-        return $this->invokeMethod($objectOrClass, $methodName, ...$args);
+        self::assertValidObjectOrClass($objectOrClass);
+
+        $method = new ReflectionMethod($objectOrClass, $methodName);
+        $method->setAccessible(true);
+
+        if ($method->isStatic()) {
+            $object = null;
+        } else {
+            self::assertValidObject($object = $objectOrClass);
+        }
+
+        return $method->invokeArgs($object, $args);
     }
 
     /**
