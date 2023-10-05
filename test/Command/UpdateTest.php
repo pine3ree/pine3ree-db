@@ -6,6 +6,8 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Command;
 
 use pine3ree\Db\Command\Update;
@@ -21,12 +23,12 @@ use pine3ree\Db\Exception\RuntimeException;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class UpdateTestBase extends TestCase
+    abstract class UpdateTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class UpdateTestBase extends TestCase
+    abstract class UpdateTestBase extends TestCase
     {
     }
 }
@@ -50,7 +52,7 @@ class UpdateTest extends UpdateTestBase
 
         $this->pdoStatement
             ->execute()
-            ->willReturn($this->returnSelf());
+            ->willReturn(true);
 
         $this->pdoStatement
             ->closeCursor()
@@ -138,7 +140,7 @@ class UpdateTest extends UpdateTestBase
         self::assertSame(1, $result);
 
         $this->pdoStatement->rowCount()->willReturn(0);
-        $result = $update->set(['username' => 'INVALID'])->exec();
+        $result = $update->set(['username' => 'popeye'])->exec();
         self::assertSame(0, $result);
     }
 
@@ -146,10 +148,6 @@ class UpdateTest extends UpdateTestBase
     {
         $update = $this->createUpdateCommand($db);
         $update->table('user');
-
-        $this->pdoStatement->rowCount()->willReturn(false);
-        $result = $update->set(['username' => 'INVALID'])->exec();
-        self::assertSame(false, $result);
 
         $this->pdoStatement->execute()->willReturn(false);
         $result = $update->set(['username' => 'INVALID'])->exec();
