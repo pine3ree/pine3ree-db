@@ -27,7 +27,11 @@ use PDO;
 use pine3ree\Db\Exception\RuntimeException;
 
 use function func_get_args;
+use function gettype;
 use function is_array;
+use function is_object;
+use function is_string;
+use function sprintf;
 
 /**
  * Class Select
@@ -54,8 +58,8 @@ class Select extends Command implements ReaderInterface
 {
     use ReaderTrait;
 
-    /** @var string|null */
-    protected $indexBy;
+    /** The column to use to index results */
+    protected ?string $indexBy = null;
 
     /**
      * @param Db $db
@@ -454,9 +458,9 @@ class Select extends Command implements ReaderInterface
      *
      * @see \PDOStatement::fetchAll()
      *
-     * @param int $fetch_mode The PDO fetch style
-     * @param mixed $fetch_argument Different meaning depending on the value of the fetch_style parameter
-     * @param array $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS
+     * @param int $fetch_mode The PDO fetch mode
+     * @param mixed $fetch_argument Different meaning depending on the value of the $fetch_mode argument
+     * @param array|null $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS
      * @return array[]
      * @psalm-return array<string|int, mixed>[]
      * @throws RuntimeException
@@ -464,7 +468,7 @@ class Select extends Command implements ReaderInterface
     public function fetchAll(
         int $fetch_mode = PDO::FETCH_ASSOC,
         $fetch_argument = null,
-        array $ctor_args = []
+        ?array $ctor_args = null
     ): array {
         if (false === $stmt = $this->execute()) {
             return [];
@@ -534,13 +538,13 @@ class Select extends Command implements ReaderInterface
      *
      * @param int $fetch_mode The PDO fetch style
      * @param mixed $class_or_object Used with PDO::FETCH_CLASS and PDO::FETCH_INTO
-     * @param array $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS
+     * @param array|null $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS
      * @return array|object|null
      */
     public function fetchOne(
         int $fetch_mode = PDO::FETCH_ASSOC,
         $class_or_object = null,
-        array $ctor_args = []
+        ?array $ctor_args = null
     ) {
         $this->sqlStatement->limit(1);
         if (false === $stmt = $this->execute()) {
@@ -598,9 +602,9 @@ class Select extends Command implements ReaderInterface
     /**
      * Fetch a column of the first row, if any, after executing the composed sql statement
      *
-     * @return string|null
+     * @return mixed|null
      */
-    public function fetchScalar(string $identifier): ?string
+    public function fetchScalar(string $identifier)
     {
         $this->sqlStatement->limit(1);
         if (false === $stmt = $this->execute()) {
