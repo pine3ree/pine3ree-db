@@ -23,6 +23,9 @@ use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionProperty;
 use stdClass;
 
+use function is_int;
+use function is_object;
+
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
     class SelectTestBase extends TestCase
@@ -601,14 +604,16 @@ class SelectTest extends SelectTestBase
         $select->from('user')->indexBy('nonexistent');
 
         $rows = $this->buildResultRows($fetchMode ?? PDO::FETCH_ASSOC);
+
         $this->pdoStatement->fetchAll()->willReturn($rows);
         $this->pdoStatement->fetchAll($fetchMode ?? PDO::FETCH_ASSOC)->willReturn($rows);
+
         $this->expectException(RuntimeException::class);
 
-        if (!is_int($fetchMode)) {
-            $select->fetchAll();
-        } else {
+        if (is_int($fetchMode)) {
             $select->fetchAll($fetchMode);
+        } else {
+            $select->fetchAll();
         }
     }
 
