@@ -43,46 +43,44 @@ use function sprintf;
 
 class Db
 {
-    /** @var PDO|null */
-    private $pdo;
+    /** The wrapped PDO instance */
+    private ?PDO $pdo = null;
 
     /** @var string */
-    private $dsn;
+    private ?string $dsn = null;
 
-    /** @var string|null */
-    private $username;
+    /** The PDO connection username */
+    private ?string $username = null;
 
-    /** @var string|null */
-    private $password;
+    /** @var The PDO connection password */
+    private ?string $password = null;
 
-    /** @var array */
-    private $options;
+    /** PDO connection options */
+    private array $options;
 
-    /** @var string */
-    private $charset;
+    /** The connection charset */
+    private string $charset;
 
-    /** @var string */
+    /** @var string The default connection charset */
     private const DEFAULT_CHARSET = 'utf8';
 
-    /** @var string */
-    private $pdoClass = PDO::class;
+    /** @var The PDO class to use */
+    private string $pdoClass = PDO::class;
 
-    /** @var DriverInterface|null A connection-aware sql-driver instance*/
-    private $driver;
+    /** A connection-aware sql-driver instance */
+    private ?DriverInterface $driver = null;
 
     /** @var DriverInterface|null A connection-less sql-driver instance */
     private $_driver;
 
-    /**
-     * @var bool Has the pdo instance been initialized?
-     */
-    private $pdoIsInitialized = false;
+    /** bool Has the pdo instance been initialized? */
+    private bool $pdoIsInitialized = false;
 
-    /** @var int */
-    private $transactionLevel = 0;
+    /** Keep track of the current nesting transaction depth */
+    private int $transactionLevel = 0;
 
-    /** @var bool */
-    private $inRollBack = false;
+    /** Flag for rollback operation currently active */
+    private bool $inRollBack = false;
 
     /**
      * @param string|PDO $dsn_or_pdo A valid pdo dsn string or an existing pdo connection instance
@@ -121,7 +119,9 @@ class Db
 
         $this->charset = $options['charset'] ?? self::DEFAULT_CHARSET;
         $this->options = $options ?? [];
-        $this->decorateOptions();
+        if (!empty($this->dsn)) {
+            $this->decorateOptions();
+        }
     }
 
     public function __destruct()
@@ -131,7 +131,7 @@ class Db
 
     private function decorateOptions(): void
     {
-        if ($this->dsn === null) {
+        if (empty($this->dsn)) {
             return;
         }
 
@@ -532,7 +532,7 @@ class Db
     }
 
     /**
-     * Return the most appropriate pdo param-type constant for the given value
+     * Return the most appropriate PDO param-type constant for the given value
      *
      * @param mixed $value
      * @return int
@@ -557,12 +557,14 @@ class Db
      *
      * @see PDO::query()
      * @param string $sql The sql-statement string
+     * @param int|null $fetch_mode The default fetch mode for the returned PDOStatement.
+     *      It must be one of the PDO::FETCH_* constants.
      * @return PDOStatement|false Execute the statement and returns either an
      *      already executed traversable PDOStatement object or false on failure.
      *      The PDO statement object can be iterated over to fetch the result-set
      *      rows, if any.
      */
-    public function query(string $sql)
+    public function query(string $sql, ?int $fetch_mode = null)
     {
         return $this->pdo()->query(...func_get_args());
     }
@@ -605,11 +607,9 @@ class Db
      * Try to actually start a PDO transaction or just increase the transaction
      * nesting level counter
      *
-     * Returns true if actually starting a pdo transaction
+     * Returns TRUE if actually starting a pdo transaction
      *
-     * @return bool
-     * @throws RuntimeException If a transaction was already initiated but not by
-     *      this Db instance
+     * @throws RuntimeException If a transaction was already initiated but not by this Db instance
      */
     public function beginTransaction(): bool
     {
@@ -636,18 +636,16 @@ class Db
      * with the same pdo-connectin at some point and has not been yet committed
      * or rolled-back.
      *
-     * This does not check the actual transaction status of the pdo connection that could
+     * This does NOT check the actual transaction status of the pdo connection that could
      * have been initiated autonomally via the pdo instance itself.
-     *
-     * @return bool
      */
     public function inTransaction(): bool
     {
-        if (!$this->isConnected()) {
-            return false;
+        if ($this->isConnected()) {
+            return $this->transactionLevel > 0;
         }
 
-        return $this->transactionLevel > 0;
+        return false;
     }
 
     /**
@@ -659,8 +657,6 @@ class Db
      *
      * Returns true if we are at the first transaction nesting level and the commit
      * operation is supported by the pdo-driver in use and if it succeeds.
-     *
-     * @return bool
      */
     public function commit(): bool
     {
@@ -697,8 +693,6 @@ class Db
      *
      * Returns true if we are at the first transaction nesting level and the rollback
      * operation is supported by the pdo driver in use and if it succeeds.
-     *
-     * @return bool
      */
     public function rollBack(): bool
     {
