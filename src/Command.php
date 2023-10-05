@@ -35,11 +35,6 @@ abstract class Command implements CommandInterface
     protected SqlStatement $sqlStatement;
 
     /**
-     * @var string
-     */
-    protected string $sql;
-
-    /**
      * @var Params
      */
     protected ?Params $params = null;
