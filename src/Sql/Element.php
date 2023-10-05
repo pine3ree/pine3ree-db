@@ -62,6 +62,13 @@ abstract class Element implements ElementInterface
      */
     protected $driver;
 
+    /**
+     * A cache for element classes short name
+     *
+     * @var array|string[]|array<string, string>
+     */
+    protected static array $shortNames = [];
+
     public function hasParams(): bool
     {
         return isset($this->params) && !$this->params->isEmpty();
@@ -112,10 +119,8 @@ abstract class Element implements ElementInterface
      */
     protected function getShortName(): string
     {
-        static $shortName = null;
-
-        return $shortName ?? (
-            $shortName = (new ReflectionClass($this))->getShortName()
+        return self::$shortNames[static::class] ?? (
+            self::$shortNames[static::class] = (new ReflectionClass($this))->getShortName()
         );
     }
 
