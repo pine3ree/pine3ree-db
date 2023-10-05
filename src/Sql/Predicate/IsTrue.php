@@ -5,6 +5,8 @@
  * @author  pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\Db\Sql\Predicate;
 
 use pine3ree\Db\Sql\Alias;
