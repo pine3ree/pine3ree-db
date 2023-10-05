@@ -56,7 +56,7 @@ class UpdateTest extends UpdateTestBase
 
         $this->pdoStatement
             ->closeCursor()
-            ->willReturn(null);
+            ->willReturn(true);
     }
 
     public function tearDown(): void

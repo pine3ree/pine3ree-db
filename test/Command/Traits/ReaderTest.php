@@ -44,7 +44,7 @@ class ReaderTest extends ReaderTestBase
     {
         $this->pdoStatement = $this->prophesize(PDOStatement::class);
         $this->pdoStatement->execute()->willReturn($this->returnSelf());
-        $this->pdoStatement->closeCursor()->willReturn(null);
+        $this->pdoStatement->closeCursor()->willReturn(true);
     }
 
     public function tearDown(): void
