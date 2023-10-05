@@ -6,6 +6,8 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Command\Traits;
 
 use pine3ree\Db\Command\Traits\Writer as WriterTrait;
@@ -18,12 +20,12 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class WriterTestBase extends TestCase
+    abstract class WriterTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class WriterTestBase extends TestCase
+    abstract class WriterTestBase extends TestCase
     {
     }
 }
@@ -43,7 +45,7 @@ class WriterTest extends WriterTestBase
     public function setUp(): void
     {
         $this->pdoStatement = $this->prophesize(PDOStatement::class);
-        $this->pdoStatement->execute()->willReturn($this->returnSelf());
+        $this->pdoStatement->execute()->willReturn(true);
     }
 
     public function tearDown(): void
@@ -75,9 +77,6 @@ class WriterTest extends WriterTestBase
     {
         $writer = $this->createWriterCommand();
 
-        $this->pdoStatement->rowCount()->willReturn(false);
-        self::assertSame(false, $writer->exec());
-
         $this->pdoStatement->execute()->willReturn(false);
         self::assertSame(false, $writer->exec());
     }
@@ -85,9 +84,6 @@ class WriterTest extends WriterTestBase
     public function testExecuteWillCallExec()
     {
         $writer = $this->createWriterCommand();
-
-        $this->pdoStatement->rowCount()->willReturn(false);
-        self::assertSame($writer->exec(), $writer->execute());
 
         $this->pdoStatement->rowCount()->willReturn(42);
         self::assertSame($writer->exec(), $writer->execute());

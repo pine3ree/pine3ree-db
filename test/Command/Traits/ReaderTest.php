@@ -6,6 +6,8 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Command\Traits;
 
 use pine3ree\Db\Command\Traits\Reader as ReaderTrait;
@@ -18,12 +20,12 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class ReaderTestBase extends TestCase
+    abstract class ReaderTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class ReaderTestBase extends TestCase
+    abstract class ReaderTestBase extends TestCase
     {
     }
 }
@@ -43,7 +45,7 @@ class ReaderTest extends ReaderTestBase
     public function setUp(): void
     {
         $this->pdoStatement = $this->prophesize(PDOStatement::class);
-        $this->pdoStatement->execute()->willReturn($this->returnSelf());
+        $this->pdoStatement->execute()->willReturn(true);
         $this->pdoStatement->closeCursor()->willReturn(true);
     }
 
