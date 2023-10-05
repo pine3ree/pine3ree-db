@@ -6,8 +6,12 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest;
 
+use PDO;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Command\Delete;
 use pine3ree\Db\Command\Insert;
 use pine3ree\Db\Command\Select;
@@ -18,8 +22,6 @@ use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Driver\Sqlite;
-use PDO;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use stdClass;
 
@@ -42,9 +44,9 @@ if (trait_exists(ProphecyTrait::class)) {
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class DbTest extends DbTestBase
+class DbTest extends \pine3ree\DbTest\DbTestBase
 {
-    use DiscloseTrait;
+    use \pine3ree\DbTest\DiscloseTrait;
 
     /**
      * The Db instance used to interact with sqlite memory database

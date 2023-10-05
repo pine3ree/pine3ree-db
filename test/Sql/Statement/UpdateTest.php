@@ -6,16 +6,18 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Statement;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause\Where;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Statement\Update;
 use pine3ree\DbTest\DiscloseTrait;
-use PHPUnit\Framework\TestCase;
-use pine3ree\Db\Exception\RuntimeException;
 
 class UpdateTest extends TestCase
 {

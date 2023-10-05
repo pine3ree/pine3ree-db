@@ -6,31 +6,33 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Driver;
 
+use PDO;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\DbTest\DiscloseTrait;
-use PDO;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class AnsiTestBase extends TestCase
+    abstract class AnsiTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class AnsiTestBase extends TestCase
+    abstract class AnsiTestBase extends TestCase
     {
     }
 }
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class AnsiTest extends AnsiTestBase
+class AnsiTest extends \pine3ree\DbTest\Sql\Driver\AnsiTestBase
 {
     use DiscloseTrait;
 

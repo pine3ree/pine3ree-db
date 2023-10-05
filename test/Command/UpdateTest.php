@@ -10,16 +10,16 @@ declare(strict_types=1);
 
 namespace pine3ree\DbTest\Command;
 
-use pine3ree\Db\Command\Update;
-use pine3ree\Db\Db;
-use pine3ree\Db\Sql\Driver;
-use pine3ree\Db\Sql\Statement;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use pine3ree\Db\Command\Update;
+use pine3ree\Db\Db;
+use pine3ree\Db\Exception\RuntimeException;
+use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Statement;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use pine3ree\Db\Exception\RuntimeException;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
@@ -35,7 +35,7 @@ if (trait_exists(ProphecyTrait::class)) {
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class UpdateTest extends UpdateTestBase
+class UpdateTest extends \pine3ree\DbTest\Command\UpdateTestBase
 {
     /** @var ObjectProphecy|PDO */
     private $pdo;

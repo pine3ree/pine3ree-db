@@ -6,14 +6,17 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Predicate;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
-use pine3ree\Db\Sql\Predicate\Expression;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql\Alias;
 use pine3ree\Db\Sql\Identifier;
-use PHPUnit\Framework\TestCase;
-use pine3ree\Db\Exception\RuntimeException;
+use pine3ree\Db\Sql\Predicate\Expression;
+use stdClass;
 
 class ExpressionTest extends TestCase
 {
@@ -46,7 +49,7 @@ class ExpressionTest extends TestCase
     public function testExpressionWithInvalidSubstitutionValueTypeRaisesException()
     {
         $this->expectException(InvalidArgumentException::class);
-        new Expression("id > {id}", ['id' => new \stdClass()]);
+        new Expression("id > {id}", ['id' => new stdClass()]);
     }
 
     /**

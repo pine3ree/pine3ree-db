@@ -6,16 +6,19 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Statement;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement\Insert;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\DbTest\DiscloseTrait;
-use PHPUnit\Framework\TestCase;
-use pine3ree\Db\Exception\RuntimeException;
+use stdClass;
 
 use function array_keys;
 use function array_values;
@@ -82,7 +85,7 @@ class InsertTest extends TestCase
     {
         return [
             [[]],
-            [['price' => new \stdClass()]],
+            [['price' => new stdClass()]],
         ];
     }
 
@@ -282,7 +285,7 @@ class InsertTest extends TestCase
             [[]],
             [[1]],
             [["1"]],
-            [[new \stdClass()]],
+            [[new stdClass()]],
         ];
     }
 

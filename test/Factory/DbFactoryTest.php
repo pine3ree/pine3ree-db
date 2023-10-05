@@ -6,30 +6,32 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Factory;
 
-use pine3ree\Db\Exception\InvalidArgumentException;
-use pine3ree\Db\Db;
-use pine3ree\Db\Factory\DbFactory;
 use PHPUnit\Framework\TestCase;
+use pine3ree\Db\Db;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Factory\DbFactory;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class DbFactoryTestBase extends TestCase
+    abstract class DbFactoryTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class DbFactoryTestBase extends TestCase
+    abstract class DbFactoryTestBase extends TestCase
     {
     }
 }
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class DbFactoryTest extends DbFactoryTestBase
+class DbFactoryTest extends \pine3ree\DbTest\Factory\DbFactoryTestBase
 {
     /** @var ContainerInterface */
     private $container;

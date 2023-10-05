@@ -6,8 +6,11 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Expression;
@@ -17,7 +20,6 @@ use pine3ree\Db\Sql\Statement\Delete;
 use pine3ree\Db\Sql\Statement\Insert;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\Db\Sql\Statement\Update;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class SqlTest

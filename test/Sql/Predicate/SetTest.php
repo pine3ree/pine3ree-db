@@ -6,15 +6,18 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Predicate;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Predicate;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\DbTest\DiscloseTrait;
-use PHPUnit\Framework\TestCase;
-use pine3ree\Db\Exception\RuntimeException;
+use stdClass;
 
 use function array_values;
 
@@ -473,7 +476,7 @@ class SetTest extends TestCase
         return [
             [null],
             [123],
-            [new \stdClass()],
+            [new stdClass()],
         ];
     }
 
@@ -482,7 +485,7 @@ class SetTest extends TestCase
         return [
             [[null]],
             [[123, 4.56]],
-            [[new \stdClass()]],
+            [[new stdClass()]],
         ];
     }
 
@@ -492,7 +495,7 @@ class SetTest extends TestCase
             [null],
             [123],
             [1.23],
-            [new \stdClass()],
+            [new stdClass()],
         ];
     }
 

@@ -6,13 +6,15 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Driver;
 
+use PHPUnit\Framework\TestCase;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement\Select;
-use PHPUnit\Framework\TestCase;
-use pine3ree\Db\Exception\RuntimeException;
 
 class SqlSrvTest extends TestCase
 {

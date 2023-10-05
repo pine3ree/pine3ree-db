@@ -10,14 +10,14 @@ declare(strict_types=1);
 
 namespace pine3ree\DbTest\Command;
 
+use PDO;
+use PDOStatement;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Command\Delete;
 use pine3ree\Db\Db;
 use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Statement;
-use PDO;
-use PDOStatement;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
@@ -35,7 +35,7 @@ if (trait_exists(ProphecyTrait::class)) {
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class DeleteTest extends DeleteTestBase
+class DeleteTest extends \pine3ree\DbTest\Command\DeleteTestBase
 {
     /** @var ObjectProphecy|PDO */
     private $pdo;

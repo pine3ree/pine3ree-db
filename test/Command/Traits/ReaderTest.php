@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace pine3ree\DbTest\Command\Traits;
 
-use pine3ree\Db\Command\Traits\Reader as ReaderTrait;
-use pine3ree\DbTest\DiscloseTrait;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use pine3ree\Db\Command\Traits\Reader as ReaderTrait;
+use pine3ree\DbTest\DiscloseTrait;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
@@ -32,7 +32,7 @@ if (trait_exists(ProphecyTrait::class)) {
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class ReaderTest extends ReaderTestBase
+class ReaderTest extends \pine3ree\DbTest\Command\Traits\ReaderTestBase
 {
     use DiscloseTrait;
 

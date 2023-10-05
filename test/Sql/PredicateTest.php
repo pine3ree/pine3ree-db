@@ -6,9 +6,13 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql;
 
 use ArrayObject;
+use Exception;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Alias;
@@ -18,7 +22,6 @@ use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Predicate;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function array_keys;

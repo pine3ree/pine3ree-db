@@ -6,12 +6,14 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Predicate;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Predicate\Exists;
 use pine3ree\Db\Sql\Predicate\NotExists;
-use PHPUnit\Framework\TestCase;
 
 class ExistsTest extends TestCase
 {

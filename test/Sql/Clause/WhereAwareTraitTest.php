@@ -6,14 +6,16 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Clause;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Sql\Clause\Where;
 use pine3ree\Db\Sql\Clause\WhereAwareTrait;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Params;
 use pine3ree\DbTest\DiscloseTrait;
-use PHPUnit\Framework\TestCase;
 
 class WhereAwareTraitTest extends TestCase
 {

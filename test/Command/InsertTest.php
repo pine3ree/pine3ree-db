@@ -6,16 +6,18 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Command;
 
+use PDO;
+use PDOStatement;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Command\Insert;
 use pine3ree\Db\Db;
 use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Statement;
-use PDO;
-use PDOStatement;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
@@ -33,7 +35,7 @@ if (trait_exists(ProphecyTrait::class)) {
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class InsertTest extends InsertTestBase
+class InsertTest extends \pine3ree\DbTest\Command\InsertTestBase
 {
     /** @var ObjectProphecy|PDO */
     private $pdo;

@@ -6,17 +6,19 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Clause;
 
+use PDO;
+use PHPUnit\Framework\TestCase;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause\ConditionalClause;
 use pine3ree\Db\Sql\Predicate;
 use pine3ree\Db\Sql\Predicate\Set;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\DbTest\DiscloseTrait;
-use pine3ree\Db\Exception\RuntimeException;
-use PDO;
-use PHPUnit\Framework\TestCase;
 
 class ConditionalClauseTest extends TestCase
 {

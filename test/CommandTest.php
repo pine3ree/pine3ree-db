@@ -6,11 +6,12 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest;
 
-//use PDO;
-
-
+use PDOStatement;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Command;
 use pine3ree\Db\Db;
 use pine3ree\Db\Exception\RuntimeException;
@@ -18,25 +19,23 @@ use pine3ree\Db\Sql\DriverInterface;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement;
 use pine3ree\DbTest\DiscloseTrait;
-use PDOStatement;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
-    class CommandTestBase extends TestCase
+    abstract class CommandTestBase extends TestCase
     {
        use ProphecyTrait;
     }
 } else {
-    class CommandTestBase extends TestCase
+    abstract class CommandTestBase extends TestCase
     {
     }
 }
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class CommandTest extends CommandTestBase
+class CommandTest extends \pine3ree\DbTest\CommandTestBase
 {
     use DiscloseTrait;
 

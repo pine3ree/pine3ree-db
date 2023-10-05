@@ -6,12 +6,14 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Predicate;
 
 use ArrayObject;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql\Predicate;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 class BetweenTest extends TestCase

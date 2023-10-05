@@ -6,18 +6,22 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql;
 
+use PDO;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\DbTest\DiscloseTrait;
-use PDO;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use stdClass;
 
 use function setlocale;
+use function trait_exists;
 
 use const LC_NUMERIC;
 
@@ -35,7 +39,7 @@ if (trait_exists(ProphecyTrait::class)) {
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class DriverTest extends DriverTestBase
+class DriverTest extends \pine3ree\DbTest\Sql\DriverTestBase
 {
     use DiscloseTrait;
 
@@ -203,7 +207,7 @@ class DriverTest extends DriverTestBase
     public function provideUnsupportedValues(): array
     {
         return [
-            [new \stdClass()],
+            [new stdClass()],
             [[1, 2, 3]],
         ];
     }

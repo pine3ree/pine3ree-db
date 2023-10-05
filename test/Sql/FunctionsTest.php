@@ -6,17 +6,18 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql\Alias;
 use pine3ree\Db\Sql\Expression;
 use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
-use PHPUnit\Framework\TestCase;
 
 use function pine3ree\Db\Sql\alias;
-use function pine3ree\Db\Sql\expr;
 use function pine3ree\Db\Sql\expression;
 use function pine3ree\Db\Sql\identifier;
 use function pine3ree\Db\Sql\literal;

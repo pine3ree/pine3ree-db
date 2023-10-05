@@ -6,8 +6,13 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Command;
 
+use PDO;
+use PDOStatement;
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Command\Select;
 use pine3ree\Db\Db;
 use pine3ree\Db\Exception\InvalidArgumentException;
@@ -15,9 +20,6 @@ use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Statement;
-use PDO;
-use PDOStatement;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionProperty;
@@ -40,7 +42,7 @@ if (trait_exists(ProphecyTrait::class)) {
 // @codingStandardsIgnoreEnd
 
 // @codingStandardsIgnoreLine
-class SelectTest extends SelectTestBase
+class SelectTest extends \pine3ree\DbTest\Command\SelectTestBase
 {
     /** @var ObjectProphecy|Db */
     private $db;

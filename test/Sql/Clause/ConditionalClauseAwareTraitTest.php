@@ -6,16 +6,18 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Clause;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql\Clause\ConditionalClause;
 use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\Params;
 use pine3ree\DbTest\DiscloseTrait;
-use PHPUnit\Framework\TestCase;
-use pine3ree\Db\Exception\RuntimeException;
 use stdClass;
 
 class ConditionalClauseAwareTraitTest extends TestCase

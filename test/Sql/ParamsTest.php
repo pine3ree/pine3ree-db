@@ -6,15 +6,14 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql;
 
-use pine3ree\Db\Sql\Driver;
-use pine3ree\Db\Sql\DriverInterface;
-use pine3ree\Db\Sql\Element;
-use pine3ree\Db\Sql\Params;
-use pine3ree\DbTest\DiscloseTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use pine3ree\Db\Sql\Params;
+use pine3ree\DbTest\DiscloseTrait;
 use stdClass;
 
 class ParamsTest extends TestCase

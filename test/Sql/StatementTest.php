@@ -6,14 +6,16 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\DriverInterface;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement;
 use pine3ree\DbTest\DiscloseTrait;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 class StatementTest extends TestCase

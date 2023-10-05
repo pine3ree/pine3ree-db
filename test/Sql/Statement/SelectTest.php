@@ -6,9 +6,13 @@
  * @author      pine3ree https://github.com/pine3ree
  */
 
+declare(strict_types=1);
+
 namespace pine3ree\DbTest\Sql\Statement;
 
+use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Alias;
 use pine3ree\Db\Sql\Clause\Join;
@@ -18,8 +22,6 @@ use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\DbTest\DiscloseTrait;
-use PHPUnit\Framework\TestCase;
-use pine3ree\Db\Exception\RuntimeException;
 use stdClass;
 
 class SelectTest extends TestCase
