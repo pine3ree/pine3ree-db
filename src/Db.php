@@ -182,7 +182,7 @@ class Db
     /**
      * Get the active pdo instance, if any, optionally forcing its instantiation
      *
-     * @param bool $instantiate Create a new PDO connection if not already connected
+     * @param bool $instantiate Create a new PDO connection if not already connected?
      * @return PDO|null
      */
     public function getPDO(bool $instantiate = false): ?PDO
