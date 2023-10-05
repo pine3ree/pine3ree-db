@@ -23,7 +23,7 @@ use function strtoupper;
  */
 class Sql
 {
-    /**
+    /*
      * DQL/DML statements
      */
     public const SELECT = 'SELECT';
@@ -39,7 +39,7 @@ class Sql
         self::DELETE => self::DELETE,
     ];
 
-    /**
+    /*
      * DQL/DML keywords
      */
     public const ASTERISK = '*';
@@ -62,7 +62,7 @@ class Sql
         self::DROP   => self::DROP,
     ];
 
-    /**
+    /*
      * Clauses
      */
     public const WHERE    = 'WHERE';
@@ -85,7 +85,7 @@ class Sql
         self::OFFSET   => self::OFFSET,
     ];
 
-    /**
+    /*
      * Join clause types
      */
     public const JOIN_AUTO          = '';
@@ -111,7 +111,7 @@ class Sql
         self::JOIN_NATURAL_RIGHT => self::JOIN_NATURAL_RIGHT,
     ];
 
-    /**
+    /*
      * ORDER BY directions
      */
     public const ASC  = 'ASC';
@@ -123,7 +123,7 @@ class Sql
     ];
 
 
-    /**
+    /*
      * SQL values
      */
     public const NULL    = 'NULL';
@@ -131,7 +131,7 @@ class Sql
     public const FALSE   = 'FALSE';
     public const UNKNOWN = 'UNKNOWN';
 
-    /**
+    /*
      * Comparison operators...
      */
     public const EQUAL              = '=';
@@ -150,7 +150,7 @@ class Sql
     public const GTE = self::GREATER_THAN_EQUAL;
     public const GT  = self::GREATER_THAN;
 
-    // valid comparison operators excluding null/boolean
+    // Valid comparison operators excluding null/boolean
     public const COMPARISON_OPERATORS = [
         self::EQ  => self::EQUAL,
         self::NEQ => self::NOT_EQUAL,
@@ -161,19 +161,19 @@ class Sql
         self::GT  => self::GREATER_THAN,
     ];
 
-    /**
+    /*
      * null/boolean comparison operators
      */
     public const IS     = 'IS';
     public const IS_NOT = 'IS NOT';
 
-    // valid null/bolean operators
+    // Valid null/bolean operators
     public const BOOLEAN_OPERATORS = [
         self::IS     => self::IS,
         self::IS_NOT => self::IS_NOT,
     ];
 
-    /**
+    /*
      * Other conditional operators
      */
     public const BETWEEN     = 'BETWEEN';
@@ -185,7 +185,7 @@ class Sql
     public const LIKE        = 'LIKE';
     public const NOT_LIKE    = 'NOT LIKE';
 
-    // valid conditional operators
+    // Valid conditional operators
     public const CONDITIONAL_OPERATORS = [
         self::BETWEEN     => self::BETWEEN,
         self::NOT_BETWEEN => self::NOT_BETWEEN,
@@ -197,13 +197,13 @@ class Sql
         self::NOT_LIKE    => self::NOT_LIKE,
     ];
 
-    // valid operators excluding boolean operators
+    // Valid operators excluding boolean operators
     public const OPERATORS
         = self::COMPARISON_OPERATORS
         + self::BOOLEAN_OPERATORS
         + self::CONDITIONAL_OPERATORS;
 
-    /**
+    /*
      * Logical operators
      */
     public const AND = 'AND';
@@ -211,7 +211,7 @@ class Sql
     public const XOR = 'XOR';
     public const NOT = 'NOT';
 
-    /**
+    /*
      * Quantifiers
      */
     public const DISTINCT = 'DISTINCT';
@@ -224,7 +224,7 @@ class Sql
         self::ALL      => self::ALL,
     ];
 
-    /**
+    /*
      * COMBINED-SETS
      */
     public const UNION     = 'UNION';
@@ -236,7 +236,7 @@ class Sql
         self::INTERSECT => self::INTERSECT,
     ];
 
-    /**
+    /*
      * FUNCTIONS
      */
     public const ESCAPE = 'ESCAPE';
