@@ -26,6 +26,7 @@ use stdClass;
 use function setlocale;
 
 use const LC_NUMERIC;
+use const PHP_VERSION_ID;
 
 // @codingStandardsIgnoreStart
 if (trait_exists(ProphecyTrait::class)) {
@@ -100,6 +101,11 @@ EOIS
     {
         unset($this->db);
         unset($this->pdo);
+    }
+
+    protected function isPhp81(): bool
+    {
+        return PHP_VERSION_ID > 80099;
     }
 
     public function testInvalidPdoClassRaisesException()
@@ -297,7 +303,7 @@ EOIS
         self::assertArrayHasKey('created_at', $row);
         self::assertArrayHasKey('updated_at', $row);
 
-        self::assertSame('3', $row['id']);
+        self::assertSame($this->isPhp81() ? 3 : '3', $row['id']);
     }
 
     public function testFetchOneByNotFound()
@@ -310,17 +316,17 @@ EOIS
     {
         $row = $this->db->fetchOne('product');
         self::assertIsArray($row);
-        self::assertSame('1', $row['id']);
+        self::assertSame($this->isPhp81() ? 1 : '1', $row['id']);
         self::assertSame('product-1', $row['name']);
 
         $row = $this->db->fetchOne('product', ['id' => 2]);
         self::assertIsArray($row);
-        self::assertSame('2', $row['id']);
+        self::assertSame($this->isPhp81() ? 2 : '2', $row['id']);
         self::assertSame('product-2', $row['name']);
 
         $row = $this->db->fetchOne('product', 'id < 7', ['id' => 'DESC']);
         self::assertIsArray($row);
-        self::assertSame('6', $row['id']);
+        self::assertSame($this->isPhp81() ? 6 : '6', $row['id']);
         self::assertSame('product-6', $row['name']);
     }
 
@@ -338,7 +344,7 @@ EOIS
         self::assertArrayHasKey('published', $row);
         self::assertArrayHasKey('created_at', $row);
         self::assertArrayHasKey('updated_at', $row);
-        self::assertSame('1', $row['id']);
+        self::assertSame($this->isPhp81() ? 1 : '1', $row['id']);
 
         $rows = $this->db->fetchAll('product', "id > 2");
         self::assertCount(7, $rows);
