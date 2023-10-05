@@ -162,14 +162,14 @@ class ElementTest extends TestCase
     }
 
     /**
-     * @dataProvider provideElements
+     * @dataProvider provideSqlElements
      */
-    public function testGetShortName(Element $e, string $expected)
+    public function testGetShortName(Element $sqlElement, string $expected)
     {
-        self::assertSame($expected, $this->invokeMethod($e, 'getShortName'));
+        self::assertSame($expected, $this->invokeMethod($sqlElement, 'getShortName'));
     }
 
-    public function provideElements(): array
+    public function provideSqlElements(): array
     {
         return [
             [new Sql\Alias('totPrice'), 'Alias'],
