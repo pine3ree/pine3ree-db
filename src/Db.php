@@ -39,9 +39,6 @@ use function is_subclass_of;
 use function reset;
 use function sprintf;
 
-/**
- * Class Db
- */
 class Db
 {
     /** @var PDO|null */
@@ -245,7 +242,7 @@ class Db
             return false;
         }
 
-        // set attributes if a PDO instance was passed in
+        // Set attributes if a PDO instance was passed in
         if (empty($this->dsn)) {
             foreach ($this->options as $attribute => $value) {
                 $this->pdo->setAttribute($attribute, $value);
@@ -253,7 +250,7 @@ class Db
         }
 
         switch ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
-            // set charset for pgsql: since charset is a developer written
+            // Set charset for pgsql: since charset is a developer written
             // configuration value there is no need for escaping
             case 'pgsql':
                 $this->pdo->exec("SET NAMES '{$this->charset}'");
@@ -279,7 +276,7 @@ class Db
         $pdo = $with_pdo ? $this->pdo() : $this->pdo;
 
         if (isset($pdo)) {
-            // inject and reuse the pdo-less instance, if any, with the active
+            // Inject and reuse the pdo-less instance, if any, with the active
             // pdo connection
             if (isset($this->_driver)) {
                 $this->_driver->setPDO($pdo);
@@ -297,7 +294,7 @@ class Db
         }
 
         $driver_name = explode(':', $this->dsn)[0];
-        // cache the pdo-less driver instance
+        // Cache the pdo-less driver instance
         $this->_driver = $this->createDriverFromName($driver_name);
         return $this->_driver;
     }
@@ -438,12 +435,12 @@ class Db
             return 0;
         }
 
-        // multiple rows insert: returns int|false
+        // Multiple rows insert: returns int|false
         if (is_array(reset($row_or_rows))) {
             return $insert->rows($row_or_rows)->execute();
         }
 
-        // single row insert: returns bool
+        // Single row insert: returns bool
         $result = $insert->row($row_or_rows, true)->execute();
 
         return $result === false ? false : ($result > 0);
