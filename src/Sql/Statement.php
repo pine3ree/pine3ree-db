@@ -23,7 +23,7 @@ abstract class Statement extends Element
      */
     protected $sqls = [];
 
-    protected static function assertValidValue($value, string $type = '')
+    protected static function assertValidValue($value, string $type = ''): void
     {
         parent::assertValidValue($value, "{$type}statement ");
     }

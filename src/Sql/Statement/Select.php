@@ -228,10 +228,10 @@ class Select extends Statement
     /**
      * @param mixed $column
      * @param string $key
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    private static function assertValidColumn(&$column, string $key = null)
+    private static function assertValidColumn(&$column, string $key = null): void
     {
         if (is_string($column) && '' !== $column = trim($column)) {
             if (is_numeric($column)) {
@@ -472,10 +472,10 @@ class Select extends Statement
     /**
      * @param string|self $from
      * @param string $alias
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    private static function assertValidFrom($from, string &$alias = null)
+    private static function assertValidFrom($from, string &$alias = null): void
     {
         if (is_string($alias)) {
             $alias = trim($alias);

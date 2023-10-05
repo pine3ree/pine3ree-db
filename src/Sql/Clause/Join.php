@@ -85,10 +85,10 @@ class Join extends Clause
 
     /**
      * @param string $join
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidJoin(string $join)
+    protected static function assertValidJoin(string $join): void
     {
         if (!Sql::isValidJoin($join)) {
             throw new InvalidArgumentException(

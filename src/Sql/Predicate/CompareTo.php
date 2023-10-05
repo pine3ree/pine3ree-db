@@ -60,10 +60,10 @@ abstract class CompareTo extends Predicate
 
     /**
      * @param string $operator
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    private static function assertValidComparisonOperator(string $operator)
+    private static function assertValidComparisonOperator(string $operator): void
     {
         if (!isset(Sql::COMPARISON_OPERATORS[$operator])) {
             throw new InvalidArgumentException(

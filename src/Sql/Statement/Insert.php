@@ -114,8 +114,8 @@ class Insert extends Statement
      * Make sure the specified columns are valid column types
      *
      * @param array $columns
+     * 
      * @throws RuntimeException
-     * @return void
      */
     private static function assertValidColumns(array $columns): void
     {
@@ -204,7 +204,7 @@ class Insert extends Statement
      * @return void
      * @throws InvalidArgumentException
      */
-    protected static function assertValidValues(array $values)
+    protected static function assertValidValues(array $values): void
     {
         if (empty($values)) {
             throw new InvalidArgumentException(

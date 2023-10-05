@@ -55,10 +55,10 @@ class Between extends Predicate
 
     /**
      * @param mixed $value
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidLimit($value)
+    protected static function assertValidLimit($value): void
     {
         $is_valid = is_scalar($value) || $value instanceof Literal;
         if (!$is_valid) {

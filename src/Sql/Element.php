@@ -38,31 +38,23 @@ abstract class Element implements ElementInterface
 {
     /**
      * The rendered SQL statement string with optional parameter markers
-     *
-     * @var string|null
      */
-    protected $sql;
+    protected ?string $sql = null;
 
     /**
      * The element's parameters collector, if any
-     *
-     * @var Params|null
      */
-    protected $params;
+    protected ?Params $params = null;
 
     /**
      * The parent element, if any
-     *
-     * @var ElementInterface|null
      */
-    protected $parent;
+    protected ?ElementInterface $parent = null;
 
     /**
      * The last driver argument used in this element getSQL() call
-     *
-     * @var DriverInterface|null
      */
-    protected $driver;
+    protected ?DriverInterface $driver = null;
 
     /**
      * A cache for element classes short name
@@ -106,7 +98,6 @@ abstract class Element implements ElementInterface
      * Return true if element has a parent different from the given element
      *
      * @param ElementInterface $parent
-     * @return bool
      */
     protected function parentIsNot(ElementInterface $parent): bool
     {
@@ -115,9 +106,6 @@ abstract class Element implements ElementInterface
 
     /**
      * Get the class basename
-     *
-     * @staticvar string $shortName The cached base-name of this element's class obtained using reflection
-     * @return string
      */
     protected function getShortName(): string
     {
@@ -133,9 +121,8 @@ abstract class Element implements ElementInterface
      * @param mixed $value
      * @param int|null $type Optional PDO::PARAM_* constant
      * @param string|null $name Optional parameter name seed for pdo marker generation
-     * @return string
      */
-    protected function getValueSQL(Params $params, $value, int $type = null, string $name = null): string
+    protected function getValueSQL(Params $params, $value, ?int $type = null, ?string $name = null): string
     {
         return $value instanceof Literal
             ? $value->getSQL()
@@ -148,7 +135,6 @@ abstract class Element implements ElementInterface
      *
      * @param mixed $identifier
      * @param DriverInterface $driver A SQL-driver
-     * @return string
      * @throws InvalidArgumentException
      */
     protected function getIdentifierSQL($identifier, DriverInterface $driver): string
@@ -182,10 +168,10 @@ abstract class Element implements ElementInterface
      *
      * @param mixed $identifier
      * @param string $type
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidIdentifier(&$identifier, string $type = '')
+    protected static function assertValidIdentifier(&$identifier, string $type = ''): void
     {
         if (is_string($identifier)) {
             $identifier = trim($identifier);
@@ -223,10 +209,10 @@ abstract class Element implements ElementInterface
      *
      * @param mixed $value
      * @param string $type A string identifier for the exception message
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidValue($value, string $type = '')
+    protected static function assertValidValue($value, string $type = ''): void
     {
         if (is_scalar($value) || null === $value || $value instanceof Literal) {
             return;
@@ -246,8 +232,7 @@ abstract class Element implements ElementInterface
     /**
      * Check that the given SQL is a non-empty string
      *
-     * @param string $sql
-     * @return bool
+     * @param string $sql The SQL-string to check
      */
     protected static function isEmptySQL(string &$sql): bool
     {
@@ -257,8 +242,6 @@ abstract class Element implements ElementInterface
     /**
      * Remove the cached SQL string and the collected parameters from this element
      * and all its parent elements
-     *
-     * @return void
      */
     protected function clearSQL(): void
     {

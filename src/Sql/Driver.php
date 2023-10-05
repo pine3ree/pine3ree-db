@@ -141,10 +141,10 @@ abstract class Driver implements DriverInterface
     /**
      * @param string $qc
      * @param string $type
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidQuotingChar(string &$qc, string $type)
+    protected static function assertValidQuotingChar(string &$qc, string $type): void
     {
         $qc = trim($qc);
         if ('' === $qc || strlen($qc) !== 1 || '\\' === $qc) {

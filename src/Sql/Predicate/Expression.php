@@ -70,10 +70,10 @@ class Expression extends Predicate
     /**
      * @param string $name
      * @param mixed $value
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected function assertValidSubstitution(string $name, $value)
+    protected function assertValidSubstitution(string $name, $value): void
     {
         if (false === strpos($this->expression, "{{$name}}")) {
             throw new InvalidArgumentException(

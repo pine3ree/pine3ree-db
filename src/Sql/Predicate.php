@@ -27,18 +27,16 @@ abstract class Predicate extends Element
     /**
      * @param mixed $identifier
      * @param string $type
-     * @return void
      */
-    protected static function assertValidIdentifier(&$identifier, string $type = '')
+    protected static function assertValidIdentifier(&$identifier, string $type = ''): void
     {
         parent::assertValidIdentifier($identifier, "{$type}predicate ");
     }
 
     /**
      * @param mixed $operator
-     * @return void
      */
-    protected static function assertValidOperator($operator)
+    protected static function assertValidOperator($operator): void
     {
         if (!is_string($operator)
             || !Sql::isSupportedOperator($operator)
@@ -50,7 +48,7 @@ abstract class Predicate extends Element
         }
     }
 
-    protected static function assertValidValue($value, string $type = '')
+    protected static function assertValidValue($value, string $type = ''): void
     {
         parent::assertValidValue($value, "{$type}predicate ");
     }

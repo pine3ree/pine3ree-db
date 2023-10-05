@@ -62,10 +62,10 @@ class Comparison extends Predicate
 
     /**
      * @param string $operator
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidComparisonOperator(string $operator)
+    protected static function assertValidComparisonOperator(string $operator): void
     {
         if (!isset(Sql::COMPARISON_OPERATORS[$operator])) {
             throw new InvalidArgumentException(
@@ -77,10 +77,10 @@ class Comparison extends Predicate
 
     /**
      * @param mixed $value
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidComparisonValue($value)
+    protected static function assertValidComparisonValue($value): void
     {
         if (is_scalar($value)
             || $value === null

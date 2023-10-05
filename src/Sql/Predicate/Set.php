@@ -488,10 +488,10 @@ class Set extends Predicate implements IteratorAggregate
 
     /**
      * @param mixed $predicate
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidPredicate($predicate)
+    protected static function assertValidPredicate($predicate): void
     {
         if (is_string($predicate)
             || is_array($predicate)

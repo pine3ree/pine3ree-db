@@ -65,10 +65,10 @@ class Like extends Predicate
 
     /**
      * @param mixed $pattern
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidPattern($pattern)
+    protected static function assertValidPattern($pattern): void
     {
         if (!is_string($pattern) && ! $pattern instanceof Literal) {
             throw new InvalidArgumentException(sprintf(
@@ -80,10 +80,10 @@ class Like extends Predicate
 
     /**
      * @param string $escape
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    protected static function assertValidEscapeCharacter(string $escape)
+    protected static function assertValidEscapeCharacter(string $escape): void
     {
         if (strlen($escape) !== 1) {
             throw new InvalidArgumentException(

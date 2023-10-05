@@ -96,10 +96,10 @@ trait ConditionalClauseAwareTrait
 
     /**
      * @param string $fqcn
-     * @return void
+     *
      * @throws InvalidArgumentException
      */
-    private static function assertValidConditionaClauseClass(string $fqcn)
+    private static function assertValidConditionaClauseClass(string $fqcn): void
     {
         if (!is_subclass_of($fqcn, ConditionalClause::class, true)) {
             throw new InvalidArgumentException(
