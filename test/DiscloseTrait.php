@@ -34,9 +34,7 @@ trait DiscloseTrait
     {
         self::assertValidObjectOrClass($objectOrClass);
 
-        $class = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
-
-        $method = new ReflectionMethod($class, $methodName);
+        $method = new ReflectionMethod($objectOrClass, $methodName);
         $method->setAccessible(true);
 
         if ($method->isStatic()) {
@@ -58,20 +56,7 @@ trait DiscloseTrait
      */
     protected function invokeMethodArgs($objectOrClass, string $methodName, array $args = [])
     {
-        self::assertValidObjectOrClass($objectOrClass);
-
-        $class = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
-
-        $method = new ReflectionMethod($class, $methodName);
-        $method->setAccessible(true);
-
-        if ($method->isStatic()) {
-            $object = null;
-        } else {
-            self::assertValidObject($object = $objectOrClass);
-        }
-
-        return $method->invokeArgs($object, $args);
+        return $this->invokeMethod($objectOrClass, ...$args);
     }
 
     /**
