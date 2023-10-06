@@ -114,10 +114,11 @@ Sub sets of predicates may be created using `begingGroup()` calls:
 use pine3ree\Db\Sql\Predicate;
 
 $predicateSet = new Predicate\Set();
-// add predicates
+
+// Add predicates
 
 // Begin a sub set
-// will be compiled into ("price" > :gt1 OR "stock" > :gt2)
+// The following code will be compiled to ("price" > :gt1 OR "stock" > :gt2)
 $predicateSet
     ->beginGroup() // entering the subset scope
         ->gt('price', 100.0)

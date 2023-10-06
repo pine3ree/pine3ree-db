@@ -43,7 +43,7 @@ $expr = Sql::expr('CONCAT({title}, ' ', "surname")', ['title' => 'sir']);
 
 // Create parameter-less sql Literal expression elements:
 // substitution parameter markers must be enclosed in curly brackets
-$literal = Sql::literal('("price" * 20.0)'); // sql-string: (price * 20.0)
+$literal = Sql::literal('("price" * 20.0)'); // sql-string: ("price" * 20.0)
 
 $select = Sql::select(); // returns a Statement\Select instance
 $insert = Sql::insert(); // returns a Statement\Insert instance

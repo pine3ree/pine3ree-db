@@ -1,5 +1,9 @@
 # pine3ree\Db
 
+##### Note:
+Unless differently specified, all the examples in the guide will use standard
+ANSI quotes `"` to wrap identifiers inside SQL expressions.
+
 ## Quick start
 
 ```php
