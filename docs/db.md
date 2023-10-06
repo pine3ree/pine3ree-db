@@ -1,8 +1,9 @@
 # pine3ree\Db
 
 ##### Note:
-Unless differently specified, all the examples in the guide will use standard
-ANSI quotes `"` to wrap identifiers inside SQL expressions.
+Unless otherwise stated the compiled sql-strings identifiers and aliases in the
+examples will be quoted according to the default `Ansi` driver, i.e. using
+double quotes `"`.
 
 ## Quick start
 
@@ -186,10 +187,6 @@ All database command classes implement the `execute()` method.
 - For reader-DQL-commands (Select) `execute()` will call the reader method
   `Reader::query()` and will return either a traversable `\PDOStatement`
   result-set object or `false` on failure.
-
-Unless otherwise stated in all the examples' compiled sql-strings identifiers
-and aliases will be quoted according to an implied `Ansi` driver, i.e. using
-double quotes `"`.
 
 ### Db::select()
 
