@@ -1,4 +1,4 @@
-## p3\Db\Sql\Statement
+## pine3ree\Db\Sql\Statement
 
 SQL statement classes abstracts full sql statements with named placeholder markers
 in place of the actual parameter values. They are composed of simpler elements like

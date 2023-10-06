@@ -44,21 +44,27 @@ $affected = $db->exec('UPDATE product SET published = FALSE WHERE stock <= 0');
 Other examples:
 
 ```php
-// fetch all rows from the "product" table
+// Fetch all rows from the "product" table
 // fetchAll(string $table, $where = null, $order = null, int $limit = null, int $offset = null): array
 $products = $db->fetchAll('product');
 
-// fetch the product row with column id = 42
+// Fetch the product row with column id = 42
 // fetchOneBy(string $table, string $column, $value, $order = null): ?array
 $product = $db->fetchOneBy('product', 'id', 42);
 
-// same row using `fetchOne()` with condition
+// Same row using `fetchOne()` with condition in array-format
 // fetchOne(string $table, $where = null, $order = null): ?array
 $product = $db->fetchOne('product', ['id' => 42]);
 
-$fiftyExpensiveProducts = $db->fetchAll('product', [
-    ['price', '>', 1000.00],
-], ['price' => 'ASC'], 50);
+$fiftyExpensiveProducts = $db->fetchAll(
+    'product', [ // conditions array start
+        ['price', '>', 1000.00], // 1 conditions in array-format
+    ], // conditions array end
+    [
+        'price' => 'ASC',
+    ],
+    50
+);
 
 $tenMostExpensiveProducts = $db->fetchAll('product', null, ['price' => 'DESC'], 10);
 
@@ -199,7 +205,7 @@ $select = $db->select('*')->from('product');
 $select = $db->select(null, 'product');
 $select = $db->select()->from('product');
 
-// use table alias: SELECT * FROM "product" "p"
+// Use table alias: SELECT * FROM "product" "p"
 $select = $db->select('*', 'product', 'p');
 $select = $db->select('*')->from('product', 'p');
 $select = $db->select()->from('product', 'p');
@@ -207,7 +213,7 @@ $select = $db->select()->from('product', 'p');
  // SELECT "p"."price", "p"."vat_rate" AS "vatRate" FROM "product" "p"
 $select = $db->select(['price', 'vat_rate' => 'vatRate'])->from('product', 'p');
 
-// add where condition LessThanEqual and order-by clause
+// Add where condition LessThanEqual and order-by clause
 $select->where->lte('price', 1000.0); // WHERE "price" <= :lte1 (named parameter marker)
 
 // ORDER BY "p"."price" ASC
@@ -236,7 +242,7 @@ $select = $db->select()
 // using $select->where or $select->having changes the scope and the fluent interface
 // method chain is broken
 
-// add a GROUP BY
+// Add a GROUP BY
 // GROUP BY "category_id" HAVING "numProducts" < :lte1
 $select->groupBy('category_id')
     ->having->lte('numProducts', 5);
@@ -381,7 +387,7 @@ $update = $db->update()->table('product')->set('published', true)->where('stock 
 $update = $db->update('product')->set('published', true)->where('stock > 0');
 $affected = $update->execute(); // or exec()
 
-// immediate command execution
+// Immediate command execution
 // UPDATE "product" SET "published" = :set1 WHERE TRUE, we use the condition "TRUE" to update all records
 $affected = $db->update('product', ['published' => true], 'TRUE');
 ```

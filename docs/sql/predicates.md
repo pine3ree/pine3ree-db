@@ -30,16 +30,16 @@ use pine3ree\Db\Sql\Predicate;
 use pine3ree\Db\Sql\Statement\Select;
 use function pine3ree\Db\Sql\alias;
 
-// empty predicate-set with "AND" as default logical operator
+// Empty predicate-set with "AND" as default logical operator
 $predicateSet = new Predicate\Set();
-// add Predicate\Comparison predicates with equality operator
+// Add Predicate\Comparison predicates with equality operator
 $predicateSet->equal('p.vat_rate', 20.0); // "p"."vat_rate" = :eq1
 $predicateSet->eq(alias('tot.Price'), 20.0); // AND "tot.Price" = :eq2
 
 $predicateSet = new Predicate\Set([], Sql::OR); // default logical operator is "OR"
 $predicateSet->lessThan('vat_rate', 20.0);// "vat_rate" < :lt1
 $predicateSet->lt('price', 100.0); // OR "price" < :lt2
-// add a Predicate\Literal predicate with an expression used as it is
+// Add a Predicate\Literal predicate with an expression used as it is
 $predicateSet->and()->literal('"published" IS TRUE'); // AND "published" IS TRUE
 $predicateSet->or()->gt('stock', 10); // OR "stock" > :gt1
 ```
@@ -49,24 +49,24 @@ As a convenience predicate-set methods may also have a shorter and/or equivalent
 ```php
 use pine3ree\Db\Sql\Predicate;
 
-// creates a Predicate\Comparison with operator =
+// Creates a Predicate\Comparison with operator =
 Predicate\Set::equal($identifier, $value);
 Predicate\Set::eq($identifier, $value);
-// creates a Predicate\Comparison with operator !=
+// Creates a Predicate\Comparison with operator !=
 Predicate\Set::notEqual($identifier, $value);
 Predicate\Set::neq($identifier, $value);
-// creates a Predicate\Comparison with operator <>
+// Creates a Predicate\Comparison with operator <>
 Predicate\Set::ne($identifier, $value);
-// creates a Predicate\Comparison with operator <
+// Creates a Predicate\Comparison with operator <
 Predicate\Set::lessThan($identifier, $value);
 Predicate\Set::lt($identifier, $value);
-// creates a Predicate\Comparison with operator <=
+// Creates a Predicate\Comparison with operator <=
 Predicate\Set::lessThanEqual($identifier, $value);
 Predicate\Set::lte($identifier, $value);
-// creates a Predicate\Comparison with operator >=
+// Creates a Predicate\Comparison with operator >=
 Predicate\Set::greaterThanEqual($identifier, $value);
 Predicate\Set::gte($identifier, $value);
-// creates a Predicate\Comparison with operator >
+// Creates a Predicate\Comparison with operator >
 Predicate\Set::greaterThan($identifier, $value);
 Predicate\Set::gt($identifier, $value);
 
@@ -104,7 +104,7 @@ Predicate sets initialized with a string will use the string to create a literal
 ```php
 use pine3ree\Db\Sql\Predicate;
 
-// the following set will contain 1 predicate of class Predicate\Literal
+// The following set will contain 1 predicate of class Predicate\Literal
 $predicateSet = new Predicate\Set('MAX("price") <= 100.0'); // MAX("price") <= 100.0
 ```
 
@@ -116,7 +116,7 @@ use pine3ree\Db\Sql\Predicate;
 $predicateSet = new Predicate\Set();
 // add predicates
 
-// begin a sub set
+// Begin a sub set
 // will be compiled into ("price" > :gt1 OR "stock" > :gt2)
 $predicateSet
     ->beginGroup() // entering the subset scope

@@ -17,7 +17,7 @@ performed by the composed DBAL instance.
 
 ## Installation
 
-pine3ree-db DBAL requires php >= 7.1 and can be installed via composer
+pine3ree-db DBAL requires php >= 7.4 and can be installed via composer
 
 ```bash
 $ composer require pine3ree/pine3ree-db
