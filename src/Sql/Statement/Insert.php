@@ -10,14 +10,15 @@ declare(strict_types=1);
 namespace pine3ree\Db\Sql\Statement;
 
 use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Driver\Feature\InsertSqlProvider;
 use pine3ree\Db\Sql\DriverInterface;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\Db\Sql\TableAwareTrait;
-use pine3ree\Db\Exception\RuntimeException;
 
 use function array_keys;
 use function array_values;
@@ -44,20 +45,17 @@ class Insert extends Statement
 {
     use TableAwareTrait;
 
-    /** @var bool */
-    private $ignore = false;
+    private bool $ignore = false;
 
     /** @var string[] */
-    private $columns = [];
+    private array $columns = [];
 
-    /** @var int */
-    private $num_columns = 0;
+    private int $num_columns = 0;
 
     /** @var array[] */
-    private $values = [];
+    private array $values = [];
 
-    /** @var Select|null */
-    private $select;
+    private ?Select $select = null;
 
     /**
      * @param string $table
@@ -114,7 +112,7 @@ class Insert extends Statement
      * Make sure the specified columns are valid column types
      *
      * @param array $columns
-     * 
+     *
      * @throws RuntimeException
      */
     private static function assertValidColumns(array $columns): void
@@ -321,12 +319,21 @@ class Insert extends Statement
             );
         }
 
-        $this->driver = $driver; // set last used driver argument
-        $this->params = null; // reset previously collected params, if any
+        $this->driver = $driver; // Set last used driver argument
+        $this->params = null; // Reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
 
+        if ($driver instanceof InsertSqlProvider) {
+            return $this->sql = $driver->getInsertSQL($this, $params);
+        }
+
+        return $this->generateSQL($driver, $params);
+    }
+
+    protected function generateSQL(DriverInterface $driver, Params $params): string
+    {
         $insert  = $this->ignore ? Sql::INSERT_IGNORE : Sql::INSERT;
         $table   = $driver->quoteIdentifier($this->table);
         $columns = $this->getColumnsSQL($driver);
@@ -334,7 +341,7 @@ class Insert extends Statement
 
         if (empty($values)) {
             // @codeCoverageIgnoreStart
-            // should be unreacheable code
+            // This should be unreacheable code
             throw new RuntimeException(
                 "Missing values definitions in INSERT SQL!"
             );

@@ -9,9 +9,11 @@ declare(strict_types=1);
 
 namespace pine3ree\Db\Sql\Driver;
 
+use PDO;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Driver;
+use pine3ree\Db\Sql\Driver\Feature\InsertSqlProvider;
 use pine3ree\Db\Sql\Driver\Feature\LimitSqlProvider;
 use pine3ree\Db\Sql\Driver\Feature\SelectColumnsSqlProvider;
 use pine3ree\Db\Sql\Driver\Feature\SelectDecorator;
@@ -20,14 +22,15 @@ use pine3ree\Db\Sql\Expression;
 use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
 use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement\Insert;
 use pine3ree\Db\Sql\Statement\Select;
-use PDO;
+use RuntimeException;
 
 use function end;
 use function explode;
-use function implode;
 use function get_class;
 use function gettype;
+use function implode;
 use function is_object;
 use function sprintf;
 use function strpos;
@@ -40,7 +43,8 @@ class Oci extends Driver implements
     SelectColumnsSqlProvider,
     SelectSqlDecorator,
     SelectDecorator,
-    LimitSqlProvider
+    LimitSqlProvider,
+    InsertSqlProvider
 {
     /**
      * @const string Quoted table alias for LIMIT+OFFSET statements
@@ -354,5 +358,35 @@ class Oci extends Driver implements
     public function getLimitSQL(Select $select, Params $params): string
     {
         return '';
+    }
+
+    public function getInsertSQL(Insert $insert, Params $params): string
+    {
+        if ($insert->ignore) {
+            throw new RuntimeException(
+                "INSERT IGNORE is not supported by the OCI sql driver"
+            );
+        }
+
+        // Standard single-row insert or INSERT...SELECT: fallback to standard SQL
+        if (count($insert->values) < 2 || $insert->select instanceof Select) {
+            return $this->call($insert, 'generateSQL', $this, $params);
+        }
+
+        $sqls = [];
+
+        $sqls[] = Sql::INSERT . " " . Sql::ALL;
+
+        $table   = $this->quoteIdentifier($insert->table);
+        $columns = $this->call($insert, 'getColumnsSQL', $this);
+        $into    = Sql::INTO . " {$table} {$columns} " . Sql::VALUES ;
+
+        foreach ($insert->values as $values) {
+            $sqls[] = "    {$into} " . $this->call($insert, 'getRowValuesSQL', $values, $this, $params);
+        }
+
+        $sqls[] = "SELECT 1 FROM dual;";
+
+       return implode("\n", $sqls);
     }
 }
