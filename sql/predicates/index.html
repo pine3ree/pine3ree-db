@@ -521,10 +521,11 @@ $predicateSet = new Predicate\Set('MAX(&quot;price&quot;) &lt;= 100.0'); // MAX(
 <pre><code class="language-php">use pine3ree\Db\Sql\Predicate;
 
 $predicateSet = new Predicate\Set();
-// add predicates
+
+// Add predicates
 
 // Begin a sub set
-// will be compiled into (&quot;price&quot; &gt; :gt1 OR &quot;stock&quot; &gt; :gt2)
+// The following code will be compiled to (&quot;price&quot; &gt; :gt1 OR &quot;stock&quot; &gt; :gt2)
 $predicateSet
     -&gt;beginGroup() // entering the subset scope
         -&gt;gt('price', 100.0)
