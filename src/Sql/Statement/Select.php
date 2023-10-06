@@ -77,50 +77,38 @@ class Select extends Statement
     use TableAwareTrait;
     use WhereAwareTrait;
 
-    /** @var string|null */
-    protected $quantifier;
+    protected ?string $quantifier = null;
 
     /**
      * @var string[]|Identifier[]|Literal[]|Expression[]|self[]
      * @psalm-var array<string|int, string|Identifier|Literal|Expression|self>
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /** @var string|self|null */
     protected $from;
 
-    /** @var string|null */
-    protected $alias;
+    protected ?string $alias = null;
 
-    /** @var Join[] */
-    protected $joins = [];
+    protected array $joins = [];
 
-    /** @var array */
-    protected $groupBy = [];
+    protected array $groupBy = [];
 
-    /** @var Having|null */
-    protected $having;
+    protected ?Having $having = null;
 
-    /** @var array */
-    protected $orderBy = [];
+    protected array $orderBy = [];
 
-    /** @var int|null */
-    protected $limit;
+    protected ?int $limit = null;
 
-    /** @var int|null */
-    protected $offset;
+    protected ?int $offset = null;
 
-    /** @var self|null */
-    protected $union;
+    protected ?self $union = null;
 
-    /** @var bool|null */
-    protected $unionAll;
+    protected ?bool $unionAll = null;
 
-    /** @var self|null */
-    protected $intersect;
+    protected ?self $intersect = null;
 
-    /** @var bool */
-    protected $driver_unchanged = true;
+    protected bool $driver_unchanged = true;
 
     /**
      * @param null|string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
@@ -339,11 +327,11 @@ class Select extends Statement
             return $this->sqls['columns'];
         }
 
-        // we can only cache when there are no parameters to import, start with
+        // We can only cache when there are no parameters to import, start with
         // true and set it to false when meeting parametric column
         $cache = true;
 
-        // overridden by driver?
+        // Overridden by driver?
         if ($driver instanceof SelectColumnsSqlProvider) {
             $sql = $driver->getSelectColumnsSQL($this, $params, $cache);
             if ($cache) {
