@@ -108,7 +108,7 @@ use pine3ree\Db\Sql\Predicate;
 $predicateSet = new Predicate\Set('MAX("price") <= 100.0'); // MAX("price") <= 100.0
 ```
 
-Sub sets of predicates may be created using `begingGroup()` calls:
+Subsets of predicates may be created using `begingGroup()` calls:
 
 ```php
 use pine3ree\Db\Sql\Predicate;

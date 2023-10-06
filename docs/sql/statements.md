@@ -8,5 +8,5 @@ composed of.
 
 Supported statements are `Select` for DQL, and `Insert`, `Update`, `Delete` for DML,
 reflecting the previously examined database command classes. The sql-building methods
-used in a command instance are proxies to corresponding methods of composed
+used in a command instance are proxies to corresponding methods of the composed
 sql-statement instance.
