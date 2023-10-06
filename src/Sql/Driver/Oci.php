@@ -387,6 +387,6 @@ class Oci extends Driver implements
 
         $sqls[] = "SELECT 1 FROM dual;";
 
-       return implode("\n", $sqls);
+        return implode("\n", $sqls);
     }
 }

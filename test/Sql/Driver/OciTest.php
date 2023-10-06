@@ -405,7 +405,8 @@ class OciTest extends TestCase
             ],
         ]);
 
-        self::assertSame(<<< EOSQL
+        self::assertSame(
+            <<< EOSQL
             INSERT ALL
                 INTO product (id, name, price) VALUES (:val1, :val2, :val3)
                 INTO product (id, name, price) VALUES (:val4, :val5, :val6)
