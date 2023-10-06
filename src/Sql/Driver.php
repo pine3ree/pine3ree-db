@@ -230,8 +230,8 @@ abstract class Driver implements DriverInterface
         }
 
         if (is_float($value)) {
-            // make sure we use the dot '.' as decimal separator
-            $lc_numeric = setlocale(LC_NUMERIC, "0");
+            // Make sure we use the dot '.' as decimal separator
+            $lc_numeric = setlocale(LC_NUMERIC, "0"); // This returns the current locale
             if ($lc_numeric === 'C') {
                 return (string)$value;
             }
