@@ -211,7 +211,7 @@ $select = $db->select('*')->from('product', 'p');
 $select = $db->select()->from('product', 'p');
 
  // SELECT "p"."price", "p"."vat_rate" AS "vatRate" FROM "product" "p"
-$select = $db->select(['price', 'vat_rate' => 'vatRate'])->from('product', 'p');
+$select = $db->select(['price', 'vatRate' => 'vat_rate'])->from('product', 'p');
 
 // Add where condition LessThanEqual and order-by clause
 $select->where->lte('price', 1000.0); // WHERE "price" <= :lte1 (named parameter marker)
