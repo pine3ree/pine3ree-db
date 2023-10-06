@@ -11,43 +11,48 @@
       
       
       
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../sql/elements/">
+      
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.6">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
-        <title>Db - pine3ree/p3-db</title>
+        <title>Db - pine3ree/pine3ree-db</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.2c0c5eaf.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.7fa14f5b.min.css">
-        
-          
-          
-          <meta name="theme-color" content="#7e56c2">
-        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
       
+      
+
     
     
     
       
+        
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
-    
     
     
       <link rel="stylesheet" href="../css/code.css">
     
       <link rel="stylesheet" href="../css/monokai-sublime.min.css">
     
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
+
+    
     
     
   </head>
@@ -58,9 +63,9 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="">
-      
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
   
+    
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -68,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#p3db" class="md-skip">
+        <a href="#pine3reedb" class="md-skip">
           Skip to content
         </a>
       
@@ -77,22 +82,27 @@
       
     </div>
     
-      <header class="md-header" data-md-component="header">
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="pine3ree/p3-db" class="md-header__button md-logo" aria-label="pine3ree/p3-db" data-md-component="logo">
+    <a href=".." title="pine3ree/pine3ree-db" class="md-header__button md-logo" aria-label="pine3ree/pine3ree-db" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            pine3ree/p3-db
+            pine3ree/pine3ree-db
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -104,26 +114,30 @@
         </div>
       </div>
     </div>
-    <div class="md-header__options">
+    
       
-    </div>
+    
+    
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
-      
-<div class="md-search" data-md-component="search" role="dialog">
+      <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
-      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-      </button>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -131,7 +145,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -140,11 +154,10 @@
     
     
       <div class="md-header__source">
-        
-<a href="https://github.com/pine3ree/p3-db/" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/pine3ree/pine3ree-db" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -153,11 +166,14 @@
       </div>
     
   </nav>
+  
 </header>
     
     <div class="md-container" data-md-component="container">
       
       
+        
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -175,21 +191,20 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="pine3ree/p3-db" class="md-nav__button md-logo" aria-label="pine3ree/p3-db" data-md-component="logo">
+    <a href=".." title="pine3ree/pine3ree-db" class="md-nav__button md-logo" aria-label="pine3ree/pine3ree-db" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    pine3ree/p3-db
+    pine3ree/pine3ree-db
   </label>
   
     <div class="md-nav__source">
-      
-<a href="https://github.com/pine3ree/p3-db/" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/pine3ree/pine3ree-db" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -225,7 +240,8 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
       
         
       
@@ -240,7 +256,9 @@
       </a>
       
         
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -348,13 +366,32 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" data-md-state="indeterminate" type="checkbox" id="__nav_3" checked>
       
-      <label class="md-nav__link" for="__nav_3">
-        Sql
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Sql" data-md-level="1">
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Sql
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Sql
@@ -362,6 +399,7 @@
         <ul class="md-nav__list" data-md-scrollfix>
           
             
+              
   
   
   
@@ -372,8 +410,10 @@
     </li>
   
 
+            
           
             
+              
   
   
   
@@ -384,8 +424,10 @@
     </li>
   
 
+            
           
             
+              
   
   
   
@@ -396,8 +438,10 @@
     </li>
   
 
+            
           
             
+              
   
   
   
@@ -408,8 +452,10 @@
     </li>
   
 
+            
           
             
+              
   
   
   
@@ -420,6 +466,7 @@
     </li>
   
 
+            
           
         </ul>
       </nav>
@@ -435,19 +482,20 @@
             
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
-              
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
-                  <a href="https://github.com/pine3ree/p3-db/edit/master/docs/db.md" title="Edit this page" class="md-content__button md-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-                  </a>
-                
-                
-                <h1 id="p3db">P3\Db</h1>
+                  
+
+  
+  
+
+
+<h1 id="pine3reedb">pine3ree\Db</h1>
 <h2 id="quick-start">Quick start</h2>
-<pre><code class="php">use P3\Db;
-use P3\Db\Factory\DbFactory;
+<pre><code class="language-php">use pine3ree\Db;
+use pine3ree\Db\Factory\DbFactory;
 use PDO;
 
 // 1. Create a dbal instance using an existing PDO connection
@@ -483,34 +531,38 @@ $stmt = $db-&gt;query('SELECT * FROM product WHERE price &lt; 100.0 AND id &lt; 
 // false if execution fails
 $affected = $db-&gt;exec('UPDATE product SET published = FALSE WHERE stock &lt;= 0');
 </code></pre>
-
 <p>Other examples:</p>
-<pre><code class="php">// fetch all rows from the &quot;product&quot; table
+<pre><code class="language-php">// Fetch all rows from the &quot;product&quot; table
 // fetchAll(string $table, $where = null, $order = null, int $limit = null, int $offset = null): array
 $products = $db-&gt;fetchAll('product');
 
-// fetch the product row with column id = 42
+// Fetch the product row with column id = 42
 // fetchOneBy(string $table, string $column, $value, $order = null): ?array
 $product = $db-&gt;fetchOneBy('product', 'id', 42);
 
-// same row using `fetchOne()` with condition
+// Same row using `fetchOne()` with condition in array-format
 // fetchOne(string $table, $where = null, $order = null): ?array
 $product = $db-&gt;fetchOne('product', ['id' =&gt; 42]);
 
-$fiftyExpensiveProducts = $db-&gt;fetchAll('product', [
-    ['price', '&gt;', 1000.00],
-], ['price' =&gt; 'ASC'], 50);
+$fiftyExpensiveProducts = $db-&gt;fetchAll(
+    'product', [ // conditions array start
+        ['price', '&gt;', 1000.00], // 1 conditions in array-format
+    ], // conditions array end
+    [
+        'price' =&gt; 'ASC',
+    ],
+    50
+);
 
 $tenMostExpensiveProducts = $db-&gt;fetchAll('product', null, ['price' =&gt; 'DESC'], 10);
 
 $mostExpensiveProduct = $db-&gt;fetchOne('product', null, ['price' =&gt; 'DESC']);
 </code></pre>
-
 <h3 id="constructor-arguments">Constructor arguments</h3>
-<p><code>P3\Db</code> supports the same constructor arguments as the <code>\PDO</code> class.</p>
+<p><code>pine3ree\Db</code> supports the same constructor arguments as the <code>\PDO</code> class.</p>
 <p>It also supports an extra argument, an optional custom PDO subclass to use in
 lazy connection instances.</p>
-<pre><code class="php">class Db
+<pre><code class="language-php">class Db
 {
    /**
      * @param string|PDO $dsn_or_pdo A valid pdo dsn string or an existing pdo connection instance
@@ -529,13 +581,12 @@ lazy connection instances.</p>
 }
 //...
 </code></pre>
-
 <p>The first argument can also be an existing PDO instance itself, that will be used
 as the composed pdo connection.</p>
 <h3 id="factory-configuration-parameters">Factory configuration parameters</h3>
 <p>Factory configuration retrieved from the container should return an array like the
 one below:</p>
-<pre><code class="php">// file config.php
+<pre><code class="language-php">// file config.php
 return [
     // full dsn specification
     'db' =&gt; [ // alt key: 'pdo' =&gt; [...]
@@ -558,7 +609,6 @@ return [
     ],
 ];
 </code></pre>
-
 <p>The database configuration subkeys depend on the db driver used and must be all
 in snake_case format. Please check the pdo driver page https://www.php.net/manual/en/pdo.drivers.php
 for more information.</p>
@@ -566,24 +616,22 @@ for more information.</p>
 <p>Supported drivers are <code>mysql</code>, <code>pgsql</code>, <code>sqlite</code>, <code>sqlsrv</code> and <code>oci</code>.</p>
 <h2 id="crud-commands">CRUD commands</h2>
 <p>To start building a crud databse command you can use the following methods:</p>
-<pre><code class="php">$select = $db-&gt;select(); // returns a P3\Db\Command\Select instance
-$insert = $db-&gt;insert(); // returns a P3\Db\Command\Insert instance
-$update = $db-&gt;update(); // returns a P3\Db\Command\Update instance
-$delete = $db-&gt;delete(); // returns a P3\Db\Command\Delete instance
+<pre><code class="language-php">$select = $db-&gt;select(); // returns a pine3ree\Db\Command\Select instance
+$insert = $db-&gt;insert(); // returns a pine3ree\Db\Command\Insert instance
+$update = $db-&gt;update(); // returns a pine3ree\Db\Command\Update instance
+$delete = $db-&gt;delete(); // returns a pine3ree\Db\Command\Delete instance
 </code></pre>
-
 <p>Database command instances provide a fluent interface for building sql statement.
-The sql build is actually perfomed by the composed sql-statement (<code>P3\Db\Sql\Statement</code>)
-instance with the help of the sql-driver (<code>P3\Sql\DriverInterface</code>) created for
+The sql build is actually perfomed by the composed sql-statement (<code>pine3ree\Db\Sql\Statement</code>)
+instance with the help of the sql-driver (<code>pine3ree\Sql\DriverInterface</code>) created for
 the current connection.</p>
-<p>The corresponding sql-statement objects ca be created with the following <code>P3\Db\Sql</code> helper
+<p>The corresponding sql-statement objects ca be created with the following <code>pine3ree\Db\Sql</code> helper
 class static methods:</p>
-<pre><code class="php">$select = Sql::select(); // returns a P3\Db\Sql\Statement\Select instance
-$insert = Sql::insert(); // returns a P3\Db\Sql\Statement\Insert instance
-$update = Sql::update(); // returns a P3\Db\Sql\Statement\Update instance
-$delete = Sql::delete(); // returns a P3\Db\Sql\Statement\Delete instance
+<pre><code class="language-php">$select = Sql::select(); // returns a pine3ree\Db\Sql\Statement\Select instance
+$insert = Sql::insert(); // returns a pine3ree\Db\Sql\Statement\Insert instance
+$update = Sql::update(); // returns a pine3ree\Db\Sql\Statement\Update instance
+$delete = Sql::delete(); // returns a pine3ree\Db\Sql\Statement\Delete instance
 </code></pre>
-
 <p>The <code>Sql\Statement</code> classes, as any other <code>Sql\Element</code> class, provide a <code>getSQL()</code>
 method which compiles the sql string for the given sql-driver argument or the default
 <code>Ansi</code> driver. The sql-drivers provide identifier quoting and other sql transformations
@@ -605,9 +653,9 @@ only if not passed-in as the 2nd argument of the <code>getSQL()</code> call.</p>
 and aliases will be quoted according to an implied <code>Ansi</code> driver, i.e. using
 double quotes <code>"</code>.</p>
 <h3 id="dbselect">Db::select()</h3>
-<p>Create a <code>P3\Db\Command\Select</code> reader command instance</p>
-<pre><code class="php">use P3\Db;
-use P3\Db\Sql;
+<p>Create a <code>pine3ree\Db\Command\Select</code> reader command instance</p>
+<pre><code class="language-php">use pine3ree\Db;
+use pine3ree\Db\Sql;
 
 /** @var Db $db */
 
@@ -619,15 +667,15 @@ $select = $db-&gt;select('*')-&gt;from('product');
 $select = $db-&gt;select(null, 'product');
 $select = $db-&gt;select()-&gt;from('product');
 
-// use table alias: SELECT * FROM &quot;product&quot; &quot;p&quot;
+// Use table alias: SELECT * FROM &quot;product&quot; &quot;p&quot;
 $select = $db-&gt;select('*', 'product', 'p');
 $select = $db-&gt;select('*')-&gt;from('product', 'p');
 $select = $db-&gt;select()-&gt;from('product', 'p');
 
  // SELECT &quot;p&quot;.&quot;price&quot;, &quot;p&quot;.&quot;vat_rate&quot; AS &quot;vatRate&quot; FROM &quot;product&quot; &quot;p&quot;
-$select = $db-&gt;select(['price', 'vat_rate' =&gt; 'vatRate'])-&gt;from('product', 'p');
+$select = $db-&gt;select(['price', 'vatRate' =&gt; 'vat_rate'])-&gt;from('product', 'p');
 
-// add where condition LessThanEqual and order-by clause
+// Add where condition LessThanEqual and order-by clause
 $select-&gt;where-&gt;lte('price', 1000.0); // WHERE &quot;price&quot; &lt;= :lte1 (named parameter marker)
 
 // ORDER BY &quot;p&quot;.&quot;price&quot; ASC
@@ -656,7 +704,7 @@ $select = $db-&gt;select()
 // using $select-&gt;where or $select-&gt;having changes the scope and the fluent interface
 // method chain is broken
 
-// add a GROUP BY
+// Add a GROUP BY
 // GROUP BY &quot;category_id&quot; HAVING &quot;numProducts&quot; &lt; :lte1
 $select-&gt;groupBy('category_id')
     -&gt;having-&gt;lte('numProducts', 5);
@@ -664,10 +712,9 @@ $select-&gt;groupBy('category_id')
 // SELECT MIN(&quot;price&quot;) FROM &quot;product&quot; GROUP BY &quot;category_id&quot;
 $select = $db-&gt;select()-&gt;min('price')-&gt;from('product')-&gt;groupBy('category_id');
 </code></pre>
-
 <h3 id="dbinsert">Db::insert()</h3>
-<p>Create and optionally execute an <code>P3\Db\Command\Insert</code> writer command instance.</p>
-<pre><code class="php">// INSERT INTO &quot;product&quot; (&quot;name&quot;, &quot;price&quot;) VALUES (:val1, :val2)
+<p>Create and optionally execute an <code>pine3ree\Db\Command\Insert</code> writer command instance.</p>
+<pre><code class="language-php">// INSERT INTO &quot;product&quot; (&quot;name&quot;, &quot;price&quot;) VALUES (:val1, :val2)
 $insert = $db-&gt;insert()
     -&gt;into('product')
     -&gt;row([
@@ -683,10 +730,9 @@ $insert = $db-&gt;insert()
 
 $result = $insert-&gt;execute() // or $insert-&gt;exec(), returns TRUE or FALSE for single row insert
 </code></pre>
-
 <p><strong>Insert and execute</strong> shortcut call, when both arguments (<code>$table</code> and <code>$row</code>/<code>$rows</code>)
 are provided:</p>
-<pre><code class="php">$result = $db-&gt;insert('product', [
+<pre><code class="language-php">$result = $db-&gt;insert('product', [
     'name' =&gt; 'product-111',
     'price' =&gt; 111.11,
 ]); // returns TRUE or FALSE for single insert
@@ -694,9 +740,8 @@ are provided:</p>
 // get the last generated value if the insert is successful
 $id = $result ? $db-&gt;lastInsertId() : null;
 </code></pre>
-
 <p>Insert many rows:</p>
-<pre><code class="php">// INSERT INTO &quot;product&quot; (&quot;name&quot;, &quot;price&quot;) VALUES (:val1, :val2), (:val3, :val4)
+<pre><code class="language-php">// INSERT INTO &quot;product&quot; (&quot;name&quot;, &quot;price&quot;) VALUES (:val1, :val2), (:val3, :val4)
 $num_inserted = $db-&gt;insert('product', [
     [
         'name' =&gt; 'product-111',
@@ -750,12 +795,11 @@ $num_inserted = $db-&gt;insert()
         ],
     ])-&gt;execute();
 </code></pre>
-
 <p>By default <code>Insert::values(array $values, bool $reset = false)</code> and
 <code>Insert::row(array $row, bool $reset = false)</code> will add new inset values to
 existing ones. This can be changed by setting the 2nd
 argument to <code>true</code>:</p>
-<pre><code class="php">$insert = $db-&gt;insert('product');
+<pre><code class="language-php">$insert = $db-&gt;insert('product');
 
 $insert-&gt;row(['price' =&gt; 111.11, 'stock' =&gt; 111]); // adds 1 set of values
 $insert-&gt;row(['price' =&gt; 222.22, 'stock' =&gt; 222]); // adds 1 set of values
@@ -771,29 +815,27 @@ $insert-&gt;execute(); // this will try to insert 4 rows
 $insert-&gt;row(['price' =&gt; 555.55, 'stock' =&gt; 555], true);
 $insert-&gt;execute(); // this will try to insert 1 row
 </code></pre>
-
 <p>The opposite happens for <code>Insert::rows(array $rows, bool $reset = true)</code> and
 <code>Insert::multipleValues(array $values, bool $reset = true)</code>. These methods calls
 will insert the exact rows/values provided unless the 2nd argument is set to <code>false</code>.</p>
 <h3 id="dbupdate">Db::update()</h3>
-<p>The <code>P3\Db\Command\Update</code> command abstracts an INSERT operation</p>
+<p>The <code>pine3ree\Db\Command\Update</code> command abstracts an INSERT operation</p>
 <p>A non empty condition/predicate is required, otherwise an exception is thrown.</p>
 <p>Examples:</p>
-<pre><code class="php">// UPDATE &quot;product&quot; SET &quot;published&quot; = :set1 WHERE stock &gt; 0
+<pre><code class="language-php">// UPDATE &quot;product&quot; SET &quot;published&quot; = :set1 WHERE stock &gt; 0
 $update = $db-&gt;update()-&gt;table('product')-&gt;set('published', true)-&gt;where('stock &gt; 0');
 $update = $db-&gt;update('product')-&gt;set('published', true)-&gt;where('stock &gt; 0');
 $affected = $update-&gt;execute(); // or exec()
 
-// immediate command execution
+// Immediate command execution
 // UPDATE &quot;product&quot; SET &quot;published&quot; = :set1 WHERE TRUE, we use the condition &quot;TRUE&quot; to update all records
 $affected = $db-&gt;update('product', ['published' =&gt; true], 'TRUE');
 </code></pre>
-
 <h3 id="dbdelete">Db::delete()</h3>
-<p>The <code>P3\Db\Command\Delete</code> command abstracts a SQL DELETE operation</p>
+<p>The <code>pine3ree\Db\Command\Delete</code> command abstracts a SQL DELETE operation</p>
 <p>A non empty condition/predicate is required, otherwise an exception is thrown.</p>
 <p>Examples:</p>
-<pre><code class="php">// DELETE FROM &quot;product&quot; WHERE stock &lt;= 0
+<pre><code class="language-php">// DELETE FROM &quot;product&quot; WHERE stock &lt;= 0
 $delete = $db-&gt;delete()-&gt;from('product')-&gt;where('stock &lt;= 0');
 $delete = $db-&gt;delete('product')-&gt;where('stock &lt;= 0');
 $num_deleted = $delete-&gt;execute(); // or exec()
@@ -802,88 +844,63 @@ $num_deleted = $delete-&gt;execute(); // or exec()
 // DELETE FROM &quot;product&quot; WHERE stock &lt;= 0
 $num_deleted = $db-&gt;delete('product', 'stock &lt;= 0');
 </code></pre>
-
 <h3 id="sql-driver-proxy-helper-methods">Sql driver proxy helper methods</h3>
 <p>The following methods are simple proxies to methods implemented in the
-<code>P3\Db\Sql\DriverInterface</code> class of the current dbal's sql-driver instance.</p>
+<code>pine3ree\Db\Sql\DriverInterface</code> class of the current dbal's sql-driver instance.</p>
 <ul>
 <li><code>Db::quoteIdentifier(string $identifier)</code> quotes given column/table SQL identifier</li>
 <li><code>Db::quoteAlias(string $alias)</code> quotes given SQL aliase</li>
 <li><code>Db::quoteValue(null|scalar $value)</code> perform type-casting and quotes - when required - the given value</li>
 </ul>
-                
-              
-              
-                
 
 
-              
-            </article>
-          </div>
+
+
+
+                
+              </article>
+            </div>
+          
+          
         </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </button>
+        
       </main>
       
-        
-<footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        <a href=".." class="md-footer__link md-footer__link--prev" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              Home
-            </div>
-          </div>
-        </a>
-      
-      
-        <a href="../sql/elements/" class="md-footer__link md-footer__link--next" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Elements
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
+        <footer class="md-footer">
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-          <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2021 pine3ree
-          </div>
-        
-        Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs
-        </a>
-        
-      </div>
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2021 pine3ree
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
       
-  <div class="md-footer-social">
+        <div class="md-social">
+  
     
-      
-      
-      <a href="https://github.com/pine3ree/p3-db" target="_blank" rel="noopener" title="source on github" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
-      </a>
     
-  </div>
-
+    
+    
+    <a href="https://github.com/pine3ree/pine3ree-db" target="_blank" rel="noopener" title="source on github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
     </div>
   </div>
 </footer>
@@ -892,14 +909,19 @@ $num_deleted = $db-&gt;delete('product', 'stock &lt;= 0');
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"features": ["navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"], "translations": {"search.result.none": "No matching documents", "search.config.lang": "en", "search.config.separator": "[\\s\\-]+", "clipboard.copied": "Copied to clipboard", "search.config.pipeline": "trimmer, stopWordFilter", "search.result.one": "1 matching document", "clipboard.copy": "Copy to clipboard", "search.result.placeholder": "Type to start searching", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.other": "# matching documents"}, "base": "..", "search": "../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
       
-        <script src="../js/highlight.min.js"></script>
+        
+          <script src="../js/highlight.min.js"></script>
+        
       
-        <script src="../js/hljs.js"></script>
+        
+          <script src="../js/hljs.js"></script>
+        
       
     
   </body>
