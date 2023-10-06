@@ -19,6 +19,7 @@ use pine3ree\Db\Sql\Expression;
 use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
 use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Statement\Insert;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\DbTest\DiscloseTrait;
 
@@ -376,5 +377,42 @@ class OciTest extends TestCase
     {
         $select = new Select('*', 'user');
         self::assertSame($select, $this->driver->decorateSelect($select, new Params()));
+    }
+
+    public function testDecorateInsertSQL()
+    {
+        $insertPrototype = new Insert('product');
+
+//        $sql = $insertPrototype->getSQL($this->driver, new Params());
+//        $sql = str_replace([" ", "\n"], '%w', $sql);
+
+        $insert = clone $insertPrototype;
+        $insert->rows([
+            [
+                'id' => 1,
+                'name' => 'product-1',
+                'price' => 1.11,
+            ],
+            [
+                'id' => 2,
+                'name' => 'product-2',
+                'price' => 2.22,
+            ],
+            [
+                'id' => 3,
+                'name' => 'product-3',
+                'price' => 3.33,
+            ],
+        ]);
+
+        self::assertSame(<<< EOSQL
+            INSERT ALL
+                INTO product (id, name, price) VALUES (:val1, :val2, :val3)
+                INTO product (id, name, price) VALUES (:val4, :val5, :val6)
+                INTO product (id, name, price) VALUES (:val7, :val8, :val9)
+            SELECT 1 FROM dual;
+            EOSQL,
+            $insert->getSQL($this->driver)
+        );
     }
 }
