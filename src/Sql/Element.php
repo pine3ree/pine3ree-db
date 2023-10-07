@@ -33,6 +33,7 @@ use function trim;
  *
  * @property-read Params|null $params The parameters collector, if any
  * @property-read ElementInterface|null $parent The parent element, if any
+ * @property-read ElementInterface|null $top The top-level element element, if any
 */
 abstract class Element implements ElementInterface
 {
@@ -81,6 +82,37 @@ abstract class Element implements ElementInterface
     public function getParent(): ?ElementInterface
     {
         return $this->parent;
+    }
+
+    public function up(): ?ElementInterface
+    {
+        return $this->parent;
+    }
+
+    public function closest(string $fqcn, bool $strict = false): ?ElementInterface
+    {
+        $closest = $this->parent;
+        while ($closest) {
+            if ($closest instanceof $fqcn) {
+                if (!$strict || $fqcn === get_class($closest)) {
+                    return $closest;
+                }
+            }
+            $closest = $closest->parent;
+        }
+
+        return $closest;
+    }
+
+    public function top(): ?ElementInterface
+    {
+        $parent = $this->parent;
+        while ($parent) {
+            $top = $parent;
+            $parent = $parent->parent;
+        }
+
+        return $top ?? null;
     }
 
     public function setParent(ElementInterface $parent): void
@@ -274,13 +306,21 @@ abstract class Element implements ElementInterface
      */
     public function __get(string $name)
     {
+        if ('params' === $name) {
+            return $this->params;
+        };
+
         if ('parent' === $name) {
             return $this->parent;
         };
 
-        if ('params' === $name) {
-            return $this->params;
-        };
+        if ('top' === $name) {
+            $top = $this->parent;
+            while ($top) {
+                $top = $top->parent;
+            }
+            return $top;
+        }
 
         throw new RuntimeException(sprintf(
             "Undefined property `%s` for sql-element of class `%s`!",
