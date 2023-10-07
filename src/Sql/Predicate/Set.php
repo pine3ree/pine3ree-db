@@ -931,7 +931,7 @@ class Set extends Predicate implements IteratorAggregate
     }
 
     /**
-     * @see self::equal()
+     * @see self::notEqual()
      *
      * @param string|Alias|Identifier|Literal $identifier
      * @param scalar|Literal|Identifier|Alias|null $value
