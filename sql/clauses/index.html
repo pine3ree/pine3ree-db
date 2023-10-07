@@ -607,7 +607,7 @@ $select
         'u.enabled' =&gt; true, // equality condition in key =&gt; value form
     ]);
 
-// SELECT &quot;p&quot;.*, &quot;u&quot;.&quot;name&quot; AS &quot;user&quot; FROM &quot;post&quot; &quot;p&quot;
+// SELECT &quot;p&quot;.*, &quot;u&quot;.&quot;name&quot; AS &quot;author&quot; FROM &quot;post&quot; &quot;p&quot;
 // LEFT JOIN &quot;user&quot; &quot;u&quot; ON (&quot;u&quot;.id = &quot;p&quot;.user_id AND &quot;u&quot;.&quot;enabled&quot; = :eq1)
 </code></pre>
 <p>The sql <code>Select</code> statement class provides the following utility methods for sql-joins:</p>
