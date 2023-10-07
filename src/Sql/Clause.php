@@ -27,7 +27,7 @@ abstract class Clause extends Element
     protected static string $name;
 
     /**
-     * @var array|string[]|array<string, string> A cache of sql clause names
+     * @var array|string[]|array<string, string> A cache of computed sql clause names
      */
     private static array $names;
 
