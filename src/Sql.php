@@ -270,7 +270,7 @@ class Sql
      * @param string|null $alias The db-table alias
      * @return Select
      */
-    public static function select($columns = Sql::ASTERISK, $from = null, string $alias = null): Select
+    public static function select($columns = null, $from = null, string $alias = null): Select
     {
         return new Select($columns, $from, $alias);
     }
