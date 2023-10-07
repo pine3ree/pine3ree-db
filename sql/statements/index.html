@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pine3reedbsqlstatement" class="md-skip">
+        <a href="#statement" class="md-skip">
           Skip to content
         </a>
       
@@ -367,9 +367,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pine3reedbsqlstatement" class="md-nav__link">
-    pine3ree\Db\Sql\Statement
+  <a href="#statement" class="md-nav__link">
+    Statement
   </a>
+  
+    <nav class="md-nav" aria-label="Statement">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    Select
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -422,16 +435,19 @@
 
   <h1>Statements</h1>
 
-<h2 id="pine3reedbsqlstatement">pine3ree\Db\Sql\Statement</h2>
-<p>SQL statement classes abstracts full sql statements with named placeholder markers
-in place of the actual parameter values. They are composed of simpler elements like
-identifiers, aliases, expressions, predicates and clauses. Statement are actually
-sql-statement builders providing methods for adding the innser elements they are
-composed of.</p>
+<h2 id="statement">Statement</h2>
+<p><code>pine3ree\Db\Sql\Statement</code></p>
+<p>The SQL statement classes abstract full sql statements with named placeholder markers
+in place of the actual parameter values. They are composed of simpler SQL elements
+such as identifiers, aliases, expressions, predicates and clauses.</p>
+<p>Statement are actually sql-statement builders and provides methods for adding the
+inner elements they are composed of.</p>
 <p>Supported statements are <code>Select</code> for DQL, and <code>Insert</code>, <code>Update</code>, <code>Delete</code> for DML,
 reflecting the previously examined database command classes. The sql-building methods
 used in a command instance are proxies to corresponding methods of the composed
 sql-statement instance.</p>
+<h3 id="select">Select</h3>
+<p><code>pine3ree\Db\Sql\Statement\Select</code></p>
 
 
 

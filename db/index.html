@@ -501,8 +501,9 @@
 
 <h1 id="pine3reedb">pine3ree\Db</h1>
 <h5 id="note">Note:</h5>
-<p>Unless differently specified, all the examples in the guide will use standard
-ANSI quotes <code>"</code> to wrap identifiers inside SQL expressions.</p>
+<p>Unless otherwise stated the compiled sql-strings identifiers and aliases in the
+examples will be quoted according to the default <code>Ansi</code> driver, i.e. using
+double quotes <code>"</code>.</p>
 <h2 id="quick-start">Quick start</h2>
 <pre><code class="language-php">use pine3ree\Db;
 use pine3ree\Db\Factory\DbFactory;
@@ -659,9 +660,6 @@ only if not passed-in as the 2nd argument of the <code>getSQL()</code> call.</p>
   <code>Reader::query()</code> and will return either a traversable <code>\PDOStatement</code>
   result-set object or <code>false</code> on failure.</li>
 </ul>
-<p>Unless otherwise stated in all the examples' compiled sql-strings identifiers
-and aliases will be quoted according to an implied <code>Ansi</code> driver, i.e. using
-double quotes <code>"</code>.</p>
 <h3 id="dbselect">Db::select()</h3>
 <p>Create a <code>pine3ree\Db\Command\Select</code> reader command instance</p>
 <pre><code class="language-php">use pine3ree\Db;

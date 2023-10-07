@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pine3reedbsqlclause" class="md-skip">
+        <a href="#clauses" class="md-skip">
           Skip to content
         </a>
       
@@ -332,9 +332,47 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Clauses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Clauses
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-where-having-and-on-conditional-clauses" class="md-nav__link">
+    The Where, Having and On conditional clauses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-join-clause" class="md-nav__link">
+    The Join clause
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -393,8 +431,207 @@
   
 
 
-<h1 id="pine3reedbsqlclause">pine3ree\Db\Sql\Clause</h1>
-<h1 id="pine3reedbsqlclausejoin">pine3ree\Db\Sql\Clause\Join</h1>
+<h1 id="clauses">Clauses</h1>
+<p>The abstract class <code>pine3ree\Db\Sql\Clause</code> is the base class for implementations
+that abstract common SQL clauses such as the <code>JOIN</code> clause and the conditional
+clauses <code>WHERE</code>, <code>HAVING</code> and <code>ON</code>.</p>
+<h2 id="the-where-having-and-on-conditional-clauses">The Where, Having and On conditional clauses</h2>
+<p>A conditional clause wraps a search condition object as an instance of <code>Predicate\Set</code>
+It also provides proxy methods to all the condition building methods of a predicate-set.
+After the first call of any of such methods we are brought into the context of the
+composed predicate-set.</p>
+<pre><code class="language-php">
+use pine3ree\Db\Sql\Params;
+use pine3ree\Db\Sql\Predicate;
+
+ConditionalClause::getSearchCondition(): Predicate\Set;
+ConditionalClause::isEmpty(): bool
+ConditionalClause::hasParams(): bool
+ConditionalClause::getParams(): ?Params
+ConditionalClause::getSQL(DriverInterface $driver = null, Params $params = null): string
+/**
+ * @param Predicate|string|array $predicate A Predicate|Predicate\Set instance
+ *      or a specs-array [identifier, operator, value] or [identifier =&gt; value]
+ */
+ConditionalClause::addPredicate($predicate): Predicate\Set;
+ConditionalClause::literal(string $literal): Predicate\Set;
+ConditionalClause::expression(string $expression, array $substitutions = []): Predicate\Set;
+ConditionalClause::expr(string $expression, array $substitutions = []): Predicate\Set;
+ConditionalClause::all($identifier, string $operator, Select $select): Predicate\Set;
+ConditionalClause::any($identifier, string $operator, Select $select): Predicate\Set;
+ConditionalClause::some($identifier, string $operator, Select $select): Predicate\Set;
+ConditionalClause::between($identifier, $min_value, $max_value): Predicate\Set;
+ConditionalClause::notBetween($identifier, $min_value, $max_value): Predicate\Set;
+ConditionalClause::exists(Select $select): Predicate\Set;
+ConditionalClause::notExists(Select $select): Predicate\Set;
+ConditionalClause::in($identifier, $valueList): Predicate\Set;
+ConditionalClause::notIn($identifier, $valueList): Predicate\Set;
+ConditionalClause::is($identifier, $value): Predicate\Set;
+ConditionalClause::isNot($identifier, $value): Predicate\Set;
+ConditionalClause::isNull($identifier): Predicate\Set;
+ConditionalClause::isNotNull($identifier): Predicate\Set;
+ConditionalClause::isTrue($identifier): Predicate\Set;
+ConditionalClause::isFalse($identifier): Predicate\Set;
+ConditionalClause::isUnknown($identifier): Predicate\Set;
+ConditionalClause::isNotUnknown($identifier): Predicate\Set;
+ConditionalClause::like($identifier, $pattern, string $escape = null): Predicate\Set;
+ConditionalClause::notLike($identifier, $pattern, string $escape = null): Predicate\Set;
+ConditionalClause::equal($identifier, $value): Predicate\Set;
+ConditionalClause::eq($identifier, $value): Predicate\Set;
+ConditionalClause::notEqual($identifier, $value): Predicate\Set;
+ConditionalClause::neq($identifier, $value): Predicate\Set;
+ConditionalClause::ne($identifier, $value): Predicate\Set;
+ConditionalClause::lessThan($identifier, $value): Predicate\Set;
+ConditionalClause::lt($identifier, $value): Predicate\Set;
+ConditionalClause::lessThanEqual($identifier, $value): Predicate\Set;
+ConditionalClause::lte($identifier, $value): Predicate\Set;
+ConditionalClause::greaterThanEqual($identifier, $value): Predicate\Set;
+ConditionalClause::gte($identifier, $value): Predicate\Set;
+ConditionalClause::greaterThan($identifier, $value): Predicate\Set;
+ConditionalClause::gt($identifier, $value): Predicate\Set;
+ConditionalClause::and(): Predicate\Set;
+ConditionalClause::or(): Predicate\Set;
+ConditionalClause::beginGroup(string $defaultLogicalOperator = Sql::AND): Predicate\Set;
+
+</code></pre>
+<p>An endGroup() method is not provided as we call it from the search-condition <code>Predicate\Set</code> context</p>
+<p>Examples:</p>
+<pre><code class="language-php">
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Clause\Where;
+use pine3ree\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Statement\Select;
+
+$date = '2023-10-07';
+
+$select = Sql::select();
+$select
+    -&gt;from('tax_rate', 'tr')
+    -&gt;where // changed context to the composed Where instance
+        -&gt;lte('tr.date_min', $date) // changed context to the composed Predicate\Set instance
+        -&gt;and()
+        -&gt;beginGroup() // changed context to the nested Predicate\Set instance
+            -&gt;equal('tr.date_max', '0000-00-00')
+            -&gt;or()
+            -&gt;gte('tr.date_max', $date)
+        -&gt;endGroup(); // changed context back to the Where::$searchCondition Predicate\Set instance
+
+// SELECT &quot;tr&quot;.* FROM &quot;tax_rate&quot; &quot;tr&quot; WHERE &quot;tr&quot;.&quot;date_min&quot; &lt;= :lte1 AND (&quot;tr&quot;.&quot;date_max&quot; = :eq1 OR &quot;tr&quot;.&quot;date_max&quot; &gt;= :gte1)
+
+$select = Sql::select();
+$select
+    -&gt;columns([
+        'id',
+        'name',
+        'originalPrice' =&gt; 'price',
+    ])
+    -&gt;column(Sql::literal('(p.price - p.discount)'), 'discountedPrice')
+    -&gt;from('product', 'p')
+    -&gt;where
+        -&gt;gt('discount', 0.0)
+    -&gt;top() // Back to the Select instance, we could have called -&gt;up()-&gt;up(), or -&gt;closest(Select::class)
+    -&gt;having
+        -&gt;lte('discountedPrice', 100.00);
+
+// SELECT &quot;p&quot;.&quot;id&quot;, &quot;p&quot;.&quot;name&quot;, &quot;p&quot;.&quot;price&quot; AS &quot;originalPrice&quot;, (&quot;p&quot;.price - &quot;p&quot;.discount) AS &quot;discountedPrice&quot;
+// FROM &quot;product&quot; &quot;p&quot;
+// WHERE &quot;discount&quot; &gt; :gt1
+// HAVING &quot;discountedPrice&quot; &lt;= :lte1
+</code></pre>
+<h2 id="the-join-clause">The Join clause</h2>
+<p>The class <code>pine3ree\Db\Sql\Clause\Join</code> abstract the SQL JOIN clause.
+A Join instance is created with at least 2 parameters:</p>
+<ul>
+<li>the join type ('', 'INNER', 'CROSS', 'LEFT', 'RIGHT', 'STRAIGHT', 'NATURAL',
+  'NATURAL LEFT', 'NATURAL RIGHT' - <code>Sql::JOIN_*</code> constants ara available)</li>
+<li>the joined table name</li>
+</ul>
+<p>and most commonly with the following optional parameters</p>
+<ul>
+<li>the joined table alias</li>
+<li>the join specification in the form of a sql literal predicate rendered as the 
+  wrapped string, a sql identifier that is automatically wrapped in a
+  <code>USING("identifier")</code> clause, an <code>On</code> clause or conditions in various form
+  (strings, arrays, predicates, predicate-sets, ..) the will be used to build
+  an <code>On</code> conditional-clause instance</li>
+</ul>
+<p>Examples:</p>
+<pre><code class="language-php">
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Clause\Join;
+use pine3ree\Db\Sql\Predicate;
+use pine3ree\Db\Sql\Statement\Select;
+
+$select = new Select(); // or $select = Sql::select()
+
+$select
+    -&gt;columns([
+        'title',
+        'summary',
+        'date',
+        'author' =&gt; 'u.name', // key:alias, value: column
+    ])
+    -&gt;from('post', 'p')
+    -&gt;addJoin(new Join(
+        Sql::JOIN_LEFT, // or just &quot;LEFT&quot;,
+        'user',
+        'u',
+        'u.id = p.user_id' // Will be used as a literal predicate for the On clause
+    ));
+
+// The resulting sql-string is split into two lines to improve readability
+//
+// SELECT &quot;p&quot;.&quot;title&quot;, &quot;p&quot;.&quot;summary&quot;, &quot;p&quot;.&quot;date&quot;, &quot;u&quot;.&quot;name&quot; AS &quot;author&quot; FROM &quot;post&quot; &quot;p&quot;
+// LEFT JOIN &quot;user&quot; &quot;u&quot; ON (&quot;u&quot;.id = &quot;p&quot;.user_id)
+
+// If using a literal predicate then &quot;ON&quot; sql keyword must be included manually, i.e:
+new Predicate\Literal('ON u.id = p.user_id')
+</code></pre>
+<p>You will usually call join select method intead of programmatically creating new
+<code>Join instances</code></p>
+<pre><code class="language-php">
+use pine3ree\Db\Sql;
+use pine3ree\Db\Sql\Clause\Join;
+use pine3ree\Db\Sql\Statement\Select;
+
+$select = Sql::select();
+
+$select
+    -&gt;columns([
+        '*',
+        'author' =&gt; 'u.name',
+    ])
+    -&gt;from('post', 'p')
+    -&gt;leftJoin('user', 'u', [ // conditions array used to build the On clause
+        'u.id = p.user_id', // literal string
+        'u.enabled' =&gt; true, // equality condition in key =&gt; value form
+    ]);
+
+// SELECT &quot;p&quot;.*, &quot;u&quot;.&quot;name&quot; AS &quot;user&quot; FROM &quot;post&quot; &quot;p&quot;
+// LEFT JOIN &quot;user&quot; &quot;u&quot; ON (&quot;u&quot;.id = &quot;p&quot;.user_id AND &quot;u&quot;.&quot;enabled&quot; = :eq1)
+</code></pre>
+<p>The sql <code>Select</code> statement class provides the following utility methods for sql-joins:</p>
+<pre><code class="language-php">Select::addJoin(Join $join): self;
+
+/**
+ * Common signature
+ *
+ * @param string $table The joined table name
+ * @param string $alias The joined table alias
+ * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+ * @return $this Fluent interface
+ */
+
+Select::innerJoin(string $table, string $alias, $specification = null): self;
+Select::leftJoin(string $table, string $alias, $specification = null): self;
+Select::rightJoin(string $table, string $alias, $specification = null): self;
+Select::naturalJoin(string $table, string $alias, $specification = null): self;
+Select::naturalLeftJoin(string $table, string $alias, $specification = null): self;
+Select::naturalRightJoin(string $table, string $alias, $specification = null): self;
+Select::crossJoin(string $table, string $alias, $specification = null): self;
+Select::straightJoin(string $table, string $alias, $specification = null): self;
+
+</code></pre>
 
 
 
