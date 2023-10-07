@@ -190,7 +190,7 @@ $select
         'u.enabled' => true, // equality condition in key => value form
     ]);
 
-// SELECT "p".*, "u"."name" AS "user" FROM "post" "p"
+// SELECT "p".*, "u"."name" AS "author" FROM "post" "p"
 // LEFT JOIN "user" "u" ON ("u".id = "p".user_id AND "u"."enabled" = :eq1)
 ```
 
