@@ -18,7 +18,7 @@ use function is_string;
 use function sprintf;
 
 /**
- * Predicate represents a single SQL condition that can be evaluates by the underlying
+ * Predicate represents a single SQL condition that can be evaluated by the underlying
  * database software. It is usually part of set of conditions (Predicate\Set) such
  * as the WHERE, the HAVING and the ON clauses or their nested sets of conditions.
  */
