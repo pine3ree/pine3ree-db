@@ -23,8 +23,7 @@ use function trim;
  */
 class Literal extends Predicate
 {
-    /** @var string */
-    protected $literal;
+    protected string $literal;
 
     public function __construct(string $literal)
     {
