@@ -16,6 +16,7 @@ use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Alias;
+use pine3ree\Db\Sql\Clause\ConditionalClause;
 use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\DriverInterface;
@@ -47,7 +48,8 @@ use function trim;
  *
  * @property-read string $defaultLogicalOperator
  * @property-read string|null $nextLogicalOperator The next logical operator
- * @property-read array $predicates An array of [(AND|OR), Predicate] added so fare
+ * @property-read array|Predicate[] $predicates An array of [(AND|OR), Predicate] added so far
+ * @property-read ConditionalClause|null $clause Return the context of the parent conditional-clause, if any
 */
 class Set extends Predicate implements IteratorAggregate
 {
@@ -1143,6 +1145,16 @@ class Set extends Predicate implements IteratorAggregate
         return $this;
     }
 
+    /**
+     * Set the context to the closest conditional-clause (where, having, on). if any
+     *
+     * @return ConditionalClause|null
+     */
+    public function clause(): ?ConditionalClause
+    {
+        return $this->closest(ConditionalClause::class, false);
+    }
+
     public function __clone()
     {
         parent::__clone();
@@ -1157,6 +1169,10 @@ class Set extends Predicate implements IteratorAggregate
      */
     public function __get(string $name)
     {
+        if ('clause' === $name) {
+            return $this->clause();
+        };
+
         if ('predicates' === $name) {
             return $this->predicates;
         };
