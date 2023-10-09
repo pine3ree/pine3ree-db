@@ -128,6 +128,8 @@ class Set extends Predicate implements IteratorAggregate
         'notBetween'  => Sql::NOT_BETWEEN,
         'NOTBETWEEN'  => Sql::NOT_BETWEEN,
         'NOT_BETWEEN' => Sql::NOT_BETWEEN,
+        'in'  => Sql::IN,
+        'IN'  => Sql::IN,
         'notIn'  => Sql::NOT_IN,
         'NOTIN'  => Sql::NOT_IN,
         'NOT_IN' => Sql::NOT_IN,
