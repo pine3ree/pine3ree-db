@@ -529,7 +529,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
     }
 
     /**
-     * @see Predicate\Set::and()
+     * @see Predicate\Set::or()
      * @return Predicate\Set This clause's composed search-condition
      */
     public function or(): Predicate\Set
@@ -541,7 +541,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      * Open a nested predicate-set which will translate into a SQL group of
      * conditions inside parenthesis
      *
-     * @see Predicate\Set::notRegExp()
+     * @see Predicate\Set::beginGroup()
      *
      * @param string $defaultLogicalOperator The default logical operator for the nested set
      *
