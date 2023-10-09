@@ -120,8 +120,8 @@ class Comparison extends Predicate
 
         $operator = $this->operator;
 
-        // transform equality/inequality operators with null values into `IS NULL`,
-        //  `IS NOT NULL` expressions
+        // Transform equality/inequality operators with null values into `IS NULL`,
+        // `IS NOT NULL` expressions
         if (is_null($this->value)) {
             switch ($operator) {
                 case Sql::EQUAL:
@@ -144,13 +144,13 @@ class Comparison extends Predicate
         ) {
             $param = $this->value->getSQL($driver);
         } else {
-            $param = $params->create($this->value, null, $this->getParamName($operator));
+            $param = $params->create($this->value, null, $this->createParamName($operator));
         }
 
         return $this->sql = "{$identifier} {$operator} {$param}";
     }
 
-    private function getParamName(string $operator): string
+    private function createParamName(string $operator): string
     {
         static $map = [
             '='  => 'eq',
