@@ -98,7 +98,7 @@ class Comparison extends Predicate
             . " a SQL-literal,"
             . " a SQL-alias or"
             . " a SQL-identifier,"
-            . " `%s` provided in class``%s!",
+            . " `%s` provided in class`%s`!",
             is_object($value) ? get_class($value) : gettype($value),
             static::class
         ));
