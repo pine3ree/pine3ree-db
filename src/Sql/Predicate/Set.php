@@ -11,8 +11,9 @@ namespace pine3ree\Db\Sql\Predicate;
 
 use ArrayIterator;
 use Closure;
-use pine3ree\Db\Exception\InvalidArgumentException;
 use IteratorAggregate;
+use pine3ree\Db\Exception\InvalidArgumentException;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Alias;
 use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait;
@@ -23,7 +24,6 @@ use pine3ree\Db\Sql\Literal;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Predicate;
 use pine3ree\Db\Sql\Statement\Select;
-use pine3ree\Db\Exception\RuntimeException;
 use Throwable;
 use Traversable;
 
@@ -54,16 +54,14 @@ class Set extends Predicate implements IteratorAggregate
     /** @var Predicate[] */
     protected $predicates = [];
 
-    /** @var int Internal counter for predicate keys */
-    protected $count = 0;
+    /** Internal counter for predicate keys */
+    protected int  $count = 0;
 
-    /** @var string */
-    protected $defaultLogicalOperator = Sql::AND;
+    protected string $defaultLogicalOperator = Sql::AND;
 
-    /** @var string|null */
-    protected $nextLogicalOperator;
+    protected ?string $nextLogicalOperator = null;
 
-    /**
+    /*
      * Logical operator aliases/identifiers for predicate-sets defined via arrays
      */
     public const COMB_AND = '&&';
