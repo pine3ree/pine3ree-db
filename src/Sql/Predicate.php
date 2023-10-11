@@ -46,7 +46,7 @@ abstract class Predicate extends Element
         $parent = $this->parent;
         while ($parent) {
             $top = $parent;
-            $parent = $parent->parent;
+            $parent = $parent->getParent();
         }
 
         return $top ?? null;
