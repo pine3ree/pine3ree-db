@@ -18,6 +18,7 @@ use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Alias;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\DriverInterface;
+use pine3ree\Db\Sql\Element;
 use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
 use pine3ree\Db\Sql\Params;
@@ -191,5 +192,29 @@ class PredicateTest extends TestCase
 
         self::assertSame([42], $params_values);
         self::assertStringMatchesFormat(':value%d', $params_keys[0]);
+    }
+
+    public function testUpMethod()
+    {
+        $predicate = $this->createInstance('id', Sql::EQ, 42);
+        $parent = $this->prophesize(Element::class);
+
+        $predicate->setParent($parent->reveal());
+
+        self::assertSame($parent->reveal(), $predicate->up());
+        self::assertSame($predicate->getParent(), $predicate->up());
+    }
+
+    public function testTopMethod()
+    {
+        $predicate = $this->createInstance('id', Sql::EQ, 42);
+
+        $parent = $this->prophesize(Element::class);
+        $predicate->setParent($parent->reveal());
+
+        $top = $this->prophesize(Element::class);
+        $parent->getParent()->willReturn($top->reveal());
+
+        self::assertSame($top->reveal(), $predicate->top());
     }
 }
