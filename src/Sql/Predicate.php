@@ -24,6 +24,35 @@ use function sprintf;
  */
 abstract class Predicate extends Element
 {
+
+    /**
+     * Utility short-named method to move the context to, i.e. return, the parent
+     * element, if any, or return NULL
+     *
+     * @return ElementInterface|null Provides fluent interface
+     */
+    public function up(): ?ElementInterface
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Utility short-named method to move the context to, i.e. return,the top-level
+     * element in the parent chain if any parent at all, or return NULL
+     *
+     * @return ElementInterface|null Provides fluent interface
+     */
+    public function top(): ?ElementInterface
+    {
+        $parent = $this->parent;
+        while ($parent) {
+            $top = $parent;
+            $parent = $parent->parent;
+        }
+
+        return $top ?? null;
+    }
+
     /**
      * @param mixed $identifier
      * @param string $type

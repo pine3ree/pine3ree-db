@@ -91,27 +91,4 @@ interface ElementInterface
      * @throws RuntimeException
      */
     public function setParent(ElementInterface $parent): void;
-
-    /**
-     * Move to the parent element context, if any, or return NULL
-     *
-     * @return ElementInterface|null Provides fluent interface
-     */
-    public function up(): ?ElementInterface;
-
-    /**
-     * Move to the closest ancestor element of given class, if any, or return NULL
-     *
-     * @param string $fqcn The fully-qualified-class-name of the ancestor we are looking for
-     * @param bool $strict Flag for strict class-name matching, or return first innstanceof the class
-     * @return ElementInterface|null Provides fluent interface
-     */
-    public function closest(string $fqcn, bool $strict = false): ?ElementInterface;
-
-    /**
-     * Move the top-level element context in the parent chain, if any parent at all, or return NULL
-     *
-     * @return ElementInterface|null Provides fluent interface
-     */
-    public function top(): ?ElementInterface;
 }

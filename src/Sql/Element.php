@@ -33,7 +33,6 @@ use function trim;
  *
  * @property-read Params|null $params The parameters collector, if any
  * @property-read ElementInterface|null $parent The parent element, if any
- * @property-read ElementInterface|null $top The top-level element element, if any
 */
 abstract class Element implements ElementInterface
 {
@@ -84,37 +83,6 @@ abstract class Element implements ElementInterface
         return $this->parent;
     }
 
-    public function up(): ?ElementInterface
-    {
-        return $this->parent;
-    }
-
-    public function closest(string $fqcn, bool $strict = false): ?ElementInterface
-    {
-        $closest = $this->parent;
-        while ($closest) {
-            if ($closest instanceof $fqcn) {
-                if (!$strict || $fqcn === get_class($closest)) {
-                    return $closest;
-                }
-            }
-            $closest = $closest->parent;
-        }
-
-        return $closest;
-    }
-
-    public function top(): ?ElementInterface
-    {
-        $parent = $this->parent;
-        while ($parent) {
-            $top = $parent;
-            $parent = $parent->parent;
-        }
-
-        return $top ?? null;
-    }
-
     public function setParent(ElementInterface $parent): void
     {
         if ($this->parent instanceof ElementInterface && $this->parent !== $parent) {
@@ -134,6 +102,28 @@ abstract class Element implements ElementInterface
     protected function parentIsNot(ElementInterface $parent): bool
     {
         return isset($this->parent) && $this->parent !== $parent;
+    }
+
+    /**
+     * Move to the closest ancestor element of given class, if any, or return NULL
+     *
+     * @param string $fqcn The fully-qualified-class-name of the ancestor we are looking for
+     * @param bool $strict Flag for strict class-name matching, or return first innstanceof the class
+     * @return ElementInterface|null Provides fluent interface
+     */
+    protected function closest(string $fqcn, bool $strict = false): ?ElementInterface
+    {
+        $closest = $this->parent;
+        while ($closest) {
+            if ($closest instanceof $fqcn) {
+                if (!$strict || $fqcn === get_class($closest)) {
+                    return $closest;
+                }
+            }
+            $closest = $closest->parent;
+        }
+
+        return $closest;
     }
 
     /**
@@ -313,14 +303,6 @@ abstract class Element implements ElementInterface
         if ('parent' === $name) {
             return $this->parent;
         };
-
-        if ('top' === $name) {
-            $top = $this->parent;
-            while ($top) {
-                $top = $top->parent;
-            }
-            return $top;
-        }
 
         throw new RuntimeException(sprintf(
             "Undefined property `%s` for sql-element of class `%s`!",
