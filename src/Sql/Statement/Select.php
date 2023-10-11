@@ -53,7 +53,9 @@ use function trim;
 use const PHP_INT_MAX;
 
 /**
- * This class represents a SELECT sql-statement expression
+ * This class represents a SELECT sql query specification
+ *
+ * @link https://ronsavage.github.io/SQL/sql-2003-2.bnf.html#query%20specification
  *
  * @property-read string|null $table The db table to select from if already set
  * @property-read string|null $alias The table alias if any
