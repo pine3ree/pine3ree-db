@@ -45,6 +45,7 @@ use function sprintf;
  * @property-read string|Null $alias The table alias if any
  * @property-read string|null $quantifier The SELECT quantifier if any
  * @property-read string[] $columns The columns to be returned
+ * @property-read string|null $into The db table to insert the selected rows into, if any
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any
