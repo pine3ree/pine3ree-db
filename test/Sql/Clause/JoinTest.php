@@ -99,6 +99,35 @@ class JoinTest extends TestCase
         self::assertSame($join->on, $join->specification);
     }
 
+    /**
+     * @dataProvider provideCtorArgs
+     */
+    public function testAccessors(string $type, string $table, string $alias, $specification)
+    {
+        $join = new Join($type, $table, $alias, $specification);
+
+        self::assertSame($type, $join->getType());
+        self::assertSame($table, $join->getTable());
+        self::assertSame($alias, $join->getAlias());
+
+        if ($specification instanceof Sql\Identifier) {
+            self::assertInstanceOf(Sql\Identifier::class, $join->getSpecification());
+        } elseif ($specification instanceof Predicate\Literal) {
+            self::assertInstanceOf(Predicate\Literal::class, $join->getSpecification());
+        } else {
+            self::assertInstanceOf(On::class, $join->getSpecification());
+        }
+    }
+
+    public function provideCtorArgs()
+    {
+        return [
+            [Sql::JOIN_LEFT, 'category', 'c', 'c.id = p.category_id'],
+            [Sql::JOIN_LEFT, 'role', 'r', new Predicate\Literal('ON r.id = u2r.role_id')],
+            [Sql::JOIN_INNER , 'tag', 't', new Predicate\Set('t.id = p.category_id')],
+        ];
+    }
+
     public function testMagicGetter()
     {
         $on = new On();
