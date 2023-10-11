@@ -21,16 +21,33 @@ use function getenv;
 
 class PgSqlTest extends TestCase
 {
-    /** @var PDO */
-    private $pdo;
+    private ?PDO $pdo = null;
 
-    /** @var Driver\PgSql */
-    private $driver;
+    private ?Driver\PgSql $driver = null;
 
     public function setUp(): void
     {
+        $this->driver = new Driver\PgSql();
+    }
+
+    public function tearDown(): void
+    {
+        if (isset($this->driver)) {
+            $this->driver = null;
+        }
+        if (isset($this->pdo)) {
+            $this->pdo = null;
+        }
+    }
+
+    protected function getPDO(): PDO
+    {
         if (! getenv('TEST_P3_DB_PGSQL')) {
             $this->markTestSkipped('pdo-pgsql test is not enabled!');
+        }
+
+        if (isset($this->pdo)) {
+            return $this->pdo;
         }
 
         $host    = getenv('TEST_P3_DB_PGSQL_HOST');
@@ -48,13 +65,7 @@ class PgSqlTest extends TestCase
 
         $this->pdo->query("SET NAMES '{$charset}'");
 
-        $this->driver = new Driver\PgSql();
-    }
-
-    public function tearDown(): void
-    {
-        $this->driver = null;
-        $this->pdo = null;
+        return $this->pdo;
     }
 
     /**
@@ -113,7 +124,7 @@ class PgSqlTest extends TestCase
      */
     public function testPdoQuoteAnyValueWithConnection($value, string $expected)
     {
-        $this->driver->setPDO($this->pdo);
+        $this->driver->setPDO($this->getPDO());
         self::assertSame($expected, $this->driver->quoteValue($value));
     }
 
