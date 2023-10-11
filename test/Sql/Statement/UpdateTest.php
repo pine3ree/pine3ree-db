@@ -52,18 +52,32 @@ class UpdateTest extends TestCase
         $update->getSQL($this->driver);
     }
 
-    public function testSetNumericColumnRaisesExceptionOnGetSQL()
+    public function testSetNumericColumnRaisesException()
     {
         $update = new Update('product');
         $this->expectException(InvalidArgumentException::class);
         $update->set('1', '123');
     }
 
-    public function testSetRowWithNumericColumnRaisesExceptionOnGetSQL()
+    public function testSetEmptyColumnRaisesException()
+    {
+        $update = new Update('product');
+        $this->expectException(InvalidArgumentException::class);
+        $update->set('', 1.23);
+    }
+
+    public function testSetRowWithNumericColumnRaisesException()
     {
         $update = new Update('product');
         $this->expectException(InvalidArgumentException::class);
         $update->set(['value1', 'price' => 1.23]);
+    }
+
+    public function testSetRowWithEmptyColumnRaisesException()
+    {
+        $update = new Update('product');
+        $this->expectException(InvalidArgumentException::class);
+        $update->set(['' => 1.23]);
     }
 
     public function testGetSql()
