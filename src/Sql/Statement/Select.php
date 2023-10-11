@@ -63,7 +63,7 @@ use const PHP_INT_MAX;
  * @property-read string[]|Identifier[]|Literal[]|Expression[]|self[] $columns The columns to be returned
  * @psalm-property-read array<string, string|Identifier|Literal|Expression|self> $columns
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
- * @property-read string|null $from The db table to select into, if any
+ * @property-read string|null $into The db table to insert the selected rows into, if any
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any
  * @property-read array $groupBy An array of GROUP BY identifiers
