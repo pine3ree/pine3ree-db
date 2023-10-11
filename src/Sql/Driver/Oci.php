@@ -210,20 +210,34 @@ class Oci extends Driver implements
         $limit  = $select->limit;
         $offset = $select->offset;
 
+        $into = $select->into;
+        $into_sql = "";
+        if (isset($into)) {
+            $into_sql = "INTO {$this->quoteIdentifier($into)} ";
+        }
+
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
+            if (isset($into)) {
+                $select = clone $select;
+                $select->into(null); // Move the INTO clause to the outer select
+            }
             $select_sql = $this->generateSelectSQL($select, $params);
             $rownum = $params->create($limit, PDO::PARAM_INT, 'rownum');
 
-            return "SELECT * FROM ({$select_sql}) WHERE ROWNUM <= {$rownum}";
+            return "SELECT * {$into_sql}FROM ({$select_sql}) WHERE ROWNUM <= {$rownum}";
         }
 
         if (isset($offset) && $offset > 0) {
             $qtb = $this->quoteAlias(self::TB);
             $qrn = $this->quoteAlias(self::RN);
 
+            if (isset($into)) {
+                $select = clone $select;
+                $select->into(null); // Move the INTO clause to the outer select
+            }
+
             $select_sql = $this->generateSelectSQL($select, $params);
-            $select_sql = "SELECT {$qtb}.*, ROWNUM AS {$qrn}"
-                . " FROM ({$select_sql}) {$qtb}";
+            $select_sql = "SELECT {$qtb}.*, ROWNUM AS {$qrn} FROM ({$select_sql}) {$qtb}";
 
             if (isset($limit)) {
                 $rownum = $params->create($limit + $offset, PDO::PARAM_INT, 'rownum');
@@ -232,10 +246,10 @@ class Oci extends Driver implements
 
             $offset = $params->create($offset, PDO::PARAM_INT, 'offset');
 
-            return "SELECT * FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
+            return "SELECT * {$into_sql}FROM ({$select_sql}) WHERE {$qrn} > {$offset}";
         }
 
-        // return pretty format only if undecorated
+        // Return optional pretty format only if undecorated
         return $this->generateSelectSQL($select, $params, $pretty);
     }
 
