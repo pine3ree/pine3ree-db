@@ -255,14 +255,16 @@ class Oci extends Driver implements
 
     public function decorateSelect(Select $select, Params $params): Select
     {
+        $into   = $select->into;
         $limit  = $select->limit;
         $offset = $select->offset;
 
         if (isset($limit) && (!isset($offset) || $offset === 0)) {
             $from = clone $select;
-            $from->limit(null);
+            $from->into(null)->limit(null);
 
             $wrapper = new Select('*', $from, self::TB);
+            $wrapper->into($into);
             $wrapper->where->lte(new Literal("ROWNUM"), $limit);
 
             return $wrapper;
@@ -273,7 +275,7 @@ class Oci extends Driver implements
             $tb1 = self::TB . '1';
 
             $from = clone $select;
-            $from->offset(null)->limit(null);
+            $from->into(null)->offset(null)->limit(null);
 
             // create a select to gather ROWNUM values
             $inner = new Select('*', $from, $tb0);
@@ -284,6 +286,7 @@ class Oci extends Driver implements
             }
 
             $outer = new Select('*', $inner, $tb1);
+            $outer->into($into);
             $outer->where->gt(new Sql\Alias(self::RN), $offset);
 
             return $outer;
