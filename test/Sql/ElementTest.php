@@ -226,6 +226,16 @@ class ElementTest extends TestCase
         self::assertNull($clone->getParent());
     }
 
+    public function testClosest()
+    {
+        $where = new Sql\Clause\Where('price > 10.0');
+        $subselect = Sql::select()->from('product')->where($where);
+        $select = Sql::select()->from($subselect, 'p');
+
+        self::assertSame($subselect, $this->invokeMethod($where, 'closest', Sql\Statement\Select::class));
+        self::assertNull($this->invokeMethod($where, 'closest', Sql\Statement\Update::class));
+    }
+
     public function testClearParentSql()
     {
         $element = $this->createInstance();
