@@ -119,9 +119,7 @@ class Db
 
         $this->charset = $options['charset'] ?? self::DEFAULT_CHARSET;
         $this->options = $options ?? [];
-        if (!empty($this->dsn)) {
-            $this->decorateOptions();
-        }
+        $this->decorateOptions();
     }
 
     public function __destruct()
