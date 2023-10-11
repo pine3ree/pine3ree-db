@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace pine3ree\Db\Sql\Driver;
 
 use PDO;
+use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Driver;
@@ -24,7 +25,6 @@ use pine3ree\Db\Sql\Literal;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement\Insert;
 use pine3ree\Db\Sql\Statement\Select;
-use RuntimeException;
 
 use function end;
 use function explode;
