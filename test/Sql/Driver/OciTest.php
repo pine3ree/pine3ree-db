@@ -330,6 +330,47 @@ class OciTest extends TestCase
         );
     }
 
+    public function testDecorateSelectIntoSQL()
+    {
+        $selectPrototype = new Select('*', 'user');
+        $selectPrototype->into('author');
+        $selectPrototype->where("id > 42");
+
+        $sql = (clone $selectPrototype)->into(null)->getSQL($this->driver, new Params());
+        $sql = str_replace([" ", "\n"], '%w', $sql);
+
+        $select = clone $selectPrototype;
+        $select->limit(10);
+        self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
+        self::assertStringMatchesFormat(
+            "SELECT * INTO author FROM (%w{$sql}%w)%wWHERE ROWNUM <= :rownum%d",
+            $this->driver->decorateSelectSQL($select, new Params())
+        );
+
+        $select = clone $selectPrototype;
+        $select->limit(10)->offset(10);
+        self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
+        self::assertStringMatchesFormat(
+            "SELECT * INTO author FROM ("
+            . "%wSELECT %s.*, ROWNUM AS %s"
+            . "%wFROM (%w{$sql}%w) %s"
+            . "%wWHERE ROWNUM <= :rownum%d%w)"
+            . "%wWHERE %s > :offset%d",
+            $this->driver->decorateSelectSQL($select, new Params())
+        );
+
+        $select = clone $selectPrototype;
+        $select->offset(10);
+        self::assertStringMatchesFormat(
+            "SELECT * INTO author FROM ("
+            . "%wSELECT %s.*, ROWNUM AS %s"
+            . "%wFROM (%w{$sql}%w) %s"
+            . "%w)%w"
+            . "%wWHERE %s > :offset%d",
+            $this->driver->decorateSelectSQL($select, new Params())
+        );
+    }
+
     public function testDecorateSelect()
     {
         $selectPrototype = new Select('*', 'user');
