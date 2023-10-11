@@ -24,7 +24,6 @@ use function sprintf;
  */
 abstract class Predicate extends Element
 {
-
     /**
      * Utility short-named method to move the context to, i.e. return, the parent
      * element, if any, or return NULL

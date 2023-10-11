@@ -56,7 +56,7 @@ class Set extends Predicate implements IteratorAggregate
     protected $predicates = [];
 
     /** Internal counter for predicate keys */
-    protected int  $count = 0;
+    protected int $count = 0;
 
     protected string $defaultLogicalOperator = Sql::AND;
 
