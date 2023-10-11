@@ -443,6 +443,5 @@ class OciTest extends TestCase
 
         $insert->expects($this->once())->method('generateSQL');
         $insert->getSQL($this->driver);
-
     }
 }
