@@ -99,6 +99,17 @@ class Join extends Clause
         }
     }
 
+    /**
+     * Return the JOIN specification: either a literal-predicate, a sql-identifier
+     * object for the USING clause or an On clause instance
+     *
+     * @return On|Literal|Identifier
+     */
+    public function getSpecification()
+    {
+        return $this->specification;
+    }
+
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
         if (isset($this->sql) && $driver === $this->driver && $params === null) {
