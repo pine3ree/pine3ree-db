@@ -381,12 +381,7 @@ class OciTest extends TestCase
 
     public function testDecorateInsertSQL()
     {
-        $insertPrototype = new Insert('product');
-
-//        $sql = $insertPrototype->getSQL($this->driver, new Params());
-//        $sql = str_replace([" ", "\n"], '%w', $sql);
-
-        $insert = clone $insertPrototype;
+        $insert = new Insert('product');
         $insert->rows([
             [
                 'id' => 1,
@@ -415,5 +410,39 @@ class OciTest extends TestCase
             EOSQL,
             $insert->getSQL($this->driver)
         );
+    }
+
+    public function testInsertIgnoreThrowsException()
+    {
+        $insert = new Insert('product');
+        $insert->ignore();
+        $insert->row([
+            'id' => 111,
+            'name' => 'product-111',
+            'price' => 111.11,
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $insert->getSQL($this->driver);
+    }
+
+    public function testInsertSelectWillCallInsertGenerateSQL()
+    {
+        $insert = $this
+            ->getMockBuilder(Insert::class)
+            ->onlyMethods(['generateSQL'])
+            ->enableAutoload()
+            ->getMock();
+
+        $insert->into('product');
+        $insert->row([
+            'id' => 111,
+            'name' => 'product-111',
+            'price' => 111.11,
+        ]);
+
+        $insert->expects($this->once())->method('generateSQL');
+        $insert->getSQL($this->driver);
+
     }
 }
