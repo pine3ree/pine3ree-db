@@ -100,6 +100,30 @@ class Join extends Clause
     }
 
     /**
+     * Return the JOIN type
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * Return the JOIN table
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+
+    /**
+     * Return the JOIN table alias
+     */
+    public function getAlias(): ?string
+    {
+        return $this->alias;
+    }
+
+    /**
      * Return the JOIN specification: either a literal-predicate, a sql-identifier
      * object for the USING clause or an On clause instance
      *
