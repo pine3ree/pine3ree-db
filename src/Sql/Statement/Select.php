@@ -63,6 +63,7 @@ use const PHP_INT_MAX;
  * @property-read string[]|Identifier[]|Literal[]|Expression[]|self[] $columns The columns to be returned
  * @psalm-property-read array<string, string|Identifier|Literal|Expression|self> $columns
  * @property-read string|self|null $from The db table to select from or a sub-select if already set
+ * @property-read string|null $from The db table to select into, if any
  * @property-read Where $where The Where clause, built on-first-access if null
  * @property-read Join[] $joins An array of Join clauses if any
  * @property-read array $groupBy An array of GROUP BY identifiers
@@ -87,8 +88,11 @@ class Select extends Statement
      */
     protected array $columns = [];
 
+    /** Used for SELECT INTO statements */
+    protected ?string $into = null;
+
     /** @var string|self|null */
-    protected $from;
+    protected $from = null;
 
     protected ?string $alias = null;
 
@@ -171,6 +175,7 @@ class Select extends Statement
      */
     public function columns(array $columns): self
     {
+        $this->columns = [];
         foreach ($columns as $key => $column) {
             $this->column($column, is_numeric($key) ? null : $key);
         }
@@ -410,7 +415,7 @@ class Select extends Statement
      */
     protected function normalizeColumn(string $column, DriverInterface $driver, bool $add_tb_prefix = false): string
     {
-        // unquote the column first
+        // Unquote the column first
         $column = $driver->unquote($column);
         if (false === strpos($column, '.')) {
             $prefix = $this->alias ?: (
@@ -427,13 +432,14 @@ class Select extends Statement
      *
      * @param string|self $from The db-table name to select from
      * @param string|null $alias The db-table alias, if any
-     * @return $this
+     * @return $this Provides fluent interface
+     * @throws RuntimeException
      */
     public function from($from, string $alias = null): self
     {
         if (isset($this->from) || isset($this->table)) {
             throw new RuntimeException(sprintf(
-                "Cannot change the `from` for this Select, from is already set to %s!",
+                "Cannot change the `from` property for this Select, from is already set to %s!",
                 $this->from instanceof self ? "a sub-select" : "table `{$this->table}`"
             ));
         }
@@ -455,6 +461,29 @@ class Select extends Statement
         if (!empty($alias)) {
             $this->alias = $alias;
         }
+
+        return $this;
+    }
+
+    /**
+     * Add a table name to insert the selected rows INTO
+     *
+     * @param string|null $into The INTO table name
+     * @return $this Provides fluent interface
+     * @throws InvalidArgumentException
+     */
+    public function into(?string $into): self
+    {
+        if ($into !== null) {
+            $into = trim($into);
+            if ('' === $into) {
+                throw new InvalidArgumentException(
+                    "A INTO table name cannot be an empty string!"
+                );
+            }
+        }
+
+        $this->into = $into;
 
         return $this;
     }
@@ -491,6 +520,15 @@ class Select extends Statement
                 "A FROM clause with a sub-select requires an alias!"
             );
         }
+    }
+
+    private function getIntoSQL(DriverInterface $driver): string
+    {
+        if ($this->into === null) {
+            return '';
+        }
+
+        return  "INTO {$driver->quoteIdentifier($this->into)}";
     }
 
     private function getFromSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
@@ -1013,25 +1051,25 @@ class Select extends Statement
             return $this->sql;
         }
 
-        $this->driver = $driver; // set last used driver argument
-        $this->params = null; // reset previously collected params, if any
+        $this->driver = $driver; // Set last used driver argument
+        $this->params = null; // Reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
 
         if ($driver instanceof SelectSqlDecorator) {
-            return $this->sql = $driver->decorateSelectSQL($this, $params, $pretty);
-        }
-
-        if ($driver instanceof SelectDecorator) {
+            $this->sql = $driver->decorateSelectSQL($this, $params, $pretty);
+        } elseif ($driver instanceof SelectDecorator) {
             $parent = $this->parent; // this parent may be changed by the decorator
             $select = $driver->decorateSelect($this, $params);
             $select->parent = $parent;
-            return $this->sql = $select->generateSQL($driver, $params, $pretty);
+            $this->sql = $select->generateSQL($driver, $params, $pretty);
+        } else {
+            // Generate and cache a fresh sql string
+            $this->sql = $this->generateSQL($driver, $params, $pretty);
         }
 
-        // generate and cache a fresh sql string
-        return $this->sql = $this->generateSQL($driver, $params, $pretty);
+        return $this->sql;
     }
 
     /**
@@ -1055,6 +1093,7 @@ class Select extends Statement
             "{$select} {$this->getColumnsSQL($driver, $params)}",
         ];
 
+        $sqls[] = $this->getIntoSQL($driver);
         $sqls[] = $this->getFromSQL($driver, $params, $pretty);
         $sqls[] = $this->getJoinSQL($driver, $params);
         $sqls[] = $this->getWhereSQL($driver, $params);
@@ -1164,6 +1203,10 @@ class Select extends Statement
 
         if ('columns' === $name) {
             return $this->columns;
+        }
+
+        if ('into' === $name) {
+            return $this->into;
         }
 
         if ('from' === $name) {
