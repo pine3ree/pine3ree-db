@@ -13,7 +13,9 @@ use Closure;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Command;
 use pine3ree\Db\Command\Reader as ReaderInterface;
+use pine3ree\Db\Command\Writer as WriterInterface;
 use pine3ree\Db\Command\Traits\Reader as ReaderTrait;
+use pine3ree\Db\Command\Traits\Writer as WriterTrait;
 use pine3ree\Db\Db;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause\Join;
@@ -36,7 +38,7 @@ use function is_string;
 use function sprintf;
 
 /**
- * Class Select
+ * Execute a SELECT DQL query or a SELECT...INTO DML statement
  *
  * @property-read SqlSelect $sqlStatement
  * @property-read string|null $table The db table to select from if already set
@@ -56,9 +58,14 @@ use function sprintf;
  * @property-read bool|null $unionAll Is it a UNION ALL clause?
  * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
  */
-class Select extends Command implements ReaderInterface
+class Select extends Command implements ReaderInterface, WriterInterface
 {
-    use ReaderTrait;
+    use ReaderTrait {
+        ReaderTrait::execute as executeAsReader;
+    }
+    use WriterTrait {
+        WriterTrait::execute as executeAsWriter;
+    }
 
     /** The column to use to index results */
     protected ?string $indexBy = null;
@@ -198,6 +205,19 @@ class Select extends Command implements ReaderInterface
     public function aggregate(string $sqlAggregateFunc, string $identifier, string $alias = null): self
     {
         $this->sqlStatement->aggregate($sqlAggregateFunc, $identifier, $alias);
+        return $this;
+    }
+
+    /**
+     * @see SqlSelect::from()
+     *
+     * @param string|SqlSelect $from The db-table name to select from
+     * @param string|null $into The db-table to insert selected rows into
+     * @return $this Fluent interface
+     */
+    public function into(?string $into): self
+    {
+        $this->sqlStatement->into($into);
         return $this;
     }
 
@@ -453,6 +473,15 @@ class Select extends Command implements ReaderInterface
     {
         $this->indexBy = $identifier;
         return $this;
+    }
+
+    public function execute()
+    {
+        if ($this->sqlStatement->into === null) {
+            return $this->query();
+        }
+
+        return $this->exec();
     }
 
     /**
