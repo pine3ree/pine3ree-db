@@ -326,6 +326,13 @@ class SelectTest extends \pine3ree\DbTest\Command\SelectTestBase
         );
     }
 
+    public function testInto()
+    {
+        $select = $this->createSelectCommand($db);
+        $select->into('author')->from('user', 'u');
+        self::assertStringMatchesFormat("SELECT `u`.*%wINTO `author`%wFROM `user` `u`", $select->getSql());
+    }
+
     /**
      * @dataProvider provideJoinOptions
      */
@@ -745,5 +752,29 @@ class SelectTest extends \pine3ree\DbTest\Command\SelectTestBase
 
         $this->pdoStatement->execute()->willReturn(false);
         self::assertNull($select->fetchColumn(0));
+    }
+
+    public function testExecuteSuccessReturnsInt()
+    {
+        $select = $this->createSelectCommand($db);
+        $select->from('user');
+
+        $this->pdoStatement->rowCount()->willReturn(42);
+        $result = $select->into('author')->execute();
+        self::assertSame(42, $result);
+
+        $this->pdoStatement->rowCount()->willReturn(0);
+        $result = $select->into('author')->execute();
+        self::assertSame(0, $result);
+    }
+
+    public function testExecuteFailureReturnsFalse()
+    {
+        $select = $this->createSelectCommand($db);
+        $select->from('user');
+
+        $this->pdoStatement->execute()->willReturn(false);
+        $result = $select->into('author')->execute();
+        self::assertSame(false, $result);
     }
 }
