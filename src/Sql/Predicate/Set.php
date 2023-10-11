@@ -49,8 +49,7 @@ use function trim;
  * @property-read string $defaultLogicalOperator
  * @property-read string|null $nextLogicalOperator The next logical operator
  * @property-read array|Predicate[] $predicates An array of [(AND|OR), Predicate] added so far
- * @property-read ConditionalClause|null $clause Return the context of the parent conditional-clause, if any
-*/
+ */
 class Set extends Predicate implements IteratorAggregate
 {
     /** @var Predicate[] */
@@ -225,7 +224,7 @@ class Set extends Predicate implements IteratorAggregate
     {
         self::assertValidPredicate($predicate);
 
-        // allow adding empty nested-set (@see self::open())
+        // Allow adding empty nested-set (@see self::open())
         if (self::isEmptyPredicate($predicate, false)) {
             return $this; // throw?
         }
@@ -250,7 +249,7 @@ class Set extends Predicate implements IteratorAggregate
             }
         }
 
-        // attache the predicat to this set
+        // Attach the predicate to this set
         $predicate->parent = $this;
 
         $logicalOperator = $this->nextLogicalOperator ?? $this->defaultLogicalOperator;
@@ -261,7 +260,7 @@ class Set extends Predicate implements IteratorAggregate
 
         $this->nextLogicalOperator = null;
 
-        // remove rendered sql cache from tie element and its parent
+        // Remove rendered sql cache from the element and its parent
         $this->clearSQL();
 
         return $this;
@@ -466,17 +465,17 @@ class Set extends Predicate implements IteratorAggregate
      */
     protected static function isEmptyPredicate($predicate, bool $checkEmptySet = false): bool
     {
-        // empty values
+        // Empty values
         if ($predicate === null || $predicate === []) {
             return true;
         }
 
-        // strings
+        // Strings
         if (is_string($predicate)) {
             return trim($predicate) === '';
         }
 
-        // predicates
+        // Predicates
         if ($predicate instanceof Predicate) {
             if ($checkEmptySet && $predicate instanceof Predicate\Set) {
                 return $predicate->isEmpty();
@@ -484,7 +483,7 @@ class Set extends Predicate implements IteratorAggregate
             return false;
         }
 
-        // last valid type: not-empty array
+        // Last valid type: not-empty array
         return !is_array($predicate);
     }
 
@@ -554,8 +553,8 @@ class Set extends Predicate implements IteratorAggregate
             return $this->sql;
         }
 
-        $this->driver = $driver; // set last used driver argument
-        $this->params = null; // reset previously collected params, if any
+        $this->driver = $driver; // Set last used driver argument
+        $this->params = null; // Reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
@@ -1145,16 +1144,6 @@ class Set extends Predicate implements IteratorAggregate
         return $this;
     }
 
-    /**
-     * Set the context to the closest conditional-clause (where, having, on). if any
-     *
-     * @return ConditionalClause|null
-     */
-    public function clause(): ?ConditionalClause
-    {
-        return $this->closest(ConditionalClause::class, false);
-    }
-
     public function __clone()
     {
         parent::__clone();
@@ -1169,10 +1158,6 @@ class Set extends Predicate implements IteratorAggregate
      */
     public function __get(string $name)
     {
-        if ('clause' === $name) {
-            return $this->clause();
-        };
-
         if ('predicates' === $name) {
             return $this->predicates;
         };
