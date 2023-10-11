@@ -355,6 +355,22 @@ class SelectTest extends TestCase
         $select->from('another_table');
     }
 
+    public function testSelectIntoEmptyStringRaisesException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $select = (new Select())->from('product', 'p')->into('');
+    }
+
+    public function testSelectInto()
+    {
+        $select = (new Select())->from('product')->into('new_product');
+
+        self::assertSame(
+            "SELECT * INTO `new_product` FROM `product`",
+            $select->getSQL($this->driver)
+        );
+    }
+
     public function testSelectFromSubselect()
     {
         $subSelect = (new Select())->from('cart');
