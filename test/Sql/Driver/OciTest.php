@@ -420,6 +420,51 @@ class OciTest extends TestCase
         self::assertSame($select, $this->driver->decorateSelect($select, new Params()));
     }
 
+    public function testDecorateSelectInto()
+    {
+        $selectPrototype = new Select('*', 'user');
+        $selectPrototype->into('author');
+        $selectPrototype->where("id > 42");
+
+        $sql = (clone $selectPrototype)->into(null)->getSQL($this->driver, new Params());
+        $sql = str_replace([" ", "\n"], '%w', $sql);
+
+        $select = clone $selectPrototype;
+        $select->limit(10);
+        self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
+        $wrapper = $this->driver->decorateSelect($select, new Params());
+        self::assertStringMatchesFormat(
+            "SELECT %A*%wINTO author%wFROM (%w{$sql}%w)%A%wWHERE ROWNUM <= :lte%d",
+            $this->invokeMethod($wrapper, 'generateSQL', $this->driver, new Params(), " ")
+        );
+
+        $select = clone $selectPrototype;
+        $select->limit(10)->offset(10);
+        self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
+        $wrapper = $this->driver->decorateSelect($select, new Params());
+        self::assertStringMatchesFormat(
+            "SELECT %A*"
+            . "%wINTO author"
+            . "%wFROM"
+            . "%w("
+                . "%wSELECT %A*, ROWNUM AS %s"
+                . "%wFROM (%w{$sql}%w)%A"
+                . "%wWHERE ROWNUM <= :lte%d"
+            . "%w)%A"
+            . "%wWHERE %s > :gt%d",
+            $this->invokeMethod($wrapper, 'generateSQL', $this->driver, new Params())
+        );
+
+        $select = clone $selectPrototype;
+        $select->offset(10);
+        self::assertSame('', $this->driver->getLimitSQL($select, new Params()));
+        $wrapper = $this->driver->decorateSelect($select, new Params());
+        self::assertStringMatchesFormat(
+            "SELECT %A*%wINTO author%wFROM%w(%wSELECT %A*, ROWNUM AS %s%wFROM (%w{$sql}%w)%A)%A%wWHERE %s > :gt%d",
+            $this->invokeMethod($wrapper, 'generateSQL', $this->driver, new Params())
+        );
+    }
+
     public function testDecorateInsertSQL()
     {
         $insert = new Insert('product');
