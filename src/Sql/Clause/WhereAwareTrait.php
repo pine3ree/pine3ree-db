@@ -36,7 +36,7 @@ trait WhereAwareTrait
         if ($where instanceof Closure) {
             if ($this->where === null) {
                 $this->where = new Where();
-                $this->where->parent = $this;
+                $this->where->setParent($this);
             }
             $where($this->where);
             return $this;
