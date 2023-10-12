@@ -131,7 +131,8 @@ abstract class Element implements ElementInterface
      */
     protected function getShortName(): string
     {
-        return self::$shortNames[static::class] ?? (
+        return
+            self::$shortNames[static::class] ?? (
             self::$shortNames[static::class] = (new ReflectionClass($this))->getShortName()
         );
     }
