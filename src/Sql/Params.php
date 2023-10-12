@@ -176,7 +176,7 @@ class Params
      * @param int $type
      * @return void
      */
-    private function setParam($index, $value, int $type = null, string $name = null): void
+    private function setParam($index, $value, int $type = null): void
     {
         $this->values[$index] = $value;
 
