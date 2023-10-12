@@ -49,7 +49,8 @@ trait ConditionalClauseAwareTrait
         ) {
             $clause = new $fqcn($conditions, $logicalOp);
         } elseif ($clause instanceof $fqcn) {
-            if ($clause->parent !== null && $clause->parent !== $this) {
+            $parent = $clause->getParent();
+            if ($parent !== null && $parent !== $this) {
                 $clause = clone $clause;
             }
         } else {
@@ -58,7 +59,7 @@ trait ConditionalClauseAwareTrait
 
         $this->{$property} = $clause;
         if ($this instanceof Element) {
-            $clause->parent = $this;
+            $clause->setParent($this);
             if (!$clause->isEmpty()) {
                 $this->clearSQL();
             }
