@@ -172,7 +172,7 @@ abstract class Element implements ElementInterface
             return $identifier->getSQL($driver);
         }
 
-        // the identifier is generic SQL-literal, so no quoting
+        // the identifier is a generic SQL-literal, so no quoting
         if ($identifier instanceof Literal) {
             return $identifier->getSQL();
         }
