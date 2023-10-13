@@ -330,7 +330,12 @@ class Select extends Statement
 
     private function getColumnsSQL(DriverInterface $driver, Params $params): string
     {
-        if (isset($this->sqls['columns']) && $this->driver_unchanged) {
+
+        if (isset($this->sqls['columns'])
+            && $driver === $this->driver
+            && $params === null
+            && isset($this->params)
+        ) {
             return $this->sqls['columns'];
         }
 
@@ -774,7 +779,7 @@ class Select extends Statement
         }
 
         // Partial caching is possibile as there are no params to import here
-        if (isset($this->sqls['group']) && $this->driver_unchanged) {
+        if (isset($this->sqls['group']) && $driver === $this->driver) {
             return $this->sqls['group'];
         }
 
@@ -875,7 +880,7 @@ class Select extends Statement
         }
 
         // Partial caching is possibile as there are no params to import here
-        if (isset($this->sqls['order']) && $this->driver_unchanged) {
+        if (isset($this->sqls['order']) && $driver === $this->driver) {
             return $this->sqls['order'];
         }
 
@@ -1044,10 +1049,7 @@ class Select extends Statement
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null, bool $pretty = false): string
     {
-        if (isset($this->sql)
-            && $this->driver_unchanged = $driver === $this->driver
-            && $params === null
-        ) {
+        if ($this->hasValidSqlCache($driver, $params)) {
             return $this->sql;
         }
 

@@ -303,7 +303,7 @@ class Insert extends Statement
 
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql) && $driver === $this->driver && $params === null) {
+        if ($this->hasValidSqlCache($driver, $params)) {
             return $this->sql;
         }
 
@@ -329,7 +329,7 @@ class Insert extends Statement
             return $this->sql = $driver->getInsertSQL($this, $params);
         }
 
-        return $this->generateSQL($driver, $params);
+        return $this->sql = $this->generateSQL($driver, $params);
     }
 
     protected function generateSQL(DriverInterface $driver, Params $params): string
@@ -351,10 +351,10 @@ class Insert extends Statement
         $column_list = empty($columns) ? "" : "{$columns} ";
 
         if ($this->select instanceof Select) {
-            return $this->sql = "{$insert} " . Sql::INTO . " {$table} {$column_list}{$values}";
+            return "{$insert} " . Sql::INTO . " {$table} {$column_list}{$values}";
         }
 
-        return $this->sql = "{$insert} " . Sql::INTO . " {$table} {$column_list}" . Sql::VALUES . " {$values}";
+        return "{$insert} " . Sql::INTO . " {$table} {$column_list}" . Sql::VALUES . " {$values}";
     }
 
     private function getColumnsSQL(DriverInterface $driver): string

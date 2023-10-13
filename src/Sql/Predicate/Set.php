@@ -549,7 +549,7 @@ class Set extends Predicate implements IteratorAggregate
             return $this->sql = '';
         }
 
-        if (isset($this->sql) && $driver === $this->driver && $params === null) {
+        if ($this->hasValidSqlCache($driver, $params)) {
             return $this->sql;
         }
 

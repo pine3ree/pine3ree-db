@@ -136,7 +136,11 @@ class Join extends Clause
 
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
-        if (isset($this->sql) && $driver === $this->driver && $params === null) {
+        if (isset($this->sql)
+            && $driver === $this->driver
+            && $params === null
+            && isset($this->params)
+        ) {
             return $this->sql;
         }
 
@@ -144,6 +148,7 @@ class Join extends Clause
         $this->params = null; // Reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
+        $params = $params ?? ($this->params = new Params());
 
         $table = $driver->quoteIdentifier($this->table);
         if (!empty($this->alias)) {
@@ -155,8 +160,6 @@ class Join extends Clause
         if (empty($this->specification)) {
             return $this->sql = "{$join} {$table}";
         }
-
-        $params = $params ?? ($this->params = new Params());
 
         $specification_sql = '';
         if ($this->specification instanceof Literal) {

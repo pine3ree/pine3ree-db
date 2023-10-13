@@ -276,6 +276,15 @@ abstract class Element implements ElementInterface
         }
     }
 
+    protected function hasValidSqlCache(?Driver $driver, ?Params $params): bool
+    {
+        return (isset($this->sql)
+            && isset($this->params)
+            && $this->driver === $driver
+            && $params === null
+        );
+    }
+
     /**
      * Detach the clone from the orginal element's parent, clear the internal
      * sql cache, if any, and emove any previously collected params.
