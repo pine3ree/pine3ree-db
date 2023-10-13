@@ -168,8 +168,7 @@ class Join extends Clause
             $specification_sql = $this->getConditionalClauseSQL('specification', $driver, $params);
         }
 
-        $this->sql = rtrim("{$join} {$table} {$specification_sql}");
-        return $this->sql;
+        return $this->sql = rtrim("{$join} {$table} {$specification_sql}");
     }
 
     protected function getName(): string
