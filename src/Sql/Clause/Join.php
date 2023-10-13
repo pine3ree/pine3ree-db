@@ -140,8 +140,8 @@ class Join extends Clause
             return $this->sql;
         }
 
-        $this->driver = $driver; // set last used driver argument
-        $this->params = null; // reset previously collected params, if any
+        $this->driver = $driver; // Set last used driver argument
+        $this->params = null; // Reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
 
