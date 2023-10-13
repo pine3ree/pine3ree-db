@@ -153,8 +153,7 @@ class Join extends Clause
         $join = $this->getName();
 
         if (empty($this->specification)) {
-            $this->sql = "{$join} {$table}";
-            return $this->sql;
+            return $this->sql = "{$join} {$table}";
         }
 
         $params = $params ?? ($this->params = new Params());
