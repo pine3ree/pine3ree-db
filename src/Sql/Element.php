@@ -162,7 +162,7 @@ abstract class Element implements ElementInterface
      */
     protected function getIdentifierSQL($identifier, DriverInterface $driver): string
     {
-        // the identifier is considered a db table column, quote accordingly
+        // The identifier is considered a db table column, quote accordingly
         if (is_string($identifier)) {
             return $driver->quoteIdentifier($identifier);
         }
@@ -172,7 +172,7 @@ abstract class Element implements ElementInterface
             return $identifier->getSQL($driver);
         }
 
-        // the identifier is a generic SQL-literal, so no quoting
+        // The identifier is a generic SQL-literal, so no quoting
         if ($identifier instanceof Literal) {
             return $identifier->getSQL();
         }
