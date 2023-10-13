@@ -29,7 +29,7 @@ class CompareToTest extends TestCase
     private function createInstance($identifier, string $operator, Select $select): CompareTo
     {
         return new class ($identifier, $operator, $select) extends CompareTo {
-            public static $quantifier = 'FEW';
+            public static string $quantifier = 'FEW';
         };
     }
 
