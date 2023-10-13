@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace pine3ree\Db\Sql;
 
-use pine3ree\Db\Exception\RuntimeException;
 use pine3ree\Db\Sql\DriverInterface;
 use pine3ree\Db\Sql\Params;
 
@@ -71,7 +70,7 @@ interface ElementInterface
     /**
      * Return the parent element, if any.
      *
-     * @return ElementInterface|null
+     * @return \pine3ree\Db\Sql\ElementInterface|null
      */
-    public function getParent(): ?ElementInterface;
+    public function getParent(): ?\pine3ree\Db\Sql\ElementInterface;
 }
