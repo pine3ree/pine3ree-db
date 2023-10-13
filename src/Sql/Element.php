@@ -84,7 +84,7 @@ abstract class Element implements ElementInterface
      * Raises exception if parent is already set.
      *
      * @internal
-     * 
+     *
      * @return void
      * @throws RuntimeException
      */
