@@ -17,6 +17,5 @@ use pine3ree\Db\Sql\Predicate\CompareTo;
  */
 class Some extends CompareTo
 {
-    /** @var string */
-    protected static $quantifier = Sql::SOME;
+    protected static string $quantifier = Sql::SOME;
 }

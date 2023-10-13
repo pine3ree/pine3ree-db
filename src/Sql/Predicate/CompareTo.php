@@ -33,13 +33,13 @@ abstract class CompareTo extends Predicate
     protected $identifier;
 
     /** @var string */
-    protected $operator;
+    protected string $operator;
 
     /** @var Select */
-    protected $select;
+    protected Select $select;
 
     /** @var string */
-    protected static $quantifier;
+    protected static string $quantifier;
 
     /**
      * @param string|Alias|Identifier|Literal $identifier
