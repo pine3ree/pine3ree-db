@@ -380,7 +380,7 @@ class Select extends Statement
                 $cache = false;
             } else {
                 // @codeCoverageIgnoreStart
-                // should be unreacheable
+                // Should be unreacheable
                 throw new InvalidArgumentException(sprintf(
                     "Invalid db-table column type! Allowed types are: string, Literal,"
                     . " Expression, Select, `%s` provided!",
@@ -389,7 +389,7 @@ class Select extends Statement
                 // @codeCoverageIgnoreEnd
             }
 
-            // add alias?
+            // Add alias?
             if (!is_numeric($key) && $key !== '' && $key !== $column) {
                 $column_sql .= " AS " . $driver->quoteAlias($key);
             }
@@ -727,7 +727,7 @@ class Select extends Statement
             $join_sql = $join->getSQL($driver, $params);
             if (self::isEmptySQL($join_sql)) {
                 // @codeCoverageIgnoreStart
-                // unreacheable code
+                // Unreacheable code
                 continue;
                 // @codeCoverageIgnoreEnd
             }
@@ -773,7 +773,7 @@ class Select extends Statement
             return '';
         }
 
-        // partial caching is possibile as there are no params to import here
+        // Partial caching is possibile as there are no params to import here
         if (isset($this->sqls['group']) && $this->driver_unchanged) {
             return $this->sqls['group'];
         }
@@ -850,7 +850,7 @@ class Select extends Statement
             $sortdir = Sql::ASC;
         }
 
-        // we need to transform sql-element information as a string
+        // We need to transform the sql-element information to a string
         if ($orderBy instanceof Element) {
             if ($orderBy instanceof Alias) {
                 $orderBy = Alias::class . "::{$orderBy->alias}";
@@ -874,14 +874,14 @@ class Select extends Statement
             return '';
         }
 
-        // partial caching is possibile as there are no params to import here
+        // Partial caching is possibile as there are no params to import here
         if (isset($this->sqls['order']) && $this->driver_unchanged) {
             return $this->sqls['order'];
         }
 
         $sqls = [];
         foreach ($this->orderBy as $identifier => $direction) {
-            // rebuild the original identifier if it was a sql-element
+            // Rebuild the original identifier if it was a sql-element
             $parts = explode('::', $identifier);
             if (isset($parts[1])) {
                 $fqcn = $parts[0];
@@ -901,7 +901,7 @@ class Select extends Statement
             $limit = null;
         }
 
-        // no change? avoid clearing the cache
+        // No change? Avoid clearing the cache
         if ($limit === $this->limit) {
             return $this;
         }
@@ -918,7 +918,7 @@ class Select extends Statement
             $offset = null;
         }
 
-        // no change? avoid clearing the cache
+        // No change? Avoid clearing the cache
         if ($offset === $this->offset) {
             return $this;
         }
@@ -935,7 +935,7 @@ class Select extends Statement
             return '';
         }
 
-        // computed by driver?
+        // Computed by driver?
         if ($driver instanceof LimitSqlProvider) {
             return $driver->getLimitSQL($this, $params);
         }
