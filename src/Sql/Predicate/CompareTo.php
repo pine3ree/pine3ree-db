@@ -55,7 +55,7 @@ abstract class CompareTo extends Predicate
         $this->operator = $operator;
 
         $this->select = $select->parentIsNot($this) ? clone $select : $select;
-        $this->select->parent = $this;
+        $this->select->setParent($this);
     }
 
     /**
@@ -108,6 +108,6 @@ abstract class CompareTo extends Predicate
     {
         parent::__clone();
         $this->select = clone $this->select;
-        $this->select->parent = $this;
+        $this->select->setParent($this);
     }
 }
