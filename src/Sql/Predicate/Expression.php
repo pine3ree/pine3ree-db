@@ -36,15 +36,13 @@ use function trim;
  */
 class Expression extends Predicate
 {
-    /**
-     * @var string The "{name}"-parametrized SQL-expression
-     */
-    private $expression;
+    /** The "{name}"-parametrized SQL-expression */
+    private string $expression;
 
     /**
-     * @var array
+     * @var array|mixed[]|array<string, mixed>
      */
-    private $substitutions = [];
+    private array $substitutions = [];
 
     /**
      * @param string $expression The SQL expression with optional {name}-placeholders
