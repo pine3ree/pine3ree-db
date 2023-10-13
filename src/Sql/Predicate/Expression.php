@@ -113,13 +113,13 @@ class Expression extends Predicate
             return $this->sql = $this->expression;
         }
 
-        $this->driver = $driver; // set last used driver argument
-        $this->params = null; // reset previously collected params, if any
+        $this->driver = $driver; // Set last used driver argument
+        $this->params = null; // Reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
 
-        // replace the `{name}`-placeholders with `:name`-markers
+        // Replace the `{name}`-placeholders with `:name`-markers
         $sql = $this->expression;
         foreach ($this->substitutions as $name => $value) {
             $search = "{{$name}}";
