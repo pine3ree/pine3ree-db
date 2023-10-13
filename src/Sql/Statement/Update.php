@@ -135,8 +135,7 @@ class Update extends Statement
             );
         }
 
-        $this->sql = "{$base_sql} {$where_sql}";
-        return $this->sql;
+        return $this->sql = "{$base_sql} {$where_sql}";
     }
 
     private function getBaseSQL(DriverInterface $driver, Params $params): string
