@@ -69,13 +69,6 @@ interface ElementInterface
     public function getParams(): ?Params;
 
     /**
-     * Check if element has a parent.
-     *
-     * @return bool
-     */
-    public function hasParent(): bool;
-
-    /**
      * Return the parent element, if any.
      *
      * @return ElementInterface|null

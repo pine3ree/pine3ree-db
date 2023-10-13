@@ -214,7 +214,6 @@ class ElementTest extends TestCase
         self::assertFalse($this->invokeMethod($element, 'parentIsNot', $parent));
 
         $element->setParent($parent);
-        self::assertTrue($element->hasParent());
         self::assertNotNull($element->getParent());
         self::assertInstanceOf(Sql\ElementInterface::class, $element->getParent());
         self::assertFalse($this->invokeMethod($element, 'parentIsNot', $parent));
@@ -222,7 +221,6 @@ class ElementTest extends TestCase
         self::assertTrue($this->invokeMethod($element, 'parentIsNot', $this->createInstance()));
 
         $clone = clone $element;
-        self::assertFalse($clone->hasParent());
         self::assertNull($clone->getParent());
     }
 

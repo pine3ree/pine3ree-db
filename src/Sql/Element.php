@@ -73,11 +73,6 @@ abstract class Element implements ElementInterface
         return $this->params;
     }
 
-    public function hasParent(): bool
-    {
-        return $this->parent instanceof ElementInterface;
-    }
-
     public function getParent(): ?ElementInterface
     {
         return $this->parent;
