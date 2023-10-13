@@ -78,6 +78,16 @@ abstract class Element implements ElementInterface
         return $this->parent;
     }
 
+    /**
+     * Set the parent element.
+     *
+     * Raises exception if parent is already set.
+     *
+     * @internal
+     * 
+     * @return void
+     * @throws RuntimeException
+     */
     public function setParent(ElementInterface $parent): void
     {
         if ($this->parent instanceof ElementInterface && $this->parent !== $parent) {

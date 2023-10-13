@@ -74,14 +74,4 @@ interface ElementInterface
      * @return ElementInterface|null
      */
     public function getParent(): ?ElementInterface;
-
-    /**
-     * Set the parent element.
-     *
-     * Raises exception if parent is already set.
-     *
-     * @return void
-     * @throws RuntimeException
-     */
-    public function setParent(ElementInterface $parent): void;
 }
