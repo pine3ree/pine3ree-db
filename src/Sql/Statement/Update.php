@@ -43,9 +43,9 @@ class Update extends Statement
     use TableAwareTrait;
 
     /**
-     * @var array Column-value pairs for update
+     * @var array|array<string, mixed> Column-value pairs for update
      */
-    private $set = [];
+    private array $set = [];
 
     /**
      * @param string $table The db table to update
@@ -121,8 +121,8 @@ class Update extends Statement
             return $this->sql;
         }
 
-        $this->driver = $driver; // set last used driver argument
-        $this->params = null; // reset previously collected params, if any
+        $this->driver = $driver; // Set last used driver argument
+        $this->params = null; // Reset previously collected params, if any
 
         $driver = $driver ?? Driver::ansi();
         $params = $params ?? ($this->params = new Params());
@@ -158,8 +158,8 @@ class Update extends Statement
         $set = [];
         foreach ($this->set as $column => $value) {
             $column = $driver->quoteIdentifier($column);
-            $param  = $this->getValueSQL($params, $value, null, 'set');
-            $set[]  = "{$column} = {$param}";
+            $marker = $this->getValueSQL($params, $value, null, 'set');
+            $set[]  = "{$column} = {$marker}";
         }
 
         return Sql::UPDATE . " {$table} " . Sql::SET . " " . implode(", ", $set);
