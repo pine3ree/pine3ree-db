@@ -25,8 +25,7 @@ use function preg_match;
  */
 class Identifier extends Element
 {
-    /** @var string */
-    private $identifier;
+    private string $identifier;
 
     protected const VALID_PATTERN = '/^(?:[a-zA-Z]|\_)[a-zA-Z0-9\_\.]*$/';
 
@@ -53,8 +52,7 @@ class Identifier extends Element
     /**
      * Return a properly quoted identifier
      *
-     * @param DriverInterface $driver
-     * @return string
+     * {@inheritDoc}
      */
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
     {
@@ -62,7 +60,7 @@ class Identifier extends Element
             return $this->sql;
         }
 
-        $this->driver = $driver;
+        $this->driver = $driver; // Set last used driver argument
 
         return $this->sql = ($driver ?? Driver::ansi())->quoteIdentifier($this->identifier);
     }
