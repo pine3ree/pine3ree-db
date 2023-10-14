@@ -37,6 +37,11 @@ use function trim;
 abstract class Element implements ElementInterface
 {
     /**
+     * The parent element, if any
+     */
+    protected ?ElementInterface $parent = null;
+
+    /**
      * The rendered SQL statement string with optional parameter markers
      */
     protected ?string $sql = null;
@@ -47,14 +52,21 @@ abstract class Element implements ElementInterface
     protected ?Params $params = null;
 
     /**
-     * The parent element, if any
+     * Flag updated by getSQL(...) calls and telling if the parameter accumulator
+     * has changed since last call
      */
-    protected ?ElementInterface $parent = null;
+    protected bool $params_changed = false;
 
     /**
      * The last driver argument used in this element getSQL() call
      */
     protected ?DriverInterface $driver = null;
+
+    /**
+     * Flag updated by getSQL(...) calls and telling if the driver used to
+     * generate the sql string has changed since last call
+     */
+    protected bool $driver_changed = false;
 
     /**
      * A cache for element classes short name
