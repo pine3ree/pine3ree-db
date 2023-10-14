@@ -114,8 +114,6 @@ class Select extends Statement
 
     protected ?self $intersect = null;
 
-    protected bool $driver_unchanged = true;
-
     /**
      * @param null|string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
      *      One or many column names, Identifiers, Literals, Expressions or sub-select statements
