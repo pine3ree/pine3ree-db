@@ -70,7 +70,7 @@ interface ElementInterface
     /**
      * Return the parent element, if any.
      *
-     * @return \pine3ree\Db\Sql\ElementInterface|null
+     * @return self|null
      */
-    public function getParent(): ?\pine3ree\Db\Sql\ElementInterface;
+    public function getParent(): ?self;
 }
