@@ -48,7 +48,7 @@ class SelectDecoratorTest extends TestCase
         };
     }
 
-    public function testThatSelectsGetsDecorated()
+    public function testThatSelectGetsDecorated()
     {
         $driver = $this->createDriverInstance(10);
         $select = new Select('*', 'product');
@@ -57,5 +57,22 @@ class SelectDecoratorTest extends TestCase
             'SELECT *%wFROM "product"%w[LIMIT 10]',
             $select->getSQL($driver)
         );
+    }
+
+    public function testThatChildSelectGetsDecorated()
+    {
+        $driver = $this->createDriverInstance(10);
+
+        $from   = (new Select())->from('product');
+        $select = (new Select())->from($from, 'p');
+
+        self::assertStringMatchesFormat(
+            'SELECT "p".* FROM (SELECT * FROM "product" [LIMIT 10]) "p" [LIMIT 10]',
+            $select->getSQL($driver)
+        );
+
+//        self::assertNotSame($from, $select->from);
+        self::assertSame($from->getParent(), $select->from->getParent());
+        self::assertSame($select, $select->from->getParent());
     }
 }
