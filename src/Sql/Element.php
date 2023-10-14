@@ -91,9 +91,10 @@ abstract class Element implements ElementInterface
     public function setParent(ElementInterface $parent): void
     {
         if ($this->parent instanceof ElementInterface && $this->parent !== $parent) {
-            throw new RuntimeException(
-                "The parent of this element is already set!"
-            );
+            throw new RuntimeException(sprintf(
+                "The parent of this `%s` sql-element is already set!",
+                static::class
+            ));
         }
 
         $this->parent = $parent;
