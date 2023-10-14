@@ -294,13 +294,36 @@ abstract class Element implements ElementInterface
         }
     }
 
+    /**
+     * MUST be called on each getSQL() implementation if we need to access valid
+     * $driver_changed and $params_changed flags
+     *
+     * @param Driver|null $driver The driver passed to getSQL()
+     * @param Params|null $params The params accumulator passed to getSQL()
+     * @return bool
+     */
     protected function hasValidSqlCache(?Driver $driver, ?Params $params): bool
     {
-        return (isset($this->sql)
-            && isset($this->params)
-            && $this->driver === $driver
-            && $params === null
-        );
+        $this->driver_changed = $driver_changed = $driver !== $this->driver;
+        $this->params_changed = $params_changed = $params !== $this->params;
+
+        if ($this->sql === null) {
+            return false;
+        }
+
+        if ($this->params === null) {
+            return false;
+        }
+
+        if ($driver_changed) {
+            return false;
+        }
+
+        if (isset($params) && $params_changed) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
