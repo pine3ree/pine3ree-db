@@ -344,7 +344,7 @@ class InsertTest extends TestCase
 
     public function testColumnsSqlCache()
     {
-        // simple string column =  sql-asterisk
+        // simple string column = sql-asterisk
         $insert = new Insert('product');
 
         $insert->row(['price' => 111.11, 'stock' => 111, 'enabled' => true]);
@@ -352,6 +352,12 @@ class InsertTest extends TestCase
 
         $sql = $insert->getSQL();
         self::assertArrayHasKey('columns', $this->getPropertyValue($insert, 'sqls'));
+
+        $insert->row(['price' => 333.33, 'stock' => 333, 'enabled' => false]);
+
+        $insertColumnsSQL = $this->invokeMethod($insert, 'getColumnsSQL', $this->driver);
+
+        self::assertSame($insertColumnsSQL, $this->invokeMethod($insert, 'getColumnsSQL', $this->driver));
     }
 
     public function testGetSqlWithSelect()
