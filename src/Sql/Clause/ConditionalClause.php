@@ -84,12 +84,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
             return $this->sql = '';
         }
 
-        if ($this->hasValidSqlCache($driver, $params)) {
-            return $this->sql;
-        }
-
-        $this->driver = $driver; // Set last used driver argument
-
         $predicates_sql = $this->searchCondition->getSQL($driver, $params);
         if (static::$useParenthesis) {
             $predicates_sql = "({$predicates_sql})";
