@@ -330,11 +330,10 @@ class Select extends Statement
 
     private function getColumnsSQL(DriverInterface $driver, Params $params): string
     {
-
         if (isset($this->sqls['columns'])
+            && isset($this->params)
             && $driver === $this->driver
             && $params === null
-            && isset($this->params)
         ) {
             return $this->sqls['columns'];
         }
