@@ -41,7 +41,7 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
     public function __construct($predicates = null, string $defaultLogicalOperator = null)
     {
         $this->searchCondition = new Predicate\Set($predicates, $defaultLogicalOperator);
-        $this->searchCondition->parent = $this;
+        $this->searchCondition->setParent($this);
     }
 
     /**
@@ -569,6 +569,6 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
     {
         parent::__clone();
         $this->searchCondition = clone $this->searchCondition;
-        $this->searchCondition->parent = $this;
+        $this->searchCondition->setParent($this);
     }
 }

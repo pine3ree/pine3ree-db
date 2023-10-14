@@ -58,7 +58,7 @@ class In extends Predicate
             if ($valueList->parentIsNot($this)) {
                 $valueList = clone $valueList;
             }
-            $valueList->parent = $this;
+            $valueList->setParent($this);
         }
 
         $this->valueList = $valueList;
@@ -156,7 +156,7 @@ class In extends Predicate
         parent::__clone();
         if ($this->valueList instanceof Select) {
             $this->valueList = clone $this->valueList;
-            $this->valueList->parent = $this;
+            $this->valueList->setParent($this);
         }
     }
 }

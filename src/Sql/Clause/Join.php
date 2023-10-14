@@ -206,7 +206,7 @@ class Join extends Clause
         if ('on' === $name) {
             if ($this->specification === null) {
                 $this->specification = new On();
-                $this->specification->parent = $this;
+                $this->specification->setParent($this);
                 return $this->specification;
             }
             if ($this->specification instanceof On) {
@@ -223,7 +223,7 @@ class Join extends Clause
         parent::__clone();
         if ($this->specification instanceof On) {
             $this->specification = clone $this->specification;
-            $this->specification->parent = $this;
+            $this->specification->setParent($this);
         }
     }
 }

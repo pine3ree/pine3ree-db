@@ -35,7 +35,7 @@ class Exists extends Predicate
     public function __construct(Select $select)
     {
         $this->select = $select->parentIsNot($this) ? clone $select : $select;
-        $this->select->parent = $this;
+        $this->select->setParent($this);
     }
 
     public function getSQL(DriverInterface $driver = null, Params $params = null): string
@@ -69,6 +69,6 @@ class Exists extends Predicate
     {
         parent::__clone();
         $this->select = clone $this->select;
-        $this->select->parent = $this;
+        $this->select->setParent($this);
     }
 }

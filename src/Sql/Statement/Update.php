@@ -180,7 +180,7 @@ class Update extends Statement
         if ('where' === $name) {
             if (!isset($this->where)) {
                 $this->where = new Where();
-                $this->where->parent = $this;
+                $this->where->setParent($this);
             }
             return $this->where;
         }
@@ -193,7 +193,7 @@ class Update extends Statement
         parent::__clone();
         if (isset($this->where)) {
             $this->where = clone $this->where;
-            $this->where->parent = $this;
+            $this->where->setParent($this);
         }
     }
 }

@@ -205,7 +205,7 @@ class Select extends Statement
             if ($column->parentIsNot($this)) {
                 $column = clone $column;
             }
-            $column->parent = $this;
+            $column->setParent($this);
         }
 
         if (isset($key)) {
@@ -456,7 +456,7 @@ class Select extends Statement
                 );
             }
             $this->from = $from->parentIsNot($this) ? clone $from : $from;
-            $this->from->parent = $this;
+            $this->from->setParent($this);
         } else {
             $this->setTable($from);
         }
@@ -576,7 +576,7 @@ class Select extends Statement
         }
 
         $this->joins[] = $join;
-        $join->parent = $this;
+        $join->setParent($this);
 
         $this->clearSQL();
 
@@ -801,7 +801,7 @@ class Select extends Statement
         if ($having instanceof Closure) {
             if (!isset($this->having)) {
                 $this->having = new Having();
-                $this->having->parent = $this;
+                $this->having->setParent($this);
             }
             $having($this->having);
             return $this;
@@ -984,7 +984,7 @@ class Select extends Statement
         }
 
         $this->union = $select;
-        $this->union->parent = $this;
+        $this->union->setParent($this);
         $this->unionAll = $all;
 
         $this->clearSQL();
@@ -1015,7 +1015,7 @@ class Select extends Statement
         }
 
         $this->intersect = $select;
-        $this->intersect->parent = $this;
+        $this->intersect->setParent($this);
 
         $this->clearSQL();
 
@@ -1216,7 +1216,7 @@ class Select extends Statement
         if ('where' === $name) {
             if (!isset($this->where)) {
                 $this->where = new Where();
-                $this->where->parent = $this;
+                $this->where->setParent($this);
             }
             return $this->where;
         }
@@ -1228,7 +1228,7 @@ class Select extends Statement
         if ('having' === $name) {
             if (!isset($this->having)) {
                 $this->having = new Having();
-                $this->having->parent = $this;
+                $this->having->setParent($this);
             }
             return $this->having;
         }
@@ -1266,36 +1266,36 @@ class Select extends Statement
     {
         parent::__clone();
         foreach ($this->columns as $key => $column) {
-            if ($column instanceof self) {
+            if ($column instanceof ElementInterface) {
                 $this->columns[$key] = $column = clone $column;
-                $column->parent = $this;
+                $column->setParent($this);
             }
         }
         if ($this->from instanceof self) {
             $this->from = clone $this->from;
-            $this->from->parent = $this;
+            $this->from->setParent($this);
         }
         if ($this->union instanceof self) {
             $this->union = clone $this->union;
-            $this->union->parent = $this;
+            $this->union->setParent($this);
         }
         if ($this->intersect instanceof self) {
             $this->intersect = clone $this->intersect;
-            $this->intersect->parent = $this;
+            $this->intersect->setParent($this);
         }
         if (!empty($this->joins)) {
             foreach ($this->joins as $k => $join) {
                 $this->joins[$k] = $join = clone $join;
-                $join->parent = $this;
+                $join->setParent($this);
             }
         }
         if ($this->where instanceof Where) {
             $this->where = clone $this->where;
-            $this->where->parent = $this;
+            $this->where->setParent($this);
         }
         if ($this->having instanceof Having) {
             $this->having = clone $this->having;
-            $this->having->parent = $this;
+            $this->having->setParent($this);
         }
     }
 }
