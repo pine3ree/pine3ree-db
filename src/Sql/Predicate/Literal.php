@@ -42,9 +42,12 @@ class Literal extends Predicate
         return $this->literal;
     }
 
+    /**
+     * Only reset the parent element when cloning
+     */
     public function __clone()
     {
-        // no-op
+        $this->parent = null;
     }
 
     /**
