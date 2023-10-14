@@ -363,7 +363,7 @@ class Insert extends Statement
             return '';
         }
 
-        if (isset($this->sqls['columns'])) {
+        if (isset($this->sqls['columns']) && !$this->driver_changed) {
             return $this->sqls['columns'];
         }
 

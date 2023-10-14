@@ -323,6 +323,24 @@ class SelectTest extends TestCase
         );
     }
 
+    public function testGetColumnsSqlCache()
+    {
+        $select = (new Select())
+            ->column('unit_price', 'unitPrice')
+            ->column('vat_tax_id', 'vatTaxId')
+            ->from('product', 'p');
+
+        $select->getSQL($this->driver);
+        $params = $select->getParams();
+
+        $columnsSQL = $this->invokeMethod($select, 'getColumnsSQL', $this->driver, $params);
+
+        self::assertSame(
+            $columnsSQL,
+            $this->invokeMethod($select, 'getColumnsSQL', $this->driver, $params)
+        );
+    }
+
     public function testSelectFromTable()
     {
         $select = (new Select())->from('product', null);
@@ -543,6 +561,22 @@ class SelectTest extends TestCase
         ];
     }
 
+    public function testGroupBySqlCache()
+    {
+        $select = (new Select())->sum("unit_price*quantity", "productTotal")->from('cart_product');
+
+        $select->groupBy('cart_id');
+
+        $select->getSQL($this->driver);
+
+        $groupBySQL = $this->invokeMethod($select, 'getGroupBySQL', $this->driver);
+
+        self::assertSame(
+            $groupBySQL,
+            $this->invokeMethod($select, 'getGroupBySQL', $this->driver)
+        );
+    }
+
     /**
      * @dataProvider provideOrderBy
      */
@@ -575,6 +609,21 @@ class SelectTest extends TestCase
             [['unit_price', 'stock'], 'DESC', '`unit_price` DESC, `stock` DESC'],
             [[], 'DESC', ''],
         ];
+    }
+
+    public function testOrderBySqlCache()
+    {
+        $select = (new Select())->from('product');
+        $select->orderBy('unit_price', 'DESC');
+
+        $select->getSQL($this->driver);
+
+        $orderBySQL = $this->invokeMethod($select, 'getOrderBySQL', $this->driver);
+
+        self::assertSame(
+            $orderBySQL,
+            $this->invokeMethod($select, 'getOrderBySQL', $this->driver)
+        );
     }
 
     public function testWhereMethod()
