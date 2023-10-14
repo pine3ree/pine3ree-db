@@ -1059,9 +1059,12 @@ class Select extends Statement
         if ($driver instanceof SelectSqlDecorator) {
             $this->sql = $driver->decorateSelectSQL($this, $params, $pretty);
         } elseif ($driver instanceof SelectDecorator) {
-            $parent = $this->parent; // this parent may be changed by the decorator
+            // The original parent may be changed by the decorator returning a different instance
+            $parent = $this->parent;
             $select = $driver->decorateSelect($this, $params);
-            $select->setParent($parent);
+            if (isset($parent)) {
+                $select->setParent($parent);
+            }
             $this->sql = $select->generateSQL($driver, $params, $pretty);
         } else {
             // Generate and cache a fresh sql string
