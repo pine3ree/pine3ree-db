@@ -53,7 +53,7 @@ use function trim;
 class Set extends Predicate implements IteratorAggregate
 {
     /** @var Predicate[] */
-    protected $predicates = [];
+    protected array $predicates = [];
 
     /** Internal counter for predicate keys */
     protected int $count = 0;
