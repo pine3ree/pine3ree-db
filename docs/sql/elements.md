@@ -8,9 +8,13 @@ that returns the compiled SQL-string for the elements itself with the help of th
 driver and collects parameter values and types to be used when the sql-statements
 are being prepared to be sent to the database server.
 
-Sql elements can also be organized in hierarchies (`ElementInterface::setParent()`),
-but an element can have only one parent. Changes to an inner element must invalidate
-any compiled sql-string that has been cached.
+Sql elements are also automatically organized in hierarchies when calling many
+elements' interface methods that add inner elements. An element can only have
+one and the same parent, but a cloned element has no parent assigned to it. When
+an element is cloned, any child element is cloned as well and then assigned to it.
+
+Any changes to inner elements must invalidate any compiled sql-string that has been
+cached.
 
 The sql Element interface provides the following methods:
 ```php
