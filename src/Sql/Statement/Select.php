@@ -25,6 +25,7 @@ use pine3ree\Db\Sql\Driver\Feature\SelectDecorator;
 use pine3ree\Db\Sql\Driver\Feature\SelectSqlDecorator;
 use pine3ree\Db\Sql\DriverInterface;
 use pine3ree\Db\Sql\Element;
+use pine3ree\Db\Sql\ElementInterface;
 use pine3ree\Db\Sql\Expression;
 use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
@@ -195,7 +196,7 @@ class Select extends Statement
 
         $key = $alias ?? (is_string($column) ? $column : null);
 
-        if ($column instanceof self) {
+        if ($column instanceof ElementInterface) {
             if ($column === $this) {
                 throw new RuntimeException(
                     "A sql select statement cannot add itself as a column!"
