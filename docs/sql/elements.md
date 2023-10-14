@@ -12,6 +12,21 @@ Sql elements can also be organized in hierarchies (`ElementInterface::setParent(
 but an element can have only one parent. Changes to an inner element must invalidate
 any compiled sql-string that has been cached.
 
+The sql Element interface provides the following methods:
+```php
+
+// Return the compiled sql using the specified or the default ansi driver and
+// accumulate parameters and relative markers using the provided parameter
+// accumulator or an internal accumulator
+ElementInterface::getSQL(DriverInterface $driver = null, Params $params = null): string;
+// Returns TRUE if the internal parameter accumulator exists and is not empty
+ElementInterface::hasParams(): bool;
+// Returns the internal parameter accumulator, if any
+ElementInterface::getParams(): ?Params;
+// Returns the parent element, if any
+ElementInterface::getParent(): ?self;
+```
+
 ## pine3ree\Db\Sql
 The `Db\Sql` class offers constants for  common SQL keywords and static factory methods
 for creating complex or simple sql elements:
