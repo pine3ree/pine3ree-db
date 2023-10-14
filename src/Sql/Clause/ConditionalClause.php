@@ -14,7 +14,6 @@ use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Alias;
 use pine3ree\Db\Sql\Clause;
-use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\DriverInterface;
 use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Literal;
