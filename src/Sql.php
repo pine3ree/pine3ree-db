@@ -242,14 +242,14 @@ class Sql
     /*
      * FUNCTIONS
      */
-    public const ESCAPE = 'ESCAPE';
+    public const ESCAPE   = 'ESCAPE';
     public const COALESCE = 'COALESCE';
     // AGGREGATE FUNCTIONS
     public const COUNT = 'COUNT';
-    public const SUM = 'SUM';
-    public const MIN = 'MIN';
-    public const MAX = 'MAX';
-    public const AVG = 'AVG';
+    public const SUM   = 'SUM';
+    public const MIN   = 'MIN';
+    public const MAX   = 'MAX';
+    public const AVG   = 'AVG';
 
     public static function isValidJoin(string $join): bool
     {
