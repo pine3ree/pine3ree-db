@@ -842,8 +842,7 @@ class SelectTest extends TestCase
             . ' INTERSECT '
             . 'SELECT "p2".* FROM "product2" "p2"'
             . ' EXCEPT '
-            . 'SELECT "p3".* FROM "product3" "p3"'
-            ,
+            . 'SELECT "p3".* FROM "product3" "p3"',
             $select0->getSQL()
         );
     }
