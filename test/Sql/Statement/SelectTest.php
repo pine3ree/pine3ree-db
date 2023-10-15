@@ -28,7 +28,7 @@ class SelectTest extends TestCase
 {
     use DiscloseTrait;
 
-    private Driver\MySql $driver;
+    private ?Driver\MySql $driver = null;
 
     public function setUp(): void
     {
