@@ -18,6 +18,7 @@ use pine3ree\Db\Sql\Clause\Intersect;
 use pine3ree\Db\Sql\Clause\Union;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\DbTest\DiscloseTrait;
+use pine3ree\Db\Exception\InvalidArgumentException;
 
 class CombineTest extends TestCase
 {
@@ -70,6 +71,14 @@ class CombineTest extends TestCase
         self::assertInstanceOf(Intersect::class, Combine::create('intersect', $select));
         self::assertInstanceOf(Except::class, Combine::create(Sql::EXCEPT, $select));
         self::assertInstanceOf(Except::class, Combine::create('except', $select));
+    }
+
+    public function testFactoryMethodRaisesExceptionWithInvalidType()
+    {
+        $select = new Select('*', 'product', 'p');
+
+        $this->expectException(InvalidArgumentException::class);
+        Combine::create('invalid', $select);
     }
 
     public function testMagicGet()
