@@ -62,24 +62,21 @@ use const PHP_INT_MAX;
  *
  * @link https://ronsavage.github.io/SQL/sql-2003-2.bnf.html#query%20specification
  *
- * @property-read string|null $table The db table to select from if already set
- * @property-read string|null $alias The table alias if any
- * @property-read string|null $quantifier The SELECT quantifier if any
+ * @property-read string|null $table The db table to select from ,if already set
+ * @property-read string|null $alias The table alias, if any
+ * @property-read string|null $quantifier The SELECT quantifier, if any
  * @property-read string[]|Identifier[]|Literal[]|Expression[]|self[] $columns The columns to be returned
  * @psalm-property-read array<string, string|Identifier|Literal|Expression|self> $columns
- * @property-read string|null $into The db table to insert the selected rows into, if any
- * @property-read string|self|null $from The db table to select from or a sub-select if already set
- * @property-read Where $where The Where clause, built on-first-access if null
- * @property-read Join[] $joins An array of Join clauses if any
+ * @property-read string|null $into The db table to insert the selected rows into,, if any
+ * @property-read string|self|null $from The db table to select from or a sub-select, if already set
+ * @property-read Where $where The Where clause, built on-first-access, if null
+ * @property-read Join[] $joins An array of Join clauses, if any
  * @property-read array $groupBy An array of GROUP BY identifiers
- * @property-read Having $having The Having clause, built on-first-access if null
+ * @property-read Having $having The Having clause, built on-first-access, if null
  * @property-read array $orderBy An array of ORDER BY identifier to sort-direction pairs
- * @property-read int|null $limit The LIMIT clause value if any
- * @property-read int|null $offset The OFFSET clause value if any
- * @property-read self|null $union The UNION clause, if any
- * @property-read self|null $intersect The INTERSECT clause, if any
- * @property-read bool|null $except The EXCEPT clause, if any
- * @property-read bool|null $combine The UNION, INTERSECT or EXCEPT clause, if any
+ * @property-read int|null $limit The LIMIT clause value, if any
+ * @property-read int|null $offset The OFFSET clause value, if any
+ * @property-read Combine[] $combines An array of Combine clauses, if any
  */
 class Select extends Statement
 {
@@ -119,22 +116,19 @@ class Select extends Statement
     protected array $combines = [];
 
     /**
-     * One of the combine clauses, if any
-     *
-     * @var Combine|Except|Intersect|Union|null
+     * @todo Allow resetting of non defining properties?
      */
-    protected ?Combine $combine = null;
-
     protected $resettable_props = [
-        'columns' => [],
-        'into'    => null,
-        'joins'   => [],
-        'where'   => null,
-        'groupBy' => [],
-        'having'  => null,
-        'orderBy' => [],
-        'limit'   => null,
-        'offset'  => null,
+        'columns'  => [],
+        'into'     => null,
+        'joins'    => [],
+        'where'    => null,
+        'groupBy'  => [],
+        'having'   => null,
+        'orderBy'  => [],
+        'limit'    => null,
+        'offset'   => null,
+        'combines' => [],
     ];
 
     /**
@@ -994,32 +988,18 @@ class Select extends Statement
     {
         $type = strtoupper($type);
 
-//        $combine = $this->combine ?? $this->union ?? $this->intersect ?? $this->except;
-//
-//        if ($combine instanceof Combine) {
-//            $existing = $combine->name;
-//            throw new RuntimeException(
-//                "Cannot add a/an {$type} clause when a/an {$existing} clause is already set!"
-//            );
-//        }
-
         if ($select === $this) {
             throw new RuntimeException(
                 "A sql select statement cannot use itself for a/an {$type} clause!"
             );
         }
 
-        if ($select->parentIsNot($this)) {
-            $select = clone $select;
-            $select->setParent($this);
-        }
-
         if ($type === Sql::UNION) {
-            $combine = $this->combine = new Union($select, $all);
+            $combine = new Union($select, $all);
         } elseif ($type === Sql::INTERSECT) {
-            $combine = $this->combine = new Intersect($select, $all);
+            $combine = new Intersect($select, $all);
         } elseif ($type === Sql::EXCEPT) {
-            $combine = $this->combine = new Except($select, $all);
+            $combine = new Except($select, $all);
         } else {
             throw new InvalidArgumentException(
                 "Invalid sql combine type '{$type}'"
@@ -1260,25 +1240,6 @@ class Select extends Statement
             return $this->offset;
         }
 
-        if ('union' === $name) {
-            if ($this->combine instanceof Union) {
-                return $this->combine;
-            }
-            return null;
-        }
-        if ('intersect' === $name) {
-            if ($this->combine instanceof Intersect) {
-                return $this->combine;
-            }
-            return null;
-        }
-        if ('except' === $name) {
-            if ($this->combine instanceof Except) {
-                return $this->combine;
-            }
-            return null;
-        }
-
         if ('combines' === $name) {
             return $this->combines;
         }
@@ -1299,22 +1260,6 @@ class Select extends Statement
             $this->from = clone $this->from;
             $this->from->setParent($this);
         }
-//        if ($this->union instanceof Union) {
-//            $this->union = clone $this->union;
-//            $this->union->setParent($this);
-//        }
-//        if ($this->intersect instanceof Intersect) {
-//            $this->intersect = clone $this->intersect;
-//            $this->intersect->setParent($this);
-//        }
-//        if ($this->except instanceof Except) {
-//            $this->except = clone $this->except;
-//            $this->except->setParent($this);
-//        }
-//        if ($this->combine instanceof Combine) {
-//            $this->combine = clone $this->combine;
-//            $this->combine->setParent($this);
-//        }
         if (!empty($this->joins)) {
             foreach ($this->joins as $k => $join) {
                 $this->joins[$k] = $join = clone $join;
