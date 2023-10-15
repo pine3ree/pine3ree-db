@@ -83,7 +83,7 @@ abstract class Combine extends Clause
 
         $sep = $pretty ? "\n" : " ";
 
-        return "{$combine}{$sep}{$select_sql}";
+        return $this->sql = "{$combine}{$sep}{$select_sql}";
     }
 
     /**
