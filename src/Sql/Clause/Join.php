@@ -151,7 +151,10 @@ class Join extends Clause
             $table .= " " .  $driver->quoteAlias($this->alias);
         }
 
-        $join = $this->getName();
+        $join = Sql::JOIN;
+        if (!empty($this->type)) {
+            $join = "{$this->type} {$join}";
+        }
 
         if (empty($this->specification)) {
             return $this->sql = "{$join} {$table}";
@@ -169,23 +172,13 @@ class Join extends Clause
         return $this->sql = rtrim("{$join} {$table} {$specification_sql}");
     }
 
-    protected function getName(): string
-    {
-        if (isset($this->__name)) {
-            return $this->__name;
-        }
-
-        $this->__name = empty($this->type) ? Sql::JOIN : "{$this->type} " . Sql::JOIN;
-        return $this->__name;
-    }
-
     /**
      * @return mixed
      */
     public function __get(string $name)
     {
         if ('name' === $name) {
-            return $this->__name ?? $this->getName();
+            return Sql::JOIN;
         }
         if ('type' === $name) {
             return $this->type;
