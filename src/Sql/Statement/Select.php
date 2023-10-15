@@ -102,6 +102,7 @@ class Select extends Statement
 
     protected ?string $alias = null;
 
+    /** @var Join[] */
     protected array $joins = [];
 
     protected array $groupBy = [];
@@ -114,14 +115,15 @@ class Select extends Statement
 
     protected ?int $offset = null;
 
+    /** @var Combine[] */
+    protected array $combines = [];
+
     /**
      * One of the combine clauses, if any
      *
      * @var Combine|Except|Intersect|Union|null
      */
     protected ?Combine $combine = null;
-
-    protected ?bool $combine_all = null;
 
     protected $resettable_props = [
         'columns' => [],
@@ -746,14 +748,7 @@ class Select extends Statement
 
         $sqls = [];
         foreach ($this->joins as $join) {
-            $join_sql = $join->getSQL($driver, $params);
-            if (self::isEmptySQL($join_sql)) {
-                // @codeCoverageIgnoreStart
-                // Unreacheable code
-                continue;
-                // @codeCoverageIgnoreEnd
-            }
-            $sqls[] = $join_sql;
+            $sqls[] = $join->getSQL($driver, $params);
         }
 
         return trim(implode(" ", $sqls));
@@ -999,19 +994,24 @@ class Select extends Statement
     {
         $type = strtoupper($type);
 
-        $combine = $this->combine ?? $this->union ?? $this->intersect ?? $this->except;
-
-        if ($combine instanceof Combine) {
-            $existing = $combine->name;
-            throw new RuntimeException(
-                "Cannot add a/an {$type} clause when a/an {$existing} clause is already set!"
-            );
-        }
+//        $combine = $this->combine ?? $this->union ?? $this->intersect ?? $this->except;
+//
+//        if ($combine instanceof Combine) {
+//            $existing = $combine->name;
+//            throw new RuntimeException(
+//                "Cannot add a/an {$type} clause when a/an {$existing} clause is already set!"
+//            );
+//        }
 
         if ($select === $this) {
             throw new RuntimeException(
                 "A sql select statement cannot use itself for a/an {$type} clause!"
             );
+        }
+
+        if ($select->parentIsNot($this)) {
+            $select = clone $select;
+            $select->setParent($this);
         }
 
         if ($type === Sql::UNION) {
@@ -1028,6 +1028,8 @@ class Select extends Statement
 
         $combine->setParent($this);
 
+        $this->combines[] = $combine;
+
         $this->clearSQL();
 
         return $this;
@@ -1035,11 +1037,16 @@ class Select extends Statement
 
     private function getCombineSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
     {
-        if ($this->combine instanceof Combine) {
-            return $this->combine->getSQL($driver, $params, $pretty);
+        if (empty($this->combines)) {
+            return '';
         }
 
-        return '';
+        $sqls = [];
+        foreach ($this->combines as $combine) {
+            $sqls[] = $combine->getSQL($driver, $params, $pretty);
+        }
+
+        return implode($pretty ? "\n" :  " ", $sqls);
     }
 
     /**
@@ -1272,6 +1279,10 @@ class Select extends Statement
             return null;
         }
 
+        if ('combines' === $name) {
+            return $this->combines;
+        }
+
         return parent::__get($name);
     }
 
@@ -1300,10 +1311,10 @@ class Select extends Statement
 //            $this->except = clone $this->except;
 //            $this->except->setParent($this);
 //        }
-        if ($this->combine instanceof Combine) {
-            $this->combine = clone $this->combine;
-            $this->combine->setParent($this);
-        }
+//        if ($this->combine instanceof Combine) {
+//            $this->combine = clone $this->combine;
+//            $this->combine->setParent($this);
+//        }
         if (!empty($this->joins)) {
             foreach ($this->joins as $k => $join) {
                 $this->joins[$k] = $join = clone $join;
@@ -1317,6 +1328,12 @@ class Select extends Statement
         if ($this->having instanceof Having) {
             $this->having = clone $this->having;
             $this->having->setParent($this);
+        }
+        if (!empty($this->combines)) {
+            foreach ($this->combines as $k => $combine) {
+                $this->combines[$k] = $combine = clone $combine;
+                $combine->setParent($this);
+            }
         }
     }
 }
