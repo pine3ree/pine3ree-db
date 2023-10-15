@@ -28,8 +28,7 @@ class SelectTest extends TestCase
 {
     use DiscloseTrait;
 
-    /** @var Driver\MySql */
-    private $driver;
+    private Driver\MySql $driver;
 
     public function setUp(): void
     {
@@ -734,61 +733,128 @@ class SelectTest extends TestCase
         self::assertEquals($join1, $join2);
         self::assertNotSame($join1, $join2);
     }
-//
-//    public function testThatAddIntersectAfterUnionRaisesException()
-//    {
-//        $select = new Select('*', 'product', 'p');
-//        $union = (new Select('*', 'store1_product'))->orderBy('price');
-//        $select->union($union);
-//        $select->union; // triggers clear SQL cache
-//
-//        $this->expectException(RuntimeException::class);
-//        $select->intersect(new Select('*', 'store2_product'));
-//    }
-//
-//    public function testThatAddUnionAfterIntersectRaisesException()
-//    {
-//        $select = new Select('*', 'product', 'p');
-//        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
-//        $select->intersect($intersect);
-//
-//        $this->expectException(RuntimeException::class);
-//        $select->union(new Select('*', 'store2_product'));
-//    }
-//
-//    public function testThatAddExceptAfterIntersectRaisesException()
-//    {
-//        $select = new Select('*', 'product', 'p');
-//        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
-//        $select->intersect($intersect);
-//
-//        $this->expectException(RuntimeException::class);
-//        $select->except(new Select('*', 'store2_product'));
-//    }
-//
-//    public function testAddingItselfAsUnionRaisesException()
-//    {
-//        $select = new Select('*');
-//        $this->expectException(RuntimeException::class);
-//        $this->expectExceptionMessage("cannot use itself for a/an UNION clause");
-//        $select->union($select);
-//    }
-//
-//    public function testAddingItselfAsIntersectRaisesException()
-//    {
-//        $select = new Select('*');
-//        $this->expectException(RuntimeException::class);
-//        $this->expectExceptionMessage("cannot use itself for a/an INTERSECT clause");
-//        $select->intersect($select);
-//    }
-//
-//    public function testAddingItselfAsExceptRaisesException()
-//    {
-//        $select = new Select('*');
-//        $this->expectException(RuntimeException::class);
-//        $this->expectExceptionMessage("cannot use itself for a/an EXCEPT clause");
-//        $select->except($select);
-//    }
+
+    public function testAddUnion()
+    {
+        $select0 = new Select('*', 'product', 'p0');
+        $select1 = new Select('*', 'product1', 'p1');
+
+        $select0->union($select1);
+
+        $combines = $this->getPropertyValue($select0, 'combines');
+
+        self::assertCount(1, $combines);
+        self::assertArrayHasKey(0, $combines);
+
+        $combine = $combines[0];
+
+        self::assertInstanceOf(Sql\Clause\Union::class, $combine);
+        self::assertSame($select1, $this->getPropertyValue($combine, 'select'));
+
+        self::assertSame(
+            'SELECT "p0".* FROM "product" "p0" UNION SELECT "p1".* FROM "product1" "p1"',
+            $select0->getSQL()
+        );
+    }
+
+    public function testAddIntersect()
+    {
+        $select0 = new Select('*', 'product', 'p0');
+        $select1 = new Select('*', 'product1', 'p1');
+
+        $select0->intersect($select1);
+
+        $combines = $this->getPropertyValue($select0, 'combines');
+
+        self::assertCount(1, $combines);
+        self::assertArrayHasKey(0, $combines);
+
+        $combine = $combines[0];
+
+        self::assertInstanceOf(Sql\Clause\Intersect::class, $combine);
+        self::assertSame($select1, $this->getPropertyValue($combine, 'select'));
+
+        self::assertSame(
+            'SELECT "p0".* FROM "product" "p0" INTERSECT SELECT "p1".* FROM "product1" "p1"',
+            $select0->getSQL()
+        );
+    }
+
+    public function testAddExcept()
+    {
+        $select0 = new Select('*', 'product', 'p0');
+        $select1 = new Select('*', 'product1', 'p1');
+
+        $select0->except($select1);
+
+        $combines = $this->getPropertyValue($select0, 'combines');
+
+        self::assertCount(1, $combines);
+        self::assertArrayHasKey(0, $combines);
+
+        $combine = $combines[0];
+
+        self::assertInstanceOf(Sql\Clause\Except::class, $combine);
+        self::assertSame($select1, $this->getPropertyValue($combine, 'select'));
+
+        self::assertSame(
+            'SELECT "p0".* FROM "product" "p0" EXCEPT SELECT "p1".* FROM "product1" "p1"',
+            $select0->getSQL()
+        );
+    }
+
+    public function testAddMultipleCombine()
+    {
+        $select0 = new Select('*', 'product', 'p0');
+
+        $select1 = new Select('*', 'product1', 'p1');
+        $select2 = new Select('*', 'product2', 'p2');
+        $select3 = new Select('*', 'product3', 'p3');
+
+        $select0->union($select1);
+        $select0->intersect($select2);
+        $select0->except($select3);
+
+        $combines = $this->getPropertyValue($select0, 'combines');
+
+        self::assertCount(3, $combines);
+
+        self::assertArrayHasKey(0, $combines);
+        self::assertArrayHasKey(1, $combines);
+        self::assertArrayHasKey(2, $combines);
+
+        $union     = $combines[0];
+        $intersect = $combines[1];
+        $except    = $combines[2];
+
+        self::assertInstanceOf(Sql\Clause\Union::class, $union);
+        self::assertInstanceOf(Sql\Clause\Intersect::class, $intersect);
+        self::assertInstanceOf(Sql\Clause\Except::class, $except);
+
+        self::assertSame($select1, $this->getPropertyValue($union, 'select'));
+        self::assertSame($select2, $this->getPropertyValue($intersect, 'select'));
+        self::assertSame($select3, $this->getPropertyValue($except, 'select'));
+
+        self::assertSame(
+            'SELECT "p0".* FROM "product" "p0"'
+            . ' UNION '
+            . 'SELECT "p1".* FROM "product1" "p1"'
+            . ' INTERSECT '
+            . 'SELECT "p2".* FROM "product2" "p2"'
+            . ' EXCEPT '
+            . 'SELECT "p3".* FROM "product3" "p3"'
+            ,
+            $select0->getSQL()
+        );
+    }
+
+    public function testThatAddingItselfAsCombineRaisesException()
+    {
+        $select = new Select('*', 'product', 'p');
+
+        $this->expectException(InvalidArgumentException::class);
+        $select->union($select);
+    }
 
     public function testCacheableColumnsSql()
     {
@@ -1047,22 +1113,14 @@ class SelectTest extends TestCase
         $select5->union($select0);
         $select6 = clone $select5;
 
-        self::assertEquals($select5->union, $select6->union);
-        self::assertNotSame($select5->union, $select6->union);
+        $combines5 = $select5->combines;
+        $combines6 = $select6->combines;
 
-        $select7 = new Select('*', 'store_product', 'sp');
-        $select7->intersect($select0);
-        $select8 = clone $select7;
-
-        self::assertEquals($select7->intersect, $select8->intersect);
-        self::assertNotSame($select7->intersect, $select8->intersect);
-
-        $select9 = new Select('*', 'store_product', 'sp');
-        $select9->except($select0);
-        $select10 = clone $select9;
-
-        self::assertEquals($select9->except, $select10->except);
-        self::assertNotSame($select9->except, $select10->except);
+        foreach ($combines5 as $k => $combine5) {
+            $combine6 = $combines6[$k] ?? null;
+            self::assertEquals($combine5, $combine6);
+            self::assertNotSame($combine5, $combine6);
+        }
     }
 
     public function testThatCloningAlsoClonesColumnsOfTypeSelect()
@@ -1119,10 +1177,7 @@ class SelectTest extends TestCase
         self::assertSame(['price' => Sql::ASC], $select->orderBy);
         self::assertSame(100, $select->limit);
         self::assertSame(30, $select->offset);
-        self::assertSame(null, $select->union);
-        self::assertSame(null, $select->intersect);
-        self::assertSame(null, $select->except);
-        //self::assertSame(null, $select->combine);
+        self::assertSame([], $select->combines);
 
         $this->expectException(RuntimeException::class);
         $select->nonexistentProperty;
