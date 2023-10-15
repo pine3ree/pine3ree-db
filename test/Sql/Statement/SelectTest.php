@@ -735,7 +735,7 @@ class SelectTest extends TestCase
         self::assertNotSame($join1, $join2);
     }
 
-    public function testThatAddIntersectAfterUnionRaisesExceptiom()
+    public function testThatAddIntersectAfterUnionRaisesException()
     {
         $select = new Select('*', 'product', 'p');
         $union = (new Select('*', 'store1_product'))->orderBy('price');
@@ -746,7 +746,7 @@ class SelectTest extends TestCase
         $select->intersect(new Select('*', 'store2_product'));
     }
 
-    public function testThatAddUnionAfterIntersectRaisesExceptiom()
+    public function testThatAddUnionAfterIntersectRaisesException()
     {
         $select = new Select('*', 'product', 'p');
         $intersect = (new Select('*', 'store1_product'))->orderBy('price');
@@ -756,11 +756,21 @@ class SelectTest extends TestCase
         $select->union(new Select('*', 'store2_product'));
     }
 
+    public function testThatAddExceptAfterIntersectRaisesException()
+    {
+        $select = new Select('*', 'product', 'p');
+        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
+        $select->intersect($intersect);
+
+        $this->expectException(RuntimeException::class);
+        $select->except(new Select('*', 'store2_product'));
+    }
+
     public function testAddingItselfAsUnionRaisesException()
     {
         $select = new Select('*');
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("cannot add itself as a UNION clause");
+        $this->expectExceptionMessage("cannot use itself for a/an UNION clause");
         $select->union($select);
     }
 
@@ -768,8 +778,16 @@ class SelectTest extends TestCase
     {
         $select = new Select('*');
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("cannot add itself as an INTERSECT clause");
+        $this->expectExceptionMessage("cannot use itself for a/an INTERSECT clause");
         $select->intersect($select);
+    }
+
+    public function testAddingItselfAsExceptRaisesException()
+    {
+        $select = new Select('*');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("cannot use itself for a/an EXCEPT clause");
+        $select->except($select);
     }
 
     public function testCacheableColumnsSql()
@@ -1038,6 +1056,13 @@ class SelectTest extends TestCase
 
         self::assertEquals($select7->intersect, $select8->intersect);
         self::assertNotSame($select7->intersect, $select8->intersect);
+
+        $select9 = new Select('*', 'store_product', 'sp');
+        $select9->except($select0);
+        $select10 = clone $select9;
+
+        self::assertEquals($select9->except, $select10->except);
+        self::assertNotSame($select9->except, $select10->except);
     }
 
     public function testThatCloningAlsoClonesColumnsOfTypeSelect()
@@ -1096,7 +1121,8 @@ class SelectTest extends TestCase
         self::assertSame(30, $select->offset);
         self::assertSame(null, $select->union);
         self::assertSame(null, $select->intersect);
-        self::assertSame(null, $select->unionAll);
+        self::assertSame(null, $select->except);
+        //self::assertSame(null, $select->combine);
 
         $this->expectException(RuntimeException::class);
         $select->nonexistentProperty;
