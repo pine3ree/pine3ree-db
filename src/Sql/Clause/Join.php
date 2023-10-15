@@ -12,7 +12,7 @@ namespace pine3ree\Db\Sql\Clause;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause;
-use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait ;
+use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait;
 use pine3ree\Db\Sql\Clause\On;
 use pine3ree\Db\Sql\Driver;
 use pine3ree\Db\Sql\DriverInterface;
@@ -42,11 +42,6 @@ class Join extends Clause
     use ConditionalClauseAwareTrait;
 
     protected static string $name = Sql::JOIN;
-
-    /**
-     * The resolved name cache
-     */
-    protected ?string $__name = null;
 
     private string $type;
 
