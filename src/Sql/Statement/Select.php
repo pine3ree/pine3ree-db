@@ -994,18 +994,7 @@ class Select extends Statement
             );
         }
 
-        if ($type === Sql::UNION) {
-            $combine = new Union($select, $all);
-        } elseif ($type === Sql::INTERSECT) {
-            $combine = new Intersect($select, $all);
-        } elseif ($type === Sql::EXCEPT) {
-            $combine = new Except($select, $all);
-        } else {
-            throw new InvalidArgumentException(
-                "Invalid sql combine type '{$type}'"
-            );
-        }
-
+        $combine = Combine::create($type, $select, $all);
         $combine->setParent($this);
 
         $this->combines[] = $combine;
