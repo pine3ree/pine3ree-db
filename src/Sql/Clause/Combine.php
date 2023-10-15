@@ -49,20 +49,6 @@ abstract class Combine extends Clause
         $this->select->setParent($this);
     }
 
-    /**
-     * @param string $combine The combination SQL name
-     *
-     * @throws InvalidArgumentException
-     */
-    protected static function assertValidCombine(string $combine): void
-    {
-        if (!Sql::isValidCombine($combine)) {
-            throw new InvalidArgumentException(
-                "Invalid or unsupported SQL combination type: '{$combine}' provided!"
-            );
-        }
-    }
-
     public function hasParams(): bool
     {
         return $this->select->hasParams();
