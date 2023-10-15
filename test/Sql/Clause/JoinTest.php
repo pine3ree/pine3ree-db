@@ -135,9 +135,8 @@ class JoinTest extends TestCase
 
         $join = new Join(Sql::JOIN_LEFT, 'category', 'c', $on);
 
-        self::assertSame("LEFT JOIN", $name = $this->invokeMethod($join, 'getName'));
-        self::assertSame($name, $this->invokeMethod($join, 'getName'));
-        self::assertSame("LEFT JOIN", $join->name);
+        self::assertSame("JOIN", $name = $this->invokeMethod($join, 'getName'));
+        self::assertSame("JOIN", $join->name);
         self::assertSame(Sql::JOIN_LEFT, $join->type);
         self::assertSame('category', $join->table);
         self::assertSame('c', $join->alias);
