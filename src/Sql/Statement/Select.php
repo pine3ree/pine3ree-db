@@ -13,6 +13,10 @@ use Closure;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Alias;
+use pine3ree\Db\Sql\Clause\Combine;
+use pine3ree\Db\Sql\Clause\Except;
+use pine3ree\Db\Sql\Clause\Intersect;
+use pine3ree\Db\Sql\Clause\Union;
 use pine3ree\Db\Sql\Clause\WhereAwareTrait;
 use pine3ree\Db\Sql\Clause\Having;
 use pine3ree\Db\Sql\Clause\Join;
@@ -72,9 +76,10 @@ use const PHP_INT_MAX;
  * @property-read array $orderBy An array of ORDER BY identifier to sort-direction pairs
  * @property-read int|null $limit The LIMIT clause value if any
  * @property-read int|null $offset The OFFSET clause value if any
- * @property-read self|null $union The sql-select statement for the UNION clause, if any
- * @property-read bool|null $unionAll Is it a UNION ALL clause?
- * @property-read self|null $intersect The sql-select statement for the INTERSECT clause, if any
+ * @property-read self|null $union The UNION clause, if any
+ * @property-read self|null $intersect The INTERSECT clause, if any
+ * @property-read bool|null $except The EXCEPT clause, if any
+ * @property-read bool|null $combine The UNION, INTERSECT or EXCEPT clause, if any
  */
 class Select extends Statement
 {
@@ -109,11 +114,26 @@ class Select extends Statement
 
     protected ?int $offset = null;
 
-    protected ?self $union = null;
+    /**
+     * One of the combine clauses, if any
+     *
+     * @var Combine|Except|Intersect|Union|null
+     */
+    protected ?Combine $combine = null;
 
-    protected ?bool $unionAll = null;
+    protected ?bool $combine_all = null;
 
-    protected ?self $intersect = null;
+    protected $resettable_props = [
+        'columns' => [],
+        'into'    => null,
+        'joins'   => [],
+        'where'   => null,
+        'groupBy' => [],
+        'having'  => null,
+        'orderBy' => [],
+        'limit'   => null,
+        'offset'  => null,
+    ];
 
     /**
      * @param null|string|string[]|Expression|Expression[]|Identifier|Identifier[]|Literal|Literal[]|self|self[] $columns
@@ -962,78 +982,61 @@ class Select extends Statement
 
     public function union(self $select, bool $all = false): self
     {
-        if (isset($this->intersect)) {
+        return $this->combine(Sql::UNION, $select, $all);
+    }
+
+    public function intersect(self $select, bool $all = false): self
+    {
+        return $this->combine(Sql::INTERSECT, $select, $all);
+    }
+
+    public function except(self $select, bool $all = false): self
+    {
+        return $this->combine(Sql::EXCEPT, $select, $all);
+    }
+
+    private function combine(string $type, self $select, bool $all = false): self
+    {
+        $type = strtoupper($type);
+
+        $combine = $this->combine ?? $this->union ?? $this->intersect ?? $this->except;
+
+        if ($combine instanceof Combine) {
+            $existing = $combine->name;
             throw new RuntimeException(
-                "Cannot add a UNION clause when an INTERSECT clause is already set!"
+                "Cannot add a/an {$type} clause when a/an {$existing} clause is already set!"
             );
         }
 
         if ($select === $this) {
             throw new RuntimeException(
-                "A sql select statement cannot add itself as a UNION clause!"
+                "A sql select statement cannot use itself for a/an {$type} clause!"
             );
         }
 
-        $orderBy = $select->orderBy;
-        if (!empty($orderBy)) {
-            $select = clone $select;
-            $select->orderBy = [];
-        } elseif ($select->parentIsNot($this)) {
-            $select = clone $select;
+        if ($type === Sql::UNION) {
+            $combine = $this->combine = new Union($select, $all);
+        } elseif ($type === Sql::INTERSECT) {
+            $combine = $this->combine = new Intersect($select, $all);
+        } elseif ($type === Sql::EXCEPT) {
+            $combine = $this->combine = new Except($select, $all);
+        } else {
+            throw new InvalidArgumentException(
+                "Invalid sql combine type '{$type}'"
+            );
         }
 
-        $this->union = $select;
-        $this->union->setParent($this);
-        $this->unionAll = $all;
+        $combine->setParent($this);
 
         $this->clearSQL();
 
         return $this;
     }
 
-    public function intersect(self $select): self
+    private function getCombineSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
     {
-        if (isset($this->union)) {
-            throw new RuntimeException(
-                "Cannot add an INTERSECT clause when a UNION clause is already set!"
-            );
-        }
-
-        if ($select === $this) {
-            throw new RuntimeException(
-                "A sql select statement cannot add itself as an INTERSECT clause!"
-            );
-        }
-
-        $orderBy = $select->orderBy;
-        if (!empty($orderBy)) {
-            $select = clone $select;
-            $select->orderBy = [];
-        } elseif ($select->parentIsNot($this)) {
-            $select = clone $select;
-        }
-
-        $this->intersect = $select;
-        $this->intersect->setParent($this);
-
-        $this->clearSQL();
-
-        return $this;
-    }
-
-    private function getUnionOrIntersectSQL(DriverInterface $driver, Params $params, bool $pretty = false): string
-    {
-        $sep = $pretty ? "\n" : " ";
-
-        if ($this->union instanceof self) {
-            $union = $this->unionAll === true ? Sql::UNION_ALL : Sql::UNION;
-            $union_sql = $this->union->getSQL($driver, $params, $pretty);
-            return "{$union}{$sep}{$union_sql}";
-        }
-
-        if ($this->intersect instanceof self) {
-            $intersect_sql = $this->intersect->getSQL($driver, $params, $pretty);
-            return Sql::INTERSECT . "{$sep}{$intersect_sql}";
+        if ($this->combine instanceof Combine) {
+            return $this->combine->getSQL($driver, $params, $pretty);
         }
 
         return '';
@@ -1101,7 +1104,7 @@ class Select extends Statement
         $sqls[] = $this->getWhereSQL($driver, $params);
         $sqls[] = $this->getGroupBySQL($driver);
         $sqls[] = $this->getHavingSQL($driver, $params);
-        $sqls[] = $this->getUnionOrIntersectSQL($driver, $params, $pretty);
+        $sqls[] = $this->getCombineSQL($driver, $params, $pretty);
         $sqls[] = $this->getOrderBySQL($driver);
         $sqls[] = $this->getLimitSQL($driver, $params);
 
@@ -1251,14 +1254,22 @@ class Select extends Statement
         }
 
         if ('union' === $name) {
-            return $this->union;
+            if ($this->combine instanceof Union) {
+                return $this->combine;
+            }
+            return null;
         }
-        if ('unionAll' === $name) {
-            return $this->unionAll;
-        }
-
         if ('intersect' === $name) {
-            return $this->intersect;
+            if ($this->combine instanceof Intersect) {
+                return $this->combine;
+            }
+            return null;
+        }
+        if ('except' === $name) {
+            if ($this->combine instanceof Except) {
+                return $this->combine;
+            }
+            return null;
         }
 
         return parent::__get($name);
@@ -1277,13 +1288,21 @@ class Select extends Statement
             $this->from = clone $this->from;
             $this->from->setParent($this);
         }
-        if ($this->union instanceof self) {
-            $this->union = clone $this->union;
-            $this->union->setParent($this);
-        }
-        if ($this->intersect instanceof self) {
-            $this->intersect = clone $this->intersect;
-            $this->intersect->setParent($this);
+//        if ($this->union instanceof Union) {
+//            $this->union = clone $this->union;
+//            $this->union->setParent($this);
+//        }
+//        if ($this->intersect instanceof Intersect) {
+//            $this->intersect = clone $this->intersect;
+//            $this->intersect->setParent($this);
+//        }
+//        if ($this->except instanceof Except) {
+//            $this->except = clone $this->except;
+//            $this->except->setParent($this);
+//        }
+        if ($this->combine instanceof Combine) {
+            $this->combine = clone $this->combine;
+            $this->combine->setParent($this);
         }
         if (!empty($this->joins)) {
             foreach ($this->joins as $k => $join) {
