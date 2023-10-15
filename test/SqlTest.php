@@ -21,9 +21,6 @@ use pine3ree\Db\Sql\Statement\Insert;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\Db\Sql\Statement\Update;
 
-/**
- * Class SqlTest
- */
 class SqlTest extends TestCase
 {
     public function setUp(): void
@@ -84,6 +81,30 @@ class SqlTest extends TestCase
         }
 
         return $types;
+    }
+
+    /**
+     * @dataProvider provideCombines
+     */
+    public function testIsValidCombine(string $combine, bool $valid)
+    {
+        self::assertSame($valid, Sql::isValidCombine($combine));
+    }
+
+    public function provideCombines(): array
+    {
+        $combines = [];
+        foreach (Sql::COMBINE as $combine) {
+            $combines[] = [$combine, true];
+        }
+
+        $combines += [
+            ['A', false],
+            ['B', false],
+            ['COMBINE', false],
+        ];
+
+        return $combines;
     }
 
     /**
