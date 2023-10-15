@@ -31,8 +31,9 @@ use function trim;
  * This abstract class represents a generic SQL element and is the ancestor
  * of all the other sql-related classes.
  *
- * @property-read Params|null $params The parameters collector, if any
  * @property-read ElementInterface|null $parent The parent element, if any
+ * @property-read Params|null $params The parameters collector, if any
+ * @property-read string|null $sql The last rendered SQL string, if any
 */
 abstract class Element implements ElementInterface
 {
@@ -347,13 +348,17 @@ abstract class Element implements ElementInterface
      */
     public function __get(string $name)
     {
-        if ('params' === $name) {
-            return $this->params;
-        };
-
         if ('parent' === $name) {
             return $this->parent;
-        };
+        }
+
+        if ('params' === $name) {
+            return $this->params;
+        }
+
+        if ('sql' === $name) {
+            return $this->sql;
+        }
 
         throw new RuntimeException(sprintf(
             "Undefined property `%s` for sql-element of class `%s`!",
