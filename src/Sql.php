@@ -232,10 +232,12 @@ class Sql
     public const UNION     = 'UNION';
     public const UNION_ALL = 'UNION ALL';
     public const INTERSECT = 'INTERSECT';
+    public const EXCEPT    = 'EXCEPT';
 
-    public const SETS_COMBINATIONS = [
+    public const COMBINE = [
         self::UNION     => self::UNION,
         self::INTERSECT => self::INTERSECT,
+        self::EXCEPT    => self::EXCEPT,
     ];
 
     /*
@@ -253,6 +255,11 @@ class Sql
     public static function isValidJoin(string $join): bool
     {
         return isset(self::JOIN_TYPES[strtoupper($join)]);
+    }
+
+    public static function isValidCombine(string $combine): bool
+    {
+        return isset(self::COMBINE[strtoupper($combine)]);
     }
 
     public static function isSupportedOperator(string $operator): bool
