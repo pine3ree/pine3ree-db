@@ -989,7 +989,7 @@ class Select extends Statement
         $type = strtoupper($type);
 
         if ($select === $this) {
-            throw new RuntimeException(
+            throw new InvalidArgumentException(
                 "A sql select statement cannot use itself for a/an {$type} clause!"
             );
         }
