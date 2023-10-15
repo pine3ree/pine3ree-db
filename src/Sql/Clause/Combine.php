@@ -36,15 +36,15 @@ abstract class Combine extends Clause
     protected static string $name = '[COMBINE]';
 
     /** @var Use the ALL quantifier instead of the implicit DISTINCT */
-    private bool $all = false;
+    protected bool $all = false;
 
-    private Select $select;
+    protected Select $select;
 
     public const TYPE_UNION     = Sql::UNION;
     public const TYPE_INTERSECT = Sql::INTERSECT;
     public const TYPE_EXCEPT    = Sql::EXCEPT;
 
-    private const FQCNS = [
+    protected const FQCNS = [
         Sql::UNION     => Union::class,
         Sql::INTERSECT => Intersect::class,
         Sql::EXCEPT    => Except::class,
