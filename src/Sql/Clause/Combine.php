@@ -13,24 +13,17 @@ use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause;
 use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait;
-use pine3ree\Db\Sql\Clause\On;
 use pine3ree\Db\Sql\DriverInterface;
-use pine3ree\Db\Sql\Identifier;
 use pine3ree\Db\Sql\Params;
-use pine3ree\Db\Sql\Predicate\Literal;
 use pine3ree\Db\Sql\Statement\Select;
 use pine3ree\Db\Sql\TableAwareTrait;
 
 /**
- * Join represents a SQL-JOIN clause
+ * Base asbtract class that represents a SQL combine clause (UNION|INTERSECT|EXCEPT)
  *
- * @property-read string $name The join sql-name ("join-type JOIN")
- * @property-read string $type The join type
- * @property-read string $table The joined-table
- * @property-read string|null $alias The joined-table alias, if any
- * @property-read On|Literal|Identifier|null $specification The ON-specification, if any
- * @property-read On|null $on The ON-clause (current or new instance) if the specification
- *      is not already set to a Literal
+ * @property-read string $name The combine sql-name (UNION|INTERSECT|EXCEPT)
+ * @property-read bool $all Does this combine use the ALL quantifier?
+ * @property-read string $select The combined Select instance
  */
 abstract class Combine extends Clause
 {
@@ -39,6 +32,7 @@ abstract class Combine extends Clause
 
     protected static string $name = '[COMBINE]';
 
+    /** @var Use the ALL quantifier instead of the implicit DISTINCT */
     private bool $all = false;
 
     private Select $select;
@@ -72,7 +66,7 @@ abstract class Combine extends Clause
 //    /**
 //     * Check if the combination has the ALL quantifier enabled
 //     */
-//    public function getAll(): bool
+//    public function isAll(): bool
 //    {
 //        return $this->all;
 //    }
