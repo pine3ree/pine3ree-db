@@ -13,6 +13,9 @@ use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause;
 use pine3ree\Db\Sql\Clause\ConditionalClauseAwareTrait;
+use pine3ree\Db\Sql\Clause\Except;
+use pine3ree\Db\Sql\Clause\Intersect;
+use pine3ree\Db\Sql\Clause\Union;
 use pine3ree\Db\Sql\DriverInterface;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement\Select;
@@ -37,10 +40,19 @@ abstract class Combine extends Clause
 
     private Select $select;
 
+    public const TYPE_UNION     = Sql::UNION;
+    public const TYPE_INTERSECT = Sql::INTERSECT;
+    public const TYPE_EXCEPT    = Sql::EXCEPT;
+
+    private const FQCNS = [
+        Sql::UNION     => Union::class,
+        Sql::INTERSECT => Intersect::class,
+        Sql::EXCEPT    => Except::class,
+    ];
+
     /**
-     *
      * @param Select $select
-     * @param bool $all
+     * @param bool $all Allow duplicate rows by dding th ALL quantifier?
      */
     public function __construct(Select $select, bool $all = false)
     {
@@ -72,6 +84,37 @@ abstract class Combine extends Clause
         $sep = $pretty ? "\n" : " ";
 
         return "{$combine}{$sep}{$select_sql}";
+    }
+
+    /**
+     * Factory method for Union|Intersect|Except clauses
+     *
+     * @param string $type One of UNION|INTERSECT|SELECT
+     * @param Select $select
+     * @param bool $all
+     * @return self|Union|Intersect|Except
+     */
+    public static function create(string $type, Select $select, bool $all = false): self
+    {
+        $type = strtoupper($type);
+        self::assertValidCombine($type);
+
+        $fqcn = self::FQCNS[$type];
+
+        return new $fqcn($select, $all);
+    }
+
+    /**
+     * @param string $combine The combination SQL name
+     * @throws InvalidArgumentException
+     */
+    protected static function assertValidCombine(string $combine): void
+    {
+        if (!Sql::isValidCombine($combine)) {
+            throw new InvalidArgumentException(
+                "Invalid or unsupported SQL combination type: '{$combine}' provided!"
+            );
+        }
     }
 
     /**
