@@ -230,7 +230,6 @@ class Sql
      * COMBINED-SETS
      */
     public const UNION     = 'UNION';
-    public const UNION_ALL = 'UNION ALL';
     public const INTERSECT = 'INTERSECT';
     public const EXCEPT    = 'EXCEPT';
 
