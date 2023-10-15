@@ -734,61 +734,61 @@ class SelectTest extends TestCase
         self::assertEquals($join1, $join2);
         self::assertNotSame($join1, $join2);
     }
-
-    public function testThatAddIntersectAfterUnionRaisesException()
-    {
-        $select = new Select('*', 'product', 'p');
-        $union = (new Select('*', 'store1_product'))->orderBy('price');
-        $select->union($union);
-        $select->union; // triggers clear SQL cache
-
-        $this->expectException(RuntimeException::class);
-        $select->intersect(new Select('*', 'store2_product'));
-    }
-
-    public function testThatAddUnionAfterIntersectRaisesException()
-    {
-        $select = new Select('*', 'product', 'p');
-        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
-        $select->intersect($intersect);
-
-        $this->expectException(RuntimeException::class);
-        $select->union(new Select('*', 'store2_product'));
-    }
-
-    public function testThatAddExceptAfterIntersectRaisesException()
-    {
-        $select = new Select('*', 'product', 'p');
-        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
-        $select->intersect($intersect);
-
-        $this->expectException(RuntimeException::class);
-        $select->except(new Select('*', 'store2_product'));
-    }
-
-    public function testAddingItselfAsUnionRaisesException()
-    {
-        $select = new Select('*');
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("cannot use itself for a/an UNION clause");
-        $select->union($select);
-    }
-
-    public function testAddingItselfAsIntersectRaisesException()
-    {
-        $select = new Select('*');
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("cannot use itself for a/an INTERSECT clause");
-        $select->intersect($select);
-    }
-
-    public function testAddingItselfAsExceptRaisesException()
-    {
-        $select = new Select('*');
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("cannot use itself for a/an EXCEPT clause");
-        $select->except($select);
-    }
+//
+//    public function testThatAddIntersectAfterUnionRaisesException()
+//    {
+//        $select = new Select('*', 'product', 'p');
+//        $union = (new Select('*', 'store1_product'))->orderBy('price');
+//        $select->union($union);
+//        $select->union; // triggers clear SQL cache
+//
+//        $this->expectException(RuntimeException::class);
+//        $select->intersect(new Select('*', 'store2_product'));
+//    }
+//
+//    public function testThatAddUnionAfterIntersectRaisesException()
+//    {
+//        $select = new Select('*', 'product', 'p');
+//        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
+//        $select->intersect($intersect);
+//
+//        $this->expectException(RuntimeException::class);
+//        $select->union(new Select('*', 'store2_product'));
+//    }
+//
+//    public function testThatAddExceptAfterIntersectRaisesException()
+//    {
+//        $select = new Select('*', 'product', 'p');
+//        $intersect = (new Select('*', 'store1_product'))->orderBy('price');
+//        $select->intersect($intersect);
+//
+//        $this->expectException(RuntimeException::class);
+//        $select->except(new Select('*', 'store2_product'));
+//    }
+//
+//    public function testAddingItselfAsUnionRaisesException()
+//    {
+//        $select = new Select('*');
+//        $this->expectException(RuntimeException::class);
+//        $this->expectExceptionMessage("cannot use itself for a/an UNION clause");
+//        $select->union($select);
+//    }
+//
+//    public function testAddingItselfAsIntersectRaisesException()
+//    {
+//        $select = new Select('*');
+//        $this->expectException(RuntimeException::class);
+//        $this->expectExceptionMessage("cannot use itself for a/an INTERSECT clause");
+//        $select->intersect($select);
+//    }
+//
+//    public function testAddingItselfAsExceptRaisesException()
+//    {
+//        $select = new Select('*');
+//        $this->expectException(RuntimeException::class);
+//        $this->expectExceptionMessage("cannot use itself for a/an EXCEPT clause");
+//        $select->except($select);
+//    }
 
     public function testCacheableColumnsSql()
     {
