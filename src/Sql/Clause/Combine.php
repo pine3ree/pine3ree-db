@@ -62,25 +62,6 @@ abstract class Combine extends Clause
             );
         }
     }
-//
-//    /**
-//     * Check if the combination has the ALL quantifier enabled
-//     */
-//    public function isAll(): bool
-//    {
-//        return $this->all;
-//    }
-//
-//    /**
-//     * Return the JOIN specification: either a literal-predicate, a sql-identifier
-//     * object for the USING clause or an On clause instance
-//     *
-//     * @return On|Literal|Identifier
-//     */
-//    public function getSelect()
-//    {
-//        return $this->select;
-//    }
 
     public function hasParams(): bool
     {
