@@ -1,5 +1,5 @@
 # GitHub Actions workflow for Continuos Integration tests
-name: CI
+name: "Continuous Integration"
 
 on: [push, pull_request]
 
