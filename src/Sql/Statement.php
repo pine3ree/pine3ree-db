@@ -12,9 +12,8 @@ namespace pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Element;
 
 /**
- * A sql-statement object's goal is to abstract a sql statement collecting parts
- * (abtractions for clauses, predicates, ...) later compiled by a sql-driver into
- * a platform pecific SQL-string
+ * Abstracts a sql statement collecting parts (abstractions for clauses, predicates, ...)
+ * later compiled by a sql-driver into a platform specific SQL-string
  */
 abstract class Statement extends Element
 {
