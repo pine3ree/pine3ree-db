@@ -262,9 +262,9 @@ Create and optionally execute an `pine3ree\Db\Command\Insert` writer command ins
 $insert = $db->insert()
     ->into('product')
     ->row([
-	    'name' => 'product-1',
-    	'price' => 100.00,
-	]);
+        'name' => 'product-1',
+        'price' => 100.00,
+]);
 
 // equivalent to
 $insert = $db->insert()
