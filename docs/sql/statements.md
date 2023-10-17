@@ -173,13 +173,21 @@ Sql::insert()
     ];
 ```
 
-By default `Insert::values(array $values, bool $add = false)` and
-`Insert::row(array $row, bool $add = false)` will define the insert values
-removing any previously accumulated set of values.
+By default
+- `Insert::values(array $values, bool $add = false)` and
+- `Insert::row(array $row, bool $add = false)` and
+- `Insert::rows(array $rows, bool $add = false)` and
+- `Insert::multipleValues(array $multiple_values, bool $add = false)`
 
-The opposite happens for `Insert::rows(array $rows, bool $add = true)` and
-`Insert::multipleValues(array $values, bool $add = true)`. These methods calls
-will add the new rows/values provided to the existing ones.
+will define the insert values removing any previously accumulated set of values.
+
+The opposite happens for
+- `Insert::values(array $values, bool $add = true)` and
+- `Insert::row(array $row, bool $add = true)` and
+- `Insert::rows(array $rows, bool $add = true)` and
+- `Insert::multipleValues(array $multiple_values, bool $add = true)`
+
+These methods calls will add the new rows/values provided to the existing ones.
 
 ```php
 $insert = Sql::insert('product');
