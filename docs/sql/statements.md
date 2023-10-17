@@ -68,7 +68,7 @@ $sql = $select->getSQL($driver); // e.g. SELECT `p`.* FROM `product` `p`
 $select = Sql::select();
 $select->from('user')->where->eq('id', 42);
 $sql = $select->getSQL(null, $params);
-params->getValues(); // [':eq1' => 42]
+$params->getValues(); // [':eq1' => 42]
 
 
 // SELECT
