@@ -328,7 +328,8 @@ $num_inserted = $db->insert()
     ->values([
         'product-222',
         222.22,
-    ])->execute(); // or exec()
+    ], true) // The TRUE argument add values to existing values instead of replacing them
+    ->execute(); // or exec()
 
 // and to
 $num_inserted = $db->insert()
@@ -346,32 +347,32 @@ $num_inserted = $db->insert()
     ])->execute();
 ```
 
-By default `Insert::values(array $values, bool $reset = false)` and
-`Insert::row(array $row, bool $reset = false)` will add new inset values to
-existing ones. This can be changed by setting the 2nd
-argument to `true`:
+By default `Insert::values(array $values, bool $add = false)` and
+`Insert::row(array $row, bool $add = false)` will set insert values removing
+any previously accumulated set of values. 
+
+The opposite happens for `Insert::rows(array $rows, bool $add = true)` and
+`Insert::multipleValues(array $values, bool $add = true)`. These methods calls
+will add the new rows/values provided to the existing ones.
+
 
 ```php
 $insert = $db->insert('product');
 
-$insert->row(['price' => 111.11, 'stock' => 111]); // adds 1 set of values
-$insert->row(['price' => 222.22, 'stock' => 222]); // adds 1 set of values
-// columns "price" and "stock" are alredy specified by previuous row() calls
-$insert->values([333.33, 333]); // adds 1 set of values
+$insert->row(['price' => 111.11, 'stock' => 111]); // Adds 1 set of values
+$insert->row(['price' => 222.22, 'stock' => 222], true); // Adds 1 set of values
+// Columns "price" and "stock" are alredy specified by previuous row() calls
+$insert->values([333.33, 333], true); // Adds 1 set of values
 
-$insert->execute(); // this will try to insert 3 rows
+$insert->execute(); // This will try to insert 3 rows
 
-$insert->values([444.44, 444]); // adds another set of values
-$insert->execute(); // this will try to insert 4 rows
+$insert->values([444.44, 444]); // Adds another set of values
+$insert->execute(); // This will try to insert 4 rows
 
- // adds 1 set of values after removing the old ones
+ // Define the insert values after removing the old ones
 $insert->row(['price' => 555.55, 'stock' => 555], true);
-$insert->execute(); // this will try to insert 1 row
+$insert->execute(); // This will try to insert 1 row
 ```
-
-The opposite happens for `Insert::rows(array $rows, bool $reset = true)` and
-`Insert::multipleValues(array $values, bool $reset = true)`. These methods calls
-will insert the exact rows/values provided unless the 2nd argument is set to `false`.
 
 
 ### Db::update()
