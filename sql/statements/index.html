@@ -517,7 +517,7 @@ $sql = $select-&gt;getSQL($driver); // e.g. SELECT `p`.* FROM `product` `p`
 $select = Sql::select();
 $select-&gt;from('user')-&gt;where-&gt;eq('id', 42);
 $sql = $select-&gt;getSQL(null, $params);
-params-&gt;getValues(); // [':eq1' =&gt; 42]
+$params-&gt;getValues(); // [':eq1' =&gt; 42]
 
 
 // SELECT
