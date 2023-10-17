@@ -392,14 +392,14 @@ class Oci extends Driver implements
 
         $sqls = [];
 
-        $sqls[] = Sql::INSERT . " " . Sql::ALL;
+        $sqls[] = "INSERT ALL";
 
         $table   = $this->quoteIdentifier($insert->table);
         $columns = $this->call($insert, 'getColumnsSQL', $this);
-        $into    = Sql::INTO . " {$table} {$columns} " . Sql::VALUES ;
 
         foreach ($insert->values as $values) {
-            $sqls[] = "    {$into} " . $this->call($insert, 'getRowValuesSQL', $values, $this, $params);
+            $values = $this->call($insert, 'getRowValuesSQL', $values, $this, $params);
+            $sqls[] = "    INTO {$table} {$columns} VALUES {$values}";
         }
 
         $sqls[] = "SELECT 1 FROM dual;";
