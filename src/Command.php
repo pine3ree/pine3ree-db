@@ -11,6 +11,7 @@ namespace pine3ree\Db;
 
 use PDOStatement;
 use pine3ree\Db\CommandInterface;
+use pine3ree\Db\Db;
 use pine3ree\Db\Sql\Params;
 use pine3ree\Db\Sql\Statement as SqlStatement;
 
