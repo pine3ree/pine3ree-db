@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace pine3ree\Db\Sql\Statement;
 
-use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause\WhereAwareTrait;
 use pine3ree\Db\Sql\Clause\Where;
 use pine3ree\Db\Sql\Driver;
@@ -97,7 +96,7 @@ class Delete extends Statement
         }
 
         if ('where' === $name) {
-            if (!isset($this->where)) {
+            if ($this->where === null) {
                 $this->where = new Where();
                 $this->where->setParent($this);
             }
@@ -110,7 +109,7 @@ class Delete extends Statement
     public function __clone()
     {
         parent::__clone();
-        if (isset($this->where)) {
+        if ($this->where instanceof Where) {
             $this->where = clone $this->where;
             $this->where->setParent($this);
         }

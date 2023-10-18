@@ -433,7 +433,7 @@ class Insert extends Statement
     public function __clone()
     {
         parent::__clone();
-        if (isset($this->select)) {
+        if ($this->select instanceof Select) {
             $this->select = clone $this->select;
             $this->select->setParent($this);
         }
