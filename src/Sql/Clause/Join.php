@@ -188,12 +188,12 @@ class Join extends Clause
             return $this->specification;
         }
         if ('on' === $name) {
+            if ($this->specification instanceof On) {
+                return $this->specification;
+            }
             if ($this->specification === null) {
                 $this->specification = new On();
                 $this->specification->setParent($this);
-                return $this->specification;
-            }
-            if ($this->specification instanceof On) {
                 return $this->specification;
             }
             return null;
