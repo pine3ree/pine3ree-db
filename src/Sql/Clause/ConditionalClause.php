@@ -174,26 +174,26 @@ abstract class ConditionalClause extends Clause implements IteratorAggregate
      * @see Predicate\Set::between()
      *
      * @param string|Alias|Identifier|Literal $identifier
-     * @param scalar|Literal $min_value
-     * @param scalar|Literal $max_value
+     * @param scalar|Literal $minValue
+     * @param scalar|Literal $maxValue
      * @return Predicate\Set This clause's composed search-condition
      */
-    public function between($identifier, $min_value, $max_value): Predicate\Set
+    public function between($identifier, $minValue, $maxValue): Predicate\Set
     {
-        return $this->searchCondition->between($identifier, $min_value, $max_value);
+        return $this->searchCondition->between($identifier, $minValue, $maxValue);
     }
 
     /**
      * @see Predicate\Set::notBetween()
      *
      * @param string|Alias|Identifier|Literal $identifier
-     * @param scalar|Literal $min_value
-     * @param scalar|Literal $max_value
+     * @param scalar|Literal $minValue
+     * @param scalar|Literal $maxValue
      * @return Predicate\Set This clause's composed search-condition
      */
-    public function notBetween($identifier, $min_value, $max_value): Predicate\Set
+    public function notBetween($identifier, $minValue, $maxValue): Predicate\Set
     {
-        return $this->searchCondition->notBetween($identifier, $min_value, $max_value);
+        return $this->searchCondition->notBetween($identifier, $minValue, $maxValue);
     }
 
     /**
