@@ -32,13 +32,10 @@ abstract class QuantifiedComparison extends Predicate
     /** @var string|Alias|Identifier|Literal */
     protected $identifier;
 
-    /** @var string */
     protected string $operator;
 
-    /** @var Select */
     protected Select $select;
 
-    /** @var string */
     protected static string $quantifier;
 
     /**
