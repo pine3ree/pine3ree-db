@@ -10,12 +10,12 @@ declare(strict_types=1);
 namespace pine3ree\Db\Sql\Predicate;
 
 use pine3ree\Db\Sql;
-use pine3ree\Db\Sql\Predicate\CompareTo;
+use pine3ree\Db\Sql\Predicate\QuantifiedComparison;
 
 /**
  * This class represents a sql operator-ANY(SELECT...) condition
  */
-class Any extends CompareTo
+class Any extends QuantifiedComparison
 {
     protected static string $quantifier = Sql::ANY;
 }

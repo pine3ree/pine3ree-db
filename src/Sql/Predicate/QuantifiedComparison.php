@@ -27,7 +27,7 @@ use function implode;
  *
  * @property-read Select $select The sql select statement this predicate refers to
  */
-abstract class CompareTo extends Predicate
+abstract class QuantifiedComparison extends Predicate
 {
     /** @var string|Alias|Identifier|Literal */
     protected $identifier;

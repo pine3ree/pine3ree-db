@@ -13,10 +13,10 @@ namespace pine3ree\DbTest\Sql\Predicate;
 use PHPUnit\Framework\TestCase;
 use pine3ree\Db\Exception\InvalidArgumentException;
 use pine3ree\Db\Sql;
-use pine3ree\Db\Sql\Predicate\CompareTo;
+use pine3ree\Db\Sql\Predicate\QuantifiedComparison;
 use pine3ree\Db\Sql\Statement\Select;
 
-class CompareToTest extends TestCase
+class QuantifiedComparisonTest extends TestCase
 {
     public function setUp(): void
     {
@@ -26,9 +26,9 @@ class CompareToTest extends TestCase
     {
     }
 
-    private function createInstance($identifier, string $operator, Select $select): CompareTo
+    private function createInstance($identifier, string $operator, Select $select): QuantifiedComparison
     {
-        return new class ($identifier, $operator, $select) extends CompareTo {
+        return new class ($identifier, $operator, $select) extends QuantifiedComparison {
             public static string $quantifier = 'FEW';
         };
     }
