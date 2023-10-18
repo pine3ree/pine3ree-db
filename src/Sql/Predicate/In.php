@@ -111,29 +111,22 @@ class In extends Predicate
         }
 
         $values = [];
-        $hasNull = false;
+        $has_null = false;
         foreach ($this->valueList as $value) {
             if (null === $value) {
-                $hasNull = true;
+                $has_null = true;
                 continue;
             }
             $values[] = $this->getValueSQL($params, $value, null, 'in');
         }
 
-        $ivl_sql = "(" . (empty($values) ? Sql::NULL : implode(", ", $values)) . ")";
+        $in_value_list = empty($values) ? Sql::NULL : implode(", ", $values);
 
-        $null_sql = "";
-        if ($hasNull) {
-            $null_sql = " " . (
-                static::$not
-                ? Sql::AND . " {$identifier} " . Sql::IS_NOT . " " . Sql::NULL
-                : Sql::OR . " {$identifier} " . Sql::IS . " " . Sql::NULL
-            );
-        }
+        $sql = "{$identifier} {$operator} ({$in_value_list})";
 
-        $sql = "{$identifier} {$operator} {$ivl_sql}{$null_sql}";
-        if ($hasNull) {
-            $sql = "({$sql})";
+        if ($has_null) {
+            $null_sql = static::$not ? "AND {$identifier} IS NOT NULL" : "OR {$identifier} IS NULL";
+            $sql = "({$sql} {$null_sql})";
         }
 
         return $this->sql = $sql;

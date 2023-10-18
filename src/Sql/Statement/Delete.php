@@ -80,8 +80,7 @@ class Delete extends Statement
             );
         }
 
-        $this->sql = Sql::DELETE . " " . Sql::FROM . " {$table} {$where_sql}";
-        return $this->sql;
+        return $this->sql = "DELETE FROM {$table} {$where_sql}";
     }
 
     /**

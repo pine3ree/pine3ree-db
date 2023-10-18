@@ -572,10 +572,11 @@ class Select extends Statement
         }
 
         if (!empty($this->alias)) {
-            $from = trim("{$from} " . $driver->quoteAlias($this->alias));
+            $from = "{$from} {$driver->quoteAlias($this->alias)}";
+            $from = trim($from);
         }
 
-        return Sql::FROM . " {$from}";
+        return "FROM {$from}";
     }
 
     /**
@@ -794,7 +795,9 @@ class Select extends Statement
             $groupBy[$key] = $this->getIdentifierSQL($identifier, $driver);
         }
 
-        $this->sqls['group'] = $sql = Sql::GROUP_BY . " " . implode(", ", $groupBy);
+        $grouping_element_list = implode(", ", $groupBy);
+
+        $this->sqls['group'] = $sql = "GROUP BY {$grouping_element_list}";
         return $sql;
     }
 
@@ -902,7 +905,9 @@ class Select extends Statement
             $sqls[] = $this->getIdentifierSQL($identifier, $driver) . " {$direction}";
         }
 
-        $this->sqls['order'] = $sql = Sql::ORDER_BY . " " . implode(", ", $sqls);
+        $sort_specification_list = implode(", ", $sqls);
+
+        $this->sqls['order'] = $sql = "ORDER BY {$sort_specification_list}";
         return $sql;
     }
 
@@ -955,15 +960,15 @@ class Select extends Statement
         // PostgreSQL also supports OFFSET without LIMIT
         if (isset($this->limit)) {
             $limit = $params->create($this->limit, PDO::PARAM_INT, 'limit');
-            $sql = Sql::LIMIT . " {$limit}";
+            $sql = "LIMIT {$limit}";
         }
 
         if (isset($this->offset) && $this->offset > 0) {
             if (!isset($sql)) {
-                $sql = Sql::LIMIT . " " . PHP_INT_MAX;
+                $sql = "LIMIT " . PHP_INT_MAX;
             }
             $offset = $params->create($this->offset, PDO::PARAM_INT, 'offset');
-            $sql .= " " . Sql::OFFSET . " {$offset}";
+            $sql .= " OFFSET {$offset}";
         }
 
         return $sql ?? '';
@@ -1195,7 +1200,7 @@ class Select extends Statement
         }
 
         if ('where' === $name) {
-            if (!isset($this->where)) {
+            if ($this->where === null) {
                 $this->where = new Where();
                 $this->where->setParent($this);
             }
@@ -1207,7 +1212,7 @@ class Select extends Statement
         }
 
         if ('having' === $name) {
-            if (!isset($this->having)) {
+            if ($this->having === null) {
                 $this->having = new Having();
                 $this->having->setParent($this);
             }

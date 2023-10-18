@@ -161,7 +161,9 @@ class Update extends Statement
             $set[]  = "{$column} = {$marker}";
         }
 
-        return Sql::UPDATE . " {$table} " . Sql::SET . " " . implode(", ", $set);
+        $set_clause_list = implode(", ", $set);
+
+        return "UPDATE {$table} SET {$set_clause_list}";
     }
 
     /**
@@ -178,7 +180,7 @@ class Update extends Statement
         }
 
         if ('where' === $name) {
-            if (!isset($this->where)) {
+            if ($this->where === null) {
                 $this->where = new Where();
                 $this->where->setParent($this);
             }
@@ -191,7 +193,7 @@ class Update extends Statement
     public function __clone()
     {
         parent::__clone();
-        if (isset($this->where)) {
+        if ($this->where instanceof Where) {
             $this->where = clone $this->where;
             $this->where->setParent($this);
         }

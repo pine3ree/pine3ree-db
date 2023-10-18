@@ -334,7 +334,7 @@ class Insert extends Statement
 
     protected function generateSQL(DriverInterface $driver, Params $params): string
     {
-        $insert  = $this->ignore ? Sql::INSERT_IGNORE : Sql::INSERT;
+        $INSERT  = $this->ignore ? Sql::INSERT_IGNORE : Sql::INSERT;
         $table   = $driver->quoteIdentifier($this->table);
         $columns = $this->getColumnsSQL($driver);
         $values  = $this->getValuesSQL($driver, $params);
@@ -351,10 +351,10 @@ class Insert extends Statement
         $column_list = empty($columns) ? "" : "{$columns} ";
 
         if ($this->select instanceof Select) {
-            return "{$insert} " . Sql::INTO . " {$table} {$column_list}{$values}";
+            return "{$INSERT} INTO {$table} {$column_list}{$values}";
         }
 
-        return "{$insert} " . Sql::INTO . " {$table} {$column_list}" . Sql::VALUES . " {$values}";
+        return "{$INSERT} INTO {$table} {$column_list}VALUES {$values}";
     }
 
     private function getColumnsSQL(DriverInterface $driver): string
