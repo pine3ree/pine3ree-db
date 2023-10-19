@@ -385,11 +385,14 @@ class SelectTest extends \pine3ree\DbTest\Command\SelectTestBase
             ['crossJoin', Sql::JOIN_CROSS],
             ['innerJoin', Sql::JOIN_INNER],
             ['leftJoin', Sql::JOIN_LEFT],
+            ['rightJoin', Sql::JOIN_RIGHT],
+            ['fullJoin', Sql::JOIN_FULL],
             ['naturalJoin', Sql::JOIN_NATURAL],
+            ['naturalInnerJoin', Sql::JOIN_NATURAL_INNER],
             ['naturalLeftJoin', Sql::JOIN_NATURAL_LEFT],
             ['naturalRightJoin', Sql::JOIN_NATURAL_RIGHT],
-            ['rightJoin', Sql::JOIN_RIGHT],
-            ['straightjoin', Sql::JOIN_STRAIGHT],
+            ['naturalfullJoin', Sql::JOIN_NATURAL_FULL],
+            ['unionjoin', Sql::JOIN_UNION],
         ];
     }
 

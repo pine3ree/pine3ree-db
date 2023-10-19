@@ -631,7 +631,7 @@ class Select extends Statement
     }
 
     /**
-     * Add a LEFT JOIN clause
+     * Add a LEFT [OUTER] JOIN clause
      *
      * @param string $table The joined table name
      * @param string $alias The joined table alias
@@ -646,7 +646,7 @@ class Select extends Statement
     }
 
     /**
-     * Add a RIGHT JOIN clause
+     * Add a RIGHT [OUTER] JOIN clause
      *
      * @param string $table The joined table name
      * @param string $alias The joined table alias
@@ -657,6 +657,21 @@ class Select extends Statement
     {
         return $this->addJoin(
             new Join(Sql::JOIN_RIGHT, $table, $alias, $specification)
+        );
+    }
+
+    /**
+     * Add a FULL [OUTER] JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
+     */
+    public function fullJoin(string $table, string $alias, $specification = null): self
+    {
+        return $this->addJoin(
+            new Join(Sql::JOIN_FULL, $table, $alias, $specification)
         );
     }
 
@@ -676,7 +691,22 @@ class Select extends Statement
     }
 
     /**
-     * Add a NATURAL LEFT JOIN clause
+     * Add a NATURAL INNER JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
+     */
+    public function naturalInnerJoin(string $table, string $alias, $specification = null): self
+    {
+        return $this->addJoin(
+            new Join(Sql::JOIN_NATURAL_INNER, $table, $alias, $specification)
+        );
+    }
+
+    /**
+     * Add a NATURAL LEFT  [OUTER]JOIN clause
      *
      * @param string $table The joined table name
      * @param string $alias The joined table alias
@@ -691,7 +721,7 @@ class Select extends Statement
     }
 
     /**
-     * Add a NATURAL RIGHT JOIN clause
+     * Add a NATURAL RIGHT [OUTER] JOIN clause
      *
      * @param string $table The joined table name
      * @param string $alias The joined table alias
@@ -702,6 +732,21 @@ class Select extends Statement
     {
         return $this->addJoin(
             new Join(Sql::JOIN_NATURAL_RIGHT, $table, $alias, $specification)
+        );
+    }
+
+    /**
+     * Add a NATURAL FULL [OUTER] JOIN clause
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
+     */
+    public function naturalFullJoin(string $table, string $alias, $specification = null): self
+    {
+        return $this->addJoin(
+            new Join(Sql::JOIN_NATURAL_FULL, $table, $alias, $specification)
         );
     }
 
@@ -721,17 +766,17 @@ class Select extends Statement
     }
 
     /**
-     * Add a STRAIGHT JOIN clause
+     * Add a UNION JOIN clause
      *
      * @param string $table The joined table name
      * @param string $alias The joined table alias
      * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
      * @return $this Fluent interface
      */
-    public function straightJoin(string $table, string $alias, $specification = null): self
+    public function unionJoin(string $table, string $alias, $specification = null): self
     {
         return $this->addJoin(
-            new Join(Sql::JOIN_STRAIGHT, $table, $alias, $specification)
+            new Join(Sql::JOIN_UNION, $table, $alias, $specification)
         );
     }
 

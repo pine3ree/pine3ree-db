@@ -91,26 +91,32 @@ class Sql
      * Join clause types
      */
     public const JOIN_AUTO          = '';
-    public const JOIN_INNER         = 'INNER';
     public const JOIN_CROSS         = 'CROSS';
+    public const JOIN_UNION         = 'UNION';
+    public const JOIN_INNER         = 'INNER';
     public const JOIN_LEFT          = 'LEFT';
     public const JOIN_RIGHT         = 'RIGHT';
-    public const JOIN_STRAIGHT      = 'STRAIGHT';
+    public const JOIN_FULL          = 'FULL';
     public const JOIN_NATURAL       = 'NATURAL';
+    public const JOIN_NATURAL_INNER = 'NATURAL INNER';
     public const JOIN_NATURAL_LEFT  = 'NATURAL LEFT';
     public const JOIN_NATURAL_RIGHT = 'NATURAL RIGHT';
+    public const JOIN_NATURAL_FULL  = 'NATURAL_FULL';
     public const USING              = 'USING';
 
     public const JOIN_TYPES = [
         self::JOIN_AUTO          => self::JOIN_AUTO,
-        self::JOIN_INNER         => self::JOIN_INNER,
         self::JOIN_CROSS         => self::JOIN_CROSS,
+        self::JOIN_UNION         => self::JOIN_UNION,
+        self::JOIN_INNER         => self::JOIN_INNER,
         self::JOIN_LEFT          => self::JOIN_LEFT,
         self::JOIN_RIGHT         => self::JOIN_RIGHT,
-        self::JOIN_STRAIGHT      => self::JOIN_STRAIGHT,
+        self::JOIN_FULL          => self::JOIN_FULL,
         self::JOIN_NATURAL       => self::JOIN_NATURAL,
+        self::JOIN_NATURAL_INNER => self::JOIN_NATURAL_INNER,
         self::JOIN_NATURAL_LEFT  => self::JOIN_NATURAL_LEFT,
         self::JOIN_NATURAL_RIGHT => self::JOIN_NATURAL_RIGHT,
+        self::JOIN_NATURAL_FULL  => self::JOIN_NATURAL_FULL,
     ];
 
     /*

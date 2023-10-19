@@ -305,6 +305,20 @@ class Select extends Command implements ReaderInterface, WriterInterface
     }
 
     /**
+     * @see SqlSelect::fullJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
+     */
+    public function fullJoin(string $table, string $alias, $specification = null): self
+    {
+        $this->sqlStatement->fullJoin($table, $alias, $specification);
+        return $this;
+    }
+
+    /**
      * @see SqlSelect::naturalJoin()
      *
      * @param string $table The joined table name
@@ -315,6 +329,20 @@ class Select extends Command implements ReaderInterface, WriterInterface
     public function naturalJoin(string $table, string $alias, $specification = null): self
     {
         $this->sqlStatement->naturalJoin($table, $alias, $specification);
+        return $this;
+    }
+
+    /**
+     * @see SqlSelect::naturalInnerJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
+     */
+    public function naturalInnerJoin(string $table, string $alias, $specification = null): self
+    {
+        $this->sqlStatement->naturalInnerJoin($table, $alias, $specification);
         return $this;
     }
 
@@ -347,6 +375,20 @@ class Select extends Command implements ReaderInterface, WriterInterface
     }
 
     /**
+     * @see SqlSelect::naturalFullJoin()
+     *
+     * @param string $table The joined table name
+     * @param string $alias The joined table alias
+     * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
+     * @return $this Fluent interface
+     */
+    public function naturalFullJoin(string $table, string $alias, $specification = null): self
+    {
+        $this->sqlStatement->naturalFullJoin($table, $alias, $specification);
+        return $this;
+    }
+
+    /**
      * @see SqlSelect::crossJoin()
      *
      * @param string $table The joined table name
@@ -361,16 +403,16 @@ class Select extends Command implements ReaderInterface, WriterInterface
     }
 
     /**
-     * @see SqlSelect::straightJoin()
+     * @see SqlSelect::unionJoin()
      *
      * @param string $table The joined table name
      * @param string $alias The joined table alias
      * @param On|Predicate|Predicate\Set|array|string|Literal|Identifier|null $specification
      * @return $this Fluent interface
      */
-    public function straightJoin(string $table, string $alias, $specification = null): self
+    public function unionJoin(string $table, string $alias, $specification = null): self
     {
-        $this->sqlStatement->straightJoin($table, $alias, $specification);
+        $this->sqlStatement->unionJoin($table, $alias, $specification);
         return $this;
     }
 
