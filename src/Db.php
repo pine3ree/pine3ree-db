@@ -46,7 +46,7 @@ class Db
     /** The wrapped PDO instance */
     private ?PDO $pdo = null;
 
-    /** @var string */
+    /** @var The PDO connection data source name */
     private ?string $dsn = null;
 
     /** The PDO connection username */
