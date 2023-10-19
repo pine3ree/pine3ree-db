@@ -549,11 +549,13 @@ A Join instance is created with at least 2 parameters:</p>
 <p>and most commonly with the following optional parameters</p>
 <ul>
 <li>the joined table alias</li>
-<li>the join specification in the form of a sql literal predicate rendered as the 
-  wrapped string, a sql identifier that is automatically wrapped in a
-  <code>USING("identifier")</code> clause, an <code>On</code> clause or conditions in various form
-  (strings, arrays, predicates, predicate-sets, ..) the will be used to build
-  an <code>On</code> conditional-clause instance</li>
+<li>the join specification in the form of:</li>
+<li>a sql literal predicate rendered as is,</li>
+<li>a sql identifier that is automatically wrapped in a
+    <code>USING("identifier")</code> clause,</li>
+<li>an <code>On</code> clause or conditions in various form
+    (strings, arrays, predicates, predicate-sets, ..) the will be used to build
+    an <code>On</code> conditional-clause instance</li>
 </ul>
 <p>Examples:</p>
 <pre><code class="language-php">
@@ -594,21 +596,38 @@ use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause\Join;
 use pine3ree\Db\Sql\Statement\Select;
 
-$select = Sql::select();
-
-$select
+$select = Sql::select()
     -&gt;columns([
         '*',
         'author' =&gt; 'u.name',
     ])
     -&gt;from('post', 'p')
-    -&gt;leftJoin('user', 'u', [ // conditions array used to build the On clause
+    -&gt;innerJoin('user', 'u', [ // conditions array used to build the On clause
         'u.id = p.user_id', // literal string
         'u.enabled' =&gt; true, // equality condition in key =&gt; value form
     ]);
 
-// SELECT &quot;p&quot;.*, &quot;u&quot;.&quot;name&quot; AS &quot;author&quot; FROM &quot;post&quot; &quot;p&quot;
-// LEFT JOIN &quot;user&quot; &quot;u&quot; ON (&quot;u&quot;.id = &quot;p&quot;.user_id AND &quot;u&quot;.&quot;enabled&quot; = :eq1)
+// SELECT &quot;p&quot;.*, &quot;u&quot;.&quot;name&quot; AS &quot;author&quot;
+// FROM &quot;post&quot; &quot;p&quot;
+// INNER JOIN &quot;user&quot; &quot;u&quot; ON (&quot;u&quot;.id = &quot;p&quot;.user_id AND &quot;u&quot;.&quot;enabled&quot; = :eq1)
+
+
+// When the local and related column names are the same (e.g post_id) we can use
+// a sql identifier to trigger the compilation of a USING clause, as in the
+// following example:
+
+$select = Sql::select()
+    -&gt;columns([
+        'post_id',
+        'title',
+        'review' =&gt; 'r.content',
+    ])
+    -&gt;from('post', 'p')
+    -&gt;leftJoin('review', 'r', Sql::identifier('post_id'));
+
+// SELECT &quot;p&quot;.&quot;post_id&quot;, &quot;p&quot;.&quot;title&quot;, &quot;r&quot;.&quot;content&quot; AS &quot;review&quot;
+// FROM &quot;post&quot; &quot;p&quot;
+// LEFT JOIN &quot;review&quot; &quot;r&quot; USING(&quot;post_id&quot;)
 </code></pre>
 <p>The sql <code>Select</code> statement class provides the following utility methods for sql-joins:</p>
 <pre><code class="language-php">Select::addJoin(Join $join): self;
