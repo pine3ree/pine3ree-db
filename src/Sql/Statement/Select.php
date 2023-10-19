@@ -572,8 +572,7 @@ class Select extends Statement
         }
 
         if (!empty($this->alias)) {
-            $from = "{$from} {$driver->quoteAlias($this->alias)}";
-            $from = trim($from);
+            $from = trim("{$from} {$driver->quoteAlias($this->alias)}");
         }
 
         return "FROM {$from}";
