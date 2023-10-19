@@ -127,11 +127,13 @@ A Join instance is created with at least 2 parameters:
 and most commonly with the following optional parameters
 
 - the joined table alias
-- the join specification in the form of a sql literal predicate rendered as the 
-  wrapped string, a sql identifier that is automatically wrapped in a
-  `USING("identifier")` clause, an `On` clause or conditions in various form
-  (strings, arrays, predicates, predicate-sets, ..) the will be used to build
-  an `On` conditional-clause instance
+- the join specification in the form of:
+  - a sql literal predicate rendered as is,
+  - a sql identifier that is automatically wrapped in a
+    `USING("identifier")` clause,
+  - an `On` clause or conditions in various form
+    (strings, arrays, predicates, predicate-sets, ..) the will be used to build
+    an `On` conditional-clause instance
 
 Examples:
 
@@ -177,21 +179,38 @@ use pine3ree\Db\Sql;
 use pine3ree\Db\Sql\Clause\Join;
 use pine3ree\Db\Sql\Statement\Select;
 
-$select = Sql::select();
-
-$select
+$select = Sql::select()
     ->columns([
         '*',
         'author' => 'u.name',
     ])
     ->from('post', 'p')
-    ->leftJoin('user', 'u', [ // conditions array used to build the On clause
+    ->innerJoin('user', 'u', [ // conditions array used to build the On clause
         'u.id = p.user_id', // literal string
         'u.enabled' => true, // equality condition in key => value form
     ]);
 
-// SELECT "p".*, "u"."name" AS "author" FROM "post" "p"
-// LEFT JOIN "user" "u" ON ("u".id = "p".user_id AND "u"."enabled" = :eq1)
+// SELECT "p".*, "u"."name" AS "author"
+// FROM "post" "p"
+// INNER JOIN "user" "u" ON ("u".id = "p".user_id AND "u"."enabled" = :eq1)
+
+
+// When the local and related column names are the same (e.g post_id) we can use
+// a sql identifier to trigger the compilation of a USING clause, as in the
+// following example:
+
+$select = Sql::select()
+    ->columns([
+        'post_id',
+        'title',
+        'review' => 'r.content',
+    ])
+    ->from('post', 'p')
+    ->leftJoin('review', 'r', Sql::identifier('post_id'));
+
+// SELECT "p"."post_id", "p"."title", "r"."content" AS "review"
+// FROM "post" "p"
+// LEFT JOIN "review" "r" USING("post_id")
 ```
 
 The sql `Select` statement class provides the following utility methods for sql-joins:
