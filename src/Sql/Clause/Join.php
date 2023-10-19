@@ -26,7 +26,9 @@ use function rtrim;
 use function trim;
 
 /**
- * Join represents a SQL-JOIN clause
+ * Join represents a sql joined-table reference
+ *
+ * @link https://ronsavage.github.io/SQL/sql-2003-2.bnf.html#joined%20table
  *
  * @property-read string $name The join sql-name ("join-type JOIN")
  * @property-read string $type The join type
