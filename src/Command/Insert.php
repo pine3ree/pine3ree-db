@@ -71,9 +71,9 @@ class Insert extends Command implements WriterInterface
      * @see SqlInsert::values()
      * @return $this Fluent interface
      */
-    public function values(array $values, bool $reset = false): self
+    public function values(array $values, bool $add = false): self
     {
-        $this->sqlStatement->values($values, $reset);
+        $this->sqlStatement->values($values, $add);
         return $this;
     }
 
@@ -81,9 +81,9 @@ class Insert extends Command implements WriterInterface
      * @see SqlInsert::multipleValues()
      * @return $this Fluent interface
      */
-    public function multipleValues(array $multiple_values, bool $reset = true): self
+    public function multipleValues(array $multiple_values, $add = false): self
     {
-        $this->sqlStatement->multipleValues($multiple_values, $reset);
+        $this->sqlStatement->multipleValues($multiple_values, $add);
         return $this;
     }
 
@@ -91,9 +91,9 @@ class Insert extends Command implements WriterInterface
      * @see SqlInsert::row()
      * @return $this Fluent interface
      */
-    public function row(array $row, bool $reset = false): self
+    public function row(array $row, bool $add = false): self
     {
-        $this->sqlStatement->row($row);
+        $this->sqlStatement->row($row, $add);
         return $this;
     }
 
@@ -101,9 +101,9 @@ class Insert extends Command implements WriterInterface
      * @see SqlInsert::rows()
      * @return $this Fluent interface
      */
-    public function rows(array $rows, bool $reset = true): self
+    public function rows(array $rows, bool $add = false): self
     {
-        $this->sqlStatement->rows($rows);
+        $this->sqlStatement->rows($rows, $add);
         return $this;
     }
 
