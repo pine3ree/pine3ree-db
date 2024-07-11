@@ -471,7 +471,7 @@ EOIS
         $pdo = $this->prophesize(PDO::class);
         $db = new Db($pdo->reveal());
 
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1)->willReturn('ansi');
         $pdo->query($sql)->shouldBeCalled();
 
         $db->query($sql);
@@ -499,7 +499,7 @@ EOIS
         $pdo = $this->prophesize(PDO::class);
         $db = new Db($pdo->reveal());
 
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1)->willReturn('ansi');
         $pdo->exec($sql)->shouldBeCalled();
 
         $db->exec($sql);
@@ -542,7 +542,7 @@ EOIS
     public function testTransactionMethods()
     {
         $pdo = $this->prophesize(PDO::class);
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1)->willReturn('ansi');
 
         $db = new Db($pdo->reveal());
 
@@ -591,7 +591,7 @@ EOIS
     public function testBeginTransactionRaisesExceptionIfPdoAlreadyDid()
     {
         $pdo = $this->prophesize(PDO::class);
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1)->willReturn('ansi');
 
         $db = new Db($pdo->reveal());
         $pdo->inTransaction()->shouldBeCalled()->willReturn(true);
@@ -604,7 +604,7 @@ EOIS
     public function testCommitRaisesExceptionIfInRollBackState()
     {
         $pdo = $this->prophesize(PDO::class);
-        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1);
+        $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)->shouldBeCalledTimes(1)->willReturn('ansi');
 
         $db = new Db($pdo->reveal());
 
