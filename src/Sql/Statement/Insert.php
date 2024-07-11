@@ -134,8 +134,8 @@ class Insert extends Statement
     }
 
     /**
-     * Add a single-row set of values to the INSERT statement, optionally removing
-     * existing values
+     * Add a single-row set of values to the INSERT statement, optionally adding
+     * it to the previously defined set of values
      *
      * @param array $values
      * @param bool $add Add current set of values to existing values?
@@ -166,8 +166,8 @@ class Insert extends Statement
     }
 
     /**
-     * Add multiple-rows sets of values to the INSERT statement, optionally removing
-     * existing values
+     * Add multiple-rows sets of values to the INSERT statement, optionally adding
+     * them to the previously defined set of values
      *
      * @param array[] $multiple_values
      * @param bool $add Add current set of rows values to existing values?
@@ -216,8 +216,8 @@ class Insert extends Statement
     }
 
     /**
-     * Set the rows(columns-to-values) to be INSERTed, optionally dicarding any
-     * existing set of values
+     * Set the rows(columns-to-values) to be INSERTed, optionally adding them
+     * to the previously defined set of values
      *
      * @param array[] $rows An array of new records
      * @psalm-param <string: mixed>[] An array of new records
@@ -244,10 +244,10 @@ class Insert extends Statement
     }
 
     /**
-     * Add a row(columns-to-values) to the INSERT statement
+     * Set, or add, a table row (i.e. columns-to-values) for the INSERT statement
      *
      * @param array $row The record to insert
-     * @param bool $add Add row for multiple rows insertion?
+     * @param bool $add Add row to existing for multiple rows insertion?
      * @return $this Fluent interface
      * @throws RuntimeException
      */

@@ -352,7 +352,6 @@ By default
 - `Insert::row(array $row, bool $add = false)` and
 - `Insert::rows(array $rows, bool $add = false)` and
 - `Insert::multipleValues(array $multiple_values, bool $add = false)`
-
 will define the insert values removing any previously accumulated set of values.
 
 The opposite happens for
@@ -367,7 +366,7 @@ These methods calls will add the new rows/values provided to the existing ones.
 ```php
 $insert = $db->insert('product');
 
-$insert->row(['price' => 111.11, 'stock' => 111]); // Adds 1 set of values
+$insert->row(['price' => 111.11, 'stock' => 111]); // Define the 1st set of values
 $insert->row(['price' => 222.22, 'stock' => 222], true); // Adds 1 set of values
 // Columns "price" and "stock" are alredy specified by previuous row() calls
 $insert->values([333.33, 333], true); // Adds 1 set of values
@@ -377,8 +376,8 @@ $insert->execute(); // This will try to insert 3 rows
 $insert->values([444.44, 444]); // Adds another set of values
 $insert->execute(); // This will try to insert 4 rows
 
- // Define the insert values after removing the old ones
-$insert->row(['price' => 555.55, 'stock' => 555], true);
+ // Define the insert values discarding (i.e. after removing) the old ones
+$insert->row(['price' => 555.55, 'stock' => 555]);
 $insert->execute(); // This will try to insert 1 row
 ```
 
@@ -427,6 +426,6 @@ $num_deleted = $db->delete('product', 'stock <= 0');
 The following methods are simple proxies to methods implemented in the
 `pine3ree\Db\Sql\DriverInterface` class of the current dbal's sql-driver instance.
 
-- `Db::quoteIdentifier(string $identifier)` quotes given column/table SQL identifier
-- `Db::quoteAlias(string $alias)` quotes given SQL aliase
+- `Db::quoteIdentifier(string $identifier)` quotes the given column/table SQL identifier
+- `Db::quoteAlias(string $alias)` quotes the given SQL alias
 - `Db::quoteValue(null|scalar $value)` perform type-casting and quotes - when required - the given value
